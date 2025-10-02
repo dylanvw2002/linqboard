@@ -53,6 +53,9 @@ const Board = () => {
   const [editTaskDescription, setEditTaskDescription] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
   const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+  const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     checkAccess();
@@ -194,6 +197,15 @@ const Board = () => {
     } else {
       return "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"; // Groen - toekomstig
     }
+  };
+
+  const getPriorityBadge = (priority: "low" | "medium" | "high") => {
+    const config = {
+      high: { label: "Hoog", color: "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" },
+      medium: { label: "Middel", color: "bg-[#fef3c7] text-[#92400e] border-[#fde68a]" },
+      low: { label: "Laag", color: "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]" },
+    };
+    return config[priority];
   };
 
   const openEditDialog = (task: Task) => {
@@ -390,6 +402,65 @@ const Board = () => {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, task: Task) => {
+    setDraggedTask(task);
+    setIsDragging(true);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTask(null);
+    setDraggedOverColumn(null);
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent, columnName: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDraggedOverColumn(columnName);
+  };
+
+  const handleDrop = async (e: React.DragEvent, columnName: string) => {
+    e.preventDefault();
+    if (!draggedTask) return;
+
+    const targetColumn = columns.find((col) => col.name === columnName);
+    if (!targetColumn) return;
+
+    // Als de taak al in deze kolom zit, doe niets
+    const currentColumn = columns.find((col) => col.id === draggedTask.column_id);
+    if (currentColumn?.name === columnName) {
+      setDraggedTask(null);
+      setDraggedOverColumn(null);
+      setIsDragging(false);
+      return;
+    }
+
+    try {
+      const maxPosition = tasks
+        .filter((t) => t.column_id === targetColumn.id)
+        .reduce((max, t) => Math.max(max, t.position), -1);
+
+      const { error } = await supabase
+        .from("tasks")
+        .update({
+          column_id: targetColumn.id,
+          position: maxPosition + 1,
+        })
+        .eq("id", draggedTask.id);
+
+      if (error) throw error;
+      toast.success(`Taak verplaatst naar ${columnName}`);
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error("Fout bij verplaatsen taak");
+    }
+
+    setDraggedTask(null);
+    setDraggedOverColumn(null);
+    setIsDragging(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -504,14 +575,31 @@ const Board = () => {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list">
+          <div 
+            className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list"
+            onDragOver={(e) => handleDragOver(e, "Vandaag")}
+            onDrop={(e) => handleDrop(e, "Vandaag")}
+          >
             {getColumnTasks("Vandaag").map((task) => (
               <article
                 key={task.id}
-                onClick={() => openEditDialog(task)}
-                className="bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
+                draggable
+                onDragStart={(e) => handleDragStart(e, task)}
+                onDragEnd={handleDragEnd}
+                onClick={() => !isDragging && openEditDialog(task)}
+                className={cn(
+                  "relative bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                  draggedTask?.id === task.id && "opacity-50"
+                )}
               >
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
+                <span className={cn(
+                  "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
+                  getPriorityBadge(task.priority).color
+                )}>
+                  {getPriorityBadge(task.priority).label}
+                </span>
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-5">
                   {task.title}
                 </h4>
                 {task.description && (
@@ -574,14 +662,31 @@ const Board = () => {
               </DialogContent>
             </Dialog>
           </div>
-          <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list">
+          <div 
+            className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list"
+            onDragOver={(e) => handleDragOver(e, "Deze week")}
+            onDrop={(e) => handleDrop(e, "Deze week")}
+          >
             {getColumnTasks("Deze week").map((task) => (
               <article
                 key={task.id}
-                onClick={() => openEditDialog(task)}
-                className="bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
+                draggable
+                onDragStart={(e) => handleDragStart(e, task)}
+                onDragEnd={handleDragEnd}
+                onClick={() => !isDragging && openEditDialog(task)}
+                className={cn(
+                  "relative bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                  draggedTask?.id === task.id && "opacity-50"
+                )}
               >
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
+                <span className={cn(
+                  "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
+                  getPriorityBadge(task.priority).color
+                )}>
+                  {getPriorityBadge(task.priority).label}
+                </span>
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-5">
                   {task.title}
                 </h4>
                 {task.description && (
@@ -645,14 +750,31 @@ const Board = () => {
                   </DialogContent>
                 </Dialog>
               </div>
-              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
+              <div 
+                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                onDragOver={(e) => handleDragOver(e, "Ziek")}
+                onDrop={(e) => handleDrop(e, "Ziek")}
+              >
                 {getColumnTasks("Ziek").map((task) => (
                   <article
                     key={task.id}
-                    onClick={() => openEditDialog(task)}
-                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => !isDragging && openEditDialog(task)}
+                    className={cn(
+                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                      draggedTask?.id === task.id && "opacity-50"
+                    )}
                   >
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
+                    <span className={cn(
+                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
+                      getPriorityBadge(task.priority).color
+                    )}>
+                      {getPriorityBadge(task.priority).label}
+                    </span>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
@@ -702,14 +824,31 @@ const Board = () => {
                   </DialogContent>
                 </Dialog>
               </div>
-              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
+              <div 
+                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                onDragOver={(e) => handleDragOver(e, "Verlof")}
+                onDrop={(e) => handleDrop(e, "Verlof")}
+              >
                 {getColumnTasks("Verlof").map((task) => (
                   <article
                     key={task.id}
-                    onClick={() => openEditDialog(task)}
-                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => !isDragging && openEditDialog(task)}
+                    className={cn(
+                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                      draggedTask?.id === task.id && "opacity-50"
+                    )}
                   >
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
+                    <span className={cn(
+                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
+                      getPriorityBadge(task.priority).color
+                    )}>
+                      {getPriorityBadge(task.priority).label}
+                    </span>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
@@ -727,14 +866,31 @@ const Board = () => {
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Afgerond</div>
                 <span className="text-[#667085] font-extrabold">{getColumnTasks("Afgerond").length}</span>
               </div>
-              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list min-h-0">
+              <div 
+                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list min-h-0"
+                onDragOver={(e) => handleDragOver(e, "Afgerond")}
+                onDrop={(e) => handleDrop(e, "Afgerond")}
+              >
                 {getColumnTasks("Afgerond").map((task) => (
                   <article
                     key={task.id}
-                    onClick={() => openEditDialog(task)}
-                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => !isDragging && openEditDialog(task)}
+                    className={cn(
+                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                      draggedTask?.id === task.id && "opacity-50"
+                    )}
                   >
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                    <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
+                    <span className={cn(
+                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
+                      getPriorityBadge(task.priority).color
+                    )}>
+                      {getPriorityBadge(task.priority).label}
+                    </span>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-5">
                       {task.title}
                     </h4>
                     {task.description && (
@@ -795,14 +951,31 @@ const Board = () => {
                   </DialogContent>
                 </Dialog>
               </div>
-              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
+              <div 
+                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                onDragOver={(e) => handleDragOver(e, "Belangrijke informatie")}
+                onDrop={(e) => handleDrop(e, "Belangrijke informatie")}
+              >
                 {getColumnTasks("Belangrijke informatie").map((task) => (
                   <article
                     key={task.id}
-                    onClick={() => openEditDialog(task)}
-                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => !isDragging && openEditDialog(task)}
+                    className={cn(
+                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                      draggedTask?.id === task.id && "opacity-50"
+                    )}
                   >
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
+                    <span className={cn(
+                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
+                      getPriorityBadge(task.priority).color
+                    )}>
+                      {getPriorityBadge(task.priority).label}
+                    </span>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
