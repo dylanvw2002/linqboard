@@ -87,7 +87,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-24 py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2025 TeamTask. Samenwerken zonder gedoe.</p>
+          <p>© 2025 LinqBoard. Samenwerken zonder gedoe.</p>
         </div>
       </footer>
     </div>
