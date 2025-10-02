@@ -1219,7 +1219,7 @@ const Board = () => {
                 </Dialog>
               </div>
               <div 
-                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                className="flex-1 px-1 pt-3.5 pb-1 grid gap-2 content-start"
                 onDragOver={(e) => handleDragOver(e, "Belangrijke informatie")}
                 onDrop={(e) => handleDrop(e, "Belangrijke informatie")}
               >
