@@ -43,15 +43,7 @@ const Auth = () => {
 
         if (data.user) {
           toast.success("Succesvol ingelogd!");
-          
-          // Redirect based on mode
-          if (mode === "create") {
-            navigate("/create-organization");
-          } else if (mode === "join") {
-            navigate("/join-organization");
-          } else {
-            navigate("/dashboard");
-          }
+          navigate("/dashboard");
         }
       } else {
         if (!fullName.trim()) {
@@ -75,15 +67,7 @@ const Auth = () => {
 
         if (data.user) {
           toast.success("Account aangemaakt!");
-          
-          // Redirect based on mode
-          if (mode === "create") {
-            navigate("/create-organization");
-          } else if (mode === "join") {
-            navigate("/join-organization");
-          } else {
-            navigate("/dashboard");
-          }
+          navigate("/dashboard");
         }
       }
     } catch (error: any) {
