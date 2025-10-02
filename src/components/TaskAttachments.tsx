@@ -68,12 +68,33 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   const [loading, setLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
 
+  const fetchAttachments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("task_attachments")
+        .select("*")
+        .eq("task_id", taskId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setAttachments(data || []);
+    } catch (error) {
+      console.error("Error fetching attachments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchAttachments();
     
     console.log("Setting up realtime subscription for task:", taskId);
     const channel = supabase
-      .channel(`task-attachments-${taskId}`)
+      .channel(`task-attachments-${taskId}`, {
+        config: {
+          broadcast: { self: true }
+        }
+      })
       .on(
         "postgres_changes",
         {
@@ -96,23 +117,6 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       supabase.removeChannel(channel);
     };
   }, [taskId]);
-
-  const fetchAttachments = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("task_attachments")
-        .select("*")
-        .eq("task_id", taskId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setAttachments(data || []);
-    } catch (error) {
-      console.error("Error fetching attachments:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const uploadFile = async (file: File) => {
     // Validatie
