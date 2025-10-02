@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Zap, Shield, LogIn, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/logo-transparent.png";
+import todoBoardIllustration from "@/assets/todo-board-illustration.png";
 
 const Index = () => {
   return (
@@ -50,42 +51,11 @@ const Index = () => {
 
           {/* Right Visual Mockup */}
           <div className="relative">
-            <div className="bg-card/80 backdrop-blur-sm border-4 border-primary/20 rounded-3xl p-8 shadow-2xl">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold mb-4">To-Do Board</h3>
-                <div className="h-1 w-20 bg-gradient-to-r from-primary to-accent rounded-full"></div>
-              </div>
-              
-              <div className="space-y-4">
-                {[
-                  { label: "Planning opvullen deze week", status: "done" },
-                  { label: "WDA gesprekspunten", status: "progress" },
-                  { label: "Werkbonnen aanmaken", status: "todo" }
-                ].map((task, index) => (
-                  <div key={index} className="flex items-center gap-3 p-4 bg-background/50 rounded-xl border border-border/50">
-                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-                      task.status === "done" ? "bg-primary" : "bg-muted"
-                    }`}>
-                      {task.status === "done" && <CheckCircle2 className="w-4 h-4 text-white" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className={`h-3 rounded-full ${
-                        task.status === "done" 
-                          ? "bg-gradient-to-r from-primary/60 to-primary/30 w-full" 
-                          : task.status === "progress"
-                          ? "bg-gradient-to-r from-accent/60 to-accent/20 w-3/4"
-                          : "bg-muted w-1/2"
-                      }`}></div>
-                    </div>
-                    {task.status === "progress" && (
-                      <span className="px-3 py-1 bg-accent/20 text-accent text-xs font-bold rounded-full">
-                        In uitvoering
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <img 
+              src={todoBoardIllustration} 
+              alt="To-Do Board Illustration" 
+              className="w-full h-auto rounded-3xl shadow-2xl"
+            />
             
             {/* Decorative elements */}
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
