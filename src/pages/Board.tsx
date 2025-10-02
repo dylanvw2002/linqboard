@@ -580,12 +580,11 @@ const Board = () => {
       <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] h-full max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
         {/* Kolom 1: Vandaag */}
         <section className="flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(270,80%,60%)]/20 mb-3.5 shadow-[0_0_20px_rgba(167,139,250,0.1)] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(270,80%,60%)]/10 via-[hsl(270,90%,70%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(270,90%,70%)] bg-clip-text text-transparent relative z-10">Vandaag</div>
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Vandaag</div>
             <Dialog open={openDialog === "Vandaag"} onOpenChange={(open) => setOpenDialog(open ? "Vandaag" : null)}>
               <DialogTrigger asChild>
-                <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(270,80%,60%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(270,80%,60%)]/10 hover:border-[hsl(270,80%,60%)]/50 transition-all relative z-10">
+                <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-card transition-all relative z-10">
                   ＋ Taak
                 </button>
               </DialogTrigger>
@@ -703,11 +702,10 @@ const Board = () => {
                 onDragEnd={handleDragEnd}
                 onClick={() => !isDragging && openEditDialog(task)}
                 className={cn(
-                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(270,80%,60%)]/20 rounded-[18px] p-3.5 shadow-[0_4px_16px_rgba(167,139,250,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(167,139,250,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-border/40 rounded-[18px] p-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-200",
                   draggedTask?.id === task.id && "opacity-50 scale-95"
                 )}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(270,80%,60%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                 <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                   {task.due_date && (
@@ -737,12 +735,11 @@ const Board = () => {
 
         {/* Kolom 2: Deze week */}
         <section className="flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(210,80%,60%)]/20 mb-3.5 shadow-[0_0_20px_rgba(59,130,246,0.1)] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(210,80%,60%)]/10 via-[hsl(210,90%,70%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-            <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(210,80%,60%)] to-[hsl(210,90%,70%)] bg-clip-text text-transparent relative z-10">Deze week</div>
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Deze week</div>
             <Dialog open={openDialog === "Deze week"} onOpenChange={(open) => setOpenDialog(open ? "Deze week" : null)}>
               <DialogTrigger asChild>
-                <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(210,80%,60%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(210,80%,60%)]/10 hover:border-[hsl(210,80%,60%)]/50 transition-all relative z-10">
+                <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-card transition-all relative z-10">
                   ＋ Taak
                 </button>
               </DialogTrigger>
@@ -860,11 +857,10 @@ const Board = () => {
                 onDragEnd={handleDragEnd}
                 onClick={() => !isDragging && openEditDialog(task)}
                 className={cn(
-                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(210,80%,60%)]/20 rounded-[18px] p-3.5 shadow-[0_4px_16px_rgba(59,130,246,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(59,130,246,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-border/40 rounded-[18px] p-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-200",
                   draggedTask?.id === task.id && "opacity-50 scale-95"
                 )}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,80%,60%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                 <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                   {task.due_date && (
@@ -897,12 +893,11 @@ const Board = () => {
           <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
             {/* Ziek */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(30,90%,60%)]/20 mb-3 shadow-[0_0_20px_rgba(251,146,60,0.1)] relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(30,90%,60%)]/10 via-[hsl(30,95%,70%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(30,90%,60%)] to-[hsl(30,95%,70%)] bg-clip-text text-transparent relative z-10">Ziek</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Ziek</div>
                 <Dialog open={openDialog === "Ziek"} onOpenChange={(open) => setOpenDialog(open ? "Ziek" : null)}>
                   <DialogTrigger asChild>
-                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(30,90%,60%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(30,90%,60%)]/10 hover:border-[hsl(30,90%,60%)]/50 transition-all relative z-10" title="Nieuwe naam/reden">＋</button>
+                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-card transition-all relative z-10" title="Nieuwe naam/reden">＋</button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
@@ -1011,12 +1006,11 @@ const Board = () => {
 
             {/* Verlof */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(145,70%,55%)]/20 mb-3 shadow-[0_0_20px_rgba(34,197,94,0.1)] relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(145,70%,55%)]/10 via-[hsl(145,80%,65%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(145,70%,55%)] to-[hsl(145,80%,65%)] bg-clip-text text-transparent relative z-10">Verlof</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Verlof</div>
                 <Dialog open={openDialog === "Verlof"} onOpenChange={(open) => setOpenDialog(open ? "Verlof" : null)}>
                   <DialogTrigger asChild>
-                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(145,70%,55%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(145,70%,55%)]/10 hover:border-[hsl(145,70%,55%)]/50 transition-all relative z-10" title="Nieuwe naam/reden">＋</button>
+                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-card transition-all relative z-10" title="Nieuwe naam/reden">＋</button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
@@ -1130,9 +1124,8 @@ const Board = () => {
           <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
             {/* Afgerond */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(145,65%,50%)]/20 mb-3 shadow-[0_0_20px_rgba(34,197,94,0.1)] relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(145,65%,50%)]/10 via-[hsl(145,80%,65%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(145,65%,50%)] to-[hsl(145,80%,65%)] bg-clip-text text-transparent relative z-10">Afgerond</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Afgerond</div>
                 <span className="text-muted-foreground font-extrabold relative z-10">{getColumnTasks("Afgerond").length}</span>
               </div>
               <div 
@@ -1148,11 +1141,10 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(145,65%,50%)]/20 rounded-[18px] p-3.5 shadow-[0_4px_16px_rgba(34,197,94,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(34,197,94,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-border/40 rounded-[18px] p-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-200",
                       draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(145,65%,50%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                     <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                       {task.due_date && (
@@ -1182,12 +1174,11 @@ const Board = () => {
 
             {/* Belangrijke informatie */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(190,80%,55%)]/20 mb-3 shadow-[0_0_20px_rgba(6,182,212,0.1)] relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(190,80%,55%)]/10 via-[hsl(190,90%,65%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(190,80%,55%)] to-[hsl(190,90%,65%)] bg-clip-text text-transparent relative z-10">Belangrijke informatie</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Belangrijke informatie</div>
                 <Dialog open={openDialog === "Belangrijke informatie"} onOpenChange={(open) => setOpenDialog(open ? "Belangrijke informatie" : null)}>
                   <DialogTrigger asChild>
-                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(190,80%,55%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(190,80%,55%)]/10 hover:border-[hsl(190,80%,55%)]/50 transition-all relative z-10" title="Nieuwe info">＋</button>
+                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-card transition-all relative z-10" title="Nieuwe info">＋</button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
@@ -1237,11 +1228,10 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(190,80%,55%)]/20 rounded-[18px] p-2.5 shadow-[0_4px_16px_rgba(6,182,212,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(6,182,212,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-border/40 rounded-[18px] p-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-200",
                       draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(190,80%,55%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
                     <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
                     {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
