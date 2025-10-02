@@ -9,9 +9,10 @@ Deno.serve(async (req) => {
   try {
     console.log('Authorization header:', req.headers.get('Authorization') ? 'present' : 'missing')
     
-    const supabaseClient = createClient(
+    // Client for authentication (with user JWT)
+    const authClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
           headers: { Authorization: req.headers.get('Authorization')! },
@@ -19,13 +20,20 @@ Deno.serve(async (req) => {
       }
     )
 
+    // Validate the user
     const {
       data: { user },
-    } = await supabaseClient.auth.getUser()
+    } = await authClient.auth.getUser()
 
     if (!user) {
       throw new Error('User not authenticated')
     }
+
+    // Client for database operations (with service role)
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
     const { inviteCode } = await req.json()
 
