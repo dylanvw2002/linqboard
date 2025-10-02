@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ArrowLeft } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { z } from "zod";
@@ -540,6 +540,13 @@ const Board = () => {
           <div className="text-[clamp(10px,1.2vw,14px)] text-[#667085] font-semibold">{formatDate(currentTime)}</div>
         </div>
         <div className="flex gap-2.5">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)] flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Dashboard
+          </button>
           <button
             onClick={handleFullscreen}
             className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)]"
