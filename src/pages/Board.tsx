@@ -215,7 +215,6 @@ const Board = () => {
       {/* Header */}
       <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 bg-[#f0fdf4] border border-[#e5e7eb] px-5 py-[18px] rounded-[18px] shadow-[0_10px_30px_rgba(2,6,23,0.08)]">
         <div>
-          <div className="h-14 w-32 bg-gray-300 rounded mb-1.5"></div>
           <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)]">
             {organization?.name || "NRG TOTAAL"} – To-Do Board
           </h1>
