@@ -24,6 +24,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchAttachments();
@@ -69,12 +70,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
-
-    const file = files[0];
-
+  const uploadFile = async (file: File) => {
     // Validatie
     const maxSize = 10 * 1024 * 1024; // 10 MB
     if (file.size > maxSize) {
@@ -129,13 +125,43 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       if (dbError) throw dbError;
 
       toast.success("Bestand geüpload");
-      event.target.value = "";
     } catch (error: any) {
       toast.error("Fout bij uploaden: " + error.message);
     } finally {
       setUploading(false);
     }
   };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    await uploadFile(file);
+    event.target.value = "";
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const files = event.dataTransfer.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    await uploadFile(file);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+  };
+
 
   const handleDownload = async (attachment: Attachment) => {
     try {
@@ -201,7 +227,16 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       <Label>Bijlagen</Label>
 
       {/* Upload sectie */}
-      <div className="border-2 border-dashed border-border rounded-lg p-4 hover:bg-accent/5 transition-colors">
+      <div 
+        className={`border-2 border-dashed rounded-lg p-4 transition-colors ${
+          isDragging 
+            ? "border-primary bg-primary/10" 
+            : "border-border hover:bg-accent/5"
+        }`}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+      >
         <input
           type="file"
           id={`file-upload-${taskId}`}
@@ -215,7 +250,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
         >
           <Upload className="w-8 h-8 text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground text-center">
-            {uploading ? "Uploaden..." : "Klik om een bestand te uploaden"}
+            {uploading ? "Uploaden..." : "Sleep een bestand hierheen of klik om te uploaden"}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             PDF, Word, Excel of afbeeldingen (max 10 MB)
