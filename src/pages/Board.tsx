@@ -1439,14 +1439,14 @@ const Board = () => {
               </div>
             </div>
             <div className="flex gap-2 pt-4">
-              <Button onClick={handleEditTask} className="flex-1">
-                Opslaan
+              <Button onClick={handleDeleteFromDialog} variant="destructive">
+                Verwijderen
               </Button>
               <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
                 ✔ Voltooien
               </Button>
-              <Button onClick={handleDeleteFromDialog} variant="destructive">
-                Verwijderen
+              <Button onClick={handleEditTask} className="flex-1">
+                Opslaan
               </Button>
             </div>
           </div>
