@@ -218,21 +218,22 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       const blob = new Blob([data], { type: attachment.file_type });
       const blobUrl = URL.createObjectURL(blob);
       
-      // Maak en klik een tijdelijke link
+      // Maak download link (werkt altijd, geen popup blocker)
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
+      link.download = attachment.file_name; // Download i.p.v. openen
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       
-      // Cleanup na 1 minuut
+      // Cleanup
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
-      }, 60000);
+      }, 1000);
+      
+      toast.success("Bestand wordt gedownload");
     } catch (error: any) {
-      toast.error("Fout bij openen: " + error.message);
+      toast.error("Fout bij downloaden: " + error.message);
     }
   };
 
