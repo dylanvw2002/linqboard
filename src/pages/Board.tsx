@@ -435,8 +435,27 @@ const Board = () => {
     const targetColumn = columns.find((col) => col.name === columnName);
     if (!targetColumn) return;
 
-    // Als de taak al in deze kolom zit, doe niets
     const currentColumn = columns.find((col) => col.id === draggedTask.column_id);
+    
+    // Check of de taak uit "Belangrijke informatie" komt
+    if (currentColumn?.name === "Belangrijke informatie" && columnName !== "Belangrijke informatie") {
+      toast.error("Items uit Belangrijke informatie kunnen niet naar andere kolommen verplaatst worden");
+      setDraggedTask(null);
+      setDraggedOverColumn(null);
+      setIsDragging(false);
+      return;
+    }
+
+    // Check of we proberen iets anders naar "Belangrijke informatie" te slepen
+    if (currentColumn?.name !== "Belangrijke informatie" && columnName === "Belangrijke informatie") {
+      toast.error("Alleen items uit Belangrijke informatie kunnen hierin geplaatst worden");
+      setDraggedTask(null);
+      setDraggedOverColumn(null);
+      setIsDragging(false);
+      return;
+    }
+
+    // Als de taak al in deze kolom zit, doe niets
     if (currentColumn?.name === columnName) {
       setDraggedTask(null);
       setDraggedOverColumn(null);
@@ -1245,14 +1264,23 @@ const Board = () => {
               </div>
               <div 
                 className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                onDragOver={(e) => handleDragOver(e, "Belangrijke informatie")}
+                onDrop={(e) => handleDrop(e, "Belangrijke informatie")}
               >
                 {getColumnTasks("Belangrijke informatie").map((task) => (
                   <article
                     key={task.id}
-                    onClick={() => openEditDialog(task)}
-                    className="relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-all"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => !isDragging && openEditDialog(task)}
+                    className={cn(
+                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
+                      draggedTask?.id === task.id && "opacity-50"
+                    )}
                   >
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
