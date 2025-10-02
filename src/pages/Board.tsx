@@ -502,7 +502,7 @@ const Board = () => {
 
   return (
     <div className="h-screen overflow-hidden relative bg-background">
-      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300">
+      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-gradient-to-br from-purple-50 via-purple-100 to-purple-150">
         <div className="flex flex-col gap-[18px] p-[22px] h-screen">
       <style>{`
         body, html {
