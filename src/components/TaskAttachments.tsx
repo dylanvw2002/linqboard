@@ -218,13 +218,18 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       const blob = new Blob([data], { type: attachment.file_type });
       const blobUrl = URL.createObjectURL(blob);
       
-      // Open in nieuwe tab - dit moet werken omdat het een user click event is
-      const newWindow = window.open(blobUrl, '_blank');
+      // Maak en klik een tijdelijke link
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
-      // Cleanup na 1 minuut (genoeg tijd voor de browser om het te laden)
+      // Cleanup na 1 minuut
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
-        newWindow?.close();
       }, 60000);
     } catch (error: any) {
       toast.error("Fout bij openen: " + error.message);
