@@ -207,22 +207,25 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
   const handleView = async (attachment: Attachment) => {
     try {
-      const { data: urlData, error: urlError } = await supabase.storage
+      // Download het bestand als blob
+      const { data, error } = await supabase.storage
         .from("task-attachments")
-        .createSignedUrl(attachment.file_path, 3600);
+        .download(attachment.file_path);
 
-      if (urlError) throw urlError;
+      if (error) throw error;
 
-      if (urlData?.signedUrl) {
-        // Open in nieuwe tab - werkt beter voor PDFs
-        const link = document.createElement("a");
-        link.href = urlData.signedUrl;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      // Maak een blob URL
+      const blob = new Blob([data], { type: attachment.file_type });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      // Open in nieuwe tab - dit moet werken omdat het een user click event is
+      const newWindow = window.open(blobUrl, '_blank');
+      
+      // Cleanup na 1 minuut (genoeg tijd voor de browser om het te laden)
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        newWindow?.close();
+      }, 60000);
     } catch (error: any) {
       toast.error("Fout bij openen: " + error.message);
     }
