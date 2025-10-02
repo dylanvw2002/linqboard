@@ -7,24 +7,27 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('Authorization header:', req.headers.get('Authorization') ? 'present' : 'missing')
+    // Extract JWT from Authorization header
+    const authHeader = req.headers.get('Authorization')
+    console.log('Authorization header:', authHeader ? 'present' : 'missing')
     
-    // Client for database operations (with service role)
+    if (!authHeader) {
+      throw new Error('Missing Authorization header')
+    }
+
+    const token = authHeader.replace('Bearer ', '')
+    
+    // Create Supabase client with service role
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Validate the user using service role client
+    // Verify the JWT token and get user
     const {
       data: { user },
       error: authError
-    } = await supabaseClient.auth.getUser()
+    } = await supabaseClient.auth.getUser(token)
 
     console.log('Auth response:', { user: user ? 'present' : 'null', error: authError })
 
