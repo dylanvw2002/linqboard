@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { z } from "zod";
 
 interface Column {
   id: string;
@@ -18,6 +23,11 @@ interface Task {
   position: number;
 }
 
+const taskSchema = z.object({
+  title: z.string().trim().min(1, "Titel is verplicht").max(200, "Titel mag maximaal 200 tekens zijn"),
+  description: z.string().trim().max(1000, "Beschrijving mag maximaal 1000 tekens zijn").optional(),
+});
+
 const Board = () => {
   const { organizationId } = useParams();
   const navigate = useNavigate();
@@ -27,6 +37,9 @@ const Board = () => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [openDialog, setOpenDialog] = useState<string | null>(null);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDescription, setNewTaskDescription] = useState("");
 
   useEffect(() => {
     checkAccess();
@@ -177,6 +190,111 @@ const Board = () => {
     }
   };
 
+  const handleAddTask = async (columnName: string) => {
+    try {
+      const validation = taskSchema.safeParse({
+        title: newTaskTitle,
+        description: newTaskDescription,
+      });
+
+      if (!validation.success) {
+        toast.error(validation.error.errors[0].message);
+        return;
+      }
+
+      const column = columns.find((col) => col.name === columnName);
+      if (!column) {
+        toast.error("Kolom niet gevonden");
+        return;
+      }
+
+      const maxPosition = tasks
+        .filter((t) => t.column_id === column.id)
+        .reduce((max, t) => Math.max(max, t.position), -1);
+
+      const { error } = await supabase.from("tasks").insert({
+        column_id: column.id,
+        title: validation.data.title,
+        description: validation.data.description || null,
+        priority: "medium",
+        position: maxPosition + 1,
+      });
+
+      if (error) throw error;
+
+      toast.success("Taak toegevoegd");
+      setOpenDialog(null);
+      setNewTaskTitle("");
+      setNewTaskDescription("");
+    } catch (error: any) {
+      toast.error("Fout bij toevoegen taak");
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+      if (error) throw error;
+      toast.success("Taak verwijderd");
+    } catch (error: any) {
+      toast.error("Fout bij verwijderen taak");
+    }
+  };
+
+  const handleMarkDone = async (task: Task) => {
+    try {
+      const doneColumn = columns.find((col) => col.name === "Afgerond");
+      if (!doneColumn) {
+        toast.error("Afgerond kolom niet gevonden");
+        return;
+      }
+
+      const maxPosition = tasks
+        .filter((t) => t.column_id === doneColumn.id)
+        .reduce((max, t) => Math.max(max, t.position), -1);
+
+      const { error } = await supabase
+        .from("tasks")
+        .update({
+          column_id: doneColumn.id,
+          position: maxPosition + 1,
+          priority: "low",
+        })
+        .eq("id", task.id);
+
+      if (error) throw error;
+      toast.success("Taak afgerond");
+    } catch (error: any) {
+      toast.error("Fout bij afgeronden taak");
+    }
+  };
+
+  const handleChangePriority = async (task: Task, direction: "up" | "down") => {
+    const priorities: Array<"low" | "medium" | "high"> = ["low", "medium", "high"];
+    const currentIndex = priorities.indexOf(task.priority);
+    
+    let newPriority: "low" | "medium" | "high";
+    if (direction === "up") {
+      newPriority = currentIndex < 2 ? priorities[currentIndex + 1] : task.priority;
+    } else {
+      newPriority = currentIndex > 0 ? priorities[currentIndex - 1] : task.priority;
+    }
+
+    if (newPriority === task.priority) return;
+
+    try {
+      const { error } = await supabase
+        .from("tasks")
+        .update({ priority: newPriority })
+        .eq("id", task.id);
+
+      if (error) throw error;
+      toast.success(`Prioriteit aangepast naar ${getPriorityLabel(newPriority)}`);
+    } catch (error: any) {
+      toast.error("Fout bij aanpassen prioriteit");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -247,9 +365,46 @@ const Board = () => {
         <section className="flex flex-col min-w-0">
           <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3.5">
             <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Vandaag</div>
-            <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
-              ＋ Taak
-            </button>
+            <Dialog open={openDialog === "Vandaag"} onOpenChange={(open) => setOpenDialog(open ? "Vandaag" : null)}>
+              <DialogTrigger asChild>
+                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
+                  ＋ Taak
+                </button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Nieuwe taak toevoegen - Vandaag</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title">Titel *</Label>
+                    <Input
+                      id="title"
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      placeholder="Titel van de taak"
+                      maxLength={200}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="description">Beschrijving</Label>
+                    <Textarea
+                      id="description"
+                      value={newTaskDescription}
+                      onChange={(e) => setNewTaskDescription(e.target.value)}
+                      placeholder="Extra details..."
+                      maxLength={1000}
+                    />
+                  </div>
+                  <button
+                    onClick={() => handleAddTask("Vandaag")}
+                    className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                  >
+                    Toevoegen
+                  </button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list">
             {getColumnTasks("Vandaag").map((task) => (
@@ -282,10 +437,10 @@ const Board = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                  <button onClick={() => handleChangePriority(task, "down")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
+                  <button onClick={() => handleChangePriority(task, "up")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
+                  <button onClick={() => handleMarkDone(task)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
+                  <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
                 </div>
               </article>
             ))}
@@ -296,9 +451,46 @@ const Board = () => {
         <section className="flex flex-col min-w-0">
           <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3.5">
             <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Deze week</div>
-            <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
-              ＋ Taak
-            </button>
+            <Dialog open={openDialog === "Deze week"} onOpenChange={(open) => setOpenDialog(open ? "Deze week" : null)}>
+              <DialogTrigger asChild>
+                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
+                  ＋ Taak
+                </button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Nieuwe taak toevoegen - Deze week</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="title-week">Titel *</Label>
+                    <Input
+                      id="title-week"
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      placeholder="Titel van de taak"
+                      maxLength={200}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="description-week">Beschrijving</Label>
+                    <Textarea
+                      id="description-week"
+                      value={newTaskDescription}
+                      onChange={(e) => setNewTaskDescription(e.target.value)}
+                      placeholder="Extra details..."
+                      maxLength={1000}
+                    />
+                  </div>
+                  <button
+                    onClick={() => handleAddTask("Deze week")}
+                    className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                  >
+                    Toevoegen
+                  </button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list">
             {getColumnTasks("Deze week").map((task) => (
@@ -331,10 +523,10 @@ const Board = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
-                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                  <button onClick={() => handleChangePriority(task, "down")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
+                  <button onClick={() => handleChangePriority(task, "up")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
+                  <button onClick={() => handleMarkDone(task)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
+                  <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
                 </div>
               </article>
             ))}
@@ -348,7 +540,44 @@ const Board = () => {
             <div className="flex flex-col min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-[#fee2e2] border border-[#fecaca] mb-3">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Ziek</div>
-                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
+                <Dialog open={openDialog === "Ziek"} onOpenChange={(open) => setOpenDialog(open ? "Ziek" : null)}>
+                  <DialogTrigger asChild>
+                    <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Persoon toevoegen - Ziek</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="title-ziek">Naam *</Label>
+                        <Input
+                          id="title-ziek"
+                          value={newTaskTitle}
+                          onChange={(e) => setNewTaskTitle(e.target.value)}
+                          placeholder="Naam van persoon"
+                          maxLength={200}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="description-ziek">Reden</Label>
+                        <Textarea
+                          id="description-ziek"
+                          value={newTaskDescription}
+                          onChange={(e) => setNewTaskDescription(e.target.value)}
+                          placeholder="Extra details..."
+                          maxLength={1000}
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleAddTask("Ziek")}
+                        className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                      >
+                        Toevoegen
+                      </button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
                 {getColumnTasks("Ziek").map((task) => (
@@ -372,7 +601,44 @@ const Board = () => {
             <div className="flex flex-col min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-[#dcfce7] border border-[#bbf7d0] mb-3">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Verlof</div>
-                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
+                <Dialog open={openDialog === "Verlof"} onOpenChange={(open) => setOpenDialog(open ? "Verlof" : null)}>
+                  <DialogTrigger asChild>
+                    <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Persoon toevoegen - Verlof</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="title-verlof">Naam *</Label>
+                        <Input
+                          id="title-verlof"
+                          value={newTaskTitle}
+                          onChange={(e) => setNewTaskTitle(e.target.value)}
+                          placeholder="Naam van persoon"
+                          maxLength={200}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="description-verlof">Reden</Label>
+                        <Textarea
+                          id="description-verlof"
+                          value={newTaskDescription}
+                          onChange={(e) => setNewTaskDescription(e.target.value)}
+                          placeholder="Extra details..."
+                          maxLength={1000}
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleAddTask("Verlof")}
+                        className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                      >
+                        Toevoegen
+                      </button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
                 {getColumnTasks("Verlof").map((task) => (
@@ -386,7 +652,7 @@ const Board = () => {
                       <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
                       {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                     </div>
-                    <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                    <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
                   </article>
                 ))}
               </div>
@@ -434,10 +700,10 @@ const Board = () => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-1">
-                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
-                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
-                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
-                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                      <button onClick={() => handleChangePriority(task, "down")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
+                      <button onClick={() => handleChangePriority(task, "up")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
+                      <button onClick={() => handleMarkDone(task)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
+                    <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
                     </div>
                   </article>
                 ))}
@@ -448,7 +714,44 @@ const Board = () => {
             <div className="flex flex-col min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Belangrijke informatie</div>
-                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe info">＋</button>
+                <Dialog open={openDialog === "Belangrijke informatie"} onOpenChange={(open) => setOpenDialog(open ? "Belangrijke informatie" : null)}>
+                  <DialogTrigger asChild>
+                    <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe info">＋</button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Informatie toevoegen</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="title-info">Titel *</Label>
+                        <Input
+                          id="title-info"
+                          value={newTaskTitle}
+                          onChange={(e) => setNewTaskTitle(e.target.value)}
+                          placeholder="Titel van de informatie"
+                          maxLength={200}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="description-info">Details</Label>
+                        <Textarea
+                          id="description-info"
+                          value={newTaskDescription}
+                          onChange={(e) => setNewTaskDescription(e.target.value)}
+                          placeholder="Extra details..."
+                          maxLength={1000}
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleAddTask("Belangrijke informatie")}
+                        className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                      >
+                        Toevoegen
+                      </button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
                 {getColumnTasks("Belangrijke informatie").map((task) => (
@@ -462,7 +765,7 @@ const Board = () => {
                       <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
                       {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                     </div>
-                    <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                    <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
                   </article>
                 ))}
               </div>
