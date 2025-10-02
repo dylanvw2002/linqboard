@@ -71,6 +71,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   useEffect(() => {
     fetchAttachments();
     
+    console.log("Setting up realtime subscription for task:", taskId);
     const channel = supabase
       .channel(`task-attachments-${taskId}`)
       .on(
@@ -81,13 +82,17 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
           table: "task_attachments",
           filter: `task_id=eq.${taskId}`,
         },
-        () => {
+        (payload) => {
+          console.log("Realtime event received:", payload);
           fetchAttachments();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
 
     return () => {
+      console.log("Cleaning up realtime subscription for task:", taskId);
       supabase.removeChannel(channel);
     };
   }, [taskId]);
