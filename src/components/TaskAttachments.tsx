@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,48 @@ interface Attachment {
 interface TaskAttachmentsProps {
   taskId: string;
 }
+
+const getFileIcon = (fileType: string) => {
+  if (fileType.includes("pdf")) return <FileText className="w-8 h-8 text-red-500" />;
+  if (fileType.includes("word")) return <FileText className="w-8 h-8 text-blue-500" />;
+  if (fileType.includes("excel") || fileType.includes("spreadsheet")) return <FileSpreadsheet className="w-8 h-8 text-green-500" />;
+  return <File className="w-8 h-8 text-muted-foreground" />;
+};
+
+const FilePreview = ({ attachment }: { attachment: Attachment }) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!attachment.file_type.includes("image")) return;
+    
+    let mounted = true;
+    
+    supabase.storage
+      .from("task-attachments")
+      .createSignedUrl(attachment.file_path, 3600)
+      .then(({ data }) => {
+        if (mounted && data?.signedUrl) {
+          setPreviewUrl(data.signedUrl);
+        }
+      });
+    
+    return () => {
+      mounted = false;
+    };
+  }, [attachment.id]);
+
+  if (attachment.file_type.includes("image") && previewUrl) {
+    return (
+      <img 
+        src={previewUrl} 
+        alt={attachment.file_name}
+        className="w-12 h-12 object-cover rounded border border-border"
+      />
+    );
+  }
+
+  return <div className="w-12 h-12 flex items-center justify-center">{getFileIcon(attachment.file_type)}</div>;
+};
 
 export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -165,22 +207,22 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
   const handleView = async (attachment: Attachment) => {
     try {
-      const { data, error } = await supabase.storage
+      const { data: urlData, error: urlError } = await supabase.storage
         .from("task-attachments")
-        .download(attachment.file_path);
+        .createSignedUrl(attachment.file_path, 3600);
 
-      if (error) throw error;
+      if (urlError) throw urlError;
 
-      // Maak blob URL en open in nieuwe tab
-      const blob = new Blob([data], { type: attachment.file_type });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.target = "_blank";
-      link.click();
-      
-      // Cleanup
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      if (urlData?.signedUrl) {
+        // Open in nieuwe tab - werkt beter voor PDFs
+        const link = document.createElement("a");
+        link.href = urlData.signedUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     } catch (error: any) {
       toast.error("Fout bij openen: " + error.message);
     }
@@ -235,42 +277,6 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-  };
-
-  const getFileIcon = (fileType: string) => {
-    if (fileType.includes("pdf")) return <FileText className="w-8 h-8 text-red-500" />;
-    if (fileType.includes("word")) return <FileText className="w-8 h-8 text-blue-500" />;
-    if (fileType.includes("excel") || fileType.includes("spreadsheet")) return <FileSpreadsheet className="w-8 h-8 text-green-500" />;
-    return <File className="w-8 h-8 text-muted-foreground" />;
-  };
-
-  const FilePreview = ({ attachment }: { attachment: Attachment }) => {
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-    useEffect(() => {
-      if (attachment.file_type.includes("image")) {
-        supabase.storage
-          .from("task-attachments")
-          .createSignedUrl(attachment.file_path, 3600)
-          .then(({ data }) => {
-            if (data?.signedUrl) {
-              setPreviewUrl(data.signedUrl);
-            }
-          });
-      }
-    }, [attachment.file_path, attachment.file_type]);
-
-    if (attachment.file_type.includes("image") && previewUrl) {
-      return (
-        <img 
-          src={previewUrl} 
-          alt={attachment.file_name}
-          className="w-12 h-12 object-cover rounded border border-border"
-        />
-      );
-    }
-
-    return <div className="w-12 h-12 flex items-center justify-center">{getFileIcon(attachment.file_type)}</div>;
   };
 
   return (
