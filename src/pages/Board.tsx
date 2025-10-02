@@ -504,7 +504,7 @@ const Board = () => {
 
   return (
     <div className="h-screen overflow-hidden relative bg-background">
-      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-gradient-to-br from-primary/10 via-accent/5 to-primary/15">
+      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-gradient-to-br from-primary/20 via-accent/15 to-primary/25">
         <div className="flex flex-col gap-[18px] p-[22px] h-screen">
       <style>{`
         body, html {
@@ -547,7 +547,7 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="flex items-center justify-between gap-4 backdrop-blur-[40px] bg-white/40 dark:bg-card/40 border border-white/30 dark:border-white/10 px-5 py-[18px] rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.5)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] relative overflow-visible before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none">
+      <header className="flex items-center justify-between gap-4 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-5 py-[18px] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] relative overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none">
         <div className="flex items-center gap-4 relative z-10 min-w-0">
           <div className="min-w-0">
             <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm">
@@ -557,7 +557,7 @@ const Board = () => {
               Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
             </p>
           </div>
-          <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl backdrop-blur-[30px] bg-gradient-to-br from-primary/15 to-accent/15 border border-white/30 dark:border-white/10 text-center shadow-[0_4px_12px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.3)] shrink-0 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:pointer-events-none">
+          <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl backdrop-blur-[40px] bg-gradient-to-br from-primary/25 to-accent/25 border-2 border-white/40 dark:border-white/20 text-center shadow-[0_8px_20px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.5)] shrink-0 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
             <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
             <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold whitespace-nowrap relative z-10">{formatDate(currentTime)}</div>
           </div>
