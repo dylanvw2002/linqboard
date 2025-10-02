@@ -7,7 +7,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Header */}
-      <header className="container mx-auto px-6 py-6">
+      <header className="container mx-auto px-6 py-1">
         <div className="flex items-center justify-between">
           <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
           <Link to="/auth">
@@ -20,7 +20,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-6 py-12 md:py-20">
+      <div className="container mx-auto px-6 py-2 md:py-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
