@@ -502,7 +502,7 @@ const Board = () => {
   return (
     <div className="h-screen overflow-hidden relative bg-background">
       <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden">
-        <div className="grid grid-rows-[auto_1fr] gap-[18px] p-[22px] h-screen overflow-hidden">
+        <div className="flex flex-col gap-[18px] p-[22px] h-screen">
       <style>{`
         body, html {
           overflow: hidden !important;
@@ -582,7 +582,7 @@ const Board = () => {
       </header>
 
       {/* Board Grid */}
-      <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] h-full max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
+      <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] flex-1 min-h-0 max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
         {/* Kolom 1: Vandaag */}
         <section className="flex flex-col min-w-0">
           <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
