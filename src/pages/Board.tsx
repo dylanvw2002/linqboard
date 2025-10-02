@@ -473,10 +473,7 @@ const Board = () => {
       </main>
 
       {/* Footer */}
-      <footer className="flex items-center justify-between gap-2.5 px-2.5 py-2 text-[#667085]">
-        <div className="text-[clamp(10px,1.2vw,14px)]">
-          Sneltoetsen: <strong>N</strong> = nieuwe taak, <strong>F</strong> = fullscreen, <strong>1–3</strong> = prio aanpassen, <strong>Enter</strong> = opslaan
-        </div>
+      <footer className="flex items-center justify-end gap-2.5 px-2.5 py-2 text-[#667085]">
         <div className="text-[clamp(10px,1.2vw,14px)]">Data wordt opgeslagen in database.</div>
       </footer>
     </div>
