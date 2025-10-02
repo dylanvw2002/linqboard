@@ -510,7 +510,7 @@ const Board = () => {
             {organization?.name || "NRG TOTAAL"} – To-Do Board
           </h1>
           <p className="text-[#667085] font-semibold text-[clamp(12px,1.4vw,16px)]">
-            Live overzicht voor het team – dubbelklik op een taak om te bewerken • Sleep om te ordenen
+            Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
           </p>
         </div>
         <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl bg-[rgba(34,197,94,0.08)] border border-[rgba(34,197,94,0.25)] text-center">
