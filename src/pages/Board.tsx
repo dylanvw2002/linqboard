@@ -6,7 +6,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format, isAfter, isBefore, addDays } from "date-fns";
+import { nl } from "date-fns/locale";
 import { z } from "zod";
+import { cn } from "@/lib/utils";
 
 interface Column {
   id: string;
@@ -21,6 +28,7 @@ interface Task {
   description: string | null;
   priority: "low" | "medium" | "high";
   position: number;
+  due_date?: string | null;
 }
 
 const taskSchema = z.object({
@@ -40,6 +48,11 @@ const Board = () => {
   const [openDialog, setOpenDialog] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [editTaskTitle, setEditTaskTitle] = useState("");
+  const [editTaskDescription, setEditTaskDescription] = useState("");
+  const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
+  const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high">("medium");
 
   useEffect(() => {
     checkAccess();
@@ -161,12 +174,81 @@ const Board = () => {
       case "high":
         return "Hoog";
       case "medium":
-        return "Medium";
+        return "Middel";
       case "low":
         return "Laag";
       default:
         return priority;
     }
+  };
+
+  const getDeadlineBadgeColor = (dueDate: string) => {
+    const now = new Date();
+    const due = new Date(dueDate);
+    const twoDaysFromNow = addDays(now, 2);
+
+    if (isBefore(due, now)) {
+      return "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]"; // Rood - verlopen
+    } else if (isBefore(due, twoDaysFromNow)) {
+      return "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]"; // Oranje - binnen 2 dagen
+    } else {
+      return "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"; // Groen - toekomstig
+    }
+  };
+
+  const openEditDialog = (task: Task) => {
+    setEditingTask(task);
+    setEditTaskTitle(task.title);
+    setEditTaskDescription(task.description || "");
+    setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
+    setEditTaskPriority(task.priority);
+  };
+
+  const handleEditTask = async () => {
+    if (!editingTask) return;
+
+    try {
+      const validation = taskSchema.safeParse({
+        title: editTaskTitle,
+        description: editTaskDescription,
+      });
+
+      if (!validation.success) {
+        toast.error(validation.error.errors[0].message);
+        return;
+      }
+
+      const { error } = await supabase
+        .from("tasks")
+        .update({
+          title: validation.data.title,
+          description: validation.data.description || null,
+          due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
+          priority: editTaskPriority,
+        })
+        .eq("id", editingTask.id);
+
+      if (error) throw error;
+
+      toast.success("Taak bijgewerkt");
+      setEditingTask(null);
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error("Fout bij bijwerken taak");
+    }
+  };
+
+  const handleCompleteFromDialog = async () => {
+    if (!editingTask) return;
+    setEditingTask(null);
+    await handleMarkDone(editingTask);
+  };
+
+  const handleDeleteFromDialog = async () => {
+    if (!editingTask) return;
+    const taskId = editingTask.id;
+    setEditingTask(null);
+    await handleDeleteTask(taskId);
   };
 
   const getColumnTasks = (columnName: string) =>
@@ -426,38 +508,22 @@ const Board = () => {
             {getColumnTasks("Vandaag").map((task) => (
               <article
                 key={task.id}
-                className="grid grid-cols-[auto_1fr_auto] items-start gap-2.5 bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
-                draggable="true"
+                onClick={() => openEditDialog(task)}
+                className="bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
               >
-                <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
-                <div>
-                  <h4 className="mt-[0.1rem] mb-1 font-extrabold text-[clamp(14px,1.6vw,18px)]">
-                    {task.title}
-                  </h4>
-                  {task.description && (
-                    <p className="mt-[0.15rem] mb-[0.35rem] text-[#667085] text-[clamp(12px,1.2vw,14px)]">
-                      {task.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    <span className={`px-2 py-1 rounded-full font-extrabold text-xs border ${
-                      task.priority === "high" ? "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" :
-                      task.priority === "medium" ? "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]" :
-                      "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
-                    }`}>
-                      {getPriorityLabel(task.priority)}
-                    </span>
-                    <span className="px-2 py-1 rounded-full font-extrabold text-xs border bg-[#e0f2fe] text-[#075985] border-[#bae6fd]">
-                      Algemeen
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <button onClick={() => handleChangePriority(task, "down")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
-                  <button onClick={() => handleChangePriority(task, "up")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
-                  <button onClick={() => handleMarkDone(task)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
-                  <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
-                </div>
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                  {task.title}
+                </h4>
+                {task.description && (
+                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)] mb-2">
+                    {task.description}
+                  </p>
+                )}
+                {task.due_date && (
+                  <span className={`inline-block px-2 py-1 rounded-full font-extrabold text-xs border ${getDeadlineBadgeColor(task.due_date)}`}>
+                    📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                  </span>
+                )}
               </article>
             ))}
           </div>
@@ -512,38 +578,22 @@ const Board = () => {
             {getColumnTasks("Deze week").map((task) => (
               <article
                 key={task.id}
-                className="grid grid-cols-[auto_1fr_auto] items-start gap-2.5 bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
-                draggable="true"
+                onClick={() => openEditDialog(task)}
+                className="bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
               >
-                <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
-                <div>
-                  <h4 className="mt-[0.1rem] mb-1 font-extrabold text-[clamp(14px,1.6vw,18px)]">
-                    {task.title}
-                  </h4>
-                  {task.description && (
-                    <p className="mt-[0.15rem] mb-[0.35rem] text-[#667085] text-[clamp(12px,1.2vw,14px)]">
-                      {task.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    <span className={`px-2 py-1 rounded-full font-extrabold text-xs border ${
-                      task.priority === "high" ? "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" :
-                      task.priority === "medium" ? "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]" :
-                      "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
-                    }`}>
-                      {getPriorityLabel(task.priority)}
-                    </span>
-                    <span className="px-2 py-1 rounded-full font-extrabold text-xs border bg-[#e0f2fe] text-[#075985] border-[#bae6fd]">
-                      Algemeen
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <button onClick={() => handleChangePriority(task, "down")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
-                  <button onClick={() => handleChangePriority(task, "up")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
-                  <button onClick={() => handleMarkDone(task)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
-                  <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
-                </div>
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                  {task.title}
+                </h4>
+                {task.description && (
+                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)] mb-2">
+                    {task.description}
+                  </p>
+                )}
+                {task.due_date && (
+                  <span className={`inline-block px-2 py-1 rounded-full font-extrabold text-xs border ${getDeadlineBadgeColor(task.due_date)}`}>
+                    📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                  </span>
+                )}
               </article>
             ))}
           </div>
@@ -599,15 +649,11 @@ const Board = () => {
                 {getColumnTasks("Ziek").map((task) => (
                   <article
                     key={task.id}
-                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2 bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
-                    draggable="true"
+                    onClick={() => openEditDialog(task)}
+                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
                   >
-                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
-                    <div>
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
-                      {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
-                    </div>
-                    <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
               </div>
@@ -660,15 +706,11 @@ const Board = () => {
                 {getColumnTasks("Verlof").map((task) => (
                   <article
                     key={task.id}
-                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2 bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
-                    draggable="true"
+                    onClick={() => openEditDialog(task)}
+                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
                   >
-                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
-                    <div>
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
-                      {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
-                    </div>
-                    <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
               </div>
@@ -689,38 +731,22 @@ const Board = () => {
                 {getColumnTasks("Afgerond").map((task) => (
                   <article
                     key={task.id}
-                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2.5 bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
-                    draggable="true"
+                    onClick={() => openEditDialog(task)}
+                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
                   >
-                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
-                    <div>
-                      <h4 className="mt-[0.1rem] mb-1 font-extrabold text-[clamp(14px,1.6vw,18px)]">
-                        {task.title}
-                      </h4>
-                      {task.description && (
-                        <p className="mt-[0.15rem] mb-[0.35rem] text-[#667085] text-[clamp(12px,1.2vw,14px)]">
-                          {task.description}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-2">
-                        <span className={`px-2 py-1 rounded-full font-extrabold text-xs border ${
-                          task.priority === "high" ? "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" :
-                          task.priority === "medium" ? "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]" :
-                          "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
-                        }`}>
-                          {getPriorityLabel(task.priority)}
-                        </span>
-                        <span className="px-2 py-1 rounded-full font-extrabold text-xs border bg-[#e0f2fe] text-[#075985] border-[#bae6fd]">
-                          Algemeen
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <button onClick={() => handleChangePriority(task, "down")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
-                      <button onClick={() => handleChangePriority(task, "up")} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
-                      <button onClick={() => handleMarkDone(task)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
-                    <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
-                    </div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                      {task.title}
+                    </h4>
+                    {task.description && (
+                      <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)] mb-2">
+                        {task.description}
+                      </p>
+                    )}
+                    {task.due_date && (
+                      <span className={`inline-block px-2 py-1 rounded-full font-extrabold text-xs border ${getDeadlineBadgeColor(task.due_date)}`}>
+                        📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                      </span>
+                    )}
                   </article>
                 ))}
               </div>
@@ -773,15 +799,11 @@ const Board = () => {
                 {getColumnTasks("Belangrijke informatie").map((task) => (
                   <article
                     key={task.id}
-                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2 bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
-                    draggable="true"
+                    onClick={() => openEditDialog(task)}
+                    className="bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-shadow"
                   >
-                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
-                    <div>
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
-                      {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
-                    </div>
-                    <button onClick={() => handleDeleteTask(task.id)} className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                    {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
               </div>
@@ -789,6 +811,113 @@ const Board = () => {
           </div>
         </section>
       </main>
+
+      {/* Task Edit Dialog */}
+      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Taak bewerken</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="edit-title">Titel *</Label>
+              <Input
+                id="edit-title"
+                value={editTaskTitle}
+                onChange={(e) => setEditTaskTitle(e.target.value)}
+                placeholder="Titel van de taak"
+                maxLength={200}
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-description">Beschrijving</Label>
+              <Textarea
+                id="edit-description"
+                value={editTaskDescription}
+                onChange={(e) => setEditTaskDescription(e.target.value)}
+                placeholder="Extra details..."
+                maxLength={1000}
+              />
+            </div>
+            <div>
+              <Label>Deadline</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !editTaskDueDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Kies een datum"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={editTaskDueDate}
+                    onSelect={setEditTaskDueDate}
+                    initialFocus
+                    locale={nl}
+                    className="pointer-events-auto"
+                  />
+                  {editTaskDueDate && (
+                    <div className="p-3 border-t">
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setEditTaskDueDate(undefined)}
+                      >
+                        Wis deadline
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div>
+              <Label>Prioriteit</Label>
+              <div className="flex gap-2 mt-2">
+                <Button
+                  variant={editTaskPriority === "low" ? "default" : "outline"}
+                  onClick={() => setEditTaskPriority("low")}
+                  className="flex-1"
+                >
+                  Laag
+                </Button>
+                <Button
+                  variant={editTaskPriority === "medium" ? "default" : "outline"}
+                  onClick={() => setEditTaskPriority("medium")}
+                  className="flex-1"
+                >
+                  Middel
+                </Button>
+                <Button
+                  variant={editTaskPriority === "high" ? "default" : "outline"}
+                  onClick={() => setEditTaskPriority("high")}
+                  className="flex-1"
+                >
+                  Hoog
+                </Button>
+              </div>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button onClick={handleEditTask} className="flex-1">
+                Opslaan
+              </Button>
+              <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
+                ✔ Voltooien
+              </Button>
+              <Button onClick={handleDeleteFromDialog} variant="destructive">
+                Verwijderen
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
         </div>
       </div>
     </div>
