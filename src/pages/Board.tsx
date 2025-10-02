@@ -500,7 +500,7 @@ const Board = () => {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden relative bg-gradient-to-br from-[hsl(250,60%,97%)] via-[hsl(280,50%,97%)] to-[hsl(210,60%,97%)] dark:from-[hsl(250,40%,12%)] dark:via-[hsl(280,35%,12%)] dark:to-[hsl(210,40%,12%)]">
+    <div className="min-h-screen overflow-hidden relative bg-background">
       <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh]">
         <div className="grid grid-rows-[auto_1fr] gap-[18px] p-[22px] h-screen">
       <style>{`
