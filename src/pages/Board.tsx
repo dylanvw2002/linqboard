@@ -593,24 +593,26 @@ const Board = () => {
                 )}
               >
                 <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
-                <span className={cn(
-                  "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
-                  getPriorityBadge(task.priority).color
-                )}>
-                  {getPriorityBadge(task.priority).label}
-                </span>
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-5">
+                <div className="flex items-center gap-1.5 justify-end mb-1">
+                  {task.due_date && (
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                      📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                    </span>
+                  )}
+                  <span className={cn(
+                    "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                    getPriorityBadge(task.priority).color
+                  )}>
+                    {getPriorityBadge(task.priority).label}
+                  </span>
+                </div>
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
                   {task.title}
                 </h4>
                 {task.description && (
-                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)] mb-2">
+                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">
                     {task.description}
                   </p>
-                )}
-                {task.due_date && (
-                  <span className={`inline-block px-2 py-1 rounded-full font-extrabold text-xs border ${getDeadlineBadgeColor(task.due_date)}`}>
-                    📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                  </span>
                 )}
               </article>
             ))}
@@ -680,24 +682,26 @@ const Board = () => {
                 )}
               >
                 <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
-                <span className={cn(
-                  "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
-                  getPriorityBadge(task.priority).color
-                )}>
-                  {getPriorityBadge(task.priority).label}
-                </span>
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-5">
+                <div className="flex items-center gap-1.5 justify-end mb-1">
+                  {task.due_date && (
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                      📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                    </span>
+                  )}
+                  <span className={cn(
+                    "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                    getPriorityBadge(task.priority).color
+                  )}>
+                    {getPriorityBadge(task.priority).label}
+                  </span>
+                </div>
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
                   {task.title}
                 </h4>
                 {task.description && (
-                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)] mb-2">
+                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">
                     {task.description}
                   </p>
-                )}
-                {task.due_date && (
-                  <span className={`inline-block px-2 py-1 rounded-full font-extrabold text-xs border ${getDeadlineBadgeColor(task.due_date)}`}>
-                    📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                  </span>
                 )}
               </article>
             ))}
@@ -768,13 +772,20 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <span className={cn(
-                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
-                      getPriorityBadge(task.priority).color
-                    )}>
-                      {getPriorityBadge(task.priority).label}
-                    </span>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
+                    <div className="flex items-center gap-1.5 justify-end mb-1">
+                      {task.due_date && (
+                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                        </span>
+                      )}
+                      <span className={cn(
+                        "inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border",
+                        getPriorityBadge(task.priority).color
+                      )}>
+                        {getPriorityBadge(task.priority).label}
+                      </span>
+                    </div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
@@ -842,13 +853,20 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <span className={cn(
-                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
-                      getPriorityBadge(task.priority).color
-                    )}>
-                      {getPriorityBadge(task.priority).label}
-                    </span>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
+                    <div className="flex items-center gap-1.5 justify-end mb-1">
+                      {task.due_date && (
+                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                        </span>
+                      )}
+                      <span className={cn(
+                        "inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border",
+                        getPriorityBadge(task.priority).color
+                      )}>
+                        {getPriorityBadge(task.priority).label}
+                      </span>
+                    </div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
@@ -884,24 +902,26 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
-                    <span className={cn(
-                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
-                      getPriorityBadge(task.priority).color
-                    )}>
-                      {getPriorityBadge(task.priority).label}
-                    </span>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-5">
+                    <div className="flex items-center gap-1.5 justify-end mb-1">
+                      {task.due_date && (
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                        </span>
+                      )}
+                      <span className={cn(
+                        "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                        getPriorityBadge(task.priority).color
+                      )}>
+                        {getPriorityBadge(task.priority).label}
+                      </span>
+                    </div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
                       {task.title}
                     </h4>
                     {task.description && (
-                      <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)] mb-2">
+                      <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">
                         {task.description}
                       </p>
-                    )}
-                    {task.due_date && (
-                      <span className={`inline-block px-2 py-1 rounded-full font-extrabold text-xs border ${getDeadlineBadgeColor(task.due_date)}`}>
-                        📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                      </span>
                     )}
                   </article>
                 ))}
@@ -969,13 +989,20 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <span className={cn(
-                      "absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold border",
-                      getPriorityBadge(task.priority).color
-                    )}>
-                      {getPriorityBadge(task.priority).label}
-                    </span>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
+                    <div className="flex items-center gap-1.5 justify-end mb-1">
+                      {task.due_date && (
+                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                        </span>
+                      )}
+                      <span className={cn(
+                        "inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border",
+                        getPriorityBadge(task.priority).color
+                      )}>
+                        {getPriorityBadge(task.priority).label}
+                      </span>
+                    </div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
