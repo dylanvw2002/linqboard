@@ -175,6 +175,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       // Direct de lijst opnieuw ophalen
       await fetchAttachments();
       
+      // Trigger event voor count update
+      window.dispatchEvent(new CustomEvent('attachment-uploaded', { detail: { taskId } }));
+      
       toast.success("Bestand geüpload");
     } catch (error: any) {
       toast.error("Fout bij uploaden: " + error.message);
@@ -291,6 +294,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
       // Direct de lijst updaten zonder te wachten op realtime
       setAttachments(prev => prev.filter(a => a.id !== attachment.id));
+      
+      // Trigger event voor count update
+      window.dispatchEvent(new CustomEvent('attachment-deleted', { detail: { taskId } }));
       
       toast.success("Bijlage verwijderd");
     } catch (error: any) {
@@ -419,6 +425,17 @@ export const AttachmentCount = ({ taskId }: { taskId: string }) => {
   useEffect(() => {
     fetchCount();
     
+    // Luister naar custom events voor directe updates
+    const handleAttachmentChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.taskId === taskId) {
+        fetchCount();
+      }
+    };
+    
+    window.addEventListener('attachment-deleted', handleAttachmentChange);
+    window.addEventListener('attachment-uploaded', handleAttachmentChange);
+    
     const channel = supabase
       .channel(`attachments-count-${taskId}`)
       .on(
@@ -436,6 +453,8 @@ export const AttachmentCount = ({ taskId }: { taskId: string }) => {
       .subscribe();
 
     return () => {
+      window.removeEventListener('attachment-deleted', handleAttachmentChange);
+      window.removeEventListener('attachment-uploaded', handleAttachmentChange);
       supabase.removeChannel(channel);
     };
   }, [taskId]);
