@@ -693,7 +693,7 @@ const Board = () => {
             </Dialog>
           </div>
           <div 
-            className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list"
+            className="flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start"
             onDragOver={(e) => handleDragOver(e, "Vandaag")}
             onDrop={(e) => handleDrop(e, "Vandaag")}
           >
@@ -848,7 +848,7 @@ const Board = () => {
             </Dialog>
           </div>
           <div 
-            className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list"
+            className="flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start"
             onDragOver={(e) => handleDragOver(e, "Deze week")}
             onDrop={(e) => handleDrop(e, "Deze week")}
           >
@@ -975,7 +975,7 @@ const Board = () => {
                 </Dialog>
               </div>
               <div 
-                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                className="flex-1 px-1 pt-3.5 pb-1 grid gap-2 content-start"
                 onDragOver={(e) => handleDragOver(e, "Ziek")}
                 onDrop={(e) => handleDrop(e, "Ziek")}
               >
@@ -1088,7 +1088,7 @@ const Board = () => {
                 </Dialog>
               </div>
               <div 
-                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
+                className="flex-1 px-1 pt-3.5 pb-1 grid gap-2 content-start"
                 onDragOver={(e) => handleDragOver(e, "Verlof")}
                 onDrop={(e) => handleDrop(e, "Verlof")}
               >
@@ -1132,7 +1132,7 @@ const Board = () => {
                 <span className="text-muted-foreground font-extrabold relative z-10">{getColumnTasks("Afgerond").length}</span>
               </div>
               <div 
-                className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list min-h-0"
+                className="flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start"
                 onDragOver={(e) => handleDragOver(e, "Afgerond")}
                 onDrop={(e) => handleDrop(e, "Afgerond")}
               >
