@@ -103,7 +103,7 @@ const Dashboard = () => {
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <img src={logo} alt="LinqBoard Logo" className="h-16 w-auto cursor-pointer" onClick={() => navigate("/")} />
+            <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
             <Button variant="outline" onClick={handleLogout} size="lg" className="border-2">
               <LogOut className="mr-2 h-5 w-5" />
               Uitloggen
