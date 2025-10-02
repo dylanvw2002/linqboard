@@ -189,7 +189,7 @@ const Board = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white grid grid-rows-[auto_1fr_auto] gap-[18px] p-[22px]">
+    <div className="min-h-screen bg-white grid grid-rows-[auto_1fr] gap-[18px] p-[22px]">
       <style>{`
         .list::-webkit-scrollbar {
           width: 14px;
@@ -471,11 +471,6 @@ const Board = () => {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="flex items-center justify-end gap-2.5 px-2.5 py-2 text-[#667085]">
-        <div className="text-[clamp(10px,1.2vw,14px)]">Data wordt opgeslagen in database.</div>
-      </footer>
     </div>
   );
 };
