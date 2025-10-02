@@ -50,7 +50,7 @@ const Index = () => {
           </div>
 
           {/* Right Visual Mockup */}
-          <div className="relative">
+          <div className="relative scale-110">
             <img 
               src={todoBoardIllustration} 
               alt="To-Do Board Illustration" 
