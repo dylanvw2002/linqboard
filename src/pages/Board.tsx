@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Menu, ChevronDown, ArrowUp, Check, X, Maximize2, Trash2 } from "lucide-react";
 
 interface Column {
   id: string;
@@ -23,12 +18,6 @@ interface Task {
   position: number;
 }
 
-interface SimpleCard {
-  id: string;
-  name: string;
-  reason?: string;
-}
-
 const Board = () => {
   const { organizationId } = useParams();
   const navigate = useNavigate();
@@ -37,7 +26,6 @@ const Board = () => {
   const [board, setBoard] = useState<any>(null);
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -61,7 +49,6 @@ const Board = () => {
       return;
     }
 
-    // Check if user is member
     const { data: membership } = await supabase
       .from("memberships")
       .select("*")
@@ -77,7 +64,6 @@ const Board = () => {
 
   const fetchBoardData = async () => {
     try {
-      // Get organization
       const { data: org } = await supabase
         .from("organizations")
         .select("*")
@@ -86,7 +72,6 @@ const Board = () => {
 
       setOrganization(org);
 
-      // Get board
       const { data: boardData } = await supabase
         .from("boards")
         .select("*")
@@ -96,7 +81,6 @@ const Board = () => {
       setBoard(boardData);
 
       if (boardData) {
-        // Get columns
         const { data: columnsData } = await supabase
           .from("columns")
           .select("*")
@@ -105,7 +89,6 @@ const Board = () => {
 
         setColumns(columnsData || []);
 
-        // Get tasks
         if (columnsData && columnsData.length > 0) {
           const columnIds = columnsData.map(c => c.id);
           const { data: tasksData } = await supabase
@@ -125,7 +108,6 @@ const Board = () => {
   };
 
   const setupRealtimeSubscriptions = () => {
-    // Subscribe to task changes
     const tasksChannel = supabase
       .channel("tasks-channel")
       .on(
@@ -147,317 +129,356 @@ const Board = () => {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high": return "bg-red-100 text-red-700 border-red-200";
-      case "medium": return "bg-orange-100 text-orange-700 border-orange-200";
-      case "low": return "bg-teal-100 text-teal-700 border-teal-200";
-      default: return "bg-gray-100 text-gray-700 border-gray-200";
-    }
+    return date.toLocaleTimeString("nl-NL", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
-      case "high": return "Hoog";
-      case "medium": return "Medium";
-      case "low": return "Laag";
-      default: return priority;
+      case "high":
+        return "Hoog";
+      case "medium":
+        return "Medium";
+      case "low":
+        return "Laag";
+      default:
+        return priority;
     }
   };
 
-  // Map database columns to fixed sections
-  const getTodayTasks = () => tasks.filter(t => {
-    const col = columns.find(c => c.id === t.column_id);
-    return col?.name.toLowerCase().includes("vandaag");
-  });
+  const getColumnTasks = (columnName: string) =>
+    tasks.filter((task) => {
+      const column = columns.find((col) => col.id === task.column_id);
+      return column?.name === columnName;
+    });
 
-  const getThisWeekTasks = () => tasks.filter(t => {
-    const col = columns.find(c => c.id === t.column_id);
-    return col?.name.toLowerCase().includes("week");
-  });
+  const handleClearCompleted = async () => {
+    const completedColumn = columns.find((col) => col.name === "Afgerond");
+    if (!completedColumn) return;
 
-  const getSickTasks = () => tasks.filter(t => {
-    const col = columns.find(c => c.id === t.column_id);
-    return col?.name.toLowerCase().includes("ziek");
-  });
+    const completedTasks = tasks.filter(
+      (task) => task.column_id === completedColumn.id
+    );
 
-  const getLeaveTasks = () => tasks.filter(t => {
-    const col = columns.find(c => c.id === t.column_id);
-    return col?.name.toLowerCase().includes("verlof");
-  });
+    for (const task of completedTasks) {
+      await supabase.from("tasks").delete().eq("id", task.id);
+    }
 
-  const getCompletedTasks = () => tasks.filter(t => {
-    const col = columns.find(c => c.id === t.column_id);
-    return col?.name.toLowerCase().includes("afgerond") || col?.name.toLowerCase().includes("gedaan");
-  });
+    toast.success(`${completedTasks.length} taken verwijderd`);
+  };
 
-  const getInfoTasks = () => tasks.filter(t => {
-    const col = columns.find(c => c.id === t.column_id);
-    return col?.name.toLowerCase().includes("info");
-  });
-
-  const TaskCard = ({ task }: { task: Task }) => (
-    <Card className="p-3 bg-white hover:shadow-lg transition-all duration-200 border border-border rounded-[18px]">
-      <div className="flex items-start gap-2 mb-2">
-        <Menu className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0 cursor-grab" />
-        <div className="flex-1">
-          <h4 className="font-semibold text-sm text-foreground mb-1">{task.title}</h4>
-          {task.description && (
-            <p className="text-xs text-muted-foreground">{task.description}</p>
-          )}
-        </div>
-      </div>
-      <div className="flex items-center gap-2 mb-3 ml-6 flex-wrap">
-        <Badge className={`text-[10px] px-2 py-0.5 border ${getPriorityColor(task.priority)}`}>
-          {getPriorityLabel(task.priority)}
-        </Badge>
-        <Badge variant="secondary" className="text-[10px] px-2 py-0.5">Algemeen</Badge>
-      </div>
-      <div className="flex items-center gap-1 ml-6">
-        <Button size="icon" variant="ghost" className="h-7 w-7 hover:bg-muted">
-          <ChevronDown className="h-3.5 w-3.5" />
-        </Button>
-        <Button size="icon" variant="ghost" className="h-7 w-7 hover:bg-muted">
-          <ArrowUp className="h-3.5 w-3.5" />
-        </Button>
-        <Button size="icon" variant="ghost" className="h-7 w-7 hover:bg-success/10 hover:text-success">
-          <Check className="h-3.5 w-3.5" />
-        </Button>
-        <Button size="icon" variant="ghost" className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive">
-          <X className="h-3.5 w-3.5" />
-        </Button>
-      </div>
-    </Card>
-  );
-
-  const SimpleTaskCard = ({ item }: { item: Task }) => (
-    <Card className="p-3 bg-white hover:shadow-lg transition-all duration-200 border border-border rounded-[18px]">
-      <div className="flex items-start gap-2">
-        <Menu className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0 cursor-grab" />
-        <div className="flex-1">
-          <h4 className="font-semibold text-sm text-foreground mb-1">{item.title}</h4>
-          {item.description && (
-            <p className="text-xs text-muted-foreground">{item.description}</p>
-          )}
-        </div>
-        <Button size="icon" variant="ghost" className="h-6 w-6 hover:bg-destructive/10 hover:text-destructive flex-shrink-0">
-          <X className="h-3.5 w-3.5" />
-        </Button>
-      </div>
-    </Card>
-  );
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Board laden...</p>
+        </div>
       </div>
     );
   }
 
-  const todayTasks = getTodayTasks();
-  const weekTasks = getThisWeekTasks();
-  const sickTasks = getSickTasks();
-  const leaveTasks = getLeaveTasks();
-  const completedTasks = getCompletedTasks();
-  const infoTasks = getInfoTasks();
-
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white grid grid-rows-[auto_1fr_auto] gap-[18px] p-[22px]">
       <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
+        .list::-webkit-scrollbar {
+          width: 14px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: hsl(var(--muted));
-          border-radius: 4px;
+        .list::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 10px;
+          border: 4px solid transparent;
+          background-clip: content-box;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: hsl(var(--primary) / 0.3);
-          border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: hsl(var(--primary) / 0.5);
+        @keyframes pop {
+          from {
+            transform: scale(0.98);
+            opacity: 0.7;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
       `}</style>
 
       {/* Header */}
-      <div className="bg-[hsl(142_76%_96%)] border-b-2 border-[hsl(142_76%_85%)]">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-start">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate("/dashboard")}
-                className="hover:bg-white/50"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border-2 border-border">
-                  <span className="text-xl font-bold text-primary">N</span>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-foreground">
-                    {organization?.name || "NRG TOTAAL"} – To-Do Board
-                  </h1>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Live overzicht voor het team – dubbelklik op een taak om te bewerken • Sleep om te ordenen
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="text-right bg-white px-4 py-2 rounded-lg border border-border">
-                <div className="text-lg font-bold text-foreground">{formatTime(currentTime)}</div>
-                <div className="text-xs text-muted-foreground">{formatDate(currentTime)}</div>
-              </div>
-              <Button variant="outline" size="sm" className="bg-white hover:bg-white/80">
-                <Maximize2 className="h-4 w-4 mr-2" />
-                Volledig scherm
-              </Button>
-              <Button variant="outline" size="sm" className="bg-white hover:bg-white/80">
-                <Trash2 className="h-4 w-4 mr-2" />
-                Leeg Afgerond
-              </Button>
-            </div>
-          </div>
+      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 bg-[#f0fdf4] border border-[#e5e7eb] px-5 py-[18px] rounded-[18px] shadow-[0_10px_30px_rgba(2,6,23,0.08)]">
+        <div>
+          <div className="h-14 w-32 bg-gray-300 rounded mb-1.5"></div>
+          <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)]">
+            {organization?.name || "NRG TOTAAL"} – To-Do Board
+          </h1>
+          <p className="text-[#667085] font-semibold text-[clamp(12px,1.4vw,16px)]">
+            Live overzicht voor het team – dubbelklik op een taak om te bewerken • Sleep om te ordenen
+          </p>
         </div>
-      </div>
+        <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl bg-[rgba(34,197,94,0.08)] border border-[rgba(34,197,94,0.25)]">
+          {formatTime(currentTime)}
+        </div>
+        <div className="flex gap-2.5">
+          <button
+            onClick={handleFullscreen}
+            className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)]"
+          >
+            ⛶ Volledig scherm
+          </button>
+          <button
+            onClick={handleClearCompleted}
+            className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)]"
+          >
+            🧹 Leeg Afgerond
+          </button>
+        </div>
+      </header>
 
       {/* Board Grid */}
-      <div className="container mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          {/* Column 1: Vandaag */}
-          <div className="flex flex-col h-[calc(100vh-200px)]">
-            <div className="bg-[hsl(217_91%_96%)] border-2 border-[hsl(217_91%_85%)] rounded-t-[18px] p-3">
-              <div className="flex justify-between items-center">
-                <h3 className="font-bold text-base text-foreground">Vandaag</h3>
-                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs hover:bg-white/50">
-                  + Taak
-                </Button>
-              </div>
-            </div>
-            <div className="flex-1 bg-[hsl(217_91%_96%)] border-2 border-t-0 border-[hsl(217_91%_85%)] rounded-b-[18px] p-3 overflow-y-auto custom-scrollbar">
-              <div className="space-y-3">
-                {todayTasks.map(task => <TaskCard key={task.id} task={task} />)}
-              </div>
-            </div>
+      <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] h-full max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
+        {/* Kolom 1: Vandaag */}
+        <section className="flex flex-col min-w-0">
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3.5">
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Vandaag</div>
+            <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
+              ＋ Taak
+            </button>
           </div>
-
-          {/* Column 2: Deze week */}
-          <div className="flex flex-col h-[calc(100vh-200px)]">
-            <div className="bg-[hsl(142_76%_96%)] border-2 border-[hsl(142_76%_85%)] rounded-t-[18px] p-3">
-              <div className="flex justify-between items-center">
-                <h3 className="font-bold text-base text-foreground">Deze week</h3>
-                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs hover:bg-white/50">
-                  + Taak
-                </Button>
-              </div>
-            </div>
-            <div className="flex-1 bg-[hsl(142_76%_96%)] border-2 border-t-0 border-[hsl(142_76%_85%)] rounded-b-[18px] p-3 overflow-y-auto custom-scrollbar">
-              <div className="space-y-3">
-                {weekTasks.map(task => <TaskCard key={task.id} task={task} />)}
-              </div>
-            </div>
+          <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list">
+            {getColumnTasks("Vandaag").map((task) => (
+              <article
+                key={task.id}
+                className="grid grid-cols-[auto_1fr_auto] items-start gap-2.5 bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
+                draggable="true"
+              >
+                <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
+                <div>
+                  <h4 className="mt-[0.1rem] mb-1 font-extrabold text-[clamp(14px,1.6vw,18px)]">
+                    {task.title}
+                  </h4>
+                  {task.description && (
+                    <p className="mt-[0.15rem] mb-[0.35rem] text-[#667085] text-[clamp(12px,1.2vw,14px)]">
+                      {task.description}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <span className={`px-2 py-1 rounded-full font-extrabold text-xs border ${
+                      task.priority === "high" ? "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" :
+                      task.priority === "medium" ? "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]" :
+                      "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
+                    }`}>
+                      {getPriorityLabel(task.priority)}
+                    </span>
+                    <span className="px-2 py-1 rounded-full font-extrabold text-xs border bg-[#e0f2fe] text-[#075985] border-[#bae6fd]">
+                      Algemeen
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                </div>
+              </article>
+            ))}
           </div>
+        </section>
 
-          {/* Column 3: Ziek / Verlof */}
-          <div className="flex flex-col h-[calc(100vh-200px)] gap-4">
+        {/* Kolom 2: Deze week */}
+        <section className="flex flex-col min-w-0">
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3.5">
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Deze week</div>
+            <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
+              ＋ Taak
+            </button>
+          </div>
+          <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list">
+            {getColumnTasks("Deze week").map((task) => (
+              <article
+                key={task.id}
+                className="grid grid-cols-[auto_1fr_auto] items-start gap-2.5 bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
+                draggable="true"
+              >
+                <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
+                <div>
+                  <h4 className="mt-[0.1rem] mb-1 font-extrabold text-[clamp(14px,1.6vw,18px)]">
+                    {task.title}
+                  </h4>
+                  {task.description && (
+                    <p className="mt-[0.15rem] mb-[0.35rem] text-[#667085] text-[clamp(12px,1.2vw,14px)]">
+                      {task.description}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <span className={`px-2 py-1 rounded-full font-extrabold text-xs border ${
+                      task.priority === "high" ? "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" :
+                      task.priority === "medium" ? "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]" :
+                      "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
+                    }`}>
+                      {getPriorityLabel(task.priority)}
+                    </span>
+                    <span className="px-2 py-1 rounded-full font-extrabold text-xs border bg-[#e0f2fe] text-[#075985] border-[#bae6fd]">
+                      Algemeen
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
+                  <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        {/* Kolom 3: Ziek / Verlof Stack */}
+        <section className="flex flex-col min-w-0">
+          <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
             {/* Ziek */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="bg-[hsl(0_85%_96%)] border-2 border-[hsl(0_85%_85%)] rounded-t-[18px] p-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-base text-foreground">Ziek</h3>
-                  <Button size="sm" variant="ghost" className="h-7 px-2 text-xs hover:bg-white/50">
-                    + Persoon
-                  </Button>
-                </div>
+            <div className="flex flex-col min-h-0">
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-[#fee2e2] border border-[#fecaca] mb-3">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Ziek</div>
+                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
               </div>
-              <div className="flex-1 bg-[hsl(0_85%_96%)] border-2 border-t-0 border-[hsl(0_85%_85%)] rounded-b-[18px] p-3 overflow-y-auto custom-scrollbar">
-                <div className="space-y-3">
-                  {sickTasks.map(task => <SimpleTaskCard key={task.id} item={task} />)}
-                </div>
+              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
+                {getColumnTasks("Ziek").map((task) => (
+                  <article
+                    key={task.id}
+                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2 bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
+                    draggable="true"
+                  >
+                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
+                    <div>
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
+                      {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
+                    </div>
+                    <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                  </article>
+                ))}
               </div>
             </div>
 
             {/* Verlof */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="bg-[hsl(142_76%_96%)] border-2 border-[hsl(142_76%_85%)] rounded-t-[18px] p-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-base text-foreground">Verlof</h3>
-                  <Button size="sm" variant="ghost" className="h-7 px-2 text-xs hover:bg-white/50">
-                    + Persoon
-                  </Button>
-                </div>
+            <div className="flex flex-col min-h-0">
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-[#dcfce7] border border-[#bbf7d0] mb-3">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Verlof</div>
+                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
               </div>
-              <div className="flex-1 bg-[hsl(142_76%_96%)] border-2 border-t-0 border-[hsl(142_76%_85%)] rounded-b-[18px] p-3 overflow-y-auto custom-scrollbar">
-                <div className="space-y-3">
-                  {leaveTasks.map(task => <SimpleTaskCard key={task.id} item={task} />)}
-                </div>
+              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
+                {getColumnTasks("Verlof").map((task) => (
+                  <article
+                    key={task.id}
+                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2 bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
+                    draggable="true"
+                  >
+                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
+                    <div>
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
+                      {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
+                    </div>
+                    <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                  </article>
+                ))}
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Column 4: Afgerond / Belangrijke informatie */}
-          <div className="flex flex-col h-[calc(100vh-200px)] gap-4">
+        {/* Kolom 4: Afgerond / Belangrijke informatie Stack */}
+        <section className="flex flex-col min-w-0">
+          <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
             {/* Afgerond */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="bg-muted border-2 border-border rounded-t-[18px] p-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-base text-foreground">Afgerond</h3>
-                    <Badge className="bg-primary text-primary-foreground text-[10px] px-2 py-0.5">
-                      {completedTasks.length}
-                    </Badge>
-                  </div>
-                  <Button size="sm" variant="ghost" className="h-7 px-2 text-xs hover:bg-white/50">
-                    🗑️
-                  </Button>
-                </div>
+            <div className="flex flex-col min-h-0">
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Afgerond</div>
+                <span className="text-[#667085] font-extrabold">{getColumnTasks("Afgerond").length}</span>
               </div>
-              <div className="flex-1 bg-muted border-2 border-t-0 border-border rounded-b-[18px] p-3 overflow-y-auto custom-scrollbar">
-                <div className="space-y-3">
-                  {completedTasks.map(task => <SimpleTaskCard key={task.id} item={task} />)}
-                </div>
+              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list min-h-0">
+                {getColumnTasks("Afgerond").map((task) => (
+                  <article
+                    key={task.id}
+                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2.5 bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
+                    draggable="true"
+                  >
+                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
+                    <div>
+                      <h4 className="mt-[0.1rem] mb-1 font-extrabold text-[clamp(14px,1.6vw,18px)]">
+                        {task.title}
+                      </h4>
+                      {task.description && (
+                        <p className="mt-[0.15rem] mb-[0.35rem] text-[#667085] text-[clamp(12px,1.2vw,14px)]">
+                          {task.description}
+                        </p>
+                      )}
+                      <div className="flex flex-wrap gap-2">
+                        <span className={`px-2 py-1 rounded-full font-extrabold text-xs border ${
+                          task.priority === "high" ? "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]" :
+                          task.priority === "medium" ? "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]" :
+                          "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
+                        }`}>
+                          {getPriorityLabel(task.priority)}
+                        </span>
+                        <span className="px-2 py-1 rounded-full font-extrabold text-xs border bg-[#e0f2fe] text-[#075985] border-[#bae6fd]">
+                          Algemeen
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Lagere prioriteit">▽</button>
+                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Hogere prioriteit">△</button>
+                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Markeer als afgerond">✔</button>
+                      <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                    </div>
+                  </article>
+                ))}
               </div>
             </div>
 
             {/* Belangrijke informatie */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="bg-[hsl(48_95%_96%)] border-2 border-[hsl(48_95%_85%)] rounded-t-[18px] p-3">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-base text-foreground">Belangrijke informatie</h3>
-                  <Button size="sm" variant="ghost" className="h-7 px-2 text-xs hover:bg-white/50">
-                    + Info
-                  </Button>
-                </div>
+            <div className="flex flex-col min-h-0">
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3">
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Belangrijke informatie</div>
+                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe info">＋</button>
               </div>
-              <div className="flex-1 bg-[hsl(48_95%_96%)] border-2 border-t-0 border-[hsl(48_95%_85%)] rounded-b-[18px] p-3 overflow-y-auto custom-scrollbar">
-                <div className="space-y-3">
-                  {infoTasks.map(task => <SimpleTaskCard key={task.id} item={task} />)}
-                </div>
+              <div className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0">
+                {getColumnTasks("Belangrijke informatie").map((task) => (
+                  <article
+                    key={task.id}
+                    className="grid grid-cols-[auto_1fr_auto] items-start gap-2 bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out]"
+                    draggable="true"
+                  >
+                    <div className="cursor-grab select-none opacity-80" title="Slepen om te verplaatsen">☰</div>
+                    <div>
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] m-0 mb-1">{task.title}</h4>
+                      {task.description && <p className="m-0 text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
+                    </div>
+                    <button className="bg-gradient-to-b from-white to-[#f8fafc] border border-[#e5e7eb] px-2 py-1.5 rounded-lg text-sm hover:-translate-y-px hover:bg-[#f3f4f6]" title="Verwijderen">✖</button>
+                  </article>
+                ))}
               </div>
             </div>
           </div>
+        </section>
+      </main>
 
+      {/* Footer */}
+      <footer className="flex items-center justify-between gap-2.5 px-2.5 py-2 text-[#667085]">
+        <div className="text-[clamp(10px,1.2vw,14px)]">
+          Sneltoetsen: <strong>N</strong> = nieuwe taak, <strong>F</strong> = fullscreen, <strong>1–3</strong> = prio aanpassen, <strong>Enter</strong> = opslaan
         </div>
-
-        {/* Footer */}
-        <div className="mt-6 text-center text-xs text-muted-foreground">
-          <p>Sneltoetsen: <span className="font-semibold">N</span> = nieuwe taak • <span className="font-semibold">F</span> = fullscreen • <span className="font-semibold">1–3</span> = prio aanpassen</p>
-          <p className="mt-1">Data wordt automatisch gesynchroniseerd via de database</p>
-        </div>
-      </div>
+        <div className="text-[clamp(10px,1.2vw,14px)]">Data wordt opgeslagen in database.</div>
+      </footer>
     </div>
   );
 };
