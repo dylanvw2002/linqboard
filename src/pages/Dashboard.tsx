@@ -115,7 +115,7 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-12">
         {/* Welcome Section */}
         <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-2">
             Hoi {userName || "daar"} 👋
           </h1>
           <p className="text-xl text-muted-foreground">
