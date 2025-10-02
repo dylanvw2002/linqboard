@@ -14,6 +14,7 @@ const Auth = () => {
   const mode = searchParams.get("mode") || "login";
   
   const [isLogin, setIsLogin] = useState(mode === "login");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -33,7 +34,17 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isLogin) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth?mode=reset`,
+        });
+
+        if (error) throw error;
+
+        toast.success("Controleer je email voor de reset link!");
+        setIsForgotPassword(false);
+        setEmail("");
+      } else if (isLogin) {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
@@ -82,17 +93,23 @@ const Auth = () => {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-2">
           <CardTitle className="text-3xl font-bold text-center">
-            {isLogin ? "Welkom terug" : "Account aanmaken"}
+            {isForgotPassword 
+              ? "Wachtwoord resetten" 
+              : isLogin 
+              ? "Welkom terug" 
+              : "Account aanmaken"}
           </CardTitle>
           <CardDescription className="text-center">
-            {isLogin
+            {isForgotPassword
+              ? "Voer je email in om een reset link te ontvangen"
+              : isLogin
               ? "Log in om toegang te krijgen tot je boards"
               : "Maak een account aan om te starten"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAuth} className="space-y-4">
-            {!isLogin && (
+            {!isLogin && !isForgotPassword && (
               <div className="space-y-2">
                 <Label htmlFor="fullName">Volledige naam</Label>
                 <Input
@@ -120,24 +137,26 @@ const Auth = () => {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password">Wachtwoord</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                disabled={loading}
-              />
-              {!isLogin && (
-                <p className="text-xs text-muted-foreground">
-                  Minimaal 6 karakters
-                </p>
-              )}
-            </div>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Wachtwoord</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  disabled={loading}
+                />
+                {!isLogin && (
+                  <p className="text-xs text-muted-foreground">
+                    Minimaal 6 karakters
+                  </p>
+                )}
+              </div>
+            )}
             
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? (
@@ -145,6 +164,8 @@ const Auth = () => {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Bezig...
                 </>
+              ) : isForgotPassword ? (
+                "Verstuur reset link"
               ) : isLogin ? (
                 "Inloggen"
               ) : (
@@ -153,17 +174,47 @@ const Auth = () => {
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
-              disabled={loading}
-            >
-              {isLogin
-                ? "Nog geen account? Registreer hier"
-                : "Al een account? Log in"}
-            </button>
+          <div className="mt-6 text-center space-y-2">
+            {!isForgotPassword && (
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-sm text-primary hover:underline block w-full"
+                disabled={loading}
+              >
+                {isLogin
+                  ? "Nog geen account? Registreer hier"
+                  : "Al een account? Log in"}
+              </button>
+            )}
+            
+            {isLogin && !isForgotPassword && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsForgotPassword(true);
+                  setPassword("");
+                }}
+                className="text-sm text-muted-foreground hover:text-primary hover:underline block w-full"
+                disabled={loading}
+              >
+                Wachtwoord vergeten?
+              </button>
+            )}
+            
+            {isForgotPassword && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsForgotPassword(false);
+                  setEmail("");
+                }}
+                className="text-sm text-primary hover:underline block w-full"
+                disabled={loading}
+              >
+                Terug naar inloggen
+              </button>
+            )}
           </div>
         </CardContent>
       </Card>
