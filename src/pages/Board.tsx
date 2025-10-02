@@ -539,7 +539,7 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 backdrop-blur-xl bg-card/90 border border-border px-5 py-[18px] rounded-[18px] shadow-lg relative overflow-hidden">
+      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 backdrop-blur-xl bg-white/80 dark:bg-card/90 border border-gray-200 dark:border-border px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-transparent pointer-events-none"></div>
         <div className="relative z-10">
           <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
@@ -549,7 +549,7 @@ const Board = () => {
             Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
           </p>
         </div>
-        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-lg">
+        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
           <div className="text-primary">{formatTime(currentTime)}</div>
           <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold">{formatDate(currentTime)}</div>
         </div>
