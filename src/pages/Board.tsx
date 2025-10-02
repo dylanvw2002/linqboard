@@ -48,6 +48,8 @@ const Board = () => {
   const [openDialog, setOpenDialog] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
@@ -319,7 +321,8 @@ const Board = () => {
         column_id: column.id,
         title: validation.data.title,
         description: validation.data.description || null,
-        priority: "medium",
+        priority: newTaskPriority,
+        due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
         position: maxPosition + 1,
       });
 
@@ -329,6 +332,8 @@ const Board = () => {
       setOpenDialog(null);
       setNewTaskTitle("");
       setNewTaskDescription("");
+      setNewTaskPriority("medium");
+      setNewTaskDueDate(undefined);
       await fetchBoardData();
     } catch (error: any) {
       toast.error("Fout bij toevoegen taak");
@@ -540,7 +545,7 @@ const Board = () => {
                   ＋ Taak
                 </button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>Nieuwe taak toevoegen - Vandaag</DialogTitle>
                 </DialogHeader>
@@ -564,6 +569,72 @@ const Board = () => {
                       placeholder="Extra details..."
                       maxLength={1000}
                     />
+                  </div>
+                  <div>
+                    <Label>Deadline</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !newTaskDueDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newTaskDueDate}
+                          onSelect={setNewTaskDueDate}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                        {newTaskDueDate && (
+                          <div className="p-3 border-t">
+                            <Button
+                              variant="outline"
+                              className="w-full"
+                              onClick={() => setNewTaskDueDate(undefined)}
+                            >
+                              Verwijder datum
+                            </Button>
+                          </div>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div>
+                    <Label>Prioriteit</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant={newTaskPriority === "low" ? "default" : "outline"}
+                        onClick={() => setNewTaskPriority("low")}
+                        className="flex-1"
+                      >
+                        Laag
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={newTaskPriority === "medium" ? "default" : "outline"}
+                        onClick={() => setNewTaskPriority("medium")}
+                        className="flex-1"
+                      >
+                        Middel
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={newTaskPriority === "high" ? "default" : "outline"}
+                        onClick={() => setNewTaskPriority("high")}
+                        className="flex-1"
+                      >
+                        Hoog
+                      </Button>
+                    </div>
                   </div>
                   <button
                     onClick={() => handleAddTask("Vandaag")}
@@ -629,7 +700,7 @@ const Board = () => {
                   ＋ Taak
                 </button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-2xl">
                 <DialogHeader>
                   <DialogTitle>Nieuwe taak toevoegen - Deze week</DialogTitle>
                 </DialogHeader>
@@ -653,6 +724,72 @@ const Board = () => {
                       placeholder="Extra details..."
                       maxLength={1000}
                     />
+                  </div>
+                  <div>
+                    <Label>Deadline</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !newTaskDueDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newTaskDueDate}
+                          onSelect={setNewTaskDueDate}
+                          initialFocus
+                          className="pointer-events-auto"
+                        />
+                        {newTaskDueDate && (
+                          <div className="p-3 border-t">
+                            <Button
+                              variant="outline"
+                              className="w-full"
+                              onClick={() => setNewTaskDueDate(undefined)}
+                            >
+                              Verwijder datum
+                            </Button>
+                          </div>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div>
+                    <Label>Prioriteit</Label>
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant={newTaskPriority === "low" ? "default" : "outline"}
+                        onClick={() => setNewTaskPriority("low")}
+                        className="flex-1"
+                      >
+                        Laag
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={newTaskPriority === "medium" ? "default" : "outline"}
+                        onClick={() => setNewTaskPriority("medium")}
+                        className="flex-1"
+                      >
+                        Middel
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={newTaskPriority === "high" ? "default" : "outline"}
+                        onClick={() => setNewTaskPriority("high")}
+                        className="flex-1"
+                      >
+                        Hoog
+                      </Button>
+                    </div>
                   </div>
                   <button
                     onClick={() => handleAddTask("Deze week")}
@@ -719,7 +856,7 @@ const Board = () => {
                   <DialogTrigger asChild>
                     <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Persoon toevoegen - Ziek</DialogTitle>
                     </DialogHeader>
@@ -743,6 +880,72 @@ const Board = () => {
                           placeholder="Extra details..."
                           maxLength={1000}
                         />
+                      </div>
+                      <div>
+                        <Label>Terug verwacht op</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !newTaskDueDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={newTaskDueDate}
+                              onSelect={setNewTaskDueDate}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                            {newTaskDueDate && (
+                              <div className="p-3 border-t">
+                                <Button
+                                  variant="outline"
+                                  className="w-full"
+                                  onClick={() => setNewTaskDueDate(undefined)}
+                                >
+                                  Verwijder datum
+                                </Button>
+                              </div>
+                            )}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <div>
+                        <Label>Prioriteit</Label>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "low" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("low")}
+                            className="flex-1"
+                          >
+                            Laag
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "medium" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("medium")}
+                            className="flex-1"
+                          >
+                            Middel
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "high" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("high")}
+                            className="flex-1"
+                          >
+                            Hoog
+                          </Button>
+                        </div>
                       </div>
                       <button
                         onClick={() => handleAddTask("Ziek")}
@@ -800,7 +1003,7 @@ const Board = () => {
                   <DialogTrigger asChild>
                     <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Persoon toevoegen - Verlof</DialogTitle>
                     </DialogHeader>
@@ -824,6 +1027,72 @@ const Board = () => {
                           placeholder="Extra details..."
                           maxLength={1000}
                         />
+                      </div>
+                      <div>
+                        <Label>Terug verwacht op</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !newTaskDueDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={newTaskDueDate}
+                              onSelect={setNewTaskDueDate}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                            {newTaskDueDate && (
+                              <div className="p-3 border-t">
+                                <Button
+                                  variant="outline"
+                                  className="w-full"
+                                  onClick={() => setNewTaskDueDate(undefined)}
+                                >
+                                  Verwijder datum
+                                </Button>
+                              </div>
+                            )}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <div>
+                        <Label>Prioriteit</Label>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "low" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("low")}
+                            className="flex-1"
+                          >
+                            Laag
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "medium" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("medium")}
+                            className="flex-1"
+                          >
+                            Middel
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "high" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("high")}
+                            className="flex-1"
+                          >
+                            Hoog
+                          </Button>
+                        </div>
                       </div>
                       <button
                         onClick={() => handleAddTask("Verlof")}
@@ -936,7 +1205,7 @@ const Board = () => {
                   <DialogTrigger asChild>
                     <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe info">＋</button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Informatie toevoegen</DialogTitle>
                     </DialogHeader>
@@ -960,6 +1229,72 @@ const Board = () => {
                           placeholder="Extra details..."
                           maxLength={1000}
                         />
+                      </div>
+                      <div>
+                        <Label>Deadline</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !newTaskDueDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={newTaskDueDate}
+                              onSelect={setNewTaskDueDate}
+                              initialFocus
+                              className="pointer-events-auto"
+                            />
+                            {newTaskDueDate && (
+                              <div className="p-3 border-t">
+                                <Button
+                                  variant="outline"
+                                  className="w-full"
+                                  onClick={() => setNewTaskDueDate(undefined)}
+                                >
+                                  Verwijder datum
+                                </Button>
+                              </div>
+                            )}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      <div>
+                        <Label>Prioriteit</Label>
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "low" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("low")}
+                            className="flex-1"
+                          >
+                            Laag
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "medium" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("medium")}
+                            className="flex-1"
+                          >
+                            Middel
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newTaskPriority === "high" ? "default" : "outline"}
+                            onClick={() => setNewTaskPriority("high")}
+                            className="flex-1"
+                          >
+                            Hoog
+                          </Button>
+                        </div>
                       </div>
                       <button
                         onClick={() => handleAddTask("Belangrijke informatie")}
