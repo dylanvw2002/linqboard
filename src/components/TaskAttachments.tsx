@@ -261,11 +261,14 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
   const handleDelete = async (attachment: Attachment) => {
     try {
+      console.log("Deleting attachment:", attachment);
+      
       // Verwijder uit storage
       const { error: storageError } = await supabase.storage
         .from("task-attachments")
         .remove([attachment.file_path]);
 
+      console.log("Storage delete result:", { error: storageError });
       if (storageError) throw storageError;
 
       // Verwijder uit database
@@ -274,10 +277,12 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
         .delete()
         .eq("id", attachment.id);
 
+      console.log("Database delete result:", { error: dbError });
       if (dbError) throw dbError;
 
       toast.success("Bijlage verwijderd");
     } catch (error: any) {
+      console.error("Delete error:", error);
       toast.error("Fout bij verwijderen: " + error.message);
     }
   };
