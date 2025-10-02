@@ -70,12 +70,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
   useEffect(() => {
     fetchAttachments();
-    setupRealtimeSubscription();
-  }, [taskId]);
-
-  const setupRealtimeSubscription = () => {
+    
     const channel = supabase
-      .channel("task-attachments")
+      .channel(`task-attachments-${taskId}`)
       .on(
         "postgres_changes",
         {
@@ -93,7 +90,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  };
+  }, [taskId]);
 
   const fetchAttachments = async () => {
     try {
@@ -392,10 +389,7 @@ export const AttachmentCount = ({ taskId }: { taskId: string }) => {
 
   useEffect(() => {
     fetchCount();
-    setupRealtimeSubscription();
-  }, [taskId]);
-
-  const setupRealtimeSubscription = () => {
+    
     const channel = supabase
       .channel(`attachments-count-${taskId}`)
       .on(
@@ -415,7 +409,7 @@ export const AttachmentCount = ({ taskId }: { taskId: string }) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  };
+  }, [taskId]);
 
   const fetchCount = async () => {
     try {
