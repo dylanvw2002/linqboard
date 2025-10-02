@@ -14,6 +14,7 @@ import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo-transparent.png";
 
 interface Column {
   id: string;
@@ -544,8 +545,9 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="grid grid-cols-[minmax(300px,1fr)_auto_auto] items-center gap-4 backdrop-blur-xl bg-white/80 dark:bg-card/90 border border-gray-200 dark:border-border px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-visible">
+      <header className="grid grid-cols-[auto_minmax(300px,1fr)_auto_auto] items-center gap-4 backdrop-blur-xl bg-white/80 dark:bg-card/90 border border-gray-200 dark:border-border px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-visible">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-transparent pointer-events-none"></div>
+        <img src={logo} alt="LinqBoard Logo" className="h-16 w-auto relative z-10 cursor-pointer" onClick={() => navigate("/dashboard")} />
         <div className="relative z-10 min-w-0">
           <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             {organization?.name || "NRG TOTAAL"} – To-Do Board
