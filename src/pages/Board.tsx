@@ -500,8 +500,9 @@ const Board = () => {
   }
 
   return (
-    <div className="h-screen overflow-hidden relative bg-background">
-      <div className="grid grid-rows-[auto_1fr] gap-4 p-4 h-full">
+    <div className="min-h-screen overflow-hidden relative bg-background">
+      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh]">
+        <div className="grid grid-rows-[auto_1fr] gap-[18px] p-[22px] h-screen">
       <style>{`
         .list::-webkit-scrollbar {
           width: 14px;
@@ -538,37 +539,37 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-3 backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-white/40 dark:border-border/40 px-4 py-3 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.08)] relative overflow-hidden">
+      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-white/40 dark:border-border/40 px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[hsl(250,70%,60%)]/5 via-[hsl(280,70%,65%)]/5 to-transparent pointer-events-none"></div>
         <div className="relative z-10">
-          <h1 className="font-extrabold tracking-tight leading-tight text-2xl lg:text-3xl bg-gradient-to-r from-[hsl(250,70%,60%)] to-[hsl(280,70%,65%)] bg-clip-text text-transparent">
+          <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-[hsl(250,70%,60%)] to-[hsl(280,70%,65%)] bg-clip-text text-transparent">
             {organization?.name || "NRG TOTAAL"} – To-Do Board
           </h1>
-          <p className="text-muted-foreground font-semibold text-xs lg:text-sm">
+          <p className="text-muted-foreground font-semibold text-[clamp(12px,1.4vw,16px)]">
             Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
           </p>
         </div>
-        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-xl lg:text-2xl px-3 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-[0_0_20px_rgba(167,139,250,0.15)]">
+        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-[0_0_20px_rgba(167,139,250,0.15)]">
           <div className="text-primary">{formatTime(currentTime)}</div>
-          <div className="text-xs text-muted-foreground font-semibold">{formatDate(currentTime)}</div>
+          <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold">{formatDate(currentTime)}</div>
         </div>
-        <div className="flex gap-2 relative z-10">
+        <div className="flex gap-2.5 relative z-10">
           <button
             onClick={() => navigate("/dashboard")}
-            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3 py-2 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-xs lg:text-sm flex items-center gap-2"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)] flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Dashboard
           </button>
           <button
             onClick={handleFullscreen}
-            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3 py-2 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-xs lg:text-sm"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)]"
           >
             ⛶ Volledig scherm
           </button>
           <button
             onClick={handleClearCompleted}
-            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3 py-2 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-xs lg:text-sm"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)]"
           >
             🧹 Leeg Afgerond
           </button>
@@ -576,14 +577,14 @@ const Board = () => {
       </header>
 
       {/* Board Grid */}
-      <main className="grid grid-cols-[repeat(6,minmax(150px,1fr))] gap-2 h-full overflow-hidden max-[1500px]:grid-cols-4 max-[1200px]:grid-cols-3 max-[800px]:grid-cols-2 max-[600px]:grid-cols-1">
+      <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] h-full max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
         {/* Kolom 1: Vandaag */}
-        <section className="flex flex-col min-w-0 min-h-0">
-          <div className="flex items-center justify-between px-3 py-2 rounded-xl backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-2 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
-            <div className="text-lg font-extrabold text-foreground relative z-10">Vandaag</div>
+        <section className="flex flex-col min-w-0">
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Vandaag</div>
             <Dialog open={openDialog === "Vandaag"} onOpenChange={(open) => setOpenDialog(open ? "Vandaag" : null)}>
               <DialogTrigger asChild>
-                <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2 py-1 rounded-lg font-bold text-xs hover:bg-card transition-all relative z-10">
+                <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-card transition-all relative z-10">
                   ＋ Taak
                 </button>
               </DialogTrigger>
@@ -689,7 +690,7 @@ const Board = () => {
             </Dialog>
           </div>
           <div 
-            className="flex-1 min-h-0 overflow-auto px-1 py-2 grid gap-2.5 content-start list"
+            className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list"
             onDragOver={(e) => handleDragOver(e, "Vandaag")}
             onDrop={(e) => handleDrop(e, "Vandaag")}
           >
@@ -701,11 +702,11 @@ const Board = () => {
                 onDragEnd={handleDragEnd}
                 onClick={() => !isDragging && openEditDialog(task)}
                 className={cn(
-                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-border/40 rounded-xl p-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 transition-all duration-200",
+                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-border/40 rounded-[18px] p-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all duration-200",
                   draggedTask?.id === task.id && "opacity-50 scale-95"
                 )}
               >
-                <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                 <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                   {task.due_date && (
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
@@ -719,11 +720,11 @@ const Board = () => {
                     {getPriorityBadge(task.priority).label}
                   </span>
                 </div>
-                <h4 className="font-extrabold text-sm mb-1 text-foreground relative z-10">
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
                   {task.title}
                 </h4>
                 {task.description && (
-                  <p className="text-muted-foreground text-xs relative z-10">
+                  <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
                     {task.description}
                   </p>
                 )}
@@ -1396,6 +1397,7 @@ const Board = () => {
         </DialogContent>
       </Dialog>
 
+        </div>
       </div>
     </div>
   );
