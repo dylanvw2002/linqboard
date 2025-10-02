@@ -77,7 +77,7 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 p-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card relative">
+        <button className="backdrop-blur-[30px] bg-white/30 dark:bg-card/30 text-foreground border border-white/30 dark:border-white/10 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.3)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] hover:-translate-y-0.5 hover:bg-white/40 dark:hover:bg-card/40 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity">
           <Users size={20} />
           {activeUsers.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
