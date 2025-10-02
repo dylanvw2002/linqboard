@@ -58,6 +58,7 @@ const Board = () => {
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
 
   useEffect(() => {
     checkAccess();
@@ -211,6 +212,8 @@ const Board = () => {
   };
 
   const openEditDialog = (task: Task) => {
+    const column = columns.find((col) => col.id === task.column_id);
+    setEditingTaskColumn(column?.name || null);
     setEditingTask(task);
     setEditTaskTitle(task.title);
     setEditTaskDescription(task.description || "");
@@ -1230,72 +1233,6 @@ const Board = () => {
                           maxLength={1000}
                         />
                       </div>
-                      <div>
-                        <Label>Deadline</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !newTaskDueDate && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={newTaskDueDate}
-                              onSelect={setNewTaskDueDate}
-                              initialFocus
-                              className="pointer-events-auto"
-                            />
-                            {newTaskDueDate && (
-                              <div className="p-3 border-t">
-                                <Button
-                                  variant="outline"
-                                  className="w-full"
-                                  onClick={() => setNewTaskDueDate(undefined)}
-                                >
-                                  Verwijder datum
-                                </Button>
-                              </div>
-                            )}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <div>
-                        <Label>Prioriteit</Label>
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "low" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("low")}
-                            className="flex-1"
-                          >
-                            Laag
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "medium" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("medium")}
-                            className="flex-1"
-                          >
-                            Middel
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "high" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("high")}
-                            className="flex-1"
-                          >
-                            Hoog
-                          </Button>
-                        </div>
-                      </div>
                       <button
                         onClick={() => handleAddTask("Belangrijke informatie")}
                         className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
@@ -1308,35 +1245,13 @@ const Board = () => {
               </div>
               <div 
                 className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-2 content-start list min-h-0"
-                onDragOver={(e) => handleDragOver(e, "Belangrijke informatie")}
-                onDrop={(e) => handleDrop(e, "Belangrijke informatie")}
               >
                 {getColumnTasks("Belangrijke informatie").map((task) => (
                   <article
                     key={task.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => !isDragging && openEditDialog(task)}
-                    className={cn(
-                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                      draggedTask?.id === task.id && "opacity-50"
-                    )}
+                    onClick={() => openEditDialog(task)}
+                    className="relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-pointer hover:shadow-lg transition-all"
                   >
-                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <div className="flex items-center gap-1.5 justify-end mb-1">
-                      {task.due_date && (
-                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                        </span>
-                      )}
-                      <span className={cn(
-                        "inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border",
-                        getPriorityBadge(task.priority).color
-                      )}>
-                        {getPriorityBadge(task.priority).label}
-                      </span>
-                    </div>
                     <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
@@ -1351,7 +1266,9 @@ const Board = () => {
       <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Taak bewerken</DialogTitle>
+            <DialogTitle>
+              {editingTaskColumn === "Belangrijke informatie" ? "Informatie bewerken" : "Taak bewerken"}
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1374,77 +1291,83 @@ const Board = () => {
                 maxLength={1000}
               />
             </div>
-            <div>
-              <Label>Deadline</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !editTaskDueDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Kies een datum"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={editTaskDueDate}
-                    onSelect={setEditTaskDueDate}
-                    initialFocus
-                    locale={nl}
-                    className="pointer-events-auto"
-                  />
-                  {editTaskDueDate && (
-                    <div className="p-3 border-t">
+            {editingTaskColumn !== "Belangrijke informatie" && (
+              <>
+                <div>
+                  <Label>Deadline</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
                       <Button
-                        variant="ghost"
-                        className="w-full"
-                        onClick={() => setEditTaskDueDate(undefined)}
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !editTaskDueDate && "text-muted-foreground"
+                        )}
                       >
-                        Wis deadline
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Kies een datum"}
                       </Button>
-                    </div>
-                  )}
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div>
-              <Label>Prioriteit</Label>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  variant={editTaskPriority === "low" ? "default" : "outline"}
-                  onClick={() => setEditTaskPriority("low")}
-                  className="flex-1"
-                >
-                  Laag
-                </Button>
-                <Button
-                  variant={editTaskPriority === "medium" ? "default" : "outline"}
-                  onClick={() => setEditTaskPriority("medium")}
-                  className="flex-1"
-                >
-                  Middel
-                </Button>
-                <Button
-                  variant={editTaskPriority === "high" ? "default" : "outline"}
-                  onClick={() => setEditTaskPriority("high")}
-                  className="flex-1"
-                >
-                  Hoog
-                </Button>
-              </div>
-            </div>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={editTaskDueDate}
+                        onSelect={setEditTaskDueDate}
+                        initialFocus
+                        locale={nl}
+                        className="pointer-events-auto"
+                      />
+                      {editTaskDueDate && (
+                        <div className="p-3 border-t">
+                          <Button
+                            variant="ghost"
+                            className="w-full"
+                            onClick={() => setEditTaskDueDate(undefined)}
+                          >
+                            Wis deadline
+                          </Button>
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div>
+                  <Label>Prioriteit</Label>
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      variant={editTaskPriority === "low" ? "default" : "outline"}
+                      onClick={() => setEditTaskPriority("low")}
+                      className="flex-1"
+                    >
+                      Laag
+                    </Button>
+                    <Button
+                      variant={editTaskPriority === "medium" ? "default" : "outline"}
+                      onClick={() => setEditTaskPriority("medium")}
+                      className="flex-1"
+                    >
+                      Middel
+                    </Button>
+                    <Button
+                      variant={editTaskPriority === "high" ? "default" : "outline"}
+                      onClick={() => setEditTaskPriority("high")}
+                      className="flex-1"
+                    >
+                      Hoog
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
             <div className="flex gap-2 pt-4">
               <Button onClick={handleDeleteFromDialog} variant="destructive">
                 Verwijderen
               </Button>
-              <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
-                ✔ Voltooien
-              </Button>
+              {editingTaskColumn !== "Belangrijke informatie" && (
+                <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
+                  ✔ Voltooien
+                </Button>
+              )}
               <Button onClick={handleEditTask} className="flex-1">
                 Opslaan
               </Button>
