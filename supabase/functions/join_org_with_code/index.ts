@@ -23,9 +23,18 @@ Deno.serve(async (req) => {
     // Validate the user
     const {
       data: { user },
+      error: authError
     } = await authClient.auth.getUser()
 
+    console.log('Auth response:', { user: user ? 'present' : 'null', error: authError })
+
+    if (authError) {
+      console.error('Authentication error:', authError)
+      throw new Error(`Authentication failed: ${authError.message}`)
+    }
+
     if (!user) {
+      console.error('No user returned from getUser()')
       throw new Error('User not authenticated')
     }
 
