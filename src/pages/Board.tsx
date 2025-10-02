@@ -996,11 +996,11 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(30,90%,60%)]/20 rounded-[18px] p-2.5 shadow-[0_4px_16px_rgba(251,146,60,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(30,90%,60%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(251,146,60,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(251,146,60,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(30,90%,60%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
                       draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,90%,60%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,90%,60%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
                     {task.due_date && (
                       <div className="flex justify-end mb-1 relative z-10">
@@ -1109,11 +1109,11 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(210,70%,55%)]/20 rounded-[18px] p-2.5 shadow-[0_4px_16px_rgba(59,130,246,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(59,130,246,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(210,70%,55%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(59,130,246,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(59,130,246,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(210,70%,55%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
                       draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,70%,55%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,70%,55%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
                     {task.due_date && (
                       <div className="flex justify-end mb-1 relative z-10">
