@@ -940,35 +940,6 @@ const Board = () => {
                           </PopoverContent>
                         </Popover>
                       </div>
-                      <div>
-                        <Label>Prioriteit</Label>
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "low" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("low")}
-                            className="flex-1"
-                          >
-                            Laag
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "medium" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("medium")}
-                            className="flex-1"
-                          >
-                            Middel
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "high" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("high")}
-                            className="flex-1"
-                          >
-                            Hoog
-                          </Button>
-                        </div>
-                      </div>
                       <button
                         onClick={() => handleAddTask("Ziek")}
                         className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
@@ -997,20 +968,14 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <div className="flex items-center gap-1.5 justify-end mb-1">
-                      {task.due_date && (
+                    {task.due_date && (
+                      <div className="flex justify-end mb-1">
                         <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
                         </span>
-                      )}
-                      <span className={cn(
-                        "inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border",
-                        getPriorityBadge(task.priority).color
-                      )}>
-                        {getPriorityBadge(task.priority).label}
-                      </span>
-                    </div>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                      </div>
+                    )}
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
@@ -1087,35 +1052,6 @@ const Board = () => {
                           </PopoverContent>
                         </Popover>
                       </div>
-                      <div>
-                        <Label>Prioriteit</Label>
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "low" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("low")}
-                            className="flex-1"
-                          >
-                            Laag
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "medium" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("medium")}
-                            className="flex-1"
-                          >
-                            Middel
-                          </Button>
-                          <Button
-                            type="button"
-                            variant={newTaskPriority === "high" ? "default" : "outline"}
-                            onClick={() => setNewTaskPriority("high")}
-                            className="flex-1"
-                          >
-                            Hoog
-                          </Button>
-                        </div>
-                      </div>
                       <button
                         onClick={() => handleAddTask("Verlof")}
                         className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
@@ -1144,20 +1080,14 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <div className="flex items-center gap-1.5 justify-end mb-1">
-                      {task.due_date && (
+                    {task.due_date && (
+                      <div className="flex justify-end mb-1">
                         <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
                         </span>
-                      )}
-                      <span className={cn(
-                        "inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border",
-                        getPriorityBadge(task.priority).color
-                      )}>
-                        {getPriorityBadge(task.priority).label}
-                      </span>
-                    </div>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">{task.title}</h4>
+                      </div>
+                    )}
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
                     {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
                   </article>
                 ))}
@@ -1319,7 +1249,7 @@ const Board = () => {
                 maxLength={1000}
               />
             </div>
-            {editingTaskColumn !== "Belangrijke informatie" && (
+            {editingTaskColumn !== "Belangrijke informatie" && editingTaskColumn !== "Ziek" && editingTaskColumn !== "Verlof" && (
               <>
                 <div>
                   <Label>Deadline</Label>
@@ -1386,6 +1316,46 @@ const Board = () => {
                   </div>
                 </div>
               </>
+            )}
+            {(editingTaskColumn === "Ziek" || editingTaskColumn === "Verlof") && (
+              <div>
+                <Label>Terug verwacht op</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !editTaskDueDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Kies een datum"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={editTaskDueDate}
+                      onSelect={setEditTaskDueDate}
+                      initialFocus
+                      locale={nl}
+                      className="pointer-events-auto"
+                    />
+                    {editTaskDueDate && (
+                      <div className="p-3 border-t">
+                        <Button
+                          variant="ghost"
+                          className="w-full"
+                          onClick={() => setEditTaskDueDate(undefined)}
+                        >
+                          Wis datum
+                        </Button>
+                      </div>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              </div>
             )}
             <div className="flex gap-2 pt-4">
               <Button onClick={handleDeleteFromDialog} variant="destructive">
