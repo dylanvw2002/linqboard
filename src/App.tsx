@@ -9,6 +9,7 @@ import CreateOrganization from "./pages/CreateOrganization";
 import JoinOrganization from "./pages/JoinOrganization";
 import Dashboard from "./pages/Dashboard";
 import Board from "./pages/Board";
+import BoardDemo from "./pages/BoardDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/join-organization" element={<JoinOrganization />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/board/:organizationId" element={<Board />} />
+          <Route path="/board-demo" element={<BoardDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
