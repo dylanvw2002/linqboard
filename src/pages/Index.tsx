@@ -1,12 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
+      {/* Header with Login Button */}
+      <header className="container mx-auto px-4 py-6">
+        <div className="flex justify-end">
+          <Link to="/auth">
+            <Button variant="outline" size="lg" className="border-2">
+              <LogIn className="mr-2 h-5 w-5" />
+              Inloggen
+            </Button>
+          </Link>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8">
         <div className="text-center max-w-4xl mx-auto">
           <div className="inline-block mb-6">
             <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
