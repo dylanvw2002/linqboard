@@ -500,7 +500,7 @@ const Board = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <div className="min-h-screen overflow-hidden relative bg-gradient-to-br from-[hsl(250,60%,97%)] via-[hsl(280,50%,97%)] to-[hsl(210,60%,97%)] dark:from-[hsl(250,40%,12%)] dark:via-[hsl(280,35%,12%)] dark:to-[hsl(210,40%,12%)]">
       <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh]">
         <div className="grid grid-rows-[auto_1fr] gap-[18px] p-[22px] h-screen">
       <style>{`
@@ -508,54 +508,68 @@ const Board = () => {
           width: 14px;
         }
         .list::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
+          background: linear-gradient(135deg, hsl(250 70% 60%), hsl(280 70% 65%));
           border-radius: 10px;
           border: 4px solid transparent;
           background-clip: content-box;
         }
+        .list::-webkit-scrollbar-track {
+          background: transparent;
+        }
         @keyframes pop {
           from {
-            transform: scale(0.98);
-            opacity: 0.7;
+            transform: scale(0.96);
+            opacity: 0;
           }
           to {
             transform: scale(1);
             opacity: 1;
           }
         }
+        @keyframes slide-up {
+          from {
+            transform: translateY(8px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
       `}</style>
 
       {/* Header */}
-      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 bg-[#f0fdf4] border border-[#e5e7eb] px-5 py-[18px] rounded-[18px] shadow-[0_10px_30px_rgba(2,6,23,0.08)]">
-        <div>
-          <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)]">
+      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-white/40 dark:border-border/40 px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(250,70%,60%)]/5 via-[hsl(280,70%,65%)]/5 to-transparent pointer-events-none"></div>
+        <div className="relative z-10">
+          <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-[hsl(250,70%,60%)] to-[hsl(280,70%,65%)] bg-clip-text text-transparent">
             {organization?.name || "NRG TOTAAL"} – To-Do Board
           </h1>
-          <p className="text-[#667085] font-semibold text-[clamp(12px,1.4vw,16px)]">
+          <p className="text-muted-foreground font-semibold text-[clamp(12px,1.4vw,16px)]">
             Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
           </p>
         </div>
-        <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl bg-[rgba(34,197,94,0.08)] border border-[rgba(34,197,94,0.25)] text-center">
-          <div>{formatTime(currentTime)}</div>
-          <div className="text-[clamp(10px,1.2vw,14px)] text-[#667085] font-semibold">{formatDate(currentTime)}</div>
+        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-[0_0_20px_rgba(167,139,250,0.15)]">
+          <div className="text-primary">{formatTime(currentTime)}</div>
+          <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold">{formatDate(currentTime)}</div>
         </div>
-        <div className="flex gap-2.5">
+        <div className="flex gap-2.5 relative z-10">
           <button
             onClick={() => navigate("/dashboard")}
-            className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)] flex items-center gap-2"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)] flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Dashboard
           </button>
           <button
             onClick={handleFullscreen}
-            className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)]"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)]"
           >
             ⛶ Volledig scherm
           </button>
           <button
             onClick={handleClearCompleted}
-            className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-[transform_0.06s_ease,box-shadow_0.2s_ease,background_0.2s_ease] shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:-translate-y-px hover:bg-[#f3f4f6] text-[clamp(12px,1.4vw,16px)]"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)]"
           >
             🧹 Leeg Afgerond
           </button>
@@ -566,11 +580,12 @@ const Board = () => {
       <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] h-full max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
         {/* Kolom 1: Vandaag */}
         <section className="flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3.5">
-            <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Vandaag</div>
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(270,80%,60%)]/20 mb-3.5 shadow-[0_0_20px_rgba(167,139,250,0.1)] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(270,80%,60%)]/10 via-[hsl(270,90%,70%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(270,80%,60%)] to-[hsl(270,90%,70%)] bg-clip-text text-transparent relative z-10">Vandaag</div>
             <Dialog open={openDialog === "Vandaag"} onOpenChange={(open) => setOpenDialog(open ? "Vandaag" : null)}>
               <DialogTrigger asChild>
-                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
+                <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(270,80%,60%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(270,80%,60%)]/10 hover:border-[hsl(270,80%,60%)]/50 transition-all relative z-10">
                   ＋ Taak
                 </button>
               </DialogTrigger>
@@ -667,7 +682,7 @@ const Board = () => {
                   </div>
                   <button
                     onClick={() => handleAddTask("Vandaag")}
-                    className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                    className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
                   >
                     Toevoegen
                   </button>
@@ -688,12 +703,13 @@ const Board = () => {
                 onDragEnd={handleDragEnd}
                 onClick={() => !isDragging && openEditDialog(task)}
                 className={cn(
-                  "relative bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                  draggedTask?.id === task.id && "opacity-50"
+                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(270,80%,60%)]/20 rounded-[18px] p-3.5 shadow-[0_4px_16px_rgba(167,139,250,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(167,139,250,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                  draggedTask?.id === task.id && "opacity-50 scale-95"
                 )}
               >
-                <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
-                <div className="flex items-center gap-1.5 justify-end mb-1">
+                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(270,80%,60%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                   {task.due_date && (
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                       📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
@@ -706,11 +722,11 @@ const Board = () => {
                     {getPriorityBadge(task.priority).label}
                   </span>
                 </div>
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
                   {task.title}
                 </h4>
                 {task.description && (
-                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">
+                  <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
                     {task.description}
                   </p>
                 )}
@@ -721,11 +737,12 @@ const Board = () => {
 
         {/* Kolom 2: Deze week */}
         <section className="flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3.5">
-            <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Deze week</div>
+          <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(210,80%,60%)]/20 mb-3.5 shadow-[0_0_20px_rgba(59,130,246,0.1)] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(210,80%,60%)]/10 via-[hsl(210,90%,70%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+            <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(210,80%,60%)] to-[hsl(210,90%,70%)] bg-clip-text text-transparent relative z-10">Deze week</div>
             <Dialog open={openDialog === "Deze week"} onOpenChange={(open) => setOpenDialog(open ? "Deze week" : null)}>
               <DialogTrigger asChild>
-                <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]">
+                <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(210,80%,60%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(210,80%,60%)]/10 hover:border-[hsl(210,80%,60%)]/50 transition-all relative z-10">
                   ＋ Taak
                 </button>
               </DialogTrigger>
@@ -822,7 +839,7 @@ const Board = () => {
                   </div>
                   <button
                     onClick={() => handleAddTask("Deze week")}
-                    className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                    className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
                   >
                     Toevoegen
                   </button>
@@ -843,12 +860,13 @@ const Board = () => {
                 onDragEnd={handleDragEnd}
                 onClick={() => !isDragging && openEditDialog(task)}
                 className={cn(
-                  "relative bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                  draggedTask?.id === task.id && "opacity-50"
+                  "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(210,80%,60%)]/20 rounded-[18px] p-3.5 shadow-[0_4px_16px_rgba(59,130,246,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(59,130,246,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                  draggedTask?.id === task.id && "opacity-50 scale-95"
                 )}
               >
-                <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
-                <div className="flex items-center gap-1.5 justify-end mb-1">
+                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,80%,60%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                   {task.due_date && (
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                       📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
@@ -861,11 +879,11 @@ const Board = () => {
                     {getPriorityBadge(task.priority).label}
                   </span>
                 </div>
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
                   {task.title}
                 </h4>
                 {task.description && (
-                  <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">
+                  <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
                     {task.description}
                   </p>
                 )}
@@ -879,11 +897,12 @@ const Board = () => {
           <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
             {/* Ziek */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-[#fee2e2] border border-[#fecaca] mb-3">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Ziek</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(30,90%,60%)]/20 mb-3 shadow-[0_0_20px_rgba(251,146,60,0.1)] relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(30,90%,60%)]/10 via-[hsl(30,95%,70%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(30,90%,60%)] to-[hsl(30,95%,70%)] bg-clip-text text-transparent relative z-10">Ziek</div>
                 <Dialog open={openDialog === "Ziek"} onOpenChange={(open) => setOpenDialog(open ? "Ziek" : null)}>
                   <DialogTrigger asChild>
-                    <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
+                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(30,90%,60%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(30,90%,60%)]/10 hover:border-[hsl(30,90%,60%)]/50 transition-all relative z-10" title="Nieuwe naam/reden">＋</button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
@@ -949,7 +968,7 @@ const Board = () => {
                       </div>
                       <button
                         onClick={() => handleAddTask("Ziek")}
-                        className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                        className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
                       >
                         Toevoegen
                       </button>
@@ -970,20 +989,21 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                      draggedTask?.id === task.id && "opacity-50"
+                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(30,90%,60%)]/20 rounded-[18px] p-2.5 shadow-[0_4px_16px_rgba(251,146,60,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(251,146,60,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,90%,60%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
                     {task.due_date && (
-                      <div className="flex justify-end mb-1">
+                      <div className="flex justify-end mb-1 relative z-10">
                         <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
                         </span>
                       </div>
                     )}
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
-                    {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
+                    {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
                   </article>
                 ))}
               </div>
@@ -991,11 +1011,12 @@ const Board = () => {
 
             {/* Verlof */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-[#dcfce7] border border-[#bbf7d0] mb-3">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Verlof</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(145,70%,55%)]/20 mb-3 shadow-[0_0_20px_rgba(34,197,94,0.1)] relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(145,70%,55%)]/10 via-[hsl(145,80%,65%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(145,70%,55%)] to-[hsl(145,80%,65%)] bg-clip-text text-transparent relative z-10">Verlof</div>
                 <Dialog open={openDialog === "Verlof"} onOpenChange={(open) => setOpenDialog(open ? "Verlof" : null)}>
                   <DialogTrigger asChild>
-                    <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe naam/reden">＋</button>
+                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(145,70%,55%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(145,70%,55%)]/10 hover:border-[hsl(145,70%,55%)]/50 transition-all relative z-10" title="Nieuwe naam/reden">＋</button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
@@ -1061,7 +1082,7 @@ const Board = () => {
                       </div>
                       <button
                         onClick={() => handleAddTask("Verlof")}
-                        className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                        className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
                       >
                         Toevoegen
                       </button>
@@ -1082,20 +1103,21 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                      draggedTask?.id === task.id && "opacity-50"
+                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(145,70%,55%)]/20 rounded-[18px] p-2.5 shadow-[0_4px_16px_rgba(34,197,94,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(34,197,94,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(145,70%,55%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
                     {task.due_date && (
-                      <div className="flex justify-end mb-1">
+                      <div className="flex justify-end mb-1 relative z-10">
                         <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
                         </span>
                       </div>
                     )}
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
-                    {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
+                    {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
                   </article>
                 ))}
               </div>
@@ -1108,9 +1130,10 @@ const Board = () => {
           <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
             {/* Afgerond */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Afgerond</div>
-                <span className="text-[#667085] font-extrabold">{getColumnTasks("Afgerond").length}</span>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(145,65%,50%)]/20 mb-3 shadow-[0_0_20px_rgba(34,197,94,0.1)] relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(145,65%,50%)]/10 via-[hsl(145,80%,65%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(145,65%,50%)] to-[hsl(145,80%,65%)] bg-clip-text text-transparent relative z-10">Afgerond</div>
+                <span className="text-muted-foreground font-extrabold relative z-10">{getColumnTasks("Afgerond").length}</span>
               </div>
               <div 
                 className="flex-1 overflow-auto px-1 pt-3.5 pb-1 grid gap-3 content-start list min-h-0"
@@ -1125,12 +1148,13 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-3.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                      draggedTask?.id === task.id && "opacity-50"
+                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(145,65%,50%)]/20 rounded-[18px] p-3.5 shadow-[0_4px_16px_rgba(34,197,94,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(34,197,94,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute top-2 left-2 text-[#94a3b8] text-sm select-none pointer-events-none">☰</div>
-                    <div className="flex items-center gap-1.5 justify-end mb-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(145,65%,50%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                    <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
                       {task.due_date && (
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
@@ -1143,11 +1167,11 @@ const Board = () => {
                         {getPriorityBadge(task.priority).label}
                       </span>
                     </div>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1">
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
                       {task.title}
                     </h4>
                     {task.description && (
-                      <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">
+                      <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
                         {task.description}
                       </p>
                     )}
@@ -1158,11 +1182,12 @@ const Board = () => {
 
             {/* Belangrijke informatie */}
             <div className="flex flex-col min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] bg-white border border-[#e5e7eb] mb-3">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold">Belangrijke informatie</div>
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-[hsl(190,80%,55%)]/20 mb-3 shadow-[0_0_20px_rgba(6,182,212,0.1)] relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(190,80%,55%)]/10 via-[hsl(190,90%,65%)]/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div className="text-[clamp(16px,2vw,22px)] font-extrabold bg-gradient-to-r from-[hsl(190,80%,55%)] to-[hsl(190,90%,65%)] bg-clip-text text-transparent relative z-10">Belangrijke informatie</div>
                 <Dialog open={openDialog === "Belangrijke informatie"} onOpenChange={(open) => setOpenDialog(open ? "Belangrijke informatie" : null)}>
                   <DialogTrigger asChild>
-                    <button className="bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[#f3f4f6]" title="Nieuwe info">＋</button>
+                    <button className="backdrop-blur-md bg-card/80 text-foreground border border-[hsl(190,80%,55%)]/30 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-[hsl(190,80%,55%)]/10 hover:border-[hsl(190,80%,55%)]/50 transition-all relative z-10" title="Nieuwe info">＋</button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
@@ -1191,7 +1216,7 @@ const Board = () => {
                       </div>
                       <button
                         onClick={() => handleAddTask("Belangrijke informatie")}
-                        className="w-full bg-gradient-to-b from-white to-[#f8fafc] text-[#0b0f12] border border-[#e5e7eb] px-3.5 py-2.5 rounded-xl font-bold hover:bg-[#f3f4f6]"
+                        className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
                       >
                         Toevoegen
                       </button>
@@ -1212,13 +1237,14 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative bg-white border border-[#e5e7eb] rounded-[18px] p-2.5 shadow-[0_10px_30px_rgba(2,6,23,0.08)] animate-[pop_0.15s_ease-out] cursor-move hover:shadow-lg transition-all",
-                      draggedTask?.id === task.id && "opacity-50"
+                      "relative backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-[hsl(190,80%,55%)]/20 rounded-[18px] p-2.5 shadow-[0_4px_16px_rgba(6,182,212,0.15)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_8px_24px_rgba(6,182,212,0.25)] hover:-translate-y-1 transition-all duration-200 group",
+                      draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
-                    <div className="absolute top-2 left-2 text-[#94a3b8] text-xs select-none pointer-events-none">☰</div>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4">{task.title}</h4>
-                    {task.description && <p className="text-[#667085] text-[clamp(12px,1.2vw,14px)]">{task.description}</p>}
+                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(190,80%,55%)]/5 to-transparent rounded-[18px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
+                    {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
                   </article>
                 ))}
               </div>
