@@ -9,7 +9,7 @@ const Index = () => {
       {/* Header */}
       <header className="container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">
-          <img src={logo} alt="LinqBoard Logo" className="h-12 w-auto" />
+          <img src={logo} alt="LinqBoard Logo" className="h-16 w-auto" />
           <Link to="/auth">
             <Button variant="outline" size="lg" className="border-2">
               <LogIn className="mr-2 h-5 w-5" />
