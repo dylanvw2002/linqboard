@@ -15,6 +15,7 @@ import { nl } from "date-fns/locale";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-transparent.png";
+import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 
 interface Column {
   id: string;
@@ -715,6 +716,7 @@ const Board = () => {
               >
                 <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                 <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                  <AttachmentCount taskId={task.id} />
                   {task.due_date && (
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                       📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
@@ -870,6 +872,7 @@ const Board = () => {
               >
                 <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                 <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                  <AttachmentCount taskId={task.id} />
                   {task.due_date && (
                     <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                       📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
@@ -1154,6 +1157,7 @@ const Board = () => {
                   >
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                     <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                      <AttachmentCount taskId={task.id} />
                       {task.due_date && (
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
@@ -1240,6 +1244,9 @@ const Board = () => {
                     )}
                   >
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                    <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                      <AttachmentCount taskId={task.id} />
+                    </div>
                     <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
                     {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
                   </article>
@@ -1387,6 +1394,10 @@ const Board = () => {
                 </Popover>
               </div>
             )}
+            
+            {/* Bijlagen sectie */}
+            {editingTask && <TaskAttachments taskId={editingTask.id} />}
+            
             <div className="flex gap-2 pt-4">
               <Button onClick={handleDeleteFromDialog} variant="destructive">
                 Verwijderen
