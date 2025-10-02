@@ -167,13 +167,20 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
     try {
       const { data, error } = await supabase.storage
         .from("task-attachments")
-        .createSignedUrl(attachment.file_path, 60); // 60 seconden geldig
+        .download(attachment.file_path);
 
       if (error) throw error;
 
-      if (data?.signedUrl) {
-        window.open(data.signedUrl, "_blank");
-      }
+      // Maak blob URL en open in nieuwe tab
+      const blob = new Blob([data], { type: attachment.file_type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.target = "_blank";
+      link.click();
+      
+      // Cleanup
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error: any) {
       toast.error("Fout bij openen: " + error.message);
     }
@@ -251,7 +258,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
             }
           });
       }
-    }, [attachment]);
+    }, [attachment.file_path, attachment.file_type]);
 
     if (attachment.file_type.includes("image") && previewUrl) {
       return (
