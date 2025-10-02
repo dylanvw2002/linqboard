@@ -892,10 +892,10 @@ const Board = () => {
         </section>
 
         {/* Kolom 3: Ziek / Verlof Stack */}
-        <section className="flex flex-col min-w-0">
-          <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
+        <section className="flex flex-col min-w-0 h-full">
+          <div className="flex flex-col gap-3 h-full">
             {/* Ziek */}
-            <div className="flex flex-col min-h-0">
+            <div className="flex flex-col flex-1 min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Ziek</div>
                 <Dialog open={openDialog === "Ziek"} onOpenChange={(open) => setOpenDialog(open ? "Ziek" : null)}>
@@ -1008,7 +1008,7 @@ const Board = () => {
             </div>
 
             {/* Verlof */}
-            <div className="flex flex-col min-h-0">
+            <div className="flex flex-col flex-1 min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Verlof</div>
                 <Dialog open={openDialog === "Verlof"} onOpenChange={(open) => setOpenDialog(open ? "Verlof" : null)}>
@@ -1123,10 +1123,10 @@ const Board = () => {
         </section>
 
         {/* Kolom 4: Afgerond / Belangrijke informatie Stack */}
-        <section className="flex flex-col min-w-0">
-          <div className="grid grid-rows-[1fr_1fr] gap-3 h-full">
+        <section className="flex flex-col min-w-0 h-full">
+          <div className="flex flex-col gap-3 h-full">
             {/* Afgerond */}
-            <div className="flex flex-col min-h-0">
+            <div className="flex flex-col flex-1 min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Afgerond</div>
                 <span className="text-muted-foreground font-extrabold relative z-10">{getColumnTasks("Afgerond").length}</span>
@@ -1176,7 +1176,7 @@ const Board = () => {
             </div>
 
             {/* Belangrijke informatie */}
-            <div className="flex flex-col min-h-0">
+            <div className="flex flex-col flex-1 min-h-0">
               <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Belangrijke informatie</div>
                 <Dialog open={openDialog === "Belangrijke informatie"} onOpenChange={(open) => setOpenDialog(open ? "Belangrijke informatie" : null)}>
