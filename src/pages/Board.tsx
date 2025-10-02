@@ -180,6 +180,7 @@ const Board = () => {
     }
 
     toast.success(`${completedTasks.length} taken verwijderd`);
+    await fetchBoardData();
   };
 
   const handleFullscreen = () => {
@@ -226,6 +227,7 @@ const Board = () => {
       setOpenDialog(null);
       setNewTaskTitle("");
       setNewTaskDescription("");
+      await fetchBoardData();
     } catch (error: any) {
       toast.error("Fout bij toevoegen taak");
     }
@@ -236,6 +238,7 @@ const Board = () => {
       const { error } = await supabase.from("tasks").delete().eq("id", taskId);
       if (error) throw error;
       toast.success("Taak verwijderd");
+      await fetchBoardData();
     } catch (error: any) {
       toast.error("Fout bij verwijderen taak");
     }
@@ -264,6 +267,7 @@ const Board = () => {
 
       if (error) throw error;
       toast.success("Taak afgerond");
+      await fetchBoardData();
     } catch (error: any) {
       toast.error("Fout bij afgeronden taak");
     }
@@ -290,6 +294,7 @@ const Board = () => {
 
       if (error) throw error;
       toast.success(`Prioriteit aangepast naar ${getPriorityLabel(newPriority)}`);
+      await fetchBoardData();
     } catch (error: any) {
       toast.error("Fout bij aanpassen prioriteit");
     }
