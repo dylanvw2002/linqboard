@@ -539,17 +539,17 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 backdrop-blur-xl bg-white/70 dark:bg-card/70 border border-white/40 dark:border-border/40 px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[hsl(250,70%,60%)]/5 via-[hsl(280,70%,65%)]/5 to-transparent pointer-events-none"></div>
+      <header className="grid grid-cols-[1fr_auto_auto] items-center gap-4 backdrop-blur-xl bg-card/90 border border-border px-5 py-[18px] rounded-[18px] shadow-lg relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-transparent pointer-events-none"></div>
         <div className="relative z-10">
-          <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-[hsl(250,70%,60%)] to-[hsl(280,70%,65%)] bg-clip-text text-transparent">
+          <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             {organization?.name || "NRG TOTAAL"} – To-Do Board
           </h1>
           <p className="text-muted-foreground font-semibold text-[clamp(12px,1.4vw,16px)]">
             Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
           </p>
         </div>
-        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-[0_0_20px_rgba(167,139,250,0.15)]">
+        <div className="relative z-10 [font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-xl backdrop-blur-sm bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center shadow-lg">
           <div className="text-primary">{formatTime(currentTime)}</div>
           <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold">{formatDate(currentTime)}</div>
         </div>
