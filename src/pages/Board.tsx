@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, ArrowLeft } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2 } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { z } from "zod";
@@ -576,9 +576,9 @@ const Board = () => {
           </button>
           <button
             onClick={handleClearCompleted}
-            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 px-3.5 py-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card text-[clamp(12px,1.4vw,16px)]"
+            className="backdrop-blur-md bg-card/80 text-foreground border border-border/60 p-2.5 rounded-xl font-bold cursor-pointer transition-all duration-200 shadow-[0_4px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:bg-card"
           >
-            🧹 Leeg Afgerond
+            <Trash2 size={20} />
           </button>
         </div>
       </header>
