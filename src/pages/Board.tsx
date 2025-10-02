@@ -16,6 +16,7 @@ import { z } from "zod";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-transparent.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
+import { ActiveUsers } from "@/components/ActiveUsers";
 
 interface Column {
   id: string;
@@ -580,6 +581,7 @@ const Board = () => {
           >
             <Trash2 size={20} />
           </button>
+          <ActiveUsers organizationId={organizationId!} />
         </div>
       </header>
 
