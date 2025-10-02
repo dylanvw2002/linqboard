@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Paperclip, X, FileText, Download, Upload } from "lucide-react";
+import { Paperclip, X, FileText, Download, Upload, Eye } from "lucide-react";
 
 interface Attachment {
   id: string;
@@ -163,6 +163,25 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   };
 
 
+  const handleView = async (attachment: Attachment) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("task-attachments")
+        .download(attachment.file_path);
+
+      if (error) throw error;
+
+      // Maak URL en open in nieuwe tab
+      const url = URL.createObjectURL(data);
+      window.open(url, "_blank");
+      
+      // Cleanup na een tijdje
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    } catch (error: any) {
+      toast.error("Fout bij openen: " + error.message);
+    }
+  };
+
   const handleDownload = async (attachment: Attachment) => {
     try {
       const { data, error } = await supabase.storage
@@ -282,7 +301,17 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
+                  onClick={() => handleView(attachment)}
+                  title="Openen"
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
                   onClick={() => handleDownload(attachment)}
+                  title="Downloaden"
                 >
                   <Download className="h-4 w-4" />
                 </Button>
@@ -291,6 +320,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
                   size="icon"
                   className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
                   onClick={() => handleDelete(attachment)}
+                  title="Verwijderen"
                 >
                   <X className="h-4 w-4" />
                 </Button>
