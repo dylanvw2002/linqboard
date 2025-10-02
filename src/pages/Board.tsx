@@ -547,10 +547,10 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="grid grid-cols-[1fr_auto] items-center gap-4 backdrop-blur-xl bg-white/80 dark:bg-card/90 border border-gray-200 dark:border-border px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-visible">
+      <header className="flex items-center justify-between gap-4 backdrop-blur-xl bg-white/80 dark:bg-card/90 border border-gray-200 dark:border-border px-5 py-[18px] rounded-[18px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-visible">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-accent/5 to-transparent pointer-events-none"></div>
         <div className="flex items-center gap-4 relative z-10 min-w-0">
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
