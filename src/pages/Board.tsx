@@ -1177,7 +1177,7 @@ const Board = () => {
 
             {/* Belangrijke informatie */}
             <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-4 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3.5 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group flex-shrink-0">
+              <div className="flex items-center justify-between px-3.5 py-3 rounded-[14px] backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
                 <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10">Belangrijke informatie</div>
                 <Dialog open={openDialog === "Belangrijke informatie"} onOpenChange={(open) => setOpenDialog(open ? "Belangrijke informatie" : null)}>
                   <DialogTrigger asChild>
