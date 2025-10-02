@@ -576,7 +576,7 @@ const Board = () => {
       </header>
 
       {/* Board Grid */}
-      <main className="grid grid-cols-[repeat(6,minmax(180px,1fr))] gap-2 h-full overflow-hidden max-[1400px]:grid-cols-3 max-[1000px]:grid-cols-2 max-[680px]:grid-cols-1">
+      <main className="grid grid-cols-[repeat(6,minmax(150px,1fr))] gap-2 h-full overflow-hidden max-[1500px]:grid-cols-4 max-[1200px]:grid-cols-3 max-[800px]:grid-cols-2 max-[600px]:grid-cols-1">
         {/* Kolom 1: Vandaag */}
         <section className="flex flex-col min-w-0 min-h-0">
           <div className="flex items-center justify-between px-3 py-2 rounded-xl backdrop-blur-xl bg-white/60 dark:bg-card/60 border border-border/40 mb-2 shadow-[0_4px_12px_rgba(0,0,0,0.06)] relative overflow-hidden group">
