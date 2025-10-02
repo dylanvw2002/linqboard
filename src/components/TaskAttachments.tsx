@@ -172,6 +172,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
       if (dbError) throw dbError;
 
+      // Direct de lijst opnieuw ophalen
+      await fetchAttachments();
+      
       toast.success("Bestand geüpload");
     } catch (error: any) {
       toast.error("Fout bij uploaden: " + error.message);
@@ -286,6 +289,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       console.log("Database delete result:", { error: dbError });
       if (dbError) throw dbError;
 
+      // Direct de lijst updaten zonder te wachten op realtime
+      setAttachments(prev => prev.filter(a => a.id !== attachment.id));
+      
       toast.success("Bijlage verwijderd");
     } catch (error: any) {
       console.error("Delete error:", error);
@@ -396,6 +402,20 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 export const AttachmentCount = ({ taskId }: { taskId: string }) => {
   const [count, setCount] = useState(0);
 
+  const fetchCount = async () => {
+    try {
+      const { count: attachmentCount, error } = await supabase
+        .from("task_attachments")
+        .select("*", { count: "exact", head: true })
+        .eq("task_id", taskId);
+
+      if (error) throw error;
+      setCount(attachmentCount || 0);
+    } catch (error) {
+      console.error("Error fetching attachment count:", error);
+    }
+  };
+
   useEffect(() => {
     fetchCount();
     
@@ -419,20 +439,6 @@ export const AttachmentCount = ({ taskId }: { taskId: string }) => {
       supabase.removeChannel(channel);
     };
   }, [taskId]);
-
-  const fetchCount = async () => {
-    try {
-      const { count: attachmentCount, error } = await supabase
-        .from("task_attachments")
-        .select("*", { count: "exact", head: true })
-        .eq("task_id", taskId);
-
-      if (error) throw error;
-      setCount(attachmentCount || 0);
-    } catch (error) {
-      console.error("Error fetching attachment count:", error);
-    }
-  };
 
   if (count === 0) return null;
 
