@@ -500,12 +500,14 @@ const Board = () => {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden relative bg-background">
-      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-auto min-h-[133.33vh]">
-        <div className="grid grid-rows-[auto_1fr] gap-[18px] p-[22px] min-h-screen pb-[60px]">
+    <div className="h-screen overflow-hidden relative bg-background">
+      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden">
+        <div className="grid grid-rows-[auto_1fr] gap-[18px] p-[22px] h-screen overflow-hidden">
       <style>{`
         body, html {
-          overflow-x: hidden !important;
+          overflow: hidden !important;
+          height: 100vh;
+          max-height: 100vh;
         }
         .list::-webkit-scrollbar {
           width: 14px;
