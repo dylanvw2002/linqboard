@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Plus, Users } from "lucide-react";
+import { ArrowLeft, Loader2, Plus, Menu, ChevronDown, ArrowUp, Check, X, Maximize2, Trash2 } from "lucide-react";
 
 interface Column {
   id: string;
@@ -130,17 +131,32 @@ const Board = () => {
     };
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getColumnColor = (columnName: string) => {
+    const name = columnName.toLowerCase();
+    if (name.includes("ziek")) return "bg-red-50 border-red-100";
+    if (name.includes("verlof")) return "bg-green-50 border-green-100";
+    if (name.includes("afgerond")) return "bg-gray-50 border-gray-100";
+    return "bg-white border-gray-100";
+  };
+
+  const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case "high":
-        return "border-l-4 border-l-destructive";
+        return <Badge variant="destructive" className="text-xs">Hoog</Badge>;
       case "medium":
-        return "border-l-4 border-l-warning";
+        return <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-700 border-orange-200">Medium</Badge>;
       case "low":
-        return "border-l-4 border-l-success";
+        return <Badge variant="secondary" className="text-xs bg-teal-100 text-teal-700 border-teal-200">Laag</Badge>;
       default:
-        return "";
+        return null;
     }
+  };
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const time = now.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+    const date = now.toLocaleDateString("nl-NL", { weekday: "long", day: "2-digit", month: "long" });
+    return `${time} — ${date}`;
   };
 
   if (loading) {
@@ -152,64 +168,101 @@ const Board = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-4xl font-bold">{organization?.name}</h1>
-              <p className="text-muted-foreground">{board?.name}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border">
-              <Users className="h-4 w-4 text-success" />
-              <span className="text-sm font-medium">{onlineUsers.length || 1} online</span>
-            </div>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Nieuwe taak
-            </Button>
-          </div>
-        </div>
-
-        {/* Board Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          {columns.map((column) => (
-            <div key={column.id} className="min-h-[500px]">
-              <div className="mb-4">
-                <h3 className="font-semibold text-lg px-2">{column.name}</h3>
-                <p className="text-sm text-muted-foreground px-2">
-                  {tasks.filter(t => t.column_id === column.id).length} taken
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {organization?.name} – {board?.name}
+                </h1>
+                <p className="text-sm text-gray-600 mt-1">
+                  Live overzicht voor het team – dubbelklik op een taak om te bewerken • Sleep om te ordenen
                 </p>
               </div>
-              
-              <div className="space-y-3">
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-lg font-semibold text-gray-900">{getCurrentDateTime()}</div>
+              </div>
+              <Button variant="outline" size="sm">
+                <Maximize2 className="h-4 w-4 mr-2" />
+                Volledig scherm
+              </Button>
+              <Button variant="outline" size="sm">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Leeg Afgerond
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Board Columns */}
+      <div className="container mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {columns.map((column) => (
+            <div key={column.id} className="flex flex-col">
+              {/* Column Header */}
+              <div className={`rounded-t-lg border-2 ${getColumnColor(column.name)} p-3 flex justify-between items-center`}>
+                <h3 className="font-bold text-base text-gray-900">{column.name}</h3>
+                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs">
+                  + Taak
+                </Button>
+              </div>
+
+              {/* Column Content */}
+              <div className={`flex-1 rounded-b-lg border-2 border-t-0 ${getColumnColor(column.name)} p-3 space-y-3 min-h-[400px]`}>
                 {tasks
                   .filter(task => task.column_id === column.id)
                   .map((task) => (
                     <Card
                       key={task.id}
-                      className={`p-4 cursor-pointer hover:shadow-md transition-all ${getPriorityColor(task.priority)}`}
+                      className="p-3 bg-white hover:shadow-md transition-shadow border-gray-200"
                     >
-                      <h4 className="font-medium mb-2">{task.title}</h4>
+                      {/* Task Header */}
+                      <div className="flex items-start gap-2 mb-2">
+                        <Menu className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                        <h4 className="font-medium text-sm text-gray-900 flex-1">
+                          {task.title}
+                        </h4>
+                      </div>
+
+                      {/* Task Description */}
                       {task.description && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">
+                        <p className="text-xs text-gray-600 mb-2 ml-6">
                           {task.description}
                         </p>
                       )}
+
+                      {/* Task Labels */}
+                      <div className="flex items-center gap-2 mb-3 ml-6">
+                        {getPriorityBadge(task.priority)}
+                        <Badge variant="secondary" className="text-xs">Algemeen</Badge>
+                      </div>
+
+                      {/* Task Actions */}
+                      <div className="flex items-center gap-1 ml-6">
+                        <Button size="icon" variant="ghost" className="h-7 w-7">
+                          <ChevronDown className="h-4 w-4 text-gray-500" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7">
+                          <ArrowUp className="h-4 w-4 text-gray-500" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7">
+                          <Check className="h-4 w-4 text-gray-500" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7">
+                          <X className="h-4 w-4 text-gray-500" />
+                        </Button>
+                      </div>
                     </Card>
                   ))}
-                
-                {tasks.filter(t => t.column_id === column.id).length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground text-sm">
-                    Geen taken
-                  </div>
-                )}
               </div>
             </div>
           ))}
