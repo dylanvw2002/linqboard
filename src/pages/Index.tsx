@@ -89,7 +89,6 @@ const Index = () => {
             
             {/* Decorative elements */}
             <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-tr from-accent to-primary rounded-full opacity-20 blur-2xl"></div>
           </div>
         </div>
       </div>
