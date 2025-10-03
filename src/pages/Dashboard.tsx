@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [userName, setUserName] = useState("");
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
+  const [leaveOrgId, setLeaveOrgId] = useState<string | null>(null);
 
   useEffect(() => {
     checkUser();
@@ -121,6 +122,30 @@ const Dashboard = () => {
     }
   };
 
+  const handleLeaveOrganization = async () => {
+    if (!leaveOrgId) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase
+        .from("memberships")
+        .delete()
+        .eq("organization_id", leaveOrgId)
+        .eq("user_id", session.user.id);
+
+      if (error) throw error;
+
+      toast.success("Je hebt de organisatie verlaten");
+      setOrganizations(organizations.filter((org) => org.id !== leaveOrgId));
+      setLeaveOrgId(null);
+    } catch (error: any) {
+      toast.error("Fout bij verlaten van organisatie");
+      console.error(error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
@@ -189,7 +214,7 @@ const Dashboard = () => {
                   key={org.id}
                   className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative"
                 >
-                  {org.role === 'owner' && (
+                  {org.role === 'owner' ? (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -200,6 +225,18 @@ const Dashboard = () => {
                       }}
                     >
                       <Trash2 className="h-5 w-5" />
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setLeaveOrgId(org.id);
+                      }}
+                    >
+                      Verlaat
                     </Button>
                   )}
                   <div 
@@ -259,6 +296,27 @@ const Dashboard = () => {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Definitief verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Leave confirmation dialog */}
+      <AlertDialog open={!!leaveOrgId} onOpenChange={(open) => !open && setLeaveOrgId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Organisatie verlaten?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Je zult geen toegang meer hebben tot deze organisatie. Je kunt alleen opnieuw lid worden met een uitnodigingscode.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLeaveOrganization}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Verlaat organisatie
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
