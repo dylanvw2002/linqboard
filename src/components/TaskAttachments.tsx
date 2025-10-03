@@ -230,22 +230,17 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       const blob = new Blob([data], { type: attachment.file_type });
       const blobUrl = URL.createObjectURL(blob);
       
-      // Maak download link (werkt altijd, geen popup blocker)
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = attachment.file_name; // Download i.p.v. openen
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Open in nieuwe tab (zodat je tekst kunt selecteren en kopiëren)
+      window.open(blobUrl, '_blank');
       
-      // Cleanup
+      // Cleanup na een tijdje
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
-      }, 1000);
+      }, 60000); // 1 minuut om de tab te openen
       
-      toast.success("Bestand wordt gedownload");
+      toast.success("Bestand wordt geopend");
     } catch (error: any) {
-      toast.error("Fout bij downloaden: " + error.message);
+      toast.error("Fout bij openen: " + error.message);
     }
   };
 
