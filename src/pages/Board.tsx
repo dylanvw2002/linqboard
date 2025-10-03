@@ -147,14 +147,8 @@ const Board = () => {
   };
 
   const setupRealtimeSubscriptions = () => {
-    console.log("Setting up realtime subscriptions for organization:", organizationId);
-    
     const channel = supabase
-      .channel(`board-changes-${organizationId}`, {
-        config: {
-          broadcast: { self: false }
-        }
-      })
+      .channel(`board-${organizationId}`)
       .on(
         "postgres_changes",
         {
@@ -162,16 +156,8 @@ const Board = () => {
           schema: "public",
           table: "tasks",
         },
-        (payload) => {
-          console.log("📝 Task change detected:", payload.eventType, payload);
-          // Direct state update voor snellere response
-          if (payload.eventType === 'INSERT' && payload.new) {
-            setTasks(prev => [...prev, payload.new as Task]);
-          } else if (payload.eventType === 'UPDATE' && payload.new) {
-            setTasks(prev => prev.map(t => t.id === payload.new.id ? payload.new as Task : t));
-          } else if (payload.eventType === 'DELETE' && payload.old) {
-            setTasks(prev => prev.filter(t => t.id !== payload.old.id));
-          }
+        () => {
+          fetchBoardData();
         }
       )
       .on(
@@ -181,24 +167,13 @@ const Board = () => {
           schema: "public",
           table: "columns",
         },
-        (payload) => {
-          console.log("📋 Column change detected:", payload.eventType, payload);
+        () => {
           fetchBoardData();
         }
       )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log("✅ Realtime connected successfully");
-          toast.success("Live updates actief");
-        } else if (status === 'CHANNEL_ERROR') {
-          console.error("❌ Realtime connection error");
-          toast.error("Live updates niet beschikbaar");
-        }
-        console.log("Subscription status:", status);
-      });
+      .subscribe();
 
     return () => {
-      console.log("🔌 Disconnecting realtime");
       supabase.removeChannel(channel);
     };
   };
