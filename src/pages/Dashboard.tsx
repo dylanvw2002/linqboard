@@ -4,13 +4,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import logo from "@/assets/logo-transparent.png";
 
 interface Organization {
   id: string;
   name: string;
   invite_code: string;
+  role: string;
 }
 
 const Dashboard = () => {
@@ -18,6 +29,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [userName, setUserName] = useState("");
+  const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
 
   useEffect(() => {
     checkUser();
@@ -50,11 +62,11 @@ const Dashboard = () => {
       
       if (!session) return;
 
-      // Get user's memberships
+      // Get user's memberships with role
       const { data: memberships, error } = await supabase
         .from("memberships")
         .select(`
-          organization_id,
+          role,
           organizations (
             id,
             name,
@@ -66,8 +78,11 @@ const Dashboard = () => {
       if (error) throw error;
 
       const orgs = memberships
-        ?.map((m: any) => m.organizations)
-        .filter(Boolean) || [];
+        ?.map((m: any) => ({
+          ...m.organizations,
+          role: m.role
+        }))
+        .filter((org: any) => org.id) || [];
       
       setOrganizations(orgs);
     } catch (error: any) {
@@ -84,6 +99,26 @@ const Dashboard = () => {
 
   const handleOpenBoard = (orgId: string) => {
     navigate(`/board/${orgId}`);
+  };
+
+  const handleDeleteOrganization = async () => {
+    if (!deleteOrgId) return;
+
+    try {
+      const { error } = await supabase
+        .from("organizations")
+        .delete()
+        .eq("id", deleteOrgId);
+
+      if (error) throw error;
+
+      toast.success("Organisatie succesvol verwijderd");
+      setOrganizations(organizations.filter((org) => org.id !== deleteOrgId));
+      setDeleteOrgId(null);
+    } catch (error: any) {
+      toast.error("Fout bij verwijderen van organisatie");
+      console.error(error);
+    }
   };
 
   if (loading) {
@@ -152,22 +187,39 @@ const Dashboard = () => {
               {organizations.map((org) => (
                 <Card
                   key={org.id}
-                  className="p-8 hover:shadow-xl transition-all cursor-pointer border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group"
-                  onClick={() => handleOpenBoard(org.id)}
+                  className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative"
                 >
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{org.name}</h3>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>Code:</span>
-                      <span className="font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
-                        {org.invite_code}
-                      </span>
+                  {org.role === 'owner' && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteOrgId(org.id);
+                      }}
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
+                  )}
+                  <div 
+                    className="cursor-pointer"
+                    onClick={() => handleOpenBoard(org.id)}
+                  >
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>Code:</span>
+                        <span className="font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
+                          {org.invite_code}
+                        </span>
+                      </div>
                     </div>
+                    <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105">
+                      Open board
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105">
-                    Open board
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
                 </Card>
               ))}
             </div>
@@ -190,6 +242,27 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Weet je het zeker?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deze actie kan niet ongedaan worden gemaakt. Dit zal permanent de organisatie en alle bijbehorende boards, taken en data verwijderen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOrganization}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Definitief verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
