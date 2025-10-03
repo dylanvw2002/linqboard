@@ -230,13 +230,19 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       const blob = new Blob([data], { type: attachment.file_type });
       const blobUrl = URL.createObjectURL(blob);
       
-      // Open in nieuwe tab (zodat je tekst kunt selecteren en kopiëren)
-      window.open(blobUrl, '_blank');
+      // Gebruik een link element om te openen (voorkomt popup blocker)
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
       // Cleanup na een tijdje
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
-      }, 60000); // 1 minuut om de tab te openen
+      }, 60000); // 1 minuut
       
       toast.success("Bestand wordt geopend");
     } catch (error: any) {
