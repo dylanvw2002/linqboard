@@ -224,12 +224,14 @@ export const TaskAttachments = ({
     setPageNumber(1);
     setScale(1.0);
   };
-
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+  const onDocumentLoadSuccess = ({
+    numPages
+  }: {
+    numPages: number;
+  }) => {
     setNumPages(numPages);
     setPageNumber(1);
   };
-
   const handleZoomIn = () => setScale(prev => Math.min(prev + 0.2, 3.0));
   const handleZoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.5));
   const handlePreviousPage = () => setPageNumber(prev => Math.max(prev - 1, 1));
@@ -346,11 +348,10 @@ export const TaskAttachments = ({
       <Dialog open={viewerOpen} onOpenChange={open => !open && handleCloseViewer()}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0 flex flex-col">
           <DialogHeader className="px-6 py-4 border-b shrink-0">
-            <DialogTitle className="flex items-center justify-between">
+            <DialogTitle className="flex items-center justify-between mx-[100px]">
               <span className="truncate">{viewingAttachment?.file_name}</span>
               <div className="flex gap-2 ml-4">
-                {viewingAttachment?.file_type.includes("pdf") && numPages > 0 && (
-                  <>
+                {viewingAttachment?.file_type.includes("pdf") && numPages > 0 && <>
                     <Button variant="outline" size="sm" onClick={handleZoomOut} disabled={scale <= 0.5}>
                       <ZoomOut className="h-4 w-4" />
                     </Button>
@@ -371,8 +372,7 @@ export const TaskAttachments = ({
                       <ChevronRight className="h-4 w-4" />
                     </Button>
                     <div className="w-px bg-border mx-2" />
-                  </>
-                )}
+                  </>}
                 <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
                   <Download className="h-4 w-4 mr-2" />
                   Download
@@ -381,28 +381,13 @@ export const TaskAttachments = ({
             </DialogTitle>
           </DialogHeader>
           <div className="flex-1 overflow-auto p-4 bg-muted/20">
-            {fileUrl && viewingAttachment && (
-              <>
-                {viewingAttachment.file_type.includes("image") ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <img 
-                      src={fileUrl} 
-                      alt={viewingAttachment.file_name} 
-                      className="max-w-full max-h-full object-contain" 
-                    />
-                  </div>
-                ) : viewingAttachment.file_type.includes("pdf") ? (
-                  <div className="flex justify-center">
-                    <Document
-                      file={fileUrl}
-                      onLoadSuccess={onDocumentLoadSuccess}
-                      loading={
-                        <div className="flex items-center justify-center p-8">
+            {fileUrl && viewingAttachment && <>
+                {viewingAttachment.file_type.includes("image") ? <div className="w-full h-full flex items-center justify-center">
+                    <img src={fileUrl} alt={viewingAttachment.file_name} className="max-w-full max-h-full object-contain" />
+                  </div> : viewingAttachment.file_type.includes("pdf") ? <div className="flex justify-center">
+                    <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="flex items-center justify-center p-8">
                           <p className="text-muted-foreground">PDF laden...</p>
-                        </div>
-                      }
-                      error={
-                        <div className="flex items-center justify-center p-8 text-center">
+                        </div>} error={<div className="flex items-center justify-center p-8 text-center">
                           <div>
                             <p className="text-destructive mb-4">
                               Fout bij laden van PDF
@@ -412,19 +397,10 @@ export const TaskAttachments = ({
                               Download PDF
                             </Button>
                           </div>
-                        </div>
-                      }
-                    >
-                      <Page 
-                        pageNumber={pageNumber} 
-                        scale={scale}
-                        renderTextLayer={true}
-                        renderAnnotationLayer={true}
-                      />
+                        </div>}>
+                      <Page pageNumber={pageNumber} scale={scale} renderTextLayer={true} renderAnnotationLayer={true} />
                     </Document>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center h-full">
+                  </div> : <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                       <p className="text-muted-foreground mb-4">
@@ -435,10 +411,8 @@ export const TaskAttachments = ({
                         Download bestand
                       </Button>
                     </div>
-                  </div>
-                )}
-              </>
-            )}
+                  </div>}
+              </>}
           </div>
         </DialogContent>
       </Dialog>
