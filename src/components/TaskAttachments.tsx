@@ -219,24 +219,49 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
   const handleView = async (attachment: Attachment) => {
     try {
-      // Maak een signed URL (verloopt na 1 uur)
+      toast.success("Bestand wordt geladen...");
+      
+      // Download het bestand direct
       const { data, error } = await supabase.storage
         .from("task-attachments")
-        .createSignedUrl(attachment.file_path, 3600);
+        .download(attachment.file_path);
 
       if (error) throw error;
-      if (!data?.signedUrl) throw new Error("Kon geen URL maken");
+
+      // Converteer naar base64 data URL (wordt niet geblokkeerd door adblockers)
+      const reader = new FileReader();
+      reader.onload = function() {
+        const dataUrl = reader.result as string;
+        
+        // Open in nieuwe tab via data URL
+        const newWindow = window.open();
+        if (newWindow) {
+          newWindow.document.write(`
+            <html>
+              <head>
+                <title>${attachment.file_name}</title>
+                <style>
+                  body { margin: 0; padding: 0; height: 100vh; }
+                  iframe { width: 100%; height: 100%; border: none; }
+                </style>
+              </head>
+              <body>
+                <iframe src="${dataUrl}"></iframe>
+              </body>
+            </html>
+          `);
+          newWindow.document.close();
+          toast.success("Bestand geopend");
+        } else {
+          toast.error("Kon venster niet openen. Controleer popup instellingen.");
+        }
+      };
       
-      // Open de signed URL direct in een nieuwe tab
-      const link = document.createElement("a");
-      link.href = data.signedUrl;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      reader.onerror = function() {
+        toast.error("Fout bij lezen van bestand");
+      };
       
-      toast.success("Bestand wordt geopend");
+      reader.readAsDataURL(new Blob([data], { type: attachment.file_type }));
     } catch (error: any) {
       toast.error("Fout bij openen: " + error.message);
     }
