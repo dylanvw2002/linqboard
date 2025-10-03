@@ -219,30 +219,22 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
   const handleView = async (attachment: Attachment) => {
     try {
-      // Download het bestand als blob
+      // Maak een signed URL (verloopt na 1 uur)
       const { data, error } = await supabase.storage
         .from("task-attachments")
-        .download(attachment.file_path);
+        .createSignedUrl(attachment.file_path, 3600);
 
       if (error) throw error;
-
-      // Maak een blob URL
-      const blob = new Blob([data], { type: attachment.file_type });
-      const blobUrl = URL.createObjectURL(blob);
+      if (!data?.signedUrl) throw new Error("Kon geen URL maken");
       
-      // Gebruik een link element om te openen (voorkomt popup blocker)
+      // Open de signed URL direct in een nieuwe tab
       const link = document.createElement("a");
-      link.href = blobUrl;
+      link.href = data.signedUrl;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
-      // Cleanup na een tijdje
-      setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-      }, 60000); // 1 minuut
       
       toast.success("Bestand wordt geopend");
     } catch (error: any) {
