@@ -36,23 +36,52 @@ const FilePreview = ({
   attachment: Attachment;
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
   useEffect(() => {
-    if (!attachment.file_type.includes("image")) return;
     let mounted = true;
-    supabase.storage.from("task-attachments").createSignedUrl(attachment.file_path, 3600).then(({
-      data
-    }) => {
-      if (mounted && data?.signedUrl) {
-        setPreviewUrl(data.signedUrl);
+    
+    const loadPreview = async () => {
+      try {
+        const { data } = await supabase.storage
+          .from("task-attachments")
+          .download(attachment.file_path);
+        
+        if (mounted && data) {
+          const blob = new Blob([data], { type: attachment.file_type });
+          const url = URL.createObjectURL(blob);
+          setPreviewUrl(url);
+        }
+      } catch (error) {
+        console.error("Error loading preview:", error);
       }
-    });
+    };
+    
+    if (attachment.file_type.includes("image") || attachment.file_type.includes("pdf")) {
+      loadPreview();
+    }
+    
     return () => {
       mounted = false;
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
     };
   }, [attachment.id]);
+  
   if (attachment.file_type.includes("image") && previewUrl) {
     return <img src={previewUrl} alt={attachment.file_name} className="w-12 h-12 object-cover rounded border border-border" />;
   }
+  
+  if (attachment.file_type.includes("pdf") && previewUrl) {
+    return (
+      <div className="w-12 h-12 border border-border rounded overflow-hidden bg-background">
+        <Document file={previewUrl} loading={<div className="w-full h-full flex items-center justify-center"><FileText className="w-6 h-6 text-muted-foreground" /></div>} error={<div className="w-full h-full flex items-center justify-center">{getFileIcon(attachment.file_type)}</div>}>
+          <Page pageNumber={1} width={48} renderTextLayer={false} renderAnnotationLayer={false} />
+        </Document>
+      </div>
+    );
+  }
+  
   return <div className="w-12 h-12 flex items-center justify-center">{getFileIcon(attachment.file_type)}</div>;
 };
 export const TaskAttachments = ({
