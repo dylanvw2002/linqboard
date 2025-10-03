@@ -66,7 +66,11 @@ const Board = () => {
   useEffect(() => {
     checkAccess();
     fetchBoardData();
-    setupRealtimeSubscriptions();
+    
+    const cleanup = setupRealtimeSubscriptions();
+    return () => {
+      if (cleanup) cleanup();
+    };
   }, [organizationId]);
 
   useEffect(() => {
@@ -143,8 +147,8 @@ const Board = () => {
   };
 
   const setupRealtimeSubscriptions = () => {
-    const tasksChannel = supabase
-      .channel("tasks-channel")
+    const channel = supabase
+      .channel(`board-${organizationId}`)
       .on(
         "postgres_changes",
         {
@@ -152,14 +156,30 @@ const Board = () => {
           schema: "public",
           table: "tasks",
         },
-        () => {
+        (payload) => {
+          console.log("Task update:", payload);
           fetchBoardData();
         }
       )
-      .subscribe();
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "columns",
+        },
+        (payload) => {
+          console.log("Column update:", payload);
+          fetchBoardData();
+        }
+      )
+      .subscribe((status) => {
+        console.log("Realtime subscription status:", status);
+      });
 
     return () => {
-      supabase.removeChannel(tasksChannel);
+      console.log("Cleaning up realtime subscription");
+      supabase.removeChannel(channel);
     };
   };
 
