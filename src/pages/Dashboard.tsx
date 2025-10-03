@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2 } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, Hand } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -175,8 +175,8 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-12">
         {/* Welcome Section */}
         <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-2">
-            Hoi {userName || "daar"} 👋
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-2 flex items-center gap-3">
+            Hoi {userName || "daar"} <Hand className="text-primary" />
           </h1>
           <p className="text-xl text-muted-foreground">
             Welkom terug op je dashboard
