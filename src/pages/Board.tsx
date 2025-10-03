@@ -147,8 +147,14 @@ const Board = () => {
   };
 
   const setupRealtimeSubscriptions = () => {
+    console.log("Setting up realtime subscriptions for organization:", organizationId);
+    
     const channel = supabase
-      .channel(`board-${organizationId}`)
+      .channel(`board-changes-${organizationId}`, {
+        config: {
+          broadcast: { self: false }
+        }
+      })
       .on(
         "postgres_changes",
         {
@@ -157,8 +163,15 @@ const Board = () => {
           table: "tasks",
         },
         (payload) => {
-          console.log("Task update:", payload);
-          fetchBoardData();
+          console.log("📝 Task change detected:", payload.eventType, payload);
+          // Direct state update voor snellere response
+          if (payload.eventType === 'INSERT' && payload.new) {
+            setTasks(prev => [...prev, payload.new as Task]);
+          } else if (payload.eventType === 'UPDATE' && payload.new) {
+            setTasks(prev => prev.map(t => t.id === payload.new.id ? payload.new as Task : t));
+          } else if (payload.eventType === 'DELETE' && payload.old) {
+            setTasks(prev => prev.filter(t => t.id !== payload.old.id));
+          }
         }
       )
       .on(
@@ -169,16 +182,23 @@ const Board = () => {
           table: "columns",
         },
         (payload) => {
-          console.log("Column update:", payload);
+          console.log("📋 Column change detected:", payload.eventType, payload);
           fetchBoardData();
         }
       )
       .subscribe((status) => {
-        console.log("Realtime subscription status:", status);
+        if (status === 'SUBSCRIBED') {
+          console.log("✅ Realtime connected successfully");
+          toast.success("Live updates actief");
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error("❌ Realtime connection error");
+          toast.error("Live updates niet beschikbaar");
+        }
+        console.log("Subscription status:", status);
       });
 
     return () => {
-      console.log("Cleaning up realtime subscription");
+      console.log("🔌 Disconnecting realtime");
       supabase.removeChannel(channel);
     };
   };
