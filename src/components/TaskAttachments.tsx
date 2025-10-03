@@ -1,10 +1,16 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Paperclip, X, FileText, Download, Upload, Eye, FileSpreadsheet, File } from "lucide-react";
+import { Paperclip, X, FileText, Download, Upload, Eye, FileSpreadsheet, File, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+// PDF.js worker configureren
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 interface Attachment {
   id: string;
   task_id: string;
@@ -59,6 +65,9 @@ export const TaskAttachments = ({
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewingAttachment, setViewingAttachment] = useState<Attachment | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [numPages, setNumPages] = useState<number>(0);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [scale, setScale] = useState<number>(1.0);
   const fetchAttachments = async () => {
     try {
       const {
@@ -212,7 +221,19 @@ export const TaskAttachments = ({
       setFileUrl(null);
     }
     setViewingAttachment(null);
+    setPageNumber(1);
+    setScale(1.0);
   };
+
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+    setNumPages(numPages);
+    setPageNumber(1);
+  };
+
+  const handleZoomIn = () => setScale(prev => Math.min(prev + 0.2, 3.0));
+  const handleZoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.5));
+  const handlePreviousPage = () => setPageNumber(prev => Math.max(prev - 1, 1));
+  const handleNextPage = () => setPageNumber(prev => Math.min(prev + 1, numPages));
   const handleDownload = async (attachment: Attachment) => {
     try {
       const {
@@ -323,36 +344,88 @@ export const TaskAttachments = ({
 
       {/* File Viewer Modal */}
       <Dialog open={viewerOpen} onOpenChange={open => !open && handleCloseViewer()}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0">
-          <DialogHeader className="px-6 py-4 border-b">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0 flex flex-col">
+          <DialogHeader className="px-6 py-4 border-b shrink-0">
             <DialogTitle className="flex items-center justify-between">
               <span className="truncate">{viewingAttachment?.file_name}</span>
               <div className="flex gap-2 ml-4">
-                <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)} className="mx-[50px]">
+                {viewingAttachment?.file_type.includes("pdf") && numPages > 0 && (
+                  <>
+                    <Button variant="outline" size="sm" onClick={handleZoomOut} disabled={scale <= 0.5}>
+                      <ZoomOut className="h-4 w-4" />
+                    </Button>
+                    <span className="px-3 py-1 text-sm flex items-center">
+                      {Math.round(scale * 100)}%
+                    </span>
+                    <Button variant="outline" size="sm" onClick={handleZoomIn} disabled={scale >= 3.0}>
+                      <ZoomIn className="h-4 w-4" />
+                    </Button>
+                    <div className="w-px bg-border mx-2" />
+                    <Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={pageNumber <= 1}>
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <span className="px-3 py-1 text-sm flex items-center">
+                      {pageNumber} / {numPages}
+                    </span>
+                    <Button variant="outline" size="sm" onClick={handleNextPage} disabled={pageNumber >= numPages}>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <div className="w-px bg-border mx-2" />
+                  </>
+                )}
+                <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
               </div>
             </DialogTitle>
           </DialogHeader>
-          <div className="flex-1 overflow-hidden p-0">
-            {fileUrl && viewingAttachment && <>
-                {viewingAttachment.file_type.includes("image") ? <div className="w-full h-full flex items-center justify-center bg-black/5 p-4">
-                    <img src={fileUrl} alt={viewingAttachment.file_name} className="max-w-full max-h-full object-contain" />
-                  </div> : viewingAttachment.file_type.includes("pdf") ? <object data={fileUrl} type="application/pdf" className="w-full h-full">
-                    <div className="flex items-center justify-center h-full p-8 text-center">
-                      <div>
-                        <p className="text-muted-foreground mb-4">
-                          PDF kan niet worden weergegeven in deze browser
-                        </p>
-                        <Button onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
-                          <Download className="h-4 w-4 mr-2" />
-                          Download PDF
-                        </Button>
-                      </div>
-                    </div>
-                  </object> : <div className="flex items-center justify-center h-full p-8 text-center">
-                    <div>
+          <div className="flex-1 overflow-auto p-4 bg-muted/20">
+            {fileUrl && viewingAttachment && (
+              <>
+                {viewingAttachment.file_type.includes("image") ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <img 
+                      src={fileUrl} 
+                      alt={viewingAttachment.file_name} 
+                      className="max-w-full max-h-full object-contain" 
+                    />
+                  </div>
+                ) : viewingAttachment.file_type.includes("pdf") ? (
+                  <div className="flex justify-center">
+                    <Document
+                      file={fileUrl}
+                      onLoadSuccess={onDocumentLoadSuccess}
+                      loading={
+                        <div className="flex items-center justify-center p-8">
+                          <p className="text-muted-foreground">PDF laden...</p>
+                        </div>
+                      }
+                      error={
+                        <div className="flex items-center justify-center p-8 text-center">
+                          <div>
+                            <p className="text-destructive mb-4">
+                              Fout bij laden van PDF
+                            </p>
+                            <Button onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
+                              <Download className="h-4 w-4 mr-2" />
+                              Download PDF
+                            </Button>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Page 
+                        pageNumber={pageNumber} 
+                        scale={scale}
+                        renderTextLayer={true}
+                        renderAnnotationLayer={true}
+                      />
+                    </Document>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-center">
                       <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                       <p className="text-muted-foreground mb-4">
                         Voorvertoning niet beschikbaar voor dit bestandstype
@@ -362,8 +435,10 @@ export const TaskAttachments = ({
                         Download bestand
                       </Button>
                     </div>
-                  </div>}
-              </>}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
