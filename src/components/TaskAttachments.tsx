@@ -4,13 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Paperclip, X, FileText, Download, Upload, Eye, FileSpreadsheet, File } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 interface Attachment {
   id: string;
   task_id: string;
@@ -21,54 +15,43 @@ interface Attachment {
   uploaded_by: string;
   created_at: string;
 }
-
 interface TaskAttachmentsProps {
   taskId: string;
 }
-
 const getFileIcon = (fileType: string) => {
   if (fileType.includes("pdf")) return <FileText className="w-8 h-8 text-red-500" />;
   if (fileType.includes("word")) return <FileText className="w-8 h-8 text-blue-500" />;
   if (fileType.includes("excel") || fileType.includes("spreadsheet")) return <FileSpreadsheet className="w-8 h-8 text-green-500" />;
   return <File className="w-8 h-8 text-muted-foreground" />;
 };
-
-const FilePreview = ({ attachment }: { attachment: Attachment }) => {
+const FilePreview = ({
+  attachment
+}: {
+  attachment: Attachment;
+}) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
   useEffect(() => {
     if (!attachment.file_type.includes("image")) return;
-    
     let mounted = true;
-    
-    supabase.storage
-      .from("task-attachments")
-      .createSignedUrl(attachment.file_path, 3600)
-      .then(({ data }) => {
-        if (mounted && data?.signedUrl) {
-          setPreviewUrl(data.signedUrl);
-        }
-      });
-    
+    supabase.storage.from("task-attachments").createSignedUrl(attachment.file_path, 3600).then(({
+      data
+    }) => {
+      if (mounted && data?.signedUrl) {
+        setPreviewUrl(data.signedUrl);
+      }
+    });
     return () => {
       mounted = false;
     };
   }, [attachment.id]);
-
   if (attachment.file_type.includes("image") && previewUrl) {
-    return (
-      <img 
-        src={previewUrl} 
-        alt={attachment.file_name}
-        className="w-12 h-12 object-cover rounded border border-border"
-      />
-    );
+    return <img src={previewUrl} alt={attachment.file_name} className="w-12 h-12 object-cover rounded border border-border" />;
   }
-
   return <div className="w-12 h-12 flex items-center justify-center">{getFileIcon(attachment.file_type)}</div>;
 };
-
-export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
+export const TaskAttachments = ({
+  taskId
+}: TaskAttachmentsProps) => {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -76,15 +59,14 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewingAttachment, setViewingAttachment] = useState<Attachment | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
-
   const fetchAttachments = async () => {
     try {
-      const { data, error } = await supabase
-        .from("task_attachments")
-        .select("*")
-        .eq("task_id", taskId)
-        .order("created_at", { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from("task_attachments").select("*").eq("task_id", taskId).order("created_at", {
+        ascending: false
+      });
       if (error) throw error;
       setAttachments(data || []);
     } catch (error) {
@@ -93,40 +75,31 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchAttachments();
-    
     console.log("Setting up realtime subscription for task:", taskId);
-    const channel = supabase
-      .channel(`task-attachments-${taskId}`, {
-        config: {
-          broadcast: { self: true }
+    const channel = supabase.channel(`task-attachments-${taskId}`, {
+      config: {
+        broadcast: {
+          self: true
         }
-      })
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "task_attachments",
-          filter: `task_id=eq.${taskId}`,
-        },
-        (payload) => {
-          console.log("Realtime event received:", payload);
-          fetchAttachments();
-        }
-      )
-      .subscribe((status) => {
-        console.log("Subscription status:", status);
-      });
-
+      }
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "task_attachments",
+      filter: `task_id=eq.${taskId}`
+    }, payload => {
+      console.log("Realtime event received:", payload);
+      fetchAttachments();
+    }).subscribe(status => {
+      console.log("Subscription status:", status);
+    });
     return () => {
       console.log("Cleaning up realtime subscription for task:", taskId);
       supabase.removeChannel(channel);
     };
   }, [taskId]);
-
   const uploadFile = async (file: File) => {
     // Validatie
     const maxSize = 10 * 1024 * 1024; // 10 MB
@@ -134,59 +107,50 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       toast.error("Bestand is te groot. Maximale grootte is 10 MB");
       return;
     }
-
-    const allowedTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "application/vnd.ms-excel",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-    ];
-
+    const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Bestandstype niet ondersteund. Alleen PDF, Word, Excel en afbeeldingen zijn toegestaan");
       return;
     }
-
     setUploading(true);
-
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Niet ingelogd");
 
       // Upload naar storage
       const fileExt = file.name.split(".").pop();
       const fileName = `${taskId}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("task-attachments")
-        .upload(fileName, file);
-
+      const {
+        error: uploadError
+      } = await supabase.storage.from("task-attachments").upload(fileName, file);
       if (uploadError) throw uploadError;
 
       // Maak database entry
-      const { error: dbError } = await supabase
-        .from("task_attachments")
-        .insert({
-          task_id: taskId,
-          file_name: file.name,
-          file_path: fileName,
-          file_size: file.size,
-          file_type: file.type,
-          uploaded_by: user.id,
-        });
-
+      const {
+        error: dbError
+      } = await supabase.from("task_attachments").insert({
+        task_id: taskId,
+        file_name: file.name,
+        file_path: fileName,
+        file_size: file.size,
+        file_type: file.type,
+        uploaded_by: user.id
+      });
       if (dbError) throw dbError;
 
       // Direct de lijst opnieuw ophalen
       await fetchAttachments();
-      
+
       // Trigger event voor count update
-      window.dispatchEvent(new CustomEvent('attachment-uploaded', { detail: { taskId } }));
-      
+      window.dispatchEvent(new CustomEvent('attachment-uploaded', {
+        detail: {
+          taskId
+        }
+      }));
       toast.success("Bestand geüpload");
     } catch (error: any) {
       toast.error("Fout bij uploaden: " + error.message);
@@ -194,53 +158,45 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       setUploading(false);
     }
   };
-
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
-
     const file = files[0];
     await uploadFile(file);
     event.target.value = "";
   };
-
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(false);
-
     const files = event.dataTransfer.files;
     if (!files || files.length === 0) return;
-
     const file = files[0];
     await uploadFile(file);
   };
-
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(true);
   };
-
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(false);
   };
-
-
   const handleView = async (attachment: Attachment) => {
     try {
       toast.success("Bestand wordt geladen...");
-      
-      // Download het bestand direct
-      const { data, error } = await supabase.storage
-        .from("task-attachments")
-        .download(attachment.file_path);
 
+      // Download het bestand direct
+      const {
+        data,
+        error
+      } = await supabase.storage.from("task-attachments").download(attachment.file_path);
       if (error) throw error;
 
       // Maak een blob URL
-      const blob = new Blob([data], { type: attachment.file_type });
+      const blob = new Blob([data], {
+        type: attachment.file_type
+      });
       const url = URL.createObjectURL(blob);
-      
       setFileUrl(url);
       setViewingAttachment(attachment);
       setViewerOpen(true);
@@ -249,7 +205,6 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       toast.error("Fout bij openen: " + error.message);
     }
   };
-
   const handleCloseViewer = () => {
     setViewerOpen(false);
     if (fileUrl) {
@@ -258,13 +213,12 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
     }
     setViewingAttachment(null);
   };
-
   const handleDownload = async (attachment: Attachment) => {
     try {
-      const { data, error } = await supabase.storage
-        .from("task-attachments")
-        .download(attachment.file_path);
-
+      const {
+        data,
+        error
+      } = await supabase.storage.from("task-attachments").download(attachment.file_path);
       if (error) throw error;
 
       // Maak download link
@@ -280,74 +234,56 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       toast.error("Fout bij downloaden: " + error.message);
     }
   };
-
   const handleDelete = async (attachment: Attachment) => {
     try {
       console.log("Deleting attachment:", attachment);
-      
-      // Verwijder uit storage
-      const { error: storageError } = await supabase.storage
-        .from("task-attachments")
-        .remove([attachment.file_path]);
 
-      console.log("Storage delete result:", { error: storageError });
+      // Verwijder uit storage
+      const {
+        error: storageError
+      } = await supabase.storage.from("task-attachments").remove([attachment.file_path]);
+      console.log("Storage delete result:", {
+        error: storageError
+      });
       if (storageError) throw storageError;
 
       // Verwijder uit database
-      const { error: dbError } = await supabase
-        .from("task_attachments")
-        .delete()
-        .eq("id", attachment.id);
-
-      console.log("Database delete result:", { error: dbError });
+      const {
+        error: dbError
+      } = await supabase.from("task_attachments").delete().eq("id", attachment.id);
+      console.log("Database delete result:", {
+        error: dbError
+      });
       if (dbError) throw dbError;
 
       // Direct de lijst updaten zonder te wachten op realtime
       setAttachments(prev => prev.filter(a => a.id !== attachment.id));
-      
+
       // Trigger event voor count update
-      window.dispatchEvent(new CustomEvent('attachment-deleted', { detail: { taskId } }));
-      
+      window.dispatchEvent(new CustomEvent('attachment-deleted', {
+        detail: {
+          taskId
+        }
+      }));
       toast.success("Bijlage verwijderd");
     } catch (error: any) {
       console.error("Delete error:", error);
       toast.error("Fout bij verwijderen: " + error.message);
     }
   };
-
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   };
-
-  return (
-    <>
+  return <>
       <div className="space-y-3">
         <Label>Bijlagen</Label>
 
       {/* Upload sectie */}
-      <div 
-        className={`border-2 border-dashed rounded-lg p-4 transition-colors ${
-          isDragging 
-            ? "border-primary bg-primary/10" 
-            : "border-border hover:bg-accent/5"
-        }`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-      >
-        <input
-          type="file"
-          id={`file-upload-${taskId}`}
-          className="hidden"
-          onChange={handleFileUpload}
-          disabled={uploading}
-        />
-        <label
-          htmlFor={`file-upload-${taskId}`}
-          className="flex flex-col items-center justify-center cursor-pointer"
-        >
+      <div className={`border-2 border-dashed rounded-lg p-4 transition-colors ${isDragging ? "border-primary bg-primary/10" : "border-border hover:bg-accent/5"}`} onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
+        <input type="file" id={`file-upload-${taskId}`} className="hidden" onChange={handleFileUpload} disabled={uploading} />
+        <label htmlFor={`file-upload-${taskId}`} className="flex flex-col items-center justify-center cursor-pointer">
           <Upload className="w-8 h-8 text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground text-center">
             {uploading ? "Uploaden..." : "Sleep een bestand hierheen of klik om te uploaden"}
@@ -359,15 +295,8 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       </div>
 
       {/* Bijlagen lijst */}
-      {loading ? (
-        <div className="text-sm text-muted-foreground">Bijlagen laden...</div>
-      ) : attachments.length > 0 ? (
-        <div className="space-y-2">
-          {attachments.map((attachment) => (
-            <div
-              key={attachment.id}
-              className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-border hover:bg-accent/10 transition-colors"
-            >
+      {loading ? <div className="text-sm text-muted-foreground">Bijlagen laden...</div> : attachments.length > 0 ? <div className="space-y-2">
+          {attachments.map(attachment => <div key={attachment.id} className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-border hover:bg-accent/10 transition-colors">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <FilePreview attachment={attachment} />
                 <div className="flex-1 min-w-0">
@@ -378,54 +307,28 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
                 </div>
               </div>
               <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleView(attachment)}
-                  title="Openen"
-                >
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleView(attachment)} title="Openen">
                   <Eye className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => handleDownload(attachment)}
-                  title="Downloaden"
-                >
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(attachment)} title="Downloaden">
                   <Download className="h-4 w-4" />
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => handleDelete(attachment)}
-                  title="Verwijderen"
-                >
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(attachment)} title="Verwijderen">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-sm text-muted-foreground">Nog geen bijlagen toegevoegd</p>
-      )}
+            </div>)}
+        </div> : <p className="text-sm text-muted-foreground">Nog geen bijlagen toegevoegd</p>}
       </div>
 
       {/* File Viewer Modal */}
-      <Dialog open={viewerOpen} onOpenChange={(open) => !open && handleCloseViewer()}>
+      <Dialog open={viewerOpen} onOpenChange={open => !open && handleCloseViewer()}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0">
           <DialogHeader className="px-6 py-4 border-b">
             <DialogTitle className="flex items-center justify-between">
               <span className="truncate">{viewingAttachment?.file_name}</span>
               <div className="flex gap-2 ml-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => viewingAttachment && handleDownload(viewingAttachment)}
-                >
+                <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)} className="mx-[50px]">
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
@@ -433,22 +336,10 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
             </DialogTitle>
           </DialogHeader>
           <div className="flex-1 overflow-hidden p-0">
-            {fileUrl && viewingAttachment && (
-              <>
-                {viewingAttachment.file_type.includes("image") ? (
-                  <div className="w-full h-full flex items-center justify-center bg-black/5 p-4">
-                    <img 
-                      src={fileUrl} 
-                      alt={viewingAttachment.file_name}
-                      className="max-w-full max-h-full object-contain"
-                    />
-                  </div>
-                ) : viewingAttachment.file_type.includes("pdf") ? (
-                  <object
-                    data={fileUrl}
-                    type="application/pdf"
-                    className="w-full h-full"
-                  >
+            {fileUrl && viewingAttachment && <>
+                {viewingAttachment.file_type.includes("image") ? <div className="w-full h-full flex items-center justify-center bg-black/5 p-4">
+                    <img src={fileUrl} alt={viewingAttachment.file_name} className="max-w-full max-h-full object-contain" />
+                  </div> : viewingAttachment.file_type.includes("pdf") ? <object data={fileUrl} type="application/pdf" className="w-full h-full">
                     <div className="flex items-center justify-center h-full p-8 text-center">
                       <div>
                         <p className="text-muted-foreground mb-4">
@@ -460,9 +351,7 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
                         </Button>
                       </div>
                     </div>
-                  </object>
-                ) : (
-                  <div className="flex items-center justify-center h-full p-8 text-center">
+                  </object> : <div className="flex items-center justify-center h-full p-8 text-center">
                     <div>
                       <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
                       <p className="text-muted-foreground mb-4">
@@ -473,37 +362,37 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
                         Download bestand
                       </Button>
                     </div>
-                  </div>
-                )}
-              </>
-            )}
+                  </div>}
+              </>}
           </div>
         </DialogContent>
       </Dialog>
-    </>
-  );
+    </>;
 };
-
-export const AttachmentCount = ({ taskId }: { taskId: string }) => {
+export const AttachmentCount = ({
+  taskId
+}: {
+  taskId: string;
+}) => {
   const [count, setCount] = useState(0);
-
   const fetchCount = async () => {
     try {
-      const { count: attachmentCount, error } = await supabase
-        .from("task_attachments")
-        .select("*", { count: "exact", head: true })
-        .eq("task_id", taskId);
-
+      const {
+        count: attachmentCount,
+        error
+      } = await supabase.from("task_attachments").select("*", {
+        count: "exact",
+        head: true
+      }).eq("task_id", taskId);
       if (error) throw error;
       setCount(attachmentCount || 0);
     } catch (error) {
       console.error("Error fetching attachment count:", error);
     }
   };
-
   useEffect(() => {
     fetchCount();
-    
+
     // Luister naar custom events voor directe updates
     const handleAttachmentChange = (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -511,39 +400,25 @@ export const AttachmentCount = ({ taskId }: { taskId: string }) => {
         fetchCount();
       }
     };
-    
     window.addEventListener('attachment-deleted', handleAttachmentChange);
     window.addEventListener('attachment-uploaded', handleAttachmentChange);
-    
-    const channel = supabase
-      .channel(`attachments-count-${taskId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "task_attachments",
-          filter: `task_id=eq.${taskId}`,
-        },
-        () => {
-          fetchCount();
-        }
-      )
-      .subscribe();
-
+    const channel = supabase.channel(`attachments-count-${taskId}`).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "task_attachments",
+      filter: `task_id=eq.${taskId}`
+    }, () => {
+      fetchCount();
+    }).subscribe();
     return () => {
       window.removeEventListener('attachment-deleted', handleAttachmentChange);
       window.removeEventListener('attachment-uploaded', handleAttachmentChange);
       supabase.removeChannel(channel);
     };
   }, [taskId]);
-
   if (count === 0) return null;
-
-  return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
+  return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
       <Paperclip className="w-3 h-3" />
       {count}
-    </span>
-  );
+    </span>;
 };
