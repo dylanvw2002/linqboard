@@ -66,12 +66,16 @@ const Board = () => {
   useEffect(() => {
     checkAccess();
     fetchBoardData();
+  }, [organizationId]);
+
+  useEffect(() => {
+    if (!board?.id) return;
     
     const cleanup = setupRealtimeSubscriptions();
     return () => {
       if (cleanup) cleanup();
     };
-  }, [organizationId]);
+  }, [board?.id]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -148,7 +152,7 @@ const Board = () => {
 
   const setupRealtimeSubscriptions = () => {
     const channel = supabase
-      .channel(`board-${organizationId}`)
+      .channel(`board-changes-${organizationId}`)
       .on(
         "postgres_changes",
         {
