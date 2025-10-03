@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Paperclip, X, FileText, Download, Upload, Eye, FileSpreadsheet, File } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Attachment {
   id: string;
@@ -67,6 +73,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewingAttachment, setViewingAttachment] = useState<Attachment | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
 
   const fetchAttachments = async () => {
     try {
@@ -228,43 +237,26 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
 
       if (error) throw error;
 
-      // Converteer naar base64 data URL (wordt niet geblokkeerd door adblockers)
-      const reader = new FileReader();
-      reader.onload = function() {
-        const dataUrl = reader.result as string;
-        
-        // Open in nieuwe tab via data URL
-        const newWindow = window.open();
-        if (newWindow) {
-          newWindow.document.write(`
-            <html>
-              <head>
-                <title>${attachment.file_name}</title>
-                <style>
-                  body { margin: 0; padding: 0; height: 100vh; }
-                  iframe { width: 100%; height: 100%; border: none; }
-                </style>
-              </head>
-              <body>
-                <iframe src="${dataUrl}"></iframe>
-              </body>
-            </html>
-          `);
-          newWindow.document.close();
-          toast.success("Bestand geopend");
-        } else {
-          toast.error("Kon venster niet openen. Controleer popup instellingen.");
-        }
-      };
+      // Maak een blob URL
+      const blob = new Blob([data], { type: attachment.file_type });
+      const url = URL.createObjectURL(blob);
       
-      reader.onerror = function() {
-        toast.error("Fout bij lezen van bestand");
-      };
-      
-      reader.readAsDataURL(new Blob([data], { type: attachment.file_type }));
+      setFileUrl(url);
+      setViewingAttachment(attachment);
+      setViewerOpen(true);
+      toast.success("Bestand geladen");
     } catch (error: any) {
       toast.error("Fout bij openen: " + error.message);
     }
+  };
+
+  const handleCloseViewer = () => {
+    setViewerOpen(false);
+    if (fileUrl) {
+      URL.revokeObjectURL(fileUrl);
+      setFileUrl(null);
+    }
+    setViewingAttachment(null);
   };
 
   const handleDownload = async (attachment: Attachment) => {
@@ -330,8 +322,9 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
   };
 
   return (
-    <div className="space-y-3">
-      <Label>Bijlagen</Label>
+    <>
+      <div className="space-y-3">
+        <Label>Bijlagen</Label>
 
       {/* Upload sectie */}
       <div 
@@ -419,7 +412,75 @@ export const TaskAttachments = ({ taskId }: TaskAttachmentsProps) => {
       ) : (
         <p className="text-sm text-muted-foreground">Nog geen bijlagen toegevoegd</p>
       )}
-    </div>
+      </div>
+
+      {/* File Viewer Modal */}
+      <Dialog open={viewerOpen} onOpenChange={(open) => !open && handleCloseViewer()}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0">
+          <DialogHeader className="px-6 py-4 border-b">
+            <DialogTitle className="flex items-center justify-between">
+              <span className="truncate">{viewingAttachment?.file_name}</span>
+              <div className="flex gap-2 ml-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => viewingAttachment && handleDownload(viewingAttachment)}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-hidden p-0">
+            {fileUrl && viewingAttachment && (
+              <>
+                {viewingAttachment.file_type.includes("image") ? (
+                  <div className="w-full h-full flex items-center justify-center bg-black/5 p-4">
+                    <img 
+                      src={fileUrl} 
+                      alt={viewingAttachment.file_name}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                ) : viewingAttachment.file_type.includes("pdf") ? (
+                  <object
+                    data={fileUrl}
+                    type="application/pdf"
+                    className="w-full h-full"
+                  >
+                    <div className="flex items-center justify-center h-full p-8 text-center">
+                      <div>
+                        <p className="text-muted-foreground mb-4">
+                          PDF kan niet worden weergegeven in deze browser
+                        </p>
+                        <Button onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Download PDF
+                        </Button>
+                      </div>
+                    </div>
+                  </object>
+                ) : (
+                  <div className="flex items-center justify-center h-full p-8 text-center">
+                    <div>
+                      <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground mb-4">
+                        Voorvertoning niet beschikbaar voor dit bestandstype
+                      </p>
+                      <Button onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download bestand
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
