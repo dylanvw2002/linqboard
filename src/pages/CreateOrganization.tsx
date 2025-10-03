@@ -29,10 +29,13 @@ const CreateOrganization = () => {
     setLoading(true);
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // Refresh session to ensure we have a valid token
+      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
       
-      if (!session?.access_token) {
-        throw new Error("Not authenticated");
+      if (sessionError || !session?.access_token) {
+        toast.error("Sessie verlopen. Log opnieuw in.");
+        navigate("/auth?mode=create");
+        return;
       }
 
       const { data, error } = await supabase.functions.invoke("create_org", {
@@ -42,14 +45,24 @@ const CreateOrganization = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Edge function error:", error);
+        throw new Error(error.message || "Kon organisatie niet aanmaken");
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
       if (data?.organization?.invite_code) {
         setInviteCode(data.organization.invite_code);
         toast.success("Organisatie succesvol aangemaakt!");
+      } else {
+        throw new Error("Geen uitnodigingscode ontvangen");
       }
     } catch (error: any) {
-      toast.error(error.message || "Er is iets misgegaan");
+      console.error("Error creating organization:", error);
+      toast.error(error.message || "Er is iets misgegaan bij het aanmaken van de organisatie");
       setLoading(false);
     }
   };
