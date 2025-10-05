@@ -87,6 +87,7 @@ const Board = () => {
   
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
+  const SCALE_FACTOR = 0.75; // UI scale factor
 
   useEffect(() => {
     checkAccess();
@@ -650,8 +651,9 @@ const Board = () => {
           if (!draggedColumn) return;
           
           const canvas = e.currentTarget.getBoundingClientRect();
-          const rawX = Math.max(0, e.clientX - canvas.left - dragOffset.x);
-          const rawY = Math.max(0, e.clientY - canvas.top - dragOffset.y);
+          // Account for UI scale factor
+          const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - dragOffset.x);
+          const rawY = Math.max(0, (e.clientY - canvas.top) / SCALE_FACTOR - dragOffset.y);
           
           const { snappedX, snappedY, guides } = calculateSnap(rawX, rawY);
           
@@ -753,6 +755,7 @@ const Board = () => {
             onDragStart={editMode ? (e) => {
               setDraggedColumn(column);
               const rect = e.currentTarget.getBoundingClientRect();
+              const canvas = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
               setDragOffset({
                 x: e.clientX - rect.left,
                 y: e.clientY - rect.top
