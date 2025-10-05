@@ -31,6 +31,11 @@ interface Column {
   y_position: number;
   width: number;
   height: number;
+  header_height: number;
+  content_padding_top: number;
+  content_padding_right: number;
+  content_padding_bottom: number;
+  content_padding_left: number;
 }
 
 interface Task {
@@ -759,10 +764,16 @@ const Board = () => {
               setSnapGuides(null);
             } : undefined}
           >
-            <div className={cn(
-              "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
-              draggedColumn?.id === column.id && "opacity-40 scale-95"
-            )}>
+            <div 
+              className={cn(
+                "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
+                draggedColumn?.id === column.id && "opacity-40 scale-95"
+              )}
+              style={{
+                height: `${column.header_height || 60}px`,
+                minHeight: `${column.header_height || 60}px`
+              }}
+            >
               <div 
                 className={cn(
                   "text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2",
@@ -889,6 +900,12 @@ const Board = () => {
               onDragOver={(e) => handleDragOver(e, column.id)}
               onDrop={(e) => handleDrop(e, column.id)}
               className="flex-1 min-h-0"
+              style={{
+                paddingTop: `${column.content_padding_top || 0}px`,
+                paddingRight: `${column.content_padding_right || 0}px`,
+                paddingBottom: `${column.content_padding_bottom || 0}px`,
+                paddingLeft: `${column.content_padding_left || 0}px`
+              }}
             >
               <TaskStack>
                 {getColumnTasks(column.id).map((task) => (

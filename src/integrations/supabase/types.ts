@@ -84,7 +84,12 @@ export type Database = {
       columns: {
         Row: {
           board_id: string
+          content_padding_bottom: number | null
+          content_padding_left: number | null
+          content_padding_right: number | null
+          content_padding_top: number | null
           created_at: string
+          header_height: number | null
           height: number | null
           id: string
           name: string
@@ -96,7 +101,12 @@ export type Database = {
         }
         Insert: {
           board_id: string
+          content_padding_bottom?: number | null
+          content_padding_left?: number | null
+          content_padding_right?: number | null
+          content_padding_top?: number | null
           created_at?: string
+          header_height?: number | null
           height?: number | null
           id?: string
           name: string
@@ -108,7 +118,12 @@ export type Database = {
         }
         Update: {
           board_id?: string
+          content_padding_bottom?: number | null
+          content_padding_left?: number | null
+          content_padding_right?: number | null
+          content_padding_top?: number | null
           created_at?: string
+          header_height?: number | null
           height?: number | null
           id?: string
           name?: string

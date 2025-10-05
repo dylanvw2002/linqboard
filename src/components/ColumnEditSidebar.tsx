@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { X } from "lucide-react";
+import { X, Crop } from "lucide-react";
+import { ColumnCropEditor } from "./ColumnCropEditor";
 
 interface Column {
   id: string;
@@ -17,6 +18,11 @@ interface Column {
   y_position: number;
   width: number;
   height: number;
+  header_height: number;
+  content_padding_top: number;
+  content_padding_right: number;
+  content_padding_bottom: number;
+  content_padding_left: number;
 }
 
 interface ColumnEditSidebarProps {
@@ -27,6 +33,7 @@ interface ColumnEditSidebarProps {
 
 export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebarProps) => {
   const [editedColumn, setEditedColumn] = useState(column);
+  const [showCropEditor, setShowCropEditor] = useState(false);
 
   const handleSave = async () => {
     try {
@@ -37,7 +44,12 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           x_position: editedColumn.x_position,
           y_position: editedColumn.y_position,
           width: editedColumn.width,
-          height: editedColumn.height
+          height: editedColumn.height,
+          header_height: editedColumn.header_height,
+          content_padding_top: editedColumn.content_padding_top,
+          content_padding_right: editedColumn.content_padding_right,
+          content_padding_bottom: editedColumn.content_padding_bottom,
+          content_padding_left: editedColumn.content_padding_left
         })
         .eq('id', editedColumn.id);
 
@@ -49,6 +61,10 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
     } catch (error: any) {
       toast.error("Fout bij opslaan: " + error.message);
     }
+  };
+
+  const handleCropChange = (updates: Partial<Column>) => {
+    setEditedColumn({ ...editedColumn, ...updates });
   };
 
   return (
@@ -119,6 +135,82 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           </div>
         </div>
 
+        {/* Header & Content Crop Section */}
+        <div className="space-y-4 pt-6 border-t">
+          <h4 className="font-semibold flex items-center gap-2">
+            <Crop className="h-4 w-4" />
+            Header & Taak Ruimte
+          </h4>
+
+          <div>
+            <Label>Header Hoogte: {editedColumn.header_height || 60}px</Label>
+            <Slider
+              value={[editedColumn.header_height || 60]}
+              onValueChange={(value) => setEditedColumn({...editedColumn, header_height: value[0]})}
+              min={40}
+              max={200}
+              step={5}
+              className="mt-2"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Boven: {editedColumn.content_padding_top || 0}px</Label>
+              <Slider
+                value={[editedColumn.content_padding_top || 0]}
+                onValueChange={(value) => setEditedColumn({...editedColumn, content_padding_top: value[0]})}
+                min={0}
+                max={100}
+                step={5}
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Rechts: {editedColumn.content_padding_right || 0}px</Label>
+              <Slider
+                value={[editedColumn.content_padding_right || 0]}
+                onValueChange={(value) => setEditedColumn({...editedColumn, content_padding_right: value[0]})}
+                min={0}
+                max={100}
+                step={5}
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Onder: {editedColumn.content_padding_bottom || 0}px</Label>
+              <Slider
+                value={[editedColumn.content_padding_bottom || 0]}
+                onValueChange={(value) => setEditedColumn({...editedColumn, content_padding_bottom: value[0]})}
+                min={0}
+                max={100}
+                step={5}
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Links: {editedColumn.content_padding_left || 0}px</Label>
+              <Slider
+                value={[editedColumn.content_padding_left || 0]}
+                onValueChange={(value) => setEditedColumn({...editedColumn, content_padding_left: value[0]})}
+                min={0}
+                max={100}
+                step={5}
+                className="mt-2"
+              />
+            </div>
+          </div>
+
+          <Button 
+            variant="outline" 
+            onClick={() => setShowCropEditor(true)}
+            className="w-full"
+          >
+            <Crop className="h-4 w-4 mr-2" />
+            Open Crop Editor
+          </Button>
+        </div>
+
         <div className="flex gap-2">
           <Button onClick={handleSave} className="flex-1">
             Opslaan
@@ -128,6 +220,14 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           </Button>
         </div>
       </div>
+
+      {showCropEditor && (
+        <ColumnCropEditor
+          column={editedColumn}
+          onClose={() => setShowCropEditor(false)}
+          onChange={handleCropChange}
+        />
+      )}
     </div>
   );
 };
