@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import logo from "@/assets/logo-transparent.png";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -91,7 +92,10 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
       <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-2">
+        <div className="flex justify-center pt-8 pb-4">
+          <img src={logo} alt="LinqBoard Logo" className="h-16" />
+        </div>
+        <CardHeader className="space-y-2 pt-2">
           <CardTitle className="text-3xl font-bold text-center">
             {isForgotPassword 
               ? "Wachtwoord resetten" 
