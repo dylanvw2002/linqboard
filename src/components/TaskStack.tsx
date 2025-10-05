@@ -31,11 +31,14 @@ export const TaskStack = ({
       let totalHeight = 0;
       let visibleTaskCount = 0;
       
+      // Reserve only 20px for the bottom padding instead of 80px
+      const reservedSpace = 20;
+      
       for (let i = 0; i < taskElements.length; i++) {
         const taskHeight = taskElements[i].clientHeight;
         const gap = 12; // gap-3 = 12px
         
-        if (totalHeight + taskHeight > containerHeight - 80) {
+        if (totalHeight + taskHeight > containerHeight - reservedSpace) {
           break;
         }
         
@@ -122,7 +125,7 @@ export const TaskStack = ({
       className="flex-1 px-1 pt-3.5 pb-1 relative"
     >
       {/* Visible tasks */}
-      <div className="grid gap-3 content-start pb-[100px]">
+      <div className="grid gap-3 content-start pb-[20px]">
         {visibleTasks.map((child, index) => (
           <div key={index} data-task-item>
             {child}
