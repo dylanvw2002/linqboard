@@ -861,7 +861,7 @@ const Board = () => {
             key={column.id} 
             className={cn(
               "absolute flex flex-col transition-all",
-              editMode && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl",
+              editMode && !isSelected && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl",
               draggedColumn?.id === column.id && "opacity-50",
               isSelected && "ring-4 ring-primary shadow-2xl"
             )}
@@ -871,14 +871,7 @@ const Board = () => {
               width: `${displayColumn.width}px`,
               height: `${displayColumn.height}px`
             }}
-            draggable={editMode && !isSelected && resizeMode === 'none'}
-            onClick={(e) => {
-              if (editMode && !resizing && resizeMode === 'none') {
-                e.stopPropagation();
-                setSelectedColumn(column);
-                setResizeMode('none');
-              }
-            }}
+            draggable={editMode && !isSelected}
             onDragStart={editMode && !isSelected ? (e) => {
               setDraggedColumn(column);
               const rect = e.currentTarget.getBoundingClientRect();
@@ -934,7 +927,7 @@ const Board = () => {
                   editMode && "cursor-pointer hover:text-primary transition-colors"
                 )}
                 onClick={(e) => {
-                  if (editMode && !isSelected) {
+                  if (editMode) {
                     e.stopPropagation();
                     setEditingColumn(displayColumn);
                   }
