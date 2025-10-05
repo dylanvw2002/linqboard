@@ -5,25 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import logo from "@/assets/logo-transparent.png";
-
 interface Organization {
   id: string;
   name: string;
   invite_code: string;
   role: string;
 }
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -31,60 +20,55 @@ const Dashboard = () => {
   const [userName, setUserName] = useState("");
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [leaveOrgId, setLeaveOrgId] = useState<string | null>(null);
-
   useEffect(() => {
     checkUser();
     fetchOrganizations();
   }, []);
-
   const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    
+    const {
+      data: {
+        session
+      }
+    } = await supabase.auth.getSession();
     if (!session) {
       navigate("/auth");
       return;
     }
 
     // Get user profile
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("full_name")
-      .eq("user_id", session.user.id)
-      .single();
-
+    const {
+      data: profile
+    } = await supabase.from("profiles").select("full_name").eq("user_id", session.user.id).single();
     if (profile) {
       setUserName(profile.full_name);
     }
   };
-
   const fetchOrganizations = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return;
 
       // Get user's memberships with role
-      const { data: memberships, error } = await supabase
-        .from("memberships")
-        .select(`
+      const {
+        data: memberships,
+        error
+      } = await supabase.from("memberships").select(`
           role,
           organizations (
             id,
             name,
             invite_code
           )
-        `)
-        .eq("user_id", session.user.id);
-
+        `).eq("user_id", session.user.id);
       if (error) throw error;
-
-      const orgs = memberships
-        ?.map((m: any) => ({
-          ...m.organizations,
-          role: m.role
-        }))
-        .filter((org: any) => org.id) || [];
-      
+      const orgs = memberships?.map((m: any) => ({
+        ...m.organizations,
+        role: m.role
+      })).filter((org: any) => org.id) || [];
       setOrganizations(orgs);
     } catch (error: any) {
       toast.error("Fout bij laden van organisaties");
@@ -92,73 +76,58 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
-
   const handleOpenBoard = (orgId: string) => {
     navigate(`/board/${orgId}`);
   };
-
   const handleDeleteOrganization = async () => {
     if (!deleteOrgId) return;
-
     try {
-      const { error } = await supabase
-        .from("organizations")
-        .delete()
-        .eq("id", deleteOrgId);
-
+      const {
+        error
+      } = await supabase.from("organizations").delete().eq("id", deleteOrgId);
       if (error) throw error;
-
       toast.success("Organisatie succesvol verwijderd");
-      setOrganizations(organizations.filter((org) => org.id !== deleteOrgId));
+      setOrganizations(organizations.filter(org => org.id !== deleteOrgId));
       setDeleteOrgId(null);
     } catch (error: any) {
       toast.error("Fout bij verwijderen van organisatie");
       console.error(error);
     }
   };
-
   const handleLeaveOrganization = async () => {
     if (!leaveOrgId) return;
-
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return;
-
-      const { error } = await supabase
-        .from("memberships")
-        .delete()
-        .eq("organization_id", leaveOrgId)
-        .eq("user_id", session.user.id);
-
+      const {
+        error
+      } = await supabase.from("memberships").delete().eq("organization_id", leaveOrgId).eq("user_id", session.user.id);
       if (error) throw error;
-
       toast.success("Je hebt de organisatie verlaten");
-      setOrganizations(organizations.filter((org) => org.id !== leaveOrgId));
+      setOrganizations(organizations.filter(org => org.id !== leaveOrgId));
       setLeaveOrgId(null);
     } catch (error: any) {
       toast.error("Fout bij verlaten van organisatie");
       console.error(error);
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">Dashboard laden...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-6 py-0">
@@ -176,7 +145,7 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-12">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 pb-2 flex items-center gap-3">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-0 py-[2px]">
               Hoi {userName || "daar"}
             </span>
             <PartyPopper className="text-primary" size={56} />
@@ -190,8 +159,7 @@ const Dashboard = () => {
         <div className="mb-12">
           <h2 className="text-3xl font-bold mb-6">Jouw organisaties</h2>
           
-          {organizations.length === 0 ? (
-            <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
+          {organizations.length === 0 ? <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="max-w-md mx-auto">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-6">
                   <Plus className="h-10 w-10 text-primary" />
@@ -209,43 +177,20 @@ const Dashboard = () => {
                   </Button>
                 </div>
               </div>
-            </Card>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {organizations.map((org) => (
-                <Card
-                  key={org.id}
-                  className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative"
-                >
-                  {org.role === 'owner' ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteOrgId(org.id);
-                      }}
-                    >
+            </Card> : <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {organizations.map(org => <Card key={org.id} className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
+                  {org.role === 'owner' ? <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
+              e.stopPropagation();
+              setDeleteOrgId(org.id);
+            }}>
                       <Trash2 className="h-5 w-5" />
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setLeaveOrgId(org.id);
-                      }}
-                    >
+                    </Button> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
+              e.stopPropagation();
+              setLeaveOrgId(org.id);
+            }}>
                       Verlaat
-                    </Button>
-                  )}
-                  <div 
-                    className="cursor-pointer"
-                    onClick={() => handleOpenBoard(org.id)}
-                  >
+                    </Button>}
+                  <div className="cursor-pointer" onClick={() => handleOpenBoard(org.id)}>
                     <div className="mb-6">
                       <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -260,15 +205,12 @@ const Dashboard = () => {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
-                </Card>
-              ))}
-            </div>
-          )}
+                </Card>)}
+            </div>}
         </div>
 
         {/* Quick actions */}
-        {organizations.length > 0 && (
-          <div className="border-t border-border/50 pt-8">
+        {organizations.length > 0 && <div className="border-t border-border/50 pt-8">
             <h3 className="text-xl font-semibold mb-4 text-muted-foreground">Snelle acties</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2">
@@ -279,12 +221,11 @@ const Dashboard = () => {
                 Sluit je aan bij team
               </Button>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
 
       {/* Delete confirmation dialog */}
-      <AlertDialog open={!!deleteOrgId} onOpenChange={(open) => !open && setDeleteOrgId(null)}>
+      <AlertDialog open={!!deleteOrgId} onOpenChange={open => !open && setDeleteOrgId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Weet je het zeker?</AlertDialogTitle>
@@ -294,10 +235,7 @@ const Dashboard = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuleren</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteOrganization}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={handleDeleteOrganization} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Definitief verwijderen
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -305,7 +243,7 @@ const Dashboard = () => {
       </AlertDialog>
 
       {/* Leave confirmation dialog */}
-      <AlertDialog open={!!leaveOrgId} onOpenChange={(open) => !open && setLeaveOrgId(null)}>
+      <AlertDialog open={!!leaveOrgId} onOpenChange={open => !open && setLeaveOrgId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Organisatie verlaten?</AlertDialogTitle>
@@ -315,17 +253,12 @@ const Dashboard = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuleren</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleLeaveOrganization}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={handleLeaveOrganization} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Verlaat organisatie
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
