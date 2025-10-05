@@ -77,6 +77,11 @@ const Board = () => {
   const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
   const [editingColumn, setEditingColumn] = useState<Column | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [dragPreview, setDragPreview] = useState<{x: number, y: number} | null>(null);
+  const [snapGuides, setSnapGuides] = useState<{x?: number, y?: number} | null>(null);
+  
+  const GRID_SIZE = 20;
+  const SNAP_THRESHOLD = 15;
 
   useEffect(() => {
     checkAccess();
@@ -446,6 +451,33 @@ const Board = () => {
     }
   };
 
+  const calculateSnap = (x: number, y: number) => {
+    // 1. Snap to grid
+    let snappedX = Math.round(x / GRID_SIZE) * GRID_SIZE;
+    let snappedY = Math.round(y / GRID_SIZE) * GRID_SIZE;
+    
+    // 2. Check alignment with other columns
+    const guides: {x?: number, y?: number} = {};
+    
+    for (const col of columns) {
+      if (col.id === draggedColumn?.id) continue;
+      
+      // X alignment check
+      if (Math.abs(snappedX - col.x_position) < SNAP_THRESHOLD) {
+        snappedX = col.x_position;
+        guides.x = col.x_position;
+      }
+      
+      // Y alignment check
+      if (Math.abs(snappedY - col.y_position) < SNAP_THRESHOLD) {
+        snappedY = col.y_position;
+        guides.y = col.y_position;
+      }
+    }
+    
+    return { snappedX, snappedY, guides };
+  };
+
   const handleDragStart = (e: React.DragEvent, task: Task) => {
     setDraggedTask(task);
     setIsDragging(true);
@@ -610,21 +642,27 @@ const Board = () => {
         }}
         onDragOver={editMode ? (e) => {
           e.preventDefault();
-        } : undefined}
-        onDrop={editMode ? async (e) => {
-          e.preventDefault();
           if (!draggedColumn) return;
           
           const canvas = e.currentTarget.getBoundingClientRect();
-          const newX = Math.max(0, Math.round(e.clientX - canvas.left - dragOffset.x));
-          const newY = Math.max(0, Math.round(e.clientY - canvas.top - dragOffset.y));
+          const rawX = Math.max(0, e.clientX - canvas.left - dragOffset.x);
+          const rawY = Math.max(0, e.clientY - canvas.top - dragOffset.y);
+          
+          const { snappedX, snappedY, guides } = calculateSnap(rawX, rawY);
+          
+          setDragPreview({ x: snappedX, y: snappedY });
+          setSnapGuides(guides);
+        } : undefined}
+        onDrop={editMode ? async (e) => {
+          e.preventDefault();
+          if (!draggedColumn || !dragPreview) return;
           
           try {
             await supabase
               .from('columns')
               .update({ 
-                x_position: newX, 
-                y_position: newY 
+                x_position: dragPreview.x, 
+                y_position: dragPreview.y 
               })
               .eq('id', draggedColumn.id);
             
@@ -635,14 +673,70 @@ const Board = () => {
           }
           
           setDraggedColumn(null);
+          setDragPreview(null);
+          setSnapGuides(null);
         } : undefined}
       >
+        {/* Grid overlay in edit mode */}
+        {editMode && (
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `
+                linear-gradient(to right, hsl(var(--border) / 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, hsl(var(--border) / 0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`
+            }}
+          />
+        )}
+
+        {/* Snap guide lines */}
+        {snapGuides?.x !== undefined && (
+          <div 
+            className="absolute top-0 h-full w-[2px] bg-destructive/70 pointer-events-none z-50"
+            style={{ left: `${snapGuides.x}px` }}
+          />
+        )}
+        {snapGuides?.y !== undefined && (
+          <div 
+            className="absolute left-0 w-full h-[2px] bg-destructive/70 pointer-events-none z-50"
+            style={{ top: `${snapGuides.y}px` }}
+          />
+        )}
+
+        {/* Preview overlay during drag */}
+        {dragPreview && draggedColumn && (
+          <>
+            <div 
+              className="absolute border-4 border-dashed border-primary/50 bg-primary/10 rounded-[24px] pointer-events-none z-40"
+              style={{
+                left: `${dragPreview.x}px`,
+                top: `${dragPreview.y}px`,
+                width: `${draggedColumn.width}px`,
+                height: `${draggedColumn.height}px`
+              }}
+            />
+            {/* Position tooltip */}
+            <div 
+              className="absolute bg-popover text-popover-foreground border px-3 py-1.5 rounded-md text-xs font-medium pointer-events-none z-50 shadow-lg"
+              style={{
+                left: `${dragPreview.x + 10}px`,
+                top: `${dragPreview.y - 35}px`
+              }}
+            >
+              x: {dragPreview.x}px, y: {dragPreview.y}px
+            </div>
+          </>
+        )}
+
         {columns.map((column) => (
           <section 
             key={column.id} 
             className={cn(
               "absolute flex flex-col transition-all",
-              editMode && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl"
+              editMode && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl",
+              draggedColumn?.id === column.id && "opacity-50"
             )}
             style={{
               left: `${column.x_position}px`,
@@ -661,6 +755,8 @@ const Board = () => {
             } : undefined}
             onDragEnd={editMode ? () => {
               setDraggedColumn(null);
+              setDragPreview(null);
+              setSnapGuides(null);
             } : undefined}
           >
             <div className={cn(
