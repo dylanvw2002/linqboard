@@ -1,25 +1,22 @@
 import { cn } from "@/lib/utils";
 
 interface ResizeHandlesProps {
-  mode: 'column' | 'content';
+  mode: 'column' | 'content' | 'header';
   onMouseDown: (e: React.MouseEvent, handle: string) => void;
   activeHandle: string | null;
 }
 
 export const ResizeHandles = ({ mode, onMouseDown, activeHandle }: ResizeHandlesProps) => {
   const isColumn = mode === 'column';
-  const color = isColumn ? 'bg-blue-500' : 'bg-green-500';
-  const hoverColor = isColumn ? 'hover:bg-blue-600' : 'hover:bg-green-600';
+  const color = isColumn ? 'bg-purple-600' : 'bg-purple-600';
+  const hoverColor = isColumn ? 'hover:bg-purple-700' : 'hover:bg-purple-700';
   
+  // Only corner handles
   const handles = [
     { name: 'nw', cursor: 'nwse-resize', style: { top: -6, left: -6 }, title: 'Noordwest hoek' },
-    { name: 'n', cursor: 'ns-resize', style: { top: -6, left: '50%', transform: 'translateX(-50%)' }, title: 'Boven' },
     { name: 'ne', cursor: 'nesw-resize', style: { top: -6, right: -6 }, title: 'Noordoost hoek' },
-    { name: 'e', cursor: 'ew-resize', style: { top: '50%', right: -6, transform: 'translateY(-50%)' }, title: 'Rechts' },
     { name: 'se', cursor: 'nwse-resize', style: { bottom: -6, right: -6 }, title: 'Zuidoost hoek' },
-    { name: 's', cursor: 'ns-resize', style: { bottom: -6, left: '50%', transform: 'translateX(-50%)' }, title: 'Onder' },
-    { name: 'sw', cursor: 'nesw-resize', style: { bottom: -6, left: -6 }, title: 'Zuidwest hoek' },
-    { name: 'w', cursor: 'ew-resize', style: { top: '50%', left: -6, transform: 'translateY(-50%)' }, title: 'Links' }
+    { name: 'sw', cursor: 'nesw-resize', style: { bottom: -6, left: -6 }, title: 'Zuidwest hoek' }
   ];
 
   return (
@@ -28,24 +25,16 @@ export const ResizeHandles = ({ mode, onMouseDown, activeHandle }: ResizeHandles
         <div
           key={handle.name}
           className={cn(
-            "absolute z-50 border-2 border-white rounded-full transition-all shadow-lg",
+            "absolute z-50 border-2 border-white rounded-sm transition-all shadow-lg",
             color,
             hoverColor,
-            activeHandle === handle.name ? "w-4 h-4 scale-150" : "w-3 h-3 hover:scale-125",
+            activeHandle === handle.name ? "w-5 h-5 scale-110" : "w-4 h-4 hover:scale-110",
             `cursor-${handle.cursor}`
           )}
           style={handle.style}
           onMouseDown={(e) => onMouseDown(e, handle.name)}
-          title={`${handle.title} - ${isColumn ? 'Kolom resizen' : 'Content resizen (Alt/Option)'}`}
-        >
-          <div 
-            className={cn(
-              "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-sm",
-              color,
-              handle.name.includes('n') || handle.name.includes('s') ? "w-8 h-1" : "w-1 h-8"
-            )}
-          />
-        </div>
+          title={`${handle.title} - Sleep om grootte aan te passen`}
+        />
       ))}
     </>
   );

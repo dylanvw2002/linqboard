@@ -555,56 +555,46 @@ const Board = () => {
     
     setResizing(true);
     setResizeHandle(handle);
+    const startX = e.clientX / SCALE_FACTOR;
+    const startY = e.clientY / SCALE_FACTOR;
     setResizeStart({
-      x: e.clientX / SCALE_FACTOR,
-      y: e.clientY / SCALE_FACTOR,
+      x: startX,
+      y: startY,
       col: column
     });
     setSelectedColumn(column);
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!resizeStart) return;
+      const deltaX = (moveEvent.clientX / SCALE_FACTOR) - startX;
+      const deltaY = (moveEvent.clientY / SCALE_FACTOR) - startY;
       
-      const deltaX = (moveEvent.clientX / SCALE_FACTOR) - resizeStart.x;
-      const deltaY = (moveEvent.clientY / SCALE_FACTOR) - resizeStart.y;
-      
-      const updated = { ...resizeStart.col };
+      const updated = { ...column };
       
       if (mode === 'header') {
-        // Header mode: only adjust header_height
-        if (handle === 's') {
-          updated.header_height = Math.max(40, Math.min(200, (updated.header_height || 60) + deltaY));
+        // Header mode: adjust header_height from all corners
+        if (handle === 'nw' || handle === 'ne') {
+          updated.header_height = Math.max(40, Math.min(200, (column.header_height || 60) - deltaY));
+        }
+        if (handle === 'sw' || handle === 'se') {
+          updated.header_height = Math.max(40, Math.min(200, (column.header_height || 60) + deltaY));
         }
       } else if (mode === 'content') {
-        // Content mode: adjust padding
-        if (handle === 'n') {
-          updated.content_padding_top = Math.max(0, Math.min(100, (updated.content_padding_top || 0) + deltaY));
-        }
-        if (handle === 'e') {
-          updated.content_padding_right = Math.max(0, Math.min(100, (updated.content_padding_right || 0) - deltaX));
-        }
-        if (handle === 's') {
-          updated.content_padding_bottom = Math.max(0, Math.min(100, (updated.content_padding_bottom || 0) - deltaY));
-        }
-        if (handle === 'w') {
-          updated.content_padding_left = Math.max(0, Math.min(100, (updated.content_padding_left || 0) + deltaX));
-        }
-        // Corner handles adjust both dimensions
+        // Content mode: adjust padding from corners
         if (handle === 'nw') {
-          updated.content_padding_top = Math.max(0, Math.min(100, (updated.content_padding_top || 0) + deltaY));
-          updated.content_padding_left = Math.max(0, Math.min(100, (updated.content_padding_left || 0) + deltaX));
+          updated.content_padding_top = Math.max(0, Math.min(100, (column.content_padding_top || 0) + deltaY));
+          updated.content_padding_left = Math.max(0, Math.min(100, (column.content_padding_left || 0) + deltaX));
         }
         if (handle === 'ne') {
-          updated.content_padding_top = Math.max(0, Math.min(100, (updated.content_padding_top || 0) + deltaY));
-          updated.content_padding_right = Math.max(0, Math.min(100, (updated.content_padding_right || 0) - deltaX));
+          updated.content_padding_top = Math.max(0, Math.min(100, (column.content_padding_top || 0) + deltaY));
+          updated.content_padding_right = Math.max(0, Math.min(100, (column.content_padding_right || 0) - deltaX));
         }
         if (handle === 'sw') {
-          updated.content_padding_bottom = Math.max(0, Math.min(100, (updated.content_padding_bottom || 0) - deltaY));
-          updated.content_padding_left = Math.max(0, Math.min(100, (updated.content_padding_left || 0) + deltaX));
+          updated.content_padding_bottom = Math.max(0, Math.min(100, (column.content_padding_bottom || 0) - deltaY));
+          updated.content_padding_left = Math.max(0, Math.min(100, (column.content_padding_left || 0) + deltaX));
         }
         if (handle === 'se') {
-          updated.content_padding_bottom = Math.max(0, Math.min(100, (updated.content_padding_bottom || 0) - deltaY));
-          updated.content_padding_right = Math.max(0, Math.min(100, (updated.content_padding_right || 0) - deltaX));
+          updated.content_padding_bottom = Math.max(0, Math.min(100, (column.content_padding_bottom || 0) - deltaY));
+          updated.content_padding_right = Math.max(0, Math.min(100, (column.content_padding_right || 0) - deltaX));
         }
       }
       
@@ -886,9 +876,9 @@ const Board = () => {
             
             <div
               className={cn(
-                "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
+                "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
                 draggedColumn?.id === column.id && "opacity-40 scale-95",
-                isSelected && resizeMode === 'header' && "ring-2 ring-yellow-500 bg-yellow-50/20"
+                isSelected && editMode && resizeMode === 'header' && "ring-2 ring-purple-500"
               )}
               style={{
                 height: `${displayColumn.header_height || 60}px`,
@@ -904,13 +894,13 @@ const Board = () => {
               {/* Header resize handles */}
               {isSelected && editMode && resizeMode === 'header' && (
                 <>
-                  <div
-                    className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-yellow-500 border-2 border-white rounded-full cursor-ns-resize hover:scale-125 transition-all shadow-lg z-50"
-                    onMouseDown={(e) => startResize(e, displayColumn, 's', 'header')}
-                    title="Sleep om header hoogte aan te passen"
+                  <ResizeHandles 
+                    mode="header"
+                    onMouseDown={(e, handle) => startResize(e, displayColumn, handle, 'header')}
+                    activeHandle={resizeHandle}
                   />
                   <div 
-                    className="absolute -top-10 left-0 bg-yellow-500 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
+                    className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
                   >
                     Header hoogte: {displayColumn.header_height || 60}px
                   </div>
@@ -1042,8 +1032,8 @@ const Board = () => {
               onDragOver={(e) => handleDragOver(e, column.id)}
               onDrop={(e) => handleDrop(e, column.id)}
               className={cn(
-                "flex-1 min-h-0 relative",
-                isSelected && resizeMode === 'content' && "ring-2 ring-green-500 ring-inset bg-green-50/10"
+                "flex-1 min-h-0 relative overflow-visible",
+                isSelected && editMode && resizeMode === 'content' && "ring-2 ring-purple-500 ring-inset"
               )}
               style={{
                 paddingTop: `${displayColumn.content_padding_top || 0}px`,
@@ -1067,7 +1057,7 @@ const Board = () => {
                     activeHandle={resizeHandle}
                   />
                   <div 
-                    className="absolute -top-10 left-0 bg-green-500 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
+                    className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
                   >
                     Padding: T{displayColumn.content_padding_top || 0} R{displayColumn.content_padding_right || 0} B{displayColumn.content_padding_bottom || 0} L{displayColumn.content_padding_left || 0}
                   </div>
