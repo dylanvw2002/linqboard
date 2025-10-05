@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-transparent.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { ActiveUsers } from "@/components/ActiveUsers";
+import { TaskStack } from "@/components/TaskStack";
 
 interface Column {
   id: string;
@@ -719,47 +720,49 @@ const Board = () => {
             </Dialog>
           </div>
           <div 
-            className="flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start"
             onDragOver={(e) => handleDragOver(e, "Vandaag")}
             onDrop={(e) => handleDrop(e, "Vandaag")}
+            className="flex-1 min-h-0"
           >
-            {getColumnTasks("Vandaag").map((task) => (
-              <article
-                key={task.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, task)}
-                onDragEnd={handleDragEnd}
-                onClick={() => !isDragging && openEditDialog(task)}
-                className={cn(
-                  "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                  draggedTask?.id === task.id && "opacity-50 scale-95"
-                )}
-              >
-                <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                  <AttachmentCount taskId={task.id} />
-                  {task.due_date && (
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                      📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                    </span>
+            <TaskStack>
+              {getColumnTasks("Vandaag").map((task) => (
+                <article
+                  key={task.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, task)}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => !isDragging && openEditDialog(task)}
+                  className={cn(
+                    "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                    draggedTask?.id === task.id && "opacity-50 scale-95"
                   )}
-                  <span className={cn(
-                    "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
-                    getPriorityBadge(task.priority).color
-                  )}>
-                    {getPriorityBadge(task.priority).label}
-                  </span>
-                </div>
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
-                  {task.title}
-                </h4>
-                {task.description && (
-                  <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
-                    {task.description}
-                  </p>
-                )}
-              </article>
-            ))}
+                >
+                  <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                  <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                    <AttachmentCount taskId={task.id} />
+                    {task.due_date && (
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                        📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                      </span>
+                    )}
+                    <span className={cn(
+                      "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                      getPriorityBadge(task.priority).color
+                    )}>
+                      {getPriorityBadge(task.priority).label}
+                    </span>
+                  </div>
+                  <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
+                    {task.title}
+                  </h4>
+                  {task.description && (
+                    <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
+                      {task.description}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </TaskStack>
           </div>
         </section>
 
@@ -875,47 +878,49 @@ const Board = () => {
             </Dialog>
           </div>
           <div 
-            className="flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start"
             onDragOver={(e) => handleDragOver(e, "Deze week")}
             onDrop={(e) => handleDrop(e, "Deze week")}
+            className="flex-1 min-h-0"
           >
-            {getColumnTasks("Deze week").map((task) => (
-              <article
-                key={task.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, task)}
-                onDragEnd={handleDragEnd}
-                onClick={() => !isDragging && openEditDialog(task)}
-                className={cn(
-                  "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                  draggedTask?.id === task.id && "opacity-50 scale-95"
-                )}
-              >
-                <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                  <AttachmentCount taskId={task.id} />
-                  {task.due_date && (
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                      📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                    </span>
+            <TaskStack>
+              {getColumnTasks("Deze week").map((task) => (
+                <article
+                  key={task.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, task)}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => !isDragging && openEditDialog(task)}
+                  className={cn(
+                    "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                    draggedTask?.id === task.id && "opacity-50 scale-95"
                   )}
-                  <span className={cn(
-                    "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
-                    getPriorityBadge(task.priority).color
-                  )}>
-                    {getPriorityBadge(task.priority).label}
-                  </span>
-                </div>
-                <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
-                  {task.title}
-                </h4>
-                {task.description && (
-                  <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
-                    {task.description}
-                  </p>
-                )}
-              </article>
-            ))}
+                >
+                  <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                  <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                    <AttachmentCount taskId={task.id} />
+                    {task.due_date && (
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                        📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                      </span>
+                    )}
+                    <span className={cn(
+                      "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                      getPriorityBadge(task.priority).color
+                    )}>
+                      {getPriorityBadge(task.priority).label}
+                    </span>
+                  </div>
+                  <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
+                    {task.title}
+                  </h4>
+                  {task.description && (
+                    <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
+                      {task.description}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </TaskStack>
           </div>
         </section>
 
@@ -1003,35 +1008,37 @@ const Board = () => {
                 </Dialog>
               </div>
               <div 
-                className="flex-1 px-1 pt-3.5 pb-1 grid gap-2 content-start"
                 onDragOver={(e) => handleDragOver(e, "Ziek")}
                 onDrop={(e) => handleDrop(e, "Ziek")}
+                className="flex-1 min-h-0"
               >
-                {getColumnTasks("Ziek").map((task) => (
-                  <article
-                    key={task.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => !isDragging && openEditDialog(task)}
-                    className={cn(
-                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(30,90%,60%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(251,146,60,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(251,146,60,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(30,90%,60%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                      draggedTask?.id === task.id && "opacity-50 scale-95"
-                    )}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,90%,60%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
-                    {task.due_date && (
-                      <div className="flex justify-end mb-1 relative z-10">
-                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                        </span>
-                      </div>
-                    )}
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
-                    {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
-                  </article>
-                ))}
+                <TaskStack stackOffset={4}>
+                  {getColumnTasks("Ziek").map((task) => (
+                    <article
+                      key={task.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, task)}
+                      onDragEnd={handleDragEnd}
+                      onClick={() => !isDragging && openEditDialog(task)}
+                      className={cn(
+                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(30,90%,60%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(251,146,60,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(251,146,60,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(30,90%,60%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                        draggedTask?.id === task.id && "opacity-50 scale-95"
+                      )}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,90%,60%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                      {task.due_date && (
+                        <div className="flex justify-end mb-1 relative z-10">
+                          <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                            📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                          </span>
+                        </div>
+                      )}
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
+                      {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
+                    </article>
+                  ))}
+                </TaskStack>
               </div>
             </div>
 
@@ -1116,35 +1123,37 @@ const Board = () => {
                 </Dialog>
               </div>
               <div 
-                className="flex-1 px-1 pt-3.5 pb-1 grid gap-2 content-start"
                 onDragOver={(e) => handleDragOver(e, "Verlof")}
                 onDrop={(e) => handleDrop(e, "Verlof")}
+                className="flex-1 min-h-0"
               >
-                {getColumnTasks("Verlof").map((task) => (
-                  <article
-                    key={task.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => !isDragging && openEditDialog(task)}
-                    className={cn(
-                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(210,70%,55%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(59,130,246,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(59,130,246,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(210,70%,55%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                      draggedTask?.id === task.id && "opacity-50 scale-95"
-                    )}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,70%,55%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
-                    {task.due_date && (
-                      <div className="flex justify-end mb-1 relative z-10">
-                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                        </span>
-                      </div>
-                    )}
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
-                    {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
-                  </article>
-                ))}
+                <TaskStack stackOffset={4}>
+                  {getColumnTasks("Verlof").map((task) => (
+                    <article
+                      key={task.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, task)}
+                      onDragEnd={handleDragEnd}
+                      onClick={() => !isDragging && openEditDialog(task)}
+                      className={cn(
+                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(210,70%,55%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(59,130,246,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(59,130,246,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(210,70%,55%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                        draggedTask?.id === task.id && "opacity-50 scale-95"
+                      )}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,70%,55%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                      {task.due_date && (
+                        <div className="flex justify-end mb-1 relative z-10">
+                          <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                            📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                          </span>
+                        </div>
+                      )}
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
+                      {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
+                    </article>
+                  ))}
+                </TaskStack>
               </div>
             </div>
           </div>
@@ -1160,47 +1169,49 @@ const Board = () => {
                 <span className="text-muted-foreground font-extrabold relative z-10">{getColumnTasks("Afgerond").length}</span>
               </div>
               <div 
-                className="flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start"
                 onDragOver={(e) => handleDragOver(e, "Afgerond")}
                 onDrop={(e) => handleDrop(e, "Afgerond")}
+                className="flex-1 min-h-0"
               >
-                {getColumnTasks("Afgerond").map((task) => (
-                  <article
-                    key={task.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => !isDragging && openEditDialog(task)}
-                    className={cn(
-                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                      draggedTask?.id === task.id && "opacity-50 scale-95"
-                    )}
-                  >
-                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                    <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                      <AttachmentCount taskId={task.id} />
-                      {task.due_date && (
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                        </span>
+                <TaskStack>
+                  {getColumnTasks("Afgerond").map((task) => (
+                    <article
+                      key={task.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, task)}
+                      onDragEnd={handleDragEnd}
+                      onClick={() => !isDragging && openEditDialog(task)}
+                      className={cn(
+                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                        draggedTask?.id === task.id && "opacity-50 scale-95"
                       )}
-                      <span className={cn(
-                        "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
-                        getPriorityBadge(task.priority).color
-                      )}>
-                        {getPriorityBadge(task.priority).label}
-                      </span>
-                    </div>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
-                      {task.title}
-                    </h4>
-                    {task.description && (
-                      <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
-                        {task.description}
-                      </p>
-                    )}
-                  </article>
-                ))}
+                    >
+                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                      <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                        <AttachmentCount taskId={task.id} />
+                        {task.due_date && (
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                            📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
+                          </span>
+                        )}
+                        <span className={cn(
+                          "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                          getPriorityBadge(task.priority).color
+                        )}>
+                          {getPriorityBadge(task.priority).label}
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
+                        {task.title}
+                      </h4>
+                      {task.description && (
+                        <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
+                          {task.description}
+                        </p>
+                      )}
+                    </article>
+                  ))}
+                </TaskStack>
               </div>
             </div>
 
@@ -1248,30 +1259,32 @@ const Board = () => {
                 </Dialog>
               </div>
               <div 
-                className="flex-1 px-1 pt-3.5 pb-1 grid gap-2 content-start"
                 onDragOver={(e) => handleDragOver(e, "Belangrijke informatie")}
                 onDrop={(e) => handleDrop(e, "Belangrijke informatie")}
+                className="flex-1 min-h-0"
               >
-                {getColumnTasks("Belangrijke informatie").map((task) => (
-                  <article
-                    key={task.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    onDragEnd={handleDragEnd}
-                    onClick={() => !isDragging && openEditDialog(task)}
-                    className={cn(
-                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                      draggedTask?.id === task.id && "opacity-50 scale-95"
-                    )}
-                  >
-                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
-                    <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                      <AttachmentCount taskId={task.id} />
-                    </div>
-                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
-                    {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
-                  </article>
-                ))}
+                <TaskStack stackOffset={4}>
+                  {getColumnTasks("Belangrijke informatie").map((task) => (
+                    <article
+                      key={task.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, task)}
+                      onDragEnd={handleDragEnd}
+                      onClick={() => !isDragging && openEditDialog(task)}
+                      className={cn(
+                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                        draggedTask?.id === task.id && "opacity-50 scale-95"
+                      )}
+                    >
+                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                      <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                        <AttachmentCount taskId={task.id} />
+                      </div>
+                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
+                      {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
+                    </article>
+                  ))}
+                </TaskStack>
               </div>
             </div>
           </div>
