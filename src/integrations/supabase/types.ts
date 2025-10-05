@@ -88,6 +88,7 @@ export type Database = {
           id: string
           name: string
           position: number
+          width_ratio: number
         }
         Insert: {
           board_id: string
@@ -95,6 +96,7 @@ export type Database = {
           id?: string
           name: string
           position: number
+          width_ratio?: number
         }
         Update: {
           board_id?: string
@@ -102,6 +104,7 @@ export type Database = {
           id?: string
           name?: string
           position?: number
+          width_ratio?: number
         }
         Relationships: [
           {

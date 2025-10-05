@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, ArrowLeft, Trash2 } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Settings } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { z } from "zod";
@@ -18,11 +18,14 @@ import logo from "@/assets/logo-transparent.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { ActiveUsers } from "@/components/ActiveUsers";
 import { TaskStack } from "@/components/TaskStack";
+import { ColumnManagement } from "@/components/ColumnManagement";
 
 interface Column {
   id: string;
   name: string;
   position: number;
+  width_ratio: number;
+  board_id: string;
 }
 
 interface Task {
@@ -63,6 +66,7 @@ const Board = () => {
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
+  const [columnManagementOpen, setColumnManagementOpen] = useState(false);
 
   useEffect(() => {
     checkAccess();
@@ -217,11 +221,11 @@ const Board = () => {
     const twoDaysFromNow = addDays(now, 2);
 
     if (isBefore(due, now)) {
-      return "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]"; // Rood - verlopen
+      return "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]";
     } else if (isBefore(due, twoDaysFromNow)) {
-      return "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]"; // Oranje - binnen 2 dagen
+      return "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]";
     } else {
-      return "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"; // Groen - toekomstig
+      return "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]";
     }
   };
 
@@ -291,26 +295,32 @@ const Board = () => {
     await handleDeleteTask(taskId);
   };
 
-  const getColumnTasks = (columnName: string) =>
-    tasks.filter((task) => {
-      const column = columns.find((col) => col.id === task.column_id);
-      return column?.name === columnName;
-    });
+  const getColumnTasks = (columnId: string) =>
+    tasks.filter((task) => task.column_id === columnId);
 
   const handleClearCompleted = async () => {
     const completedColumn = columns.find((col) => col.name === "Afgerond");
     if (!completedColumn) return;
 
-    const completedTasks = tasks.filter(
-      (task) => task.column_id === completedColumn.id
-    );
+    const completedTasks = tasks.filter((task) => task.column_id === completedColumn.id);
 
-    for (const task of completedTasks) {
-      await supabase.from("tasks").delete().eq("id", task.id);
+    if (completedTasks.length === 0) {
+      toast.error("Er zijn geen voltooide taken om te wissen");
+      return;
     }
 
-    toast.success(`${completedTasks.length} taken verwijderd`);
-    await fetchBoardData();
+    try {
+      const { error } = await supabase
+        .from("tasks")
+        .delete()
+        .eq("column_id", completedColumn.id);
+
+      if (error) throw error;
+      toast.success(`${completedTasks.length} voltooide taken verwijderd`);
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error("Fout bij wissen taken");
+    }
   };
 
   const handleFullscreen = () => {
@@ -321,7 +331,7 @@ const Board = () => {
     }
   };
 
-  const handleAddTask = async (columnName: string) => {
+  const handleAddTask = async (columnId: string) => {
     try {
       const validation = taskSchema.safeParse({
         title: newTaskTitle,
@@ -333,7 +343,7 @@ const Board = () => {
         return;
       }
 
-      const column = columns.find((col) => col.name === columnName);
+      const column = columns.find((col) => col.id === columnId);
       if (!column) {
         toast.error("Kolom niet gevonden");
         return;
@@ -343,14 +353,16 @@ const Board = () => {
         .filter((t) => t.column_id === column.id)
         .reduce((max, t) => Math.max(max, t.position), -1);
 
-      const { error } = await supabase.from("tasks").insert({
-        column_id: column.id,
-        title: validation.data.title,
-        description: validation.data.description || null,
-        priority: newTaskPriority,
-        due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
-        position: maxPosition + 1,
-      });
+      const { error } = await supabase
+        .from("tasks")
+        .insert({
+          column_id: column.id,
+          title: validation.data.title,
+          description: validation.data.description || null,
+          priority: newTaskPriority,
+          due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
+          position: maxPosition + 1,
+        });
 
       if (error) throw error;
 
@@ -368,7 +380,11 @@ const Board = () => {
 
   const handleDeleteTask = async (taskId: string) => {
     try {
-      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+      const { error } = await supabase
+        .from("tasks")
+        .delete()
+        .eq("id", taskId);
+
       if (error) throw error;
       toast.success("Taak verwijderd");
       await fetchBoardData();
@@ -378,52 +394,39 @@ const Board = () => {
   };
 
   const handleMarkDone = async (task: Task) => {
-    try {
-      const doneColumn = columns.find((col) => col.name === "Afgerond");
-      if (!doneColumn) {
-        toast.error("Afgerond kolom niet gevonden");
-        return;
-      }
+    const completedColumn = columns.find((col) => col.name === "Afgerond");
+    if (!completedColumn) {
+      toast.error("Afgerond kolom niet gevonden");
+      return;
+    }
 
+    try {
       const maxPosition = tasks
-        .filter((t) => t.column_id === doneColumn.id)
+        .filter((t) => t.column_id === completedColumn.id)
         .reduce((max, t) => Math.max(max, t.position), -1);
 
       const { error } = await supabase
         .from("tasks")
         .update({
-          column_id: doneColumn.id,
+          column_id: completedColumn.id,
           position: maxPosition + 1,
-          priority: "low",
         })
         .eq("id", task.id);
 
       if (error) throw error;
-      toast.success("Taak afgerond");
+      toast.success("Taak voltooid");
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij afgeronden taak");
+      toast.error("Fout bij voltooien taak");
     }
   };
 
-  const handleChangePriority = async (task: Task, direction: "up" | "down") => {
-    const priorities: Array<"low" | "medium" | "high"> = ["low", "medium", "high"];
-    const currentIndex = priorities.indexOf(task.priority);
-    
-    let newPriority: "low" | "medium" | "high";
-    if (direction === "up") {
-      newPriority = currentIndex < 2 ? priorities[currentIndex + 1] : task.priority;
-    } else {
-      newPriority = currentIndex > 0 ? priorities[currentIndex - 1] : task.priority;
-    }
-
-    if (newPriority === task.priority) return;
-
+  const handleChangePriority = async (taskId: string, newPriority: "low" | "medium" | "high") => {
     try {
       const { error } = await supabase
         .from("tasks")
         .update({ priority: newPriority })
-        .eq("id", task.id);
+        .eq("id", taskId);
 
       if (error) throw error;
       toast.success(`Prioriteit aangepast naar ${getPriorityLabel(newPriority)}`);
@@ -445,41 +448,22 @@ const Board = () => {
     setIsDragging(false);
   };
 
-  const handleDragOver = (e: React.DragEvent, columnName: string) => {
+  const handleDragOver = (e: React.DragEvent, columnId: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-    setDraggedOverColumn(columnName);
+    setDraggedOverColumn(columnId);
   };
 
-  const handleDrop = async (e: React.DragEvent, columnName: string) => {
+  const handleDrop = async (e: React.DragEvent, columnId: string) => {
     e.preventDefault();
     if (!draggedTask) return;
 
-    const targetColumn = columns.find((col) => col.name === columnName);
+    const targetColumn = columns.find((col) => col.id === columnId);
     if (!targetColumn) return;
 
     const currentColumn = columns.find((col) => col.id === draggedTask.column_id);
     
-    // Check of de taak uit "Belangrijke informatie" komt
-    if (currentColumn?.name === "Belangrijke informatie" && columnName !== "Belangrijke informatie") {
-      toast.error("Items uit Belangrijke informatie kunnen niet naar andere kolommen verplaatst worden");
-      setDraggedTask(null);
-      setDraggedOverColumn(null);
-      setIsDragging(false);
-      return;
-    }
-
-    // Check of we proberen iets anders naar "Belangrijke informatie" te slepen
-    if (currentColumn?.name !== "Belangrijke informatie" && columnName === "Belangrijke informatie") {
-      toast.error("Alleen items uit Belangrijke informatie kunnen hierin geplaatst worden");
-      setDraggedTask(null);
-      setDraggedOverColumn(null);
-      setIsDragging(false);
-      return;
-    }
-
-    // Als de taak al in deze kolom zit, doe niets
-    if (currentColumn?.name === columnName) {
+    if (currentColumn?.id === columnId) {
       setDraggedTask(null);
       setDraggedOverColumn(null);
       setIsDragging(false);
@@ -500,7 +484,7 @@ const Board = () => {
         .eq("id", draggedTask.id);
 
       if (error) throw error;
-      toast.success(`Taak verplaatst naar ${columnName}`);
+      toast.success(`Taak verplaatst naar ${targetColumn.name}`);
       await fetchBoardData();
     } catch (error: any) {
       toast.error("Fout bij verplaatsen taak");
@@ -526,27 +510,11 @@ const Board = () => {
     <div className="h-screen overflow-hidden relative bg-background">
       <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-blue-50">
         <div className="flex flex-col gap-[18px] p-[22px] h-screen">
+      
       <style>{`
-        body, html {
-          overflow: hidden !important;
-          height: 100vh;
-          max-height: 100vh;
-        }
-        .list::-webkit-scrollbar {
-          width: 14px;
-        }
-        .list::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, hsl(250 70% 60%), hsl(280 70% 65%));
-          border-radius: 10px;
-          border: 4px solid transparent;
-          background-clip: content-box;
-        }
-        .list::-webkit-scrollbar-track {
-          background: transparent;
-        }
         @keyframes pop {
           from {
-            transform: scale(0.96);
+            transform: scale(0.95);
             opacity: 0;
           }
           to {
@@ -597,6 +565,13 @@ const Board = () => {
             ⛶ Volledig scherm
           </button>
           <button
+            onClick={() => setColumnManagementOpen(true)}
+            className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+            title="Kolommen beheren"
+          >
+            <Settings size={20} />
+          </button>
+          <button
             onClick={handleClearCompleted}
             className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
           >
@@ -607,697 +582,179 @@ const Board = () => {
       </header>
 
       {/* Board Grid */}
-      <main className="grid grid-cols-[repeat(4,minmax(260px,1fr))] gap-[18px] flex-1 min-h-0 max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1">
-        {/* Kolom 1: Vandaag */}
-        <section className="flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-            <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">Vandaag</div>
-            <Dialog open={openDialog === "Vandaag"} onOpenChange={(open) => setOpenDialog(open ? "Vandaag" : null)}>
-              <DialogTrigger asChild>
-                <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                  ＋ Taak
-                </button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Nieuwe taak toevoegen - Vandaag</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Titel *</Label>
-                    <Input
-                      id="title"
-                      value={newTaskTitle}
-                      onChange={(e) => setNewTaskTitle(e.target.value)}
-                      placeholder="Titel van de taak"
-                      maxLength={200}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="description">Beschrijving</Label>
-                    <Textarea
-                      id="description"
-                      value={newTaskDescription}
-                      onChange={(e) => setNewTaskDescription(e.target.value)}
-                      placeholder="Extra details..."
-                      maxLength={1000}
-                    />
-                  </div>
-                  <div>
-                    <Label>Deadline</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !newTaskDueDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={newTaskDueDate}
-                          onSelect={setNewTaskDueDate}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                        {newTaskDueDate && (
-                          <div className="p-3 border-t">
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => setNewTaskDueDate(undefined)}
-                            >
-                              Verwijder datum
-                            </Button>
-                          </div>
-                        )}
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
-                    <Label>Prioriteit</Label>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant={newTaskPriority === "low" ? "default" : "outline"}
-                        onClick={() => setNewTaskPriority("low")}
-                        className="flex-1"
-                      >
-                        Laag
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={newTaskPriority === "medium" ? "default" : "outline"}
-                        onClick={() => setNewTaskPriority("medium")}
-                        className="flex-1"
-                      >
-                        Middel
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={newTaskPriority === "high" ? "default" : "outline"}
-                        onClick={() => setNewTaskPriority("high")}
-                        className="flex-1"
-                      >
-                        Hoog
-                      </Button>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleAddTask("Vandaag")}
-                    className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
-                  >
-                    Toevoegen
+      <main 
+        className="grid gap-[18px] flex-1 min-h-0 max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1"
+        style={{
+          gridTemplateColumns: columns.length > 0 
+            ? columns.map(col => `minmax(260px, ${col.width_ratio}fr)`).join(' ')
+            : 'repeat(4, minmax(260px, 1fr))'
+        }}
+      >
+        {columns.map((column) => (
+          <section key={column.id} className="flex flex-col min-w-0">
+            <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+              <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">{column.name}</div>
+              <Dialog open={openDialog === column.id} onOpenChange={(open) => setOpenDialog(open ? column.id : null)}>
+                <DialogTrigger asChild>
+                  <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                    ＋ Taak
                   </button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div 
-            onDragOver={(e) => handleDragOver(e, "Vandaag")}
-            onDrop={(e) => handleDrop(e, "Vandaag")}
-            className="flex-1 min-h-0"
-          >
-            <TaskStack>
-              {getColumnTasks("Vandaag").map((task) => (
-                <article
-                  key={task.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, task)}
-                  onDragEnd={handleDragEnd}
-                  onClick={() => !isDragging && openEditDialog(task)}
-                  className={cn(
-                    "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                    draggedTask?.id === task.id && "opacity-50 scale-95"
-                  )}
-                >
-                  <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                  <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                    <AttachmentCount taskId={task.id} />
-                    {task.due_date && (
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                        📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                      </span>
-                    )}
-                    <span className={cn(
-                      "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
-                      getPriorityBadge(task.priority).color
-                    )}>
-                      {getPriorityBadge(task.priority).label}
-                    </span>
-                  </div>
-                  <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
-                    {task.title}
-                  </h4>
-                  {task.description && (
-                    <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
-                      {task.description}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </TaskStack>
-          </div>
-        </section>
-
-        {/* Kolom 2: Deze week */}
-        <section className="flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-            <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">Deze week</div>
-            <Dialog open={openDialog === "Deze week"} onOpenChange={(open) => setOpenDialog(open ? "Deze week" : null)}>
-              <DialogTrigger asChild>
-                <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                  ＋ Taak
-                </button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Nieuwe taak toevoegen - Deze week</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="title-week">Titel *</Label>
-                    <Input
-                      id="title-week"
-                      value={newTaskTitle}
-                      onChange={(e) => setNewTaskTitle(e.target.value)}
-                      placeholder="Titel van de taak"
-                      maxLength={200}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="description-week">Beschrijving</Label>
-                    <Textarea
-                      id="description-week"
-                      value={newTaskDescription}
-                      onChange={(e) => setNewTaskDescription(e.target.value)}
-                      placeholder="Extra details..."
-                      maxLength={1000}
-                    />
-                  </div>
-                  <div>
-                    <Label>Deadline</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !newTaskDueDate && "text-muted-foreground"
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Nieuwe taak toevoegen - {column.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor={`title-${column.id}`}>Titel *</Label>
+                      <Input
+                        id={`title-${column.id}`}
+                        value={newTaskTitle}
+                        onChange={(e) => setNewTaskTitle(e.target.value)}
+                        placeholder="Titel van de taak"
+                        maxLength={200}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`description-${column.id}`}>Beschrijving</Label>
+                      <Textarea
+                        id={`description-${column.id}`}
+                        value={newTaskDescription}
+                        onChange={(e) => setNewTaskDescription(e.target.value)}
+                        placeholder="Extra details..."
+                        maxLength={1000}
+                      />
+                    </div>
+                    <div>
+                      <Label>Deadline</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !newTaskDueDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={newTaskDueDate}
+                            onSelect={setNewTaskDueDate}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                          {newTaskDueDate && (
+                            <div className="p-3 border-t">
+                              <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => setNewTaskDueDate(undefined)}
+                              >
+                                Verwijder datum
+                              </Button>
+                            </div>
                           )}
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div>
+                      <Label>Prioriteit</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={newTaskPriority === "low" ? "default" : "outline"}
+                          onClick={() => setNewTaskPriority("low")}
+                          className="flex-1"
                         >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                          Laag
                         </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={newTaskDueDate}
-                          onSelect={setNewTaskDueDate}
-                          initialFocus
-                          className="pointer-events-auto"
-                        />
-                        {newTaskDueDate && (
-                          <div className="p-3 border-t">
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => setNewTaskDueDate(undefined)}
-                            >
-                              Verwijder datum
-                            </Button>
-                          </div>
-                        )}
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div>
-                    <Label>Prioriteit</Label>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant={newTaskPriority === "low" ? "default" : "outline"}
-                        onClick={() => setNewTaskPriority("low")}
-                        className="flex-1"
-                      >
-                        Laag
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={newTaskPriority === "medium" ? "default" : "outline"}
-                        onClick={() => setNewTaskPriority("medium")}
-                        className="flex-1"
-                      >
-                        Middel
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={newTaskPriority === "high" ? "default" : "outline"}
-                        onClick={() => setNewTaskPriority("high")}
-                        className="flex-1"
-                      >
-                        Hoog
-                      </Button>
+                        <Button
+                          type="button"
+                          variant={newTaskPriority === "medium" ? "default" : "outline"}
+                          onClick={() => setNewTaskPriority("medium")}
+                          className="flex-1"
+                        >
+                          Middel
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={newTaskPriority === "high" ? "default" : "outline"}
+                          onClick={() => setNewTaskPriority("high")}
+                          className="flex-1"
+                        >
+                          Hoog
+                        </Button>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => handleAddTask(column.id)}
+                      className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
+                    >
+                      Toevoegen
+                    </button>
                   </div>
-                  <button
-                    onClick={() => handleAddTask("Deze week")}
-                    className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
-                  >
-                    Toevoegen
-                  </button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <div 
-            onDragOver={(e) => handleDragOver(e, "Deze week")}
-            onDrop={(e) => handleDrop(e, "Deze week")}
-            className="flex-1 min-h-0"
-          >
-            <TaskStack>
-              {getColumnTasks("Deze week").map((task) => (
-                <article
-                  key={task.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, task)}
-                  onDragEnd={handleDragEnd}
-                  onClick={() => !isDragging && openEditDialog(task)}
-                  className={cn(
-                    "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                    draggedTask?.id === task.id && "opacity-50 scale-95"
-                  )}
-                >
-                  <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                  <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                    <AttachmentCount taskId={task.id} />
-                    {task.due_date && (
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                        📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                      </span>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div 
+              onDragOver={(e) => handleDragOver(e, column.id)}
+              onDrop={(e) => handleDrop(e, column.id)}
+              className="flex-1 min-h-0"
+            >
+              <TaskStack>
+                {getColumnTasks(column.id).map((task) => (
+                  <article
+                    key={task.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    onDragEnd={handleDragEnd}
+                    onClick={() => !isDragging && openEditDialog(task)}
+                    className={cn(
+                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                      draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
-                    <span className={cn(
-                      "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
-                      getPriorityBadge(task.priority).color
-                    )}>
-                      {getPriorityBadge(task.priority).label}
-                    </span>
-                  </div>
-                  <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
-                    {task.title}
-                  </h4>
-                  {task.description && (
-                    <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
-                      {task.description}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </TaskStack>
-          </div>
-        </section>
-
-        {/* Kolom 3: Ziek / Verlof Stack */}
-        <section className="flex flex-col min-w-0 h-full">
-          <div className="flex flex-col gap-3 h-full">
-            {/* Ziek */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">Ziek</div>
-                <Dialog open={openDialog === "Ziek"} onOpenChange={(open) => setOpenDialog(open ? "Ziek" : null)}>
-                  <DialogTrigger asChild>
-                    <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" title="Nieuwe naam/reden">＋</button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Persoon toevoegen - Ziek</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="title-ziek">Naam *</Label>
-                        <Input
-                          id="title-ziek"
-                          value={newTaskTitle}
-                          onChange={(e) => setNewTaskTitle(e.target.value)}
-                          placeholder="Naam van persoon"
-                          maxLength={200}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="description-ziek">Reden</Label>
-                        <Textarea
-                          id="description-ziek"
-                          value={newTaskDescription}
-                          onChange={(e) => setNewTaskDescription(e.target.value)}
-                          placeholder="Extra details..."
-                          maxLength={1000}
-                        />
-                      </div>
-                      <div>
-                        <Label>Terug verwacht op</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !newTaskDueDate && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={newTaskDueDate}
-                              onSelect={setNewTaskDueDate}
-                              initialFocus
-                              className="pointer-events-auto"
-                            />
-                            {newTaskDueDate && (
-                              <div className="p-3 border-t">
-                                <Button
-                                  variant="outline"
-                                  className="w-full"
-                                  onClick={() => setNewTaskDueDate(undefined)}
-                                >
-                                  Verwijder datum
-                                </Button>
-                              </div>
-                            )}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <button
-                        onClick={() => handleAddTask("Ziek")}
-                        className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
-                      >
-                        Toevoegen
-                      </button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div 
-                onDragOver={(e) => handleDragOver(e, "Ziek")}
-                onDrop={(e) => handleDrop(e, "Ziek")}
-                className="flex-1 min-h-0"
-              >
-                <TaskStack stackOffset={4}>
-                  {getColumnTasks("Ziek").map((task) => (
-                    <article
-                      key={task.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, task)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => !isDragging && openEditDialog(task)}
-                      className={cn(
-                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(30,90%,60%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(251,146,60,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(251,146,60,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(30,90%,60%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                        draggedTask?.id === task.id && "opacity-50 scale-95"
-                      )}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(30,90%,60%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                  >
+                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                    <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
+                      <AttachmentCount taskId={task.id} />
                       {task.due_date && (
-                        <div className="flex justify-end mb-1 relative z-10">
-                          <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                            📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                          </span>
-                        </div>
-                      )}
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
-                      {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
-                    </article>
-                  ))}
-                </TaskStack>
-              </div>
-            </div>
-
-            {/* Verlof */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">Verlof</div>
-                <Dialog open={openDialog === "Verlof"} onOpenChange={(open) => setOpenDialog(open ? "Verlof" : null)}>
-                  <DialogTrigger asChild>
-                    <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" title="Nieuwe naam/reden">＋</button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Persoon toevoegen - Verlof</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="title-verlof">Naam *</Label>
-                        <Input
-                          id="title-verlof"
-                          value={newTaskTitle}
-                          onChange={(e) => setNewTaskTitle(e.target.value)}
-                          placeholder="Naam van persoon"
-                          maxLength={200}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="description-verlof">Reden</Label>
-                        <Textarea
-                          id="description-verlof"
-                          value={newTaskDescription}
-                          onChange={(e) => setNewTaskDescription(e.target.value)}
-                          placeholder="Extra details..."
-                          maxLength={1000}
-                        />
-                      </div>
-                      <div>
-                        <Label>Terug verwacht op</Label>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !newTaskDueDate && "text-muted-foreground"
-                              )}
-                            >
-                              <CalendarIcon className="mr-2 h-4 w-4" />
-                              {newTaskDueDate ? format(newTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={newTaskDueDate}
-                              onSelect={setNewTaskDueDate}
-                              initialFocus
-                              className="pointer-events-auto"
-                            />
-                            {newTaskDueDate && (
-                              <div className="p-3 border-t">
-                                <Button
-                                  variant="outline"
-                                  className="w-full"
-                                  onClick={() => setNewTaskDueDate(undefined)}
-                                >
-                                  Verwijder datum
-                                </Button>
-                              </div>
-                            )}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                      <button
-                        onClick={() => handleAddTask("Verlof")}
-                        className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
-                      >
-                        Toevoegen
-                      </button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div 
-                onDragOver={(e) => handleDragOver(e, "Verlof")}
-                onDrop={(e) => handleDrop(e, "Verlof")}
-                className="flex-1 min-h-0"
-              >
-                <TaskStack stackOffset={4}>
-                  {getColumnTasks("Verlof").map((task) => (
-                    <article
-                      key={task.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, task)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => !isDragging && openEditDialog(task)}
-                      className={cn(
-                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-[hsl(210,70%,55%)]/40 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(59,130,246,0.2),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(59,130,246,0.4),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-[hsl(210,70%,55%)]/20 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                        draggedTask?.id === task.id && "opacity-50 scale-95"
-                      )}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(210,70%,55%)]/10 to-transparent rounded-[24px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
-                      {task.due_date && (
-                        <div className="flex justify-end mb-1 relative z-10">
-                          <span className={`inline-block px-1.5 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                            📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                          </span>
-                        </div>
-                      )}
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
-                      {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
-                    </article>
-                  ))}
-                </TaskStack>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Kolom 4: Afgerond / Belangrijke informatie Stack */}
-        <section className="flex flex-col min-w-0 h-full">
-          <div className="flex flex-col gap-3 h-full">
-            {/* Afgerond */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">Afgerond</div>
-                <span className="text-muted-foreground font-extrabold relative z-10">{getColumnTasks("Afgerond").length}</span>
-              </div>
-              <div 
-                onDragOver={(e) => handleDragOver(e, "Afgerond")}
-                onDrop={(e) => handleDrop(e, "Afgerond")}
-                className="flex-1 min-h-0"
-              >
-                <TaskStack>
-                  {getColumnTasks("Afgerond").map((task) => (
-                    <article
-                      key={task.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, task)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => !isDragging && openEditDialog(task)}
-                      className={cn(
-                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                        draggedTask?.id === task.id && "opacity-50 scale-95"
-                      )}
-                    >
-                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                      <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                        <AttachmentCount taskId={task.id} />
-                        {task.due_date && (
-                          <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                            📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
-                          </span>
-                        )}
-                        <span className={cn(
-                          "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
-                          getPriorityBadge(task.priority).color
-                        )}>
-                          {getPriorityBadge(task.priority).label}
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                          📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}
                         </span>
-                      </div>
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
-                        {task.title}
-                      </h4>
-                      {task.description && (
-                        <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
-                          {task.description}
-                        </p>
                       )}
-                    </article>
-                  ))}
-                </TaskStack>
-              </div>
-            </div>
-
-            {/* Belangrijke informatie */}
-            <div className="flex flex-col flex-1 min-h-0">
-              <div className="flex items-center justify-between px-4 py-3.5 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">Belangrijke informatie</div>
-                <Dialog open={openDialog === "Belangrijke informatie"} onOpenChange={(open) => setOpenDialog(open ? "Belangrijke informatie" : null)}>
-                  <DialogTrigger asChild>
-                    <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" title="Nieuwe info">＋</button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Informatie toevoegen</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="title-info">Titel *</Label>
-                        <Input
-                          id="title-info"
-                          value={newTaskTitle}
-                          onChange={(e) => setNewTaskTitle(e.target.value)}
-                          placeholder="Titel van de informatie"
-                          maxLength={200}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="description-info">Details</Label>
-                        <Textarea
-                          id="description-info"
-                          value={newTaskDescription}
-                          onChange={(e) => setNewTaskDescription(e.target.value)}
-                          placeholder="Extra details..."
-                          maxLength={1000}
-                        />
-                      </div>
-                      <button
-                        onClick={() => handleAddTask("Belangrijke informatie")}
-                        className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
-                      >
-                        Toevoegen
-                      </button>
+                      <span className={cn(
+                        "inline-block px-2 py-0.5 rounded-full text-xs font-bold border",
+                        getPriorityBadge(task.priority).color
+                      )}>
+                        {getPriorityBadge(task.priority).label}
+                      </span>
                     </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-              <div 
-                onDragOver={(e) => handleDragOver(e, "Belangrijke informatie")}
-                onDrop={(e) => handleDrop(e, "Belangrijke informatie")}
-                className="flex-1 min-h-0"
-              >
-                <TaskStack stackOffset={4}>
-                  {getColumnTasks("Belangrijke informatie").map((task) => (
-                    <article
-                      key={task.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, task)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => !isDragging && openEditDialog(task)}
-                      className={cn(
-                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                        draggedTask?.id === task.id && "opacity-50 scale-95"
-                      )}
-                    >
-                      <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
-                      <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                        <AttachmentCount taskId={task.id} />
-                      </div>
-                      <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 mt-4 text-foreground relative z-10">{task.title}</h4>
-                      {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">{task.description}</p>}
-                    </article>
-                  ))}
-                </TaskStack>
-              </div>
+                    <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
+                      {task.title}
+                    </h4>
+                    {task.description && (
+                      <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
+                        {task.description}
+                      </p>
+                    )}
+                  </article>
+                ))}
+              </TaskStack>
             </div>
-          </div>
-        </section>
+          </section>
+        ))}
       </main>
 
-      {/* Task Edit Dialog */}
-      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
-        <DialogContent className="max-w-2xl">
+      {/* Edit Task Dialog */}
+      <Dialog open={editingTask !== null} onOpenChange={(open) => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {editingTaskColumn === "Belangrijke informatie" ? "Informatie bewerken" : "Taak bewerken"}
-            </DialogTitle>
+            <DialogTitle>Taak bewerken</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1320,127 +777,83 @@ const Board = () => {
                 maxLength={1000}
               />
             </div>
-            {editingTaskColumn !== "Belangrijke informatie" && editingTaskColumn !== "Ziek" && editingTaskColumn !== "Verlof" && (
-              <>
-                <div>
-                  <Label>Deadline</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !editTaskDueDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Kies een datum"}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={editTaskDueDate}
-                        onSelect={setEditTaskDueDate}
-                        initialFocus
-                        locale={nl}
-                        className="pointer-events-auto"
-                      />
-                      {editTaskDueDate && (
-                        <div className="p-3 border-t">
-                          <Button
-                            variant="ghost"
-                            className="w-full"
-                            onClick={() => setEditTaskDueDate(undefined)}
-                          >
-                            Wis deadline
-                          </Button>
-                        </div>
-                      )}
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div>
-                  <Label>Prioriteit</Label>
-                  <div className="flex gap-2 mt-2">
-                    <Button
-                      variant={editTaskPriority === "low" ? "default" : "outline"}
-                      onClick={() => setEditTaskPriority("low")}
-                      className="flex-1"
-                    >
-                      Laag
-                    </Button>
-                    <Button
-                      variant={editTaskPriority === "medium" ? "default" : "outline"}
-                      onClick={() => setEditTaskPriority("medium")}
-                      className="flex-1"
-                    >
-                      Middel
-                    </Button>
-                    <Button
-                      variant={editTaskPriority === "high" ? "default" : "outline"}
-                      onClick={() => setEditTaskPriority("high")}
-                      className="flex-1"
-                    >
-                      Hoog
-                    </Button>
-                  </div>
-                </div>
-              </>
-            )}
-            {(editingTaskColumn === "Ziek" || editingTaskColumn === "Verlof") && (
-              <div>
-                <Label>Terug verwacht op</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !editTaskDueDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Kies een datum"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={editTaskDueDate}
-                      onSelect={setEditTaskDueDate}
-                      initialFocus
-                      locale={nl}
-                      className="pointer-events-auto"
-                    />
-                    {editTaskDueDate && (
-                      <div className="p-3 border-t">
-                        <Button
-                          variant="ghost"
-                          className="w-full"
-                          onClick={() => setEditTaskDueDate(undefined)}
-                        >
-                          Wis datum
-                        </Button>
-                      </div>
-                    )}
-                  </PopoverContent>
-                </Popover>
+            <div>
+              <Label>Prioriteit</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={editTaskPriority === "low" ? "default" : "outline"}
+                  onClick={() => setEditTaskPriority("low")}
+                  className="flex-1"
+                >
+                  Laag
+                </Button>
+                <Button
+                  type="button"
+                  variant={editTaskPriority === "medium" ? "default" : "outline"}
+                  onClick={() => setEditTaskPriority("medium")}
+                  className="flex-1"
+                >
+                  Middel
+                </Button>
+                <Button
+                  type="button"
+                  variant={editTaskPriority === "high" ? "default" : "outline"}
+                  onClick={() => setEditTaskPriority("high")}
+                  className="flex-1"
+                >
+                  Hoog
+                </Button>
               </div>
-            )}
+            </div>
+            <div>
+              <Label>Deadline</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !editTaskDueDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={editTaskDueDate}
+                    onSelect={setEditTaskDueDate}
+                    initialFocus
+                    locale={nl}
+                    className="pointer-events-auto"
+                  />
+                  {editTaskDueDate && (
+                    <div className="p-3 border-t">
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={() => setEditTaskDueDate(undefined)}
+                      >
+                        Wis datum
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+            </div>
             
-            {/* Bijlagen sectie */}
             {editingTask && <TaskAttachments taskId={editingTask.id} />}
             
             <div className="flex gap-2 pt-4">
               <Button onClick={handleDeleteFromDialog} variant="destructive">
                 Verwijderen
               </Button>
-              {editingTaskColumn !== "Belangrijke informatie" && (
-                <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
-                  ✔ Voltooien
-                </Button>
-              )}
+              <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
+                ✔ Voltooien
+              </Button>
               <Button onClick={handleEditTask} className="flex-1">
                 Opslaan
               </Button>
@@ -1448,6 +861,15 @@ const Board = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Column Management Dialog */}
+      <ColumnManagement
+        open={columnManagementOpen}
+        onOpenChange={setColumnManagementOpen}
+        columns={columns}
+        boardId={board?.id || ''}
+        onColumnsChange={fetchBoardData}
+      />
 
         </div>
       </div>
