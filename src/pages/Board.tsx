@@ -564,12 +564,9 @@ const Board = () => {
     setResizeHandle(handle);
     const startX = e.clientX / SCALE_FACTOR;
     const startY = e.clientY / SCALE_FACTOR;
-    setResizeStart({
-      x: startX,
-      y: startY,
-      col: column
-    });
-    setSelectedColumn(column);
+    
+    let currentColumn = { ...column };
+    setSelectedColumn(currentColumn);
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const deltaX = (moveEvent.clientX / SCALE_FACTOR) - startX;
@@ -605,28 +602,27 @@ const Board = () => {
         }
       }
       
+      currentColumn = updated;
       setSelectedColumn(updated);
     };
 
     const handleMouseUp = async () => {
-      if (selectedColumn) {
-        try {
-          await supabase
-            .from('columns')
-            .update({
-              header_height: selectedColumn.header_height,
-              content_padding_top: selectedColumn.content_padding_top,
-              content_padding_right: selectedColumn.content_padding_right,
-              content_padding_bottom: selectedColumn.content_padding_bottom,
-              content_padding_left: selectedColumn.content_padding_left
-            })
-            .eq('id', selectedColumn.id);
-          
-          toast.success("Kolom aangepast");
-          await fetchBoardData();
-        } catch (error: any) {
-          toast.error("Fout bij aanpassen: " + error.message);
-        }
+      try {
+        await supabase
+          .from('columns')
+          .update({
+            header_height: currentColumn.header_height,
+            content_padding_top: currentColumn.content_padding_top,
+            content_padding_right: currentColumn.content_padding_right,
+            content_padding_bottom: currentColumn.content_padding_bottom,
+            content_padding_left: currentColumn.content_padding_left
+          })
+          .eq('id', currentColumn.id);
+        
+        toast.success("Kolom aangepast");
+        await fetchBoardData();
+      } catch (error: any) {
+        toast.error("Fout bij aanpassen: " + error.message);
       }
       
       setResizing(false);
