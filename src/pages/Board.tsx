@@ -116,6 +116,13 @@ const Board = () => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    if (!editMode) {
+      setSelectedColumn(null);
+      setResizeMode('none');
+    }
+  }, [editMode]);
+
   const checkAccess = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     
@@ -602,15 +609,11 @@ const Board = () => {
     };
 
     const handleMouseUp = async () => {
-      if (selectedColumn && resizeStart) {
+      if (selectedColumn) {
         try {
           await supabase
             .from('columns')
             .update({
-              width: selectedColumn.width,
-              height: selectedColumn.height,
-              x_position: selectedColumn.x_position,
-              y_position: selectedColumn.y_position,
               header_height: selectedColumn.header_height,
               content_padding_top: selectedColumn.content_padding_top,
               content_padding_right: selectedColumn.content_padding_right,
@@ -856,6 +859,7 @@ const Board = () => {
               if (editMode && !resizing && resizeMode === 'none') {
                 e.stopPropagation();
                 setSelectedColumn(column);
+                setResizeMode('none');
               }
             }}
             onDragStart={editMode && !isSelected ? (e) => {
@@ -885,8 +889,9 @@ const Board = () => {
                 minHeight: `${displayColumn.header_height || 60}px`
               }}
               onClick={(e) => {
-                if (editMode && isSelected) {
+                if (editMode) {
                   e.stopPropagation();
+                  setSelectedColumn(column);
                   setResizeMode('header');
                 }
               }}
@@ -1042,8 +1047,9 @@ const Board = () => {
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`
               }}
               onClick={(e) => {
-                if (editMode && isSelected) {
+                if (editMode) {
                   e.stopPropagation();
+                  setSelectedColumn(column);
                   setResizeMode('content');
                 }
               }}
