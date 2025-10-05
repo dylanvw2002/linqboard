@@ -19,6 +19,7 @@ import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { ActiveUsers } from "@/components/ActiveUsers";
 import { TaskStack } from "@/components/TaskStack";
 import { ColumnManagement } from "@/components/ColumnManagement";
+import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 
 interface Column {
   id: string;
@@ -26,6 +27,10 @@ interface Column {
   position: number;
   width_ratio: number;
   board_id: string;
+  x_position: number;
+  y_position: number;
+  width: number;
+  height: number;
 }
 
 interface Task {
@@ -70,6 +75,8 @@ const Board = () => {
   const [editMode, setEditMode] = useState(false);
   const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
   const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
+  const [editingColumn, setEditingColumn] = useState<Column | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     checkAccess();
@@ -589,73 +596,89 @@ const Board = () => {
         </div>
       </header>
 
-      {/* Board Grid */}
+      {/* Canvas Board */}
+      {editMode && (
+        <div className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-sm font-semibold text-primary">
+          🔧 Bewerkmodus actief - Sleep kolommen vrij rond, klik op een kolom naam om te bewerken
+        </div>
+      )}
       <main 
-        className="grid gap-[18px] flex-1 min-h-0 max-[1100px]:grid-cols-2 max-[680px]:grid-cols-1"
+        className="relative flex-1 min-h-0 overflow-auto bg-gradient-to-br from-blue-50 to-blue-100"
         style={{
-          gridTemplateColumns: columns.length > 0 
-            ? columns.map(col => `minmax(260px, ${col.width_ratio}fr)`).join(' ')
-            : 'repeat(4, minmax(260px, 1fr))'
+          minWidth: '3000px',
+          minHeight: '2000px'
         }}
+        onDragOver={editMode ? (e) => {
+          e.preventDefault();
+        } : undefined}
+        onDrop={editMode ? async (e) => {
+          e.preventDefault();
+          if (!draggedColumn) return;
+          
+          const canvas = e.currentTarget.getBoundingClientRect();
+          const newX = Math.max(0, Math.round(e.clientX - canvas.left - dragOffset.x));
+          const newY = Math.max(0, Math.round(e.clientY - canvas.top - dragOffset.y));
+          
+          try {
+            await supabase
+              .from('columns')
+              .update({ 
+                x_position: newX, 
+                y_position: newY 
+              })
+              .eq('id', draggedColumn.id);
+            
+            toast.success("Kolom verplaatst");
+            await fetchBoardData();
+          } catch (error: any) {
+            toast.error("Fout bij verplaatsen: " + error.message);
+          }
+          
+          setDraggedColumn(null);
+        } : undefined}
       >
         {columns.map((column) => (
           <section 
             key={column.id} 
-            className={cn("flex flex-col min-w-0 transition-all", editMode && "cursor-move")}
+            className={cn(
+              "absolute flex flex-col transition-all",
+              editMode && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl"
+            )}
+            style={{
+              left: `${column.x_position}px`,
+              top: `${column.y_position}px`,
+              width: `${column.width}px`,
+              height: `${column.height}px`
+            }}
             draggable={editMode}
-            onDragStart={editMode ? () => {
+            onDragStart={editMode ? (e) => {
               setDraggedColumn(column);
-            } : undefined}
-            onDragOver={editMode ? (e) => {
-              e.preventDefault();
-              setDraggedOverColumnId(column.id);
-            } : undefined}
-            onDrop={editMode ? async (e) => {
-              e.preventDefault();
-              if (!draggedColumn || draggedColumn.id === column.id) return;
-              
-              const draggedIndex = columns.findIndex(c => c.id === draggedColumn.id);
-              const targetIndex = columns.findIndex(c => c.id === column.id);
-              
-              const newColumns = [...columns];
-              newColumns.splice(draggedIndex, 1);
-              newColumns.splice(targetIndex, 0, draggedColumn);
-              
-              setColumns(newColumns);
-              
-              try {
-                const updates = newColumns.map((col, index) => ({
-                  id: col.id,
-                  position: index
-                }));
-                
-                for (const update of updates) {
-                  await supabase
-                    .from('columns')
-                    .update({ position: update.position })
-                    .eq('id', update.id);
-                }
-                
-                toast.success("Kolom verplaatst");
-              } catch (error: any) {
-                toast.error("Fout bij verplaatsen: " + error.message);
-                fetchBoardData();
-              }
-              
-              setDraggedColumn(null);
-              setDraggedOverColumnId(null);
+              const rect = e.currentTarget.getBoundingClientRect();
+              setDragOffset({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+              });
             } : undefined}
             onDragEnd={editMode ? () => {
               setDraggedColumn(null);
-              setDraggedOverColumnId(null);
             } : undefined}
           >
             <div className={cn(
               "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
-              draggedColumn?.id === column.id && "opacity-40 scale-95",
-              draggedOverColumnId === column.id && draggedColumn?.id !== column.id && "border-primary border-4 scale-105"
+              draggedColumn?.id === column.id && "opacity-40 scale-95"
             )}>
-              <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2">
+              <div 
+                className={cn(
+                  "text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2",
+                  editMode && "cursor-pointer hover:text-primary transition-colors"
+                )}
+                onClick={(e) => {
+                  if (editMode) {
+                    e.stopPropagation();
+                    setEditingColumn(column);
+                  }
+                }}
+              >
                 {editMode && <span className="text-muted-foreground cursor-grab active:cursor-grabbing">⋮⋮</span>}
                 {column.name}
               </div>
@@ -935,6 +958,15 @@ const Board = () => {
         boardId={board?.id || ''}
         onColumnsChange={fetchBoardData}
       />
+
+      {/* Column Edit Sidebar */}
+      {editingColumn && (
+        <ColumnEditSidebar
+          column={editingColumn}
+          onClose={() => setEditingColumn(null)}
+          onSave={fetchBoardData}
+        />
+      )}
 
         </div>
       </div>

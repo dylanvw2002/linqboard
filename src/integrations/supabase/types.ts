@@ -85,26 +85,38 @@ export type Database = {
         Row: {
           board_id: string
           created_at: string
+          height: number | null
           id: string
           name: string
           position: number
+          width: number | null
           width_ratio: number
+          x_position: number | null
+          y_position: number | null
         }
         Insert: {
           board_id: string
           created_at?: string
+          height?: number | null
           id?: string
           name: string
           position: number
+          width?: number | null
           width_ratio?: number
+          x_position?: number | null
+          y_position?: number | null
         }
         Update: {
           board_id?: string
           created_at?: string
+          height?: number | null
           id?: string
           name?: string
           position?: number
+          width?: number | null
           width_ratio?: number
+          x_position?: number | null
+          y_position?: number | null
         }
         Relationships: [
           {
