@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { X, Crop } from "lucide-react";
-import { ColumnCropEditor } from "./ColumnCropEditor";
 
 interface Column {
   id: string;
@@ -33,7 +32,6 @@ interface ColumnEditSidebarProps {
 
 export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebarProps) => {
   const [editedColumn, setEditedColumn] = useState(column);
-  const [showCropEditor, setShowCropEditor] = useState(false);
 
   const handleSave = async () => {
     try {
@@ -61,10 +59,6 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
     } catch (error: any) {
       toast.error("Fout bij opslaan: " + error.message);
     }
-  };
-
-  const handleCropChange = (updates: Partial<Column>) => {
-    setEditedColumn({ ...editedColumn, ...updates });
   };
 
   return (
@@ -142,6 +136,16 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
             Header & Taak Ruimte
           </h4>
 
+          <div className="p-3 bg-muted/50 rounded-lg space-y-2">
+            <p className="text-sm text-muted-foreground">
+              💡 <strong>Tip:</strong> Klik op een kolom en sleep aan de hoeken/randen om te resizen
+            </p>
+            <p className="text-xs text-muted-foreground">
+              • Sleep hoeken/randen = kolom grootte<br />
+              • Houd Alt/Option + sleep = content ruimte
+            </p>
+          </div>
+
           <div>
             <Label>Header Hoogte: {editedColumn.header_height || 60}px</Label>
             <Slider
@@ -200,15 +204,6 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
               />
             </div>
           </div>
-
-          <Button 
-            variant="outline" 
-            onClick={() => setShowCropEditor(true)}
-            className="w-full"
-          >
-            <Crop className="h-4 w-4 mr-2" />
-            Open Crop Editor
-          </Button>
         </div>
 
         <div className="flex gap-2">
@@ -220,14 +215,6 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           </Button>
         </div>
       </div>
-
-      {showCropEditor && (
-        <ColumnCropEditor
-          column={editedColumn}
-          onClose={() => setShowCropEditor(false)}
-          onChange={handleCropChange}
-        />
-      )}
     </div>
   );
 };

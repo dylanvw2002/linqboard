@@ -20,6 +20,7 @@ import { ActiveUsers } from "@/components/ActiveUsers";
 import { TaskStack } from "@/components/TaskStack";
 import { ColumnManagement } from "@/components/ColumnManagement";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
+import { ResizeHandles } from "@/components/ResizeHandles";
 
 interface Column {
   id: string;
@@ -84,6 +85,10 @@ const Board = () => {
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [dragPreview, setDragPreview] = useState<{x: number, y: number} | null>(null);
   const [snapGuides, setSnapGuides] = useState<{x?: number, y?: number} | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<Column | null>(null);
+  const [resizing, setResizing] = useState(false);
+  const [resizeHandle, setResizeHandle] = useState<string | null>(null);
+  const [resizeStart, setResizeStart] = useState<{x: number, y: number, col: Column} | null>(null);
   
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
@@ -543,6 +548,102 @@ const Board = () => {
     setIsDragging(false);
   };
 
+  const startResize = (e: React.MouseEvent, column: Column, handle: string, isContentMode: boolean) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setResizing(true);
+    setResizeHandle(handle);
+    setResizeStart({
+      x: e.clientX / SCALE_FACTOR,
+      y: e.clientY / SCALE_FACTOR,
+      col: column
+    });
+    setSelectedColumn(column);
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!resizeStart) return;
+      
+      const deltaX = (moveEvent.clientX / SCALE_FACTOR) - resizeStart.x;
+      const deltaY = (moveEvent.clientY / SCALE_FACTOR) - resizeStart.y;
+      
+      const updated = { ...resizeStart.col };
+      
+      if (isContentMode) {
+        // Content mode: adjust header_height and padding
+        if (handle.includes('n')) {
+          updated.header_height = Math.max(40, Math.min(200, (updated.header_height || 60) + deltaY));
+        }
+        if (handle.includes('e')) {
+          updated.content_padding_right = Math.max(0, Math.min(100, (updated.content_padding_right || 0) - deltaX));
+        }
+        if (handle.includes('s')) {
+          updated.content_padding_bottom = Math.max(0, Math.min(100, (updated.content_padding_bottom || 0) - deltaY));
+        }
+        if (handle.includes('w')) {
+          updated.content_padding_left = Math.max(0, Math.min(100, (updated.content_padding_left || 0) + deltaX));
+        }
+        if (handle === 'n' || handle === 's') {
+          updated.content_padding_top = Math.max(0, Math.min(100, (updated.content_padding_top || 0) + deltaY));
+        }
+      } else {
+        // Column mode: adjust width and height
+        if (handle.includes('e')) {
+          updated.width = Math.max(200, updated.width + deltaX);
+        }
+        if (handle.includes('w')) {
+          updated.width = Math.max(200, updated.width - deltaX);
+          updated.x_position = updated.x_position + deltaX;
+        }
+        if (handle.includes('s')) {
+          updated.height = Math.max(400, updated.height + deltaY);
+        }
+        if (handle.includes('n')) {
+          updated.height = Math.max(400, updated.height - deltaY);
+          updated.y_position = updated.y_position + deltaY;
+        }
+      }
+      
+      setSelectedColumn(updated);
+    };
+
+    const handleMouseUp = async () => {
+      if (selectedColumn && resizeStart) {
+        try {
+          await supabase
+            .from('columns')
+            .update({
+              width: selectedColumn.width,
+              height: selectedColumn.height,
+              x_position: selectedColumn.x_position,
+              y_position: selectedColumn.y_position,
+              header_height: selectedColumn.header_height,
+              content_padding_top: selectedColumn.content_padding_top,
+              content_padding_right: selectedColumn.content_padding_right,
+              content_padding_bottom: selectedColumn.content_padding_bottom,
+              content_padding_left: selectedColumn.content_padding_left
+            })
+            .eq('id', selectedColumn.id);
+          
+          toast.success("Kolom aangepast");
+          await fetchBoardData();
+        } catch (error: any) {
+          toast.error("Fout bij aanpassen: " + error.message);
+        }
+      }
+      
+      setResizing(false);
+      setResizeHandle(null);
+      setResizeStart(null);
+      
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -637,10 +738,10 @@ const Board = () => {
       {/* Canvas Board */}
       {editMode && (
         <div className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-sm font-semibold text-primary">
-          🔧 Bewerkmodus actief - Sleep kolommen vrij rond, klik op een kolom naam om te bewerken
+          🔧 Bewerkmodus actief - Klik op kolom → sleep hoeken/randen (Alt/Option voor content ruimte)
         </div>
       )}
-      <main 
+      <main
         className="relative flex-1 min-h-0 overflow-auto bg-gradient-to-br from-blue-50 to-blue-100"
         style={{
           minWidth: '3000px',
@@ -737,22 +838,33 @@ const Board = () => {
           </>
         )}
 
-        {columns.map((column) => (
+        {columns.map((column) => {
+          const isSelected = selectedColumn?.id === column.id;
+          const displayColumn = isSelected && resizing ? selectedColumn : column;
+          
+          return (
           <section 
             key={column.id} 
             className={cn(
               "absolute flex flex-col transition-all",
               editMode && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl",
-              draggedColumn?.id === column.id && "opacity-50"
+              draggedColumn?.id === column.id && "opacity-50",
+              isSelected && "ring-4 ring-primary shadow-2xl"
             )}
             style={{
-              left: `${column.x_position}px`,
-              top: `${column.y_position}px`,
-              width: `${column.width}px`,
-              height: `${column.height}px`
+              left: `${displayColumn.x_position}px`,
+              top: `${displayColumn.y_position}px`,
+              width: `${displayColumn.width}px`,
+              height: `${displayColumn.height}px`
             }}
-            draggable={editMode}
-            onDragStart={editMode ? (e) => {
+            draggable={editMode && !isSelected}
+            onClick={(e) => {
+              if (editMode && !resizing) {
+                e.stopPropagation();
+                setSelectedColumn(column);
+              }
+            }}
+            onDragStart={editMode && !isSelected ? (e) => {
               setDraggedColumn(column);
               const rect = e.currentTarget.getBoundingClientRect();
               const canvas = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
@@ -761,20 +873,72 @@ const Board = () => {
                 y: e.clientY - rect.top
               });
             } : undefined}
-            onDragEnd={editMode ? () => {
+            onDragEnd={editMode && !isSelected ? () => {
               setDraggedColumn(null);
               setDragPreview(null);
               setSnapGuides(null);
             } : undefined}
           >
-            <div 
+            {/* Resize handles */}
+            {isSelected && editMode && (
+              <>
+                {/* Column resize handles (blue) */}
+                <ResizeHandles 
+                  mode="column"
+                  onMouseDown={(e, handle) => startResize(e, displayColumn, handle, false)}
+                  activeHandle={resizeHandle}
+                />
+                
+                {/* Content area visualization */}
+                <div 
+                  className="absolute pointer-events-none border-2 border-dashed border-green-500/50 bg-green-500/10"
+                  style={{
+                    top: `${displayColumn.header_height || 60}px`,
+                    left: `${displayColumn.content_padding_left || 0}px`,
+                    right: `${displayColumn.content_padding_right || 0}px`,
+                    bottom: `${displayColumn.content_padding_bottom || 0}px`,
+                  }}
+                >
+                  {/* Content resize handles (green) - only when Alt is pressed */}
+                  <div 
+                    className="absolute inset-0"
+                    onMouseDown={(e) => {
+                      if (e.altKey) {
+                        e.stopPropagation();
+                      }
+                    }}
+                  >
+                    <ResizeHandles 
+                      mode="content"
+                      onMouseDown={(e, handle) => {
+                        if (e.altKey) {
+                          e.stopPropagation();
+                          startResize(e, displayColumn, handle, true);
+                        }
+                      }}
+                      activeHandle={resizeHandle}
+                    />
+                  </div>
+                </div>
+                
+                {/* Dimension tooltip */}
+                <div 
+                  className="absolute -top-12 left-0 bg-popover text-popover-foreground border px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
+                >
+                  {displayColumn.width}px × {displayColumn.height}px
+                  {resizing && <span className="ml-2 text-green-500">(Alt voor content)</span>}
+                </div>
+              </>
+            )}
+            
+            <div
               className={cn(
                 "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
                 draggedColumn?.id === column.id && "opacity-40 scale-95"
               )}
               style={{
-                height: `${column.header_height || 60}px`,
-                minHeight: `${column.header_height || 60}px`
+                height: `${displayColumn.header_height || 60}px`,
+                minHeight: `${displayColumn.header_height || 60}px`
               }}
             >
               <div 
@@ -783,14 +947,14 @@ const Board = () => {
                   editMode && "cursor-pointer hover:text-primary transition-colors"
                 )}
                 onClick={(e) => {
-                  if (editMode) {
+                  if (editMode && !isSelected) {
                     e.stopPropagation();
-                    setEditingColumn(column);
+                    setEditingColumn(displayColumn);
                   }
                 }}
               >
                 {editMode && <span className="text-muted-foreground cursor-grab active:cursor-grabbing">⋮⋮</span>}
-                {column.name}
+                {displayColumn.name}
               </div>
               <Dialog open={openDialog === column.id} onOpenChange={(open) => setOpenDialog(open ? column.id : null)}>
                 <DialogTrigger asChild>
@@ -904,10 +1068,10 @@ const Board = () => {
               onDrop={(e) => handleDrop(e, column.id)}
               className="flex-1 min-h-0"
               style={{
-                paddingTop: `${column.content_padding_top || 0}px`,
-                paddingRight: `${column.content_padding_right || 0}px`,
-                paddingBottom: `${column.content_padding_bottom || 0}px`,
-                paddingLeft: `${column.content_padding_left || 0}px`
+                paddingTop: `${displayColumn.content_padding_top || 0}px`,
+                paddingRight: `${displayColumn.content_padding_right || 0}px`,
+                paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
+                paddingLeft: `${displayColumn.content_padding_left || 0}px`
               }}
             >
               <TaskStack>
@@ -951,7 +1115,8 @@ const Board = () => {
               </TaskStack>
             </div>
           </section>
-        ))}
+        );
+        })}
       </main>
 
       {/* Edit Task Dialog */}
