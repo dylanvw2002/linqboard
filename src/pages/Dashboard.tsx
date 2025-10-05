@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, Hand } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -179,7 +179,7 @@ const Dashboard = () => {
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Hoi {userName || "daar"}
             </span>
-            <Hand className="text-primary animate-wiggle" />
+            <PartyPopper className="text-primary animate-wiggle" />
           </h1>
           <p className="text-xl text-muted-foreground">
             Welkom terug op je dashboard
