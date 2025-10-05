@@ -116,6 +116,17 @@ export default {
             boxShadow: "0 0 30px var(--shadow-glow)",
           },
         },
+        "wiggle": {
+          "0%, 100%": {
+            transform: "rotate(0deg)",
+          },
+          "10%, 30%, 50%, 70%, 90%": {
+            transform: "rotate(-10deg)",
+          },
+          "20%, 40%, 60%, 80%": {
+            transform: "rotate(10deg)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -124,6 +135,7 @@ export default {
         "scale-in": "scale-in 0.2s ease-out",
         "shimmer": "shimmer 2s infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "wiggle": "wiggle 1s ease-in-out infinite",
       },
     },
   },

@@ -179,7 +179,7 @@ const Dashboard = () => {
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Hoi {userName || "daar"}
             </span>
-            <Hand className="text-primary" />
+            <Hand className="text-primary animate-wiggle" />
           </h1>
           <p className="text-xl text-muted-foreground">
             Welkom terug op je dashboard
