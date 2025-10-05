@@ -175,8 +175,11 @@ const Dashboard = () => {
       <div className="container mx-auto px-6 py-12">
         {/* Welcome Section */}
         <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-2 flex items-center gap-3">
-            Hoi {userName || "daar"} <Hand className="inline-block" />
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 pb-2 flex items-center gap-3">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Hoi {userName || "daar"}
+            </span>
+            <Hand className="text-primary" />
           </h1>
           <p className="text-xl text-muted-foreground">
             Welkom terug op je dashboard
