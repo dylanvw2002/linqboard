@@ -577,28 +577,28 @@ const Board = () => {
       if (mode === 'header') {
         // Header mode: adjust header_height from all corners
         if (handle === 'nw' || handle === 'ne') {
-          updated.header_height = Math.max(40, Math.min(200, (column.header_height || 60) - deltaY));
+          updated.header_height = Math.max(20, (column.header_height || 60) - deltaY);
         }
         if (handle === 'sw' || handle === 'se') {
-          updated.header_height = Math.max(40, Math.min(200, (column.header_height || 60) + deltaY));
+          updated.header_height = Math.max(20, (column.header_height || 60) + deltaY);
         }
       } else if (mode === 'content') {
         // Content mode: adjust padding from corners
         if (handle === 'nw') {
-          updated.content_padding_top = Math.max(0, Math.min(100, (column.content_padding_top || 0) + deltaY));
-          updated.content_padding_left = Math.max(0, Math.min(100, (column.content_padding_left || 0) + deltaX));
+          updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
         }
         if (handle === 'ne') {
-          updated.content_padding_top = Math.max(0, Math.min(100, (column.content_padding_top || 0) + deltaY));
-          updated.content_padding_right = Math.max(0, Math.min(100, (column.content_padding_right || 0) - deltaX));
+          updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
         }
         if (handle === 'sw') {
-          updated.content_padding_bottom = Math.max(0, Math.min(100, (column.content_padding_bottom || 0) - deltaY));
-          updated.content_padding_left = Math.max(0, Math.min(100, (column.content_padding_left || 0) + deltaX));
+          updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
         }
         if (handle === 'se') {
-          updated.content_padding_bottom = Math.max(0, Math.min(100, (column.content_padding_bottom || 0) - deltaY));
-          updated.content_padding_right = Math.max(0, Math.min(100, (column.content_padding_right || 0) - deltaX));
+          updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
         }
       }
       
