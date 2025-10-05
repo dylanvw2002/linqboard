@@ -583,22 +583,12 @@ const Board = () => {
           updated.header_height = Math.max(20, (column.header_height || 60) + deltaY);
         }
       } else if (mode === 'content') {
-        // Content mode: adjust padding from corners
-        if (handle === 'nw') {
+        // Content mode: only adjust top and bottom padding (keep same width as header)
+        if (handle === 'nw' || handle === 'ne') {
           updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
         }
-        if (handle === 'ne') {
-          updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
-        }
-        if (handle === 'sw') {
+        if (handle === 'sw' || handle === 'se') {
           updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
-        }
-        if (handle === 'se') {
-          updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
         }
       }
       
