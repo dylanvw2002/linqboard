@@ -93,7 +93,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
       <Card className="w-full max-w-md shadow-xl">
         <div className="flex justify-center pt-8 pb-4">
-          <img src={logo} alt="LinqBoard Logo" className="h-32" />
+          <img src={logo} alt="LinqBoard Logo" className="h-40" />
         </div>
         <CardHeader className="space-y-2 pt-2">
           <CardTitle className="text-3xl font-bold text-center">
