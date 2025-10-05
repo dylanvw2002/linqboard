@@ -31,6 +31,8 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
   const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; columnId: string | null }>({ open: false, columnId: null });
   const [isAddingColumn, setIsAddingColumn] = useState(false);
   const [newColumnName, setNewColumnName] = useState("");
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   // Initialize editing columns when dialog opens
   const handleOpenChange = (newOpen: boolean) => {
@@ -48,13 +50,31 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
     setEditingColumns(cols => cols.map(col => col.id === id ? { ...col, width_ratio: width } : col));
   };
 
-  const moveColumn = (index: number, direction: 'up' | 'down') => {
-    const newCols = [...editingColumns];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    if (targetIndex < 0 || targetIndex >= newCols.length) return;
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === index) return;
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (index: number) => {
+    if (draggedIndex === null || draggedIndex === index) return;
     
-    [newCols[index], newCols[targetIndex]] = [newCols[targetIndex], newCols[index]];
+    const newCols = [...editingColumns];
+    const [draggedCol] = newCols.splice(draggedIndex, 1);
+    newCols.splice(index, 0, draggedCol);
+    
     setEditingColumns(newCols);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleSave = async () => {
@@ -177,26 +197,21 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
 
           <div className="space-y-4">
             {editingColumns.map((col, index) => (
-              <div key={col.id} className="flex items-center gap-3 p-4 border rounded-lg bg-card">
-                <div className="flex flex-col gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => moveColumn(index, 'up')}
-                    disabled={index === 0}
-                  >
-                    <GripVertical className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={() => moveColumn(index, 'down')}
-                    disabled={index === editingColumns.length - 1}
-                  >
-                    <GripVertical className="h-4 w-4" />
-                  </Button>
+              <div 
+                key={col.id} 
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={() => handleDrop(index)}
+                onDragEnd={handleDragEnd}
+                className={`flex items-center gap-3 p-4 border rounded-lg bg-card transition-all cursor-move ${
+                  draggedIndex === index ? 'opacity-40 scale-95' : ''
+                } ${
+                  dragOverIndex === index && draggedIndex !== index ? 'border-primary border-2' : ''
+                }`}
+              >
+                <div className="cursor-grab active:cursor-grabbing">
+                  <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
 
                 <div className="flex-1 space-y-3">
