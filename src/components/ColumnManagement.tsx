@@ -33,15 +33,11 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
   const [newColumnName, setNewColumnName] = useState("");
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [editMode, setEditMode] = useState(false);
 
   // Initialize editing columns when dialog opens
   const handleOpenChange = (newOpen: boolean) => {
     if (newOpen) {
       setEditingColumns([...columns].sort((a, b) => a.position - b.position));
-    } else {
-      setEditMode(false);
-      setIsAddingColumn(false);
     }
     onOpenChange(newOpen);
   };
@@ -196,40 +192,27 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>Kolommen beheren</span>
-              <Button
-                variant={editMode ? "default" : "outline"}
-                onClick={() => setEditMode(!editMode)}
-                className="ml-4"
-              >
-                {editMode ? "Bewerkmodus uit" : "Bewerkmodus inschakelen"}
-              </Button>
-            </DialogTitle>
+            <DialogTitle>Kolommen beheren</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
             {editingColumns.map((col, index) => (
               <div 
                 key={col.id} 
-                draggable={editMode}
-                onDragStart={() => editMode && handleDragStart(index)}
-                onDragOver={(e) => editMode && handleDragOver(e, index)}
-                onDrop={() => editMode && handleDrop(index)}
+                draggable
+                onDragStart={() => handleDragStart(index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={() => handleDrop(index)}
                 onDragEnd={handleDragEnd}
-                className={`flex items-center gap-3 p-4 border rounded-lg bg-card transition-all ${
-                  editMode ? 'cursor-move' : ''
+                className={`flex items-center gap-3 p-4 border rounded-lg bg-card transition-all cursor-move ${
+                  draggedIndex === index ? 'opacity-40 scale-95' : ''
                 } ${
-                  editMode && draggedIndex === index ? 'opacity-40 scale-95' : ''
-                } ${
-                  editMode && dragOverIndex === index && draggedIndex !== index ? 'border-primary border-2' : ''
+                  dragOverIndex === index && draggedIndex !== index ? 'border-primary border-2' : ''
                 }`}
               >
-                {editMode && (
-                  <div className="cursor-grab active:cursor-grabbing">
-                    <GripVertical className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                )}
+                <div className="cursor-grab active:cursor-grabbing">
+                  <GripVertical className="h-5 w-5 text-muted-foreground" />
+                </div>
 
                 <div className="flex-1 space-y-3">
                   <div>
@@ -239,84 +222,73 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                       value={col.name}
                       onChange={(e) => updateColumnName(col.id, e.target.value)}
                       placeholder="Kolomnaam"
-                      disabled={!editMode}
                     />
                   </div>
 
-                  {editMode && (
-                    <div>
-                      <Label htmlFor={`width-${col.id}`}>
-                        Breedte: {getWidthLabel(col.width_ratio)}
-                      </Label>
-                      <Slider
-                        id={`width-${col.id}`}
-                        value={[col.width_ratio]}
-                        onValueChange={([value]) => updateColumnWidth(col.id, value)}
-                        min={1}
-                        max={4}
-                        step={1}
-                        className="mt-2"
-                      />
-                    </div>
-                  )}
+                  <div>
+                    <Label htmlFor={`width-${col.id}`}>
+                      Breedte: {getWidthLabel(col.width_ratio)}
+                    </Label>
+                    <Slider
+                      id={`width-${col.id}`}
+                      value={[col.width_ratio]}
+                      onValueChange={([value]) => updateColumnWidth(col.id, value)}
+                      min={1}
+                      max={4}
+                      step={1}
+                      className="mt-2"
+                    />
+                  </div>
                 </div>
 
-                {editMode && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setDeleteConfirm({ open: true, columnId: col.id })}
-                    disabled={editingColumns.length === 1}
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setDeleteConfirm({ open: true, columnId: col.id })}
+                  disabled={editingColumns.length === 1}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
             ))}
 
-            {editMode && (
-              <>
-                {isAddingColumn ? (
-                  <div className="flex gap-2 p-4 border rounded-lg bg-card">
-                    <Input
-                      value={newColumnName}
-                      onChange={(e) => setNewColumnName(e.target.value)}
-                      placeholder="Nieuwe kolomnaam"
-                      onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()}
-                    />
-                    <Button onClick={handleAddColumn}>Toevoegen</Button>
-                    <Button variant="ghost" onClick={() => {
-                      setIsAddingColumn(false);
-                      setNewColumnName("");
-                    }}>
-                      Annuleren
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setIsAddingColumn(true)}
-                    disabled={editingColumns.length >= 8}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nieuwe kolom toevoegen
-                  </Button>
-                )}
-              </>
+            {isAddingColumn ? (
+              <div className="flex gap-2 p-4 border rounded-lg bg-card">
+                <Input
+                  value={newColumnName}
+                  onChange={(e) => setNewColumnName(e.target.value)}
+                  placeholder="Nieuwe kolomnaam"
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()}
+                />
+                <Button onClick={handleAddColumn}>Toevoegen</Button>
+                <Button variant="ghost" onClick={() => {
+                  setIsAddingColumn(false);
+                  setNewColumnName("");
+                }}>
+                  Annuleren
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsAddingColumn(true)}
+                disabled={editingColumns.length >= 8}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nieuwe kolom toevoegen
+              </Button>
             )}
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Sluiten
+              Annuleren
             </Button>
-            {editMode && (
-              <Button onClick={handleSave}>
-                Opslaan
-              </Button>
-            )}
+            <Button onClick={handleSave}>
+              Opslaan
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
