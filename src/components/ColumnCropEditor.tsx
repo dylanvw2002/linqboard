@@ -21,11 +21,11 @@ interface ColumnCropEditorProps {
 }
 
 export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditorProps) => {
-  const [headerHeight, setHeaderHeight] = useState(column.header_height);
-  const [paddingTop, setPaddingTop] = useState(column.content_padding_top);
-  const [paddingRight, setPaddingRight] = useState(column.content_padding_right);
-  const [paddingBottom, setPaddingBottom] = useState(column.content_padding_bottom);
-  const [paddingLeft, setPaddingLeft] = useState(column.content_padding_left);
+  const [headerHeight, setHeaderHeight] = useState(column.header_height || 60);
+  const [paddingTop, setPaddingTop] = useState(column.content_padding_top || 0);
+  const [paddingRight, setPaddingRight] = useState(column.content_padding_right || 0);
+  const [paddingBottom, setPaddingBottom] = useState(column.content_padding_bottom || 0);
+  const [paddingLeft, setPaddingLeft] = useState(column.content_padding_left || 0);
   const [activeHandle, setActiveHandle] = useState<string | null>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,13 +93,13 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
   const contentHeight = contentBottom - contentTop;
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center">
-      <div className="bg-background rounded-lg shadow-2xl p-6 max-w-4xl w-full mx-4">
+    <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 overflow-auto">
+      <div className="bg-background rounded-lg shadow-2xl p-6 max-w-6xl w-full">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-xl font-bold">Crop Editor - {column.name}</h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Sleep de handvatten om de header en taak ruimte aan te passen
+              Sleep de gekleurde handvatten om de header en taak ruimte aan te passen
             </p>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose}>
@@ -107,32 +107,36 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
           </Button>
         </div>
 
-        <div className="flex gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Preview */}
-          <div 
-            ref={containerRef}
-            className="relative border-2 border-border rounded-lg bg-card flex-1"
-            style={{ 
-              width: `${column.width}px`, 
-              height: `${column.height}px`,
-              minWidth: '300px',
-              minHeight: '400px'
-            }}
-          >
-            {/* Header area (yellow) */}
+          <div className="flex-1 flex items-center justify-center bg-muted/20 rounded-lg p-4 min-h-[500px]">
             <div 
-              className="absolute inset-x-0 bg-yellow-500/20 border-2 border-yellow-500 rounded-t-lg flex items-center justify-center text-yellow-700 font-semibold"
-              style={{ top: 0, height: `${headerHeight}px` }}
+              ref={containerRef}
+              className="relative border-2 border-border rounded-lg bg-card shadow-lg"
+              style={{ 
+                width: `${Math.min(column.width, 400)}px`, 
+                height: `${Math.min(column.height, 600)}px`,
+                minWidth: '250px',
+                minHeight: '350px'
+              }}
             >
-              Header ({headerHeight}px)
-            </div>
+              {/* Header area (yellow) */}
+              <div 
+                className="absolute inset-x-0 bg-yellow-500/20 border-2 border-yellow-500 rounded-t-lg flex items-center justify-center text-yellow-700 dark:text-yellow-500 font-semibold text-xs"
+                style={{ top: 0, height: `${headerHeight}px` }}
+              >
+                Header ({headerHeight}px)
+              </div>
 
-            {/* Header resize handle */}
-            <div 
-              className={`absolute left-0 right-0 h-2 bg-yellow-500/50 hover:bg-yellow-500 cursor-ns-resize transition-colors ${activeHandle === 'header' ? 'bg-yellow-500' : ''}`}
-              style={{ top: `${headerHeight - 4}px` }}
-              onMouseDown={(e) => startResize('header', e)}
-            />
+              {/* Header resize handle */}
+              <div 
+                className={`absolute left-0 right-0 h-3 bg-yellow-500/50 hover:bg-yellow-500 cursor-ns-resize transition-colors flex items-center justify-center ${activeHandle === 'header' ? 'bg-yellow-500 h-4' : ''}`}
+                style={{ top: `${headerHeight - 6}px` }}
+                onMouseDown={(e) => startResize('header', e)}
+                title="Sleep om header hoogte aan te passen"
+              >
+                <div className="w-8 h-1 bg-yellow-700 rounded-full"></div>
+              </div>
 
             {/* Top padding area (red) */}
             {paddingTop > 0 && (
@@ -147,90 +151,103 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
               />
             )}
 
-            {/* Top padding resize handle */}
-            <div 
-              className={`absolute left-0 right-0 h-2 bg-green-500/50 hover:bg-green-500 cursor-ns-resize transition-colors z-10 ${activeHandle === 'padding-top' ? 'bg-green-500' : ''}`}
-              style={{ top: `${contentTop - 4}px` }}
-              onMouseDown={(e) => startResize('padding-top', e)}
-            />
+              {/* Top padding resize handle */}
+              <div 
+                className={`absolute left-0 right-0 h-3 bg-green-500/50 hover:bg-green-500 cursor-ns-resize transition-colors z-10 flex items-center justify-center ${activeHandle === 'padding-top' ? 'bg-green-500 h-4' : ''}`}
+                style={{ top: `${contentTop - 6}px` }}
+                onMouseDown={(e) => startResize('padding-top', e)}
+                title="Sleep om boven padding aan te passen"
+              >
+                <div className="w-8 h-1 bg-green-700 rounded-full"></div>
+              </div>
 
-            {/* Active content area (green) */}
-            <div 
-              className="absolute bg-green-500/20 border-2 border-green-500 flex items-center justify-center text-green-700 font-semibold text-center"
-              style={{
-                top: `${contentTop}px`,
-                left: `${contentLeft}px`,
-                width: `${contentRight - contentLeft}px`,
-                height: `${contentHeight}px`
-              }}
-            >
-              Taak Ruimte<br/>
-              <span className="text-xs">({contentRight - contentLeft}×{contentHeight}px)</span>
+              {/* Active content area (green) */}
+              <div 
+                className="absolute bg-green-500/20 border-2 border-green-500 flex items-center justify-center text-green-700 dark:text-green-500 font-semibold text-center text-xs pointer-events-none"
+                style={{
+                  top: `${contentTop}px`,
+                  left: `${contentLeft}px`,
+                  width: `${contentRight - contentLeft}px`,
+                  height: `${contentHeight}px`
+                }}
+              >
+                Taak Ruimte<br/>
+                <span className="text-[10px]">({contentRight - contentLeft}×{contentHeight}px)</span>
+              </div>
+
+              {/* Left padding resize handle */}
+              <div 
+                className={`absolute top-0 bottom-0 w-3 bg-green-500/50 hover:bg-green-500 cursor-ew-resize transition-colors z-10 flex items-center justify-center ${activeHandle === 'padding-left' ? 'bg-green-500 w-4' : ''}`}
+                style={{ left: `${contentLeft - 6}px` }}
+                onMouseDown={(e) => startResize('padding-left', e)}
+                title="Sleep om links padding aan te passen"
+              >
+                <div className="w-1 h-8 bg-green-700 rounded-full"></div>
+              </div>
+
+              {/* Right padding resize handle */}
+              <div 
+                className={`absolute top-0 bottom-0 w-3 bg-green-500/50 hover:bg-green-500 cursor-ew-resize transition-colors z-10 flex items-center justify-center ${activeHandle === 'padding-right' ? 'bg-green-500 w-4' : ''}`}
+                style={{ left: `${contentRight - 6}px` }}
+                onMouseDown={(e) => startResize('padding-right', e)}
+                title="Sleep om rechts padding aan te passen"
+              >
+                <div className="w-1 h-8 bg-green-700 rounded-full"></div>
+              </div>
+
+              {/* Bottom padding resize handle */}
+              <div 
+                className={`absolute left-0 right-0 h-3 bg-green-500/50 hover:bg-green-500 cursor-ns-resize transition-colors z-10 flex items-center justify-center ${activeHandle === 'padding-bottom' ? 'bg-green-500 h-4' : ''}`}
+                style={{ top: `${contentBottom - 6}px` }}
+                onMouseDown={(e) => startResize('padding-bottom', e)}
+                title="Sleep om onder padding aan te passen"
+              >
+                <div className="w-8 h-1 bg-green-700 rounded-full"></div>
+              </div>
+
+              {/* Left padding area (red) */}
+              {paddingLeft > 0 && (
+                <div 
+                  className="absolute bg-red-500/10 border border-red-500/30 pointer-events-none"
+                  style={{
+                    top: `${headerHeight}px`,
+                    bottom: 0,
+                    left: 0,
+                    width: `${paddingLeft}px`
+                  }}
+                />
+              )}
+
+              {/* Right padding area (red) */}
+              {paddingRight > 0 && (
+                <div 
+                  className="absolute bg-red-500/10 border border-red-500/30 pointer-events-none"
+                  style={{
+                    top: `${headerHeight}px`,
+                    bottom: 0,
+                    right: 0,
+                    width: `${paddingRight}px`
+                  }}
+                />
+              )}
+
+              {/* Bottom padding area (red) */}
+              {paddingBottom > 0 && (
+                <div 
+                  className="absolute bg-red-500/10 border border-red-500/30 pointer-events-none"
+                  style={{
+                    bottom: 0,
+                    height: `${paddingBottom}px`,
+                    left: 0,
+                    right: 0
+                  }}
+                />
+              )}
             </div>
-
-            {/* Left padding resize handle */}
-            <div 
-              className={`absolute top-0 bottom-0 w-2 bg-green-500/50 hover:bg-green-500 cursor-ew-resize transition-colors z-10 ${activeHandle === 'padding-left' ? 'bg-green-500' : ''}`}
-              style={{ left: `${contentLeft - 4}px` }}
-              onMouseDown={(e) => startResize('padding-left', e)}
-            />
-
-            {/* Right padding resize handle */}
-            <div 
-              className={`absolute top-0 bottom-0 w-2 bg-green-500/50 hover:bg-green-500 cursor-ew-resize transition-colors z-10 ${activeHandle === 'padding-right' ? 'bg-green-500' : ''}`}
-              style={{ left: `${contentRight - 4}px` }}
-              onMouseDown={(e) => startResize('padding-right', e)}
-            />
-
-            {/* Bottom padding resize handle */}
-            <div 
-              className={`absolute left-0 right-0 h-2 bg-green-500/50 hover:bg-green-500 cursor-ns-resize transition-colors z-10 ${activeHandle === 'padding-bottom' ? 'bg-green-500' : ''}`}
-              style={{ top: `${contentBottom - 4}px` }}
-              onMouseDown={(e) => startResize('padding-bottom', e)}
-            />
-
-            {/* Left padding area (red) */}
-            {paddingLeft > 0 && (
-              <div 
-                className="absolute bg-red-500/10 border border-red-500/30"
-                style={{
-                  top: `${headerHeight}px`,
-                  bottom: 0,
-                  left: 0,
-                  width: `${paddingLeft}px`
-                }}
-              />
-            )}
-
-            {/* Right padding area (red) */}
-            {paddingRight > 0 && (
-              <div 
-                className="absolute bg-red-500/10 border border-red-500/30"
-                style={{
-                  top: `${headerHeight}px`,
-                  bottom: 0,
-                  right: 0,
-                  width: `${paddingRight}px`
-                }}
-              />
-            )}
-
-            {/* Bottom padding area (red) */}
-            {paddingBottom > 0 && (
-              <div 
-                className="absolute bg-red-500/10 border border-red-500/30"
-                style={{
-                  bottom: 0,
-                  height: `${paddingBottom}px`,
-                  left: 0,
-                  right: 0
-                }}
-              />
-            )}
           </div>
 
           {/* Values panel */}
-          <div className="w-64 space-y-4">
+          <div className="lg:w-64 w-full space-y-4">
             <div className="p-4 rounded-lg bg-muted">
               <h4 className="font-semibold mb-3 text-sm">📏 Huidige Waarden</h4>
               <div className="space-y-2 text-sm">
