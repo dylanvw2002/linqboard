@@ -148,7 +148,7 @@ const Dashboard = () => {
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-0 py-[2px]">
               Hoi {userName || "daar"}
             </span>
-            <PartyPopper className="text-primary" size={56} />
+            <PartyPopper className="text-accent" size={56} />
           </h1>
           <p className="text-xl text-muted-foreground">
             Welkom terug op je dashboard
