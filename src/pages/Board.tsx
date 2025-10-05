@@ -616,22 +616,33 @@ const Board = () => {
 
     const handleMouseUp = async () => {
       try {
-        await supabase
+        const updateData: any = {
+          header_height: Math.round(currentColumn.header_height || 60),
+          content_padding_top: Math.round(currentColumn.content_padding_top || 0),
+          content_padding_right: Math.round(currentColumn.content_padding_right || 0),
+          content_padding_bottom: Math.round(currentColumn.content_padding_bottom || 0),
+          content_padding_left: Math.round(currentColumn.content_padding_left || 0)
+        };
+
+        // Only add width and height if they're valid numbers
+        if (currentColumn.width && !isNaN(currentColumn.width)) {
+          updateData.width = Math.round(currentColumn.width);
+        }
+        if (currentColumn.height && !isNaN(currentColumn.height)) {
+          updateData.height = Math.round(currentColumn.height);
+        }
+
+        const { error } = await supabase
           .from('columns')
-          .update({
-            width: currentColumn.width,
-            height: currentColumn.height,
-            header_height: currentColumn.header_height,
-            content_padding_top: currentColumn.content_padding_top,
-            content_padding_right: currentColumn.content_padding_right,
-            content_padding_bottom: currentColumn.content_padding_bottom,
-            content_padding_left: currentColumn.content_padding_left
-          })
+          .update(updateData)
           .eq('id', currentColumn.id);
+        
+        if (error) throw error;
         
         toast.success("Kolom aangepast");
         await fetchBoardData();
       } catch (error: any) {
+        console.error('Update error:', error);
         toast.error("Fout bij aanpassen: " + error.message);
       }
       
