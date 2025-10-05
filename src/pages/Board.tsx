@@ -67,6 +67,9 @@ const Board = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
+  const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
 
   useEffect(() => {
     checkAccess();
@@ -565,9 +568,14 @@ const Board = () => {
             ⛶ Volledig scherm
           </button>
           <button
-            onClick={() => setColumnManagementOpen(true)}
-            className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
-            title="Kolommen beheren"
+            onClick={() => setEditMode(!editMode)}
+            className={cn(
+              "backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+              editMode 
+                ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" 
+                : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30"
+            )}
+            title={editMode ? "Bewerkmodus uit" : "Bewerkmodus inschakelen"}
           >
             <Settings size={20} />
           </button>
@@ -591,9 +599,66 @@ const Board = () => {
         }}
       >
         {columns.map((column) => (
-          <section key={column.id} className="flex flex-col min-w-0">
-            <div className="flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-              <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm">{column.name}</div>
+          <section 
+            key={column.id} 
+            className={cn("flex flex-col min-w-0 transition-all", editMode && "cursor-move")}
+            draggable={editMode}
+            onDragStart={editMode ? () => {
+              setDraggedColumn(column);
+            } : undefined}
+            onDragOver={editMode ? (e) => {
+              e.preventDefault();
+              setDraggedOverColumnId(column.id);
+            } : undefined}
+            onDrop={editMode ? async (e) => {
+              e.preventDefault();
+              if (!draggedColumn || draggedColumn.id === column.id) return;
+              
+              const draggedIndex = columns.findIndex(c => c.id === draggedColumn.id);
+              const targetIndex = columns.findIndex(c => c.id === column.id);
+              
+              const newColumns = [...columns];
+              newColumns.splice(draggedIndex, 1);
+              newColumns.splice(targetIndex, 0, draggedColumn);
+              
+              setColumns(newColumns);
+              
+              try {
+                const updates = newColumns.map((col, index) => ({
+                  id: col.id,
+                  position: index
+                }));
+                
+                for (const update of updates) {
+                  await supabase
+                    .from('columns')
+                    .update({ position: update.position })
+                    .eq('id', update.id);
+                }
+                
+                toast.success("Kolom verplaatst");
+              } catch (error: any) {
+                toast.error("Fout bij verplaatsen: " + error.message);
+                fetchBoardData();
+              }
+              
+              setDraggedColumn(null);
+              setDraggedOverColumnId(null);
+            } : undefined}
+            onDragEnd={editMode ? () => {
+              setDraggedColumn(null);
+              setDraggedOverColumnId(null);
+            } : undefined}
+          >
+            <div className={cn(
+              "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-hidden group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
+              draggedColumn?.id === column.id && "opacity-40 scale-95",
+              draggedOverColumnId === column.id && draggedColumn?.id !== column.id && "border-primary border-4 scale-105"
+            )}>
+              <div className="text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2">
+                {editMode && <span className="text-muted-foreground cursor-grab active:cursor-grabbing">⋮⋮</span>}
+                {column.name}
+              </div>
               <Dialog open={openDialog === column.id} onOpenChange={(open) => setOpenDialog(open ? column.id : null)}>
                 <DialogTrigger asChild>
                   <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
