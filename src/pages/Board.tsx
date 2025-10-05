@@ -583,12 +583,30 @@ const Board = () => {
           updated.header_height = Math.max(20, (column.header_height || 60) + deltaY);
         }
       } else if (mode === 'content') {
-        // Content mode: only adjust top and bottom padding (keep same width as header)
-        if (handle === 'nw' || handle === 'ne') {
+        // Content mode: adjust column width and height
+        if (handle === 'nw') {
           updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
+          updated.width = Math.max(100, (column.width || 300) - deltaX);
+          updated.height = Math.max(100, (column.height || 600) - deltaY);
         }
-        if (handle === 'sw' || handle === 'se') {
+        if (handle === 'ne') {
+          updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
+          updated.width = Math.max(100, (column.width || 300) + deltaX);
+          updated.height = Math.max(100, (column.height || 600) - deltaY);
+        }
+        if (handle === 'sw') {
           updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
+          updated.width = Math.max(100, (column.width || 300) - deltaX);
+          updated.height = Math.max(100, (column.height || 600) + deltaY);
+        }
+        if (handle === 'se') {
+          updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
+          updated.width = Math.max(100, (column.width || 300) + deltaX);
+          updated.height = Math.max(100, (column.height || 600) + deltaY);
         }
       }
       
@@ -601,6 +619,8 @@ const Board = () => {
         await supabase
           .from('columns')
           .update({
+            width: currentColumn.width,
+            height: currentColumn.height,
             header_height: currentColumn.header_height,
             content_padding_top: currentColumn.content_padding_top,
             content_padding_right: currentColumn.content_padding_right,
