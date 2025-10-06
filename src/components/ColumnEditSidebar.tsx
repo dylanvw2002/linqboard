@@ -92,6 +92,47 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           </div>
 
           <div>
+            <Label htmlFor="column-type">Kolom Type</Label>
+            <Select
+              value={editedColumn.column_type || 'regular'}
+              onValueChange={(value: ColumnType) => setEditedColumn({...editedColumn, column_type: value})}
+            >
+              <SelectTrigger id="column-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {columnTypeOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="glow-type">Glow Effect</Label>
+            <Select
+              value={editedColumn.glow_type || 'default'}
+              onValueChange={(value: GlowType) => setEditedColumn({...editedColumn, glow_type: value})}
+            >
+              <SelectTrigger id="glow-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(glowTypeLabels) as GlowType[]).map((type) => (
+                  <SelectItem key={type} value={type}>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full border ${getGlowStyles(type).header.split(' ')[0]}`} />
+                      {glowTypeLabels[type]}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
             <Label htmlFor="x-position">X Positie: {editedColumn.x_position}px</Label>
             <Input
               id="x-position"
@@ -232,47 +273,6 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
                 className="mt-2"
               />
             </div>
-          </div>
-
-          <div>
-            <Label htmlFor="column-type">Kolom Type</Label>
-            <Select
-              value={editedColumn.column_type || 'regular'}
-              onValueChange={(value: ColumnType) => setEditedColumn({...editedColumn, column_type: value})}
-            >
-              <SelectTrigger id="column-type">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {columnTypeOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="glow-type">Glow Effect</Label>
-            <Select
-              value={editedColumn.glow_type || 'default'}
-              onValueChange={(value: GlowType) => setEditedColumn({...editedColumn, glow_type: value})}
-            >
-              <SelectTrigger id="glow-type">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {(Object.keys(glowTypeLabels) as GlowType[]).map((type) => (
-                  <SelectItem key={type} value={type}>
-                    <div className="flex items-center gap-2">
-                      <div className={`w-4 h-4 rounded-full border ${getGlowStyles(type).header.split(' ')[0]}`} />
-                      {glowTypeLabels[type]}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         </div>
 
