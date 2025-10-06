@@ -171,11 +171,13 @@ const Pricing = () => {
             <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold' : ''}>
               {t('pricing.yearly')}
             </Label>
-            {isYearly && (
-              <span className="ml-2 text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full">
-                {t('pricing.save', { percentage: '17' })}
-              </span>
-            )}
+            <span 
+              className={`ml-2 text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${
+                isYearly ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {t('pricing.save', { percentage: '17' })}
+            </span>
           </div>
         </div>
 
