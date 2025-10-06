@@ -969,6 +969,21 @@ const Board = () => {
               setSnapGuides(null);
             } : undefined}
           >
+            {/* Unified resize handles at column level */}
+            {isSelected && editMode && (
+              <>
+                <ResizeHandles 
+                  mode="column"
+                  onMouseDown={(e, handle) => startResize(e, displayColumn, handle)}
+                  activeHandle={resizeHandle}
+                />
+                <div 
+                  className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50 whitespace-nowrap"
+                >
+                  Kolom: {displayColumn.width}px × {displayColumn.height}px | Header: {displayColumn.header_height || 60}px × {displayColumn.header_width || displayColumn.width}px | Padding: T:{displayColumn.content_padding_top || 0} R:{displayColumn.content_padding_right || 0} B:{displayColumn.content_padding_bottom || 0} L:{displayColumn.content_padding_left || 0}
+                </div>
+              </>
+            )}
             
             <div
               className={cn(
@@ -990,21 +1005,6 @@ const Board = () => {
                 }
               }}
             >
-              {/* Unified resize handles */}
-              {isSelected && editMode && (
-                <>
-                  <ResizeHandles 
-                    mode="column"
-                    onMouseDown={(e, handle) => startResize(e, displayColumn, handle)}
-                    activeHandle={resizeHandle}
-                  />
-                  <div 
-                    className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50 whitespace-nowrap"
-                  >
-                    Header: {displayColumn.header_height || 60}px × {displayColumn.header_width || displayColumn.width}px
-                  </div>
-                </>
-              )}
               <div 
                 className={cn(
                   "text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2",
