@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState } from 'react';
 
 interface UserProfile {
   id: string;
@@ -9,6 +10,14 @@ interface UserProfile {
 }
 
 export const useUserProfile = () => {
+  const [hasSession, setHasSession] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setHasSession(!!session);
+    });
+  }, []);
+
   return useQuery({
     queryKey: ['userProfile'],
     queryFn: async (): Promise<UserProfile> => {
@@ -30,6 +39,7 @@ export const useUserProfile = () => {
         avatar_url: profile?.avatar_url,
       };
     },
+    enabled: hasSession === true,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 1,
