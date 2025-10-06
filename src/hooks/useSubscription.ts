@@ -22,12 +22,18 @@ interface SubscriptionData {
 }
 
 export const useSubscription = () => {
-  const [hasSession, setHasSession] = useState<boolean | null>(null);
+  const [hasSession, setHasSession] = useState<boolean>(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setHasSession(!!session);
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setHasSession(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return useQuery({
@@ -41,7 +47,7 @@ export const useSubscription = () => {
       if (error) throw error;
       return data;
     },
-    enabled: hasSession === true,
+    enabled: hasSession,
     staleTime: 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000, // 5 minutes
     retry: 1,
