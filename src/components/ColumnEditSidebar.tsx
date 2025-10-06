@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { X, Crop } from "lucide-react";
+import { getGlowStyles, glowTypeLabels, GlowType } from "@/lib/glowStyles";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Column {
   id: string;
@@ -22,6 +24,7 @@ interface Column {
   content_padding_right: number;
   content_padding_bottom: number;
   content_padding_left: number;
+  glow_type?: GlowType;
 }
 
 interface ColumnEditSidebarProps {
@@ -47,7 +50,8 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           content_padding_top: editedColumn.content_padding_top,
           content_padding_right: editedColumn.content_padding_right,
           content_padding_bottom: editedColumn.content_padding_bottom,
-          content_padding_left: editedColumn.content_padding_left
+          content_padding_left: editedColumn.content_padding_left,
+          glow_type: editedColumn.glow_type || 'default'
         })
         .eq('id', editedColumn.id);
 
@@ -203,6 +207,28 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
                 className="mt-2"
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="glow-type">Glow Type</Label>
+            <Select
+              value={editedColumn.glow_type || 'default'}
+              onValueChange={(value: GlowType) => setEditedColumn({...editedColumn, glow_type: value})}
+            >
+              <SelectTrigger id="glow-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(glowTypeLabels) as GlowType[]).map((type) => (
+                  <SelectItem key={type} value={type}>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full border-2 ${getGlowStyles(type).card}`} />
+                      {glowTypeLabels[type]}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Trash2, GripVertical, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getGlowStyles, glowTypeLabels, GlowType } from "@/lib/glowStyles";
 
 interface Column {
   id: string;
@@ -16,6 +17,7 @@ interface Column {
   position: number;
   width_ratio: number;
   board_id: string;
+  glow_type?: GlowType;
 }
 
 interface ColumnManagementProps {
@@ -50,6 +52,10 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
     setEditingColumns(cols => cols.map(col => col.id === id ? { ...col, width_ratio: width } : col));
   };
 
+  const updateColumnGlowType = (id: string, glowType: GlowType) => {
+    setEditingColumns(cols => cols.map(col => col.id === id ? { ...col, glow_type: glowType } : col));
+  };
+
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
@@ -79,12 +85,13 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
 
   const handleSave = async () => {
     try {
-      // Update all columns with new positions, names, and widths
+      // Update all columns with new positions, names, widths, and glow types
       const updates = editingColumns.map((col, index) => ({
         id: col.id,
         name: col.name,
         position: index,
-        width_ratio: col.width_ratio
+        width_ratio: col.width_ratio,
+        glow_type: col.glow_type || 'default'
       }));
 
       for (const update of updates) {
@@ -93,7 +100,8 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
           .update({ 
             name: update.name, 
             position: update.position,
-            width_ratio: update.width_ratio 
+            width_ratio: update.width_ratio,
+            glow_type: update.glow_type
           })
           .eq('id', update.id);
 
@@ -238,6 +246,28 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                       step={1}
                       className="mt-2"
                     />
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`glow-${col.id}`}>Glow Type</Label>
+                    <Select
+                      value={col.glow_type || 'default'}
+                      onValueChange={(value: GlowType) => updateColumnGlowType(col.id, value)}
+                    >
+                      <SelectTrigger id={`glow-${col.id}`}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(Object.keys(glowTypeLabels) as GlowType[]).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            <div className="flex items-center gap-2">
+                              <div className={`w-4 h-4 rounded-full border-2 ${getGlowStyles(type).card}`} />
+                              {glowTypeLabels[type]}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 

@@ -21,6 +21,8 @@ import { TaskStack } from "@/components/TaskStack";
 import { ColumnManagement } from "@/components/ColumnManagement";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
+import { SimpleTaskCard } from "@/components/SimpleTaskCard";
+import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 
 interface Column {
   id: string;
@@ -37,6 +39,7 @@ interface Column {
   content_padding_right: number;
   content_padding_bottom: number;
   content_padding_left: number;
+  glow_type?: GlowType;
 }
 
 interface Task {
@@ -890,7 +893,8 @@ const Board = () => {
             
             <div
               className={cn(
-                "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] bg-white/15 dark:bg-card/15 border-2 border-white/40 dark:border-white/20 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
+                "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
+                getGlowStyles(column.glow_type).header,
                 draggedColumn?.id === column.id && "opacity-40 scale-95",
                 isSelected && editMode && resizeMode === 'header' && "ring-2 ring-purple-500"
               )}
@@ -948,27 +952,27 @@ const Board = () => {
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor={`title-${column.id}`}>Titel *</Label>
+                      <Label htmlFor={`title-${column.id}`}>{column.name === "Ziek" || column.name === "Verlof" ? "Naam" : "Titel"} *</Label>
                       <Input
                         id={`title-${column.id}`}
                         value={newTaskTitle}
                         onChange={(e) => setNewTaskTitle(e.target.value)}
-                        placeholder="Titel van de taak"
+                        placeholder={column.name === "Ziek" || column.name === "Verlof" ? "Naam van de persoon" : "Titel van de taak"}
                         maxLength={200}
                       />
                     </div>
                     <div>
-                      <Label htmlFor={`description-${column.id}`}>Beschrijving</Label>
+                      <Label htmlFor={`description-${column.id}`}>{column.name === "Ziek" || column.name === "Verlof" ? "Reden" : "Beschrijving"}</Label>
                       <Textarea
                         id={`description-${column.id}`}
                         value={newTaskDescription}
                         onChange={(e) => setNewTaskDescription(e.target.value)}
-                        placeholder="Extra details..."
+                        placeholder={column.name === "Ziek" || column.name === "Verlof" ? "Reden voor afwezigheid..." : "Extra details..."}
                         maxLength={1000}
                       />
                     </div>
                     <div>
-                      <Label>Deadline</Label>
+                      <Label>{column.name === "Ziek" || column.name === "Verlof" ? "Terug verwacht op" : "Deadline"}</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
@@ -1004,6 +1008,7 @@ const Board = () => {
                         </PopoverContent>
                       </Popover>
                     </div>
+                    {!(column.name === "Ziek" || column.name === "Verlof") && (
                     <div>
                       <Label>Prioriteit</Label>
                       <div className="flex gap-2">
@@ -1033,6 +1038,7 @@ const Board = () => {
                         </Button>
                       </div>
                     </div>
+                    )}
                     <button
                       onClick={() => handleAddTask(column.id)}
                       className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg"
@@ -1080,7 +1086,23 @@ const Board = () => {
                 </>
               )}
               <TaskStack>
-                {getColumnTasks(column.id).map((task) => (
+                {getColumnTasks(column.id).map((task) => {
+                  const isSimpleColumn = column.name === "Ziek" || column.name === "Verlof";
+                  
+                  if (isSimpleColumn) {
+                    return (
+                      <SimpleTaskCard
+                        key={task.id}
+                        title={task.title}
+                        description={task.description}
+                        dueDate={task.due_date}
+                        glowStyles={getGlowStyles(column.glow_type).card}
+                        onClick={() => !isDragging && openEditDialog(task)}
+                      />
+                    );
+                  }
+                  
+                  return (
                   <article
                     key={task.id}
                     draggable
@@ -1116,7 +1138,8 @@ const Board = () => {
                       </p>
                     )}
                   </article>
-                ))}
+                  );
+                })}
               </TaskStack>
             </div>
           </section>
@@ -1131,107 +1154,118 @@ const Board = () => {
             <DialogTitle>Taak bewerken</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit-title">Titel *</Label>
-              <Input
-                id="edit-title"
-                value={editTaskTitle}
-                onChange={(e) => setEditTaskTitle(e.target.value)}
-                placeholder="Titel van de taak"
-                maxLength={200}
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-description">Beschrijving</Label>
-              <Textarea
-                id="edit-description"
-                value={editTaskDescription}
-                onChange={(e) => setEditTaskDescription(e.target.value)}
-                placeholder="Extra details..."
-                maxLength={1000}
-              />
-            </div>
-            <div>
-              <Label>Prioriteit</Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant={editTaskPriority === "low" ? "default" : "outline"}
-                  onClick={() => setEditTaskPriority("low")}
-                  className="flex-1"
-                >
-                  Laag
-                </Button>
-                <Button
-                  type="button"
-                  variant={editTaskPriority === "medium" ? "default" : "outline"}
-                  onClick={() => setEditTaskPriority("medium")}
-                  className="flex-1"
-                >
-                  Middel
-                </Button>
-                <Button
-                  type="button"
-                  variant={editTaskPriority === "high" ? "default" : "outline"}
-                  onClick={() => setEditTaskPriority("high")}
-                  className="flex-1"
-                >
-                  Hoog
-                </Button>
-              </div>
-            </div>
-            <div>
-              <Label>Deadline</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !editTaskDueDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={editTaskDueDate}
-                    onSelect={setEditTaskDueDate}
-                    initialFocus
-                    locale={nl}
-                    className="pointer-events-auto"
-                  />
-                  {editTaskDueDate && (
-                    <div className="p-3 border-t">
-                      <Button
-                        variant="ghost"
-                        className="w-full"
-                        onClick={() => setEditTaskDueDate(undefined)}
-                      >
-                        Wis datum
-                      </Button>
+            {(() => {
+              const taskColumn = columns.find(c => c.id === editingTask?.column_id);
+              const isSimpleColumn = taskColumn && (taskColumn.name === "Ziek" || taskColumn.name === "Verlof");
+              
+              return (
+                <>
+                  <div>
+                    <Label htmlFor="edit-title">{isSimpleColumn ? "Naam" : "Titel"} *</Label>
+                    <Input
+                      id="edit-title"
+                      value={editTaskTitle}
+                      onChange={(e) => setEditTaskTitle(e.target.value)}
+                      placeholder={isSimpleColumn ? "Naam van de persoon" : "Titel van de taak"}
+                      maxLength={200}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-description">{isSimpleColumn ? "Reden" : "Beschrijving"}</Label>
+                    <Textarea
+                      id="edit-description"
+                      value={editTaskDescription}
+                      onChange={(e) => setEditTaskDescription(e.target.value)}
+                      placeholder={isSimpleColumn ? "Reden voor afwezigheid..." : "Extra details..."}
+                      maxLength={1000}
+                    />
+                  </div>
+                  {!isSimpleColumn && (
+                    <div>
+                      <Label>Prioriteit</Label>
+                      <div className="flex gap-2">
+                        <Button
+                          type="button"
+                          variant={editTaskPriority === "low" ? "default" : "outline"}
+                          onClick={() => setEditTaskPriority("low")}
+                          className="flex-1"
+                        >
+                          Laag
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={editTaskPriority === "medium" ? "default" : "outline"}
+                          onClick={() => setEditTaskPriority("medium")}
+                          className="flex-1"
+                        >
+                          Middel
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={editTaskPriority === "high" ? "default" : "outline"}
+                          onClick={() => setEditTaskPriority("high")}
+                          className="flex-1"
+                        >
+                          Hoog
+                        </Button>
+                      </div>
                     </div>
                   )}
-                </PopoverContent>
-              </Popover>
-            </div>
-            
-            {editingTask && <TaskAttachments taskId={editingTask.id} />}
-            
-            <div className="flex gap-2 pt-4">
-              <Button onClick={handleDeleteFromDialog} variant="destructive">
-                Verwijderen
-              </Button>
-              <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
-                ✔ Voltooien
-              </Button>
-              <Button onClick={handleEditTask} className="flex-1">
-                Opslaan
-              </Button>
-            </div>
+                  <div>
+                    <Label>{isSimpleColumn ? "Terug verwacht op" : "Deadline"}</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !editTaskDueDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {editTaskDueDate ? format(editTaskDueDate, "PPP", { locale: nl }) : "Selecteer datum"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={editTaskDueDate}
+                          onSelect={setEditTaskDueDate}
+                          initialFocus
+                          locale={nl}
+                          className="pointer-events-auto"
+                        />
+                        {editTaskDueDate && (
+                          <div className="p-3 border-t">
+                            <Button
+                              variant="ghost"
+                              className="w-full"
+                              onClick={() => setEditTaskDueDate(undefined)}
+                            >
+                              Wis datum
+                            </Button>
+                          </div>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  
+                  {editingTask && <TaskAttachments taskId={editingTask.id} />}
+                  
+                  <div className="flex gap-2 pt-4">
+                    <Button onClick={handleDeleteFromDialog} variant="destructive">
+                      Verwijderen
+                    </Button>
+                    <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
+                      ✔ Voltooien
+                    </Button>
+                    <Button onClick={handleEditTask} className="flex-1">
+                      Opslaan
+                    </Button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </DialogContent>
       </Dialog>

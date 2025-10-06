@@ -89,6 +89,7 @@ export type Database = {
           content_padding_right: number | null
           content_padding_top: number | null
           created_at: string
+          glow_type: Database["public"]["Enums"]["column_glow_type"]
           header_height: number | null
           height: number | null
           id: string
@@ -106,6 +107,7 @@ export type Database = {
           content_padding_right?: number | null
           content_padding_top?: number | null
           created_at?: string
+          glow_type?: Database["public"]["Enums"]["column_glow_type"]
           header_height?: number | null
           height?: number | null
           id?: string
@@ -123,6 +125,7 @@ export type Database = {
           content_padding_right?: number | null
           content_padding_top?: number | null
           created_at?: string
+          glow_type?: Database["public"]["Enums"]["column_glow_type"]
           header_height?: number | null
           height?: number | null
           id?: string
@@ -416,6 +419,14 @@ export type Database = {
     }
     Enums: {
       app_role: "owner" | "member"
+      column_glow_type:
+        | "default"
+        | "red"
+        | "green"
+        | "blue"
+        | "yellow"
+        | "purple"
+        | "orange"
       task_priority: "low" | "medium" | "high"
     }
     CompositeTypes: {
@@ -545,6 +556,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["owner", "member"],
+      column_glow_type: [
+        "default",
+        "red",
+        "green",
+        "blue",
+        "yellow",
+        "purple",
+        "orange",
+      ],
       task_priority: ["low", "medium", "high"],
     },
   },
