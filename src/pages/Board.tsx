@@ -95,7 +95,6 @@ const Board = () => {
   const [resizing, setResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
   const [resizeStart, setResizeStart] = useState<{x: number, y: number, col: Column} | null>(null);
-  const [resizeMode, setResizeMode] = useState<'none' | 'header' | 'content'>('none');
   
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
@@ -170,7 +169,6 @@ const Board = () => {
   useEffect(() => {
     if (!editMode) {
       setSelectedColumn(null);
-      setResizeMode('none');
     }
   }, [editMode]);
 
@@ -607,7 +605,7 @@ const Board = () => {
     setIsDragging(false);
   };
 
-  const startResize = (e: React.MouseEvent, column: Column, handle: string, mode: 'header' | 'content') => {
+  const startResize = (e: React.MouseEvent, column: Column, handle: string) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -619,53 +617,68 @@ const Board = () => {
     let currentColumn = { ...column };
     setSelectedColumn(currentColumn);
 
+    // Calculate initial aspect ratio for proportional scaling
+    const initialHeight = column.height || 600;
+    const initialHeaderHeight = column.header_height || 60;
+    const headerHeightRatio = initialHeaderHeight / initialHeight;
+
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const deltaX = (moveEvent.clientX / SCALE_FACTOR) - startX;
       const deltaY = (moveEvent.clientY / SCALE_FACTOR) - startY;
       
       const updated = { ...column };
       
-      if (mode === 'header') {
-        // Header mode: adjust header_height and header_width from corners
-        if (handle === 'nw' || handle === 'ne') {
-          updated.header_height = Math.max(20, (column.header_height || 60) - deltaY);
-        }
-        if (handle === 'sw' || handle === 'se') {
-          updated.header_height = Math.max(20, (column.header_height || 60) + deltaY);
-        }
-        // Adjust width from left/right corners
-        if (handle === 'nw' || handle === 'sw') {
-          updated.header_width = Math.max(100, (column.header_width || column.width) - deltaX);
-        }
-        if (handle === 'ne' || handle === 'se') {
-          updated.header_width = Math.max(100, (column.header_width || column.width) + deltaX);
-        }
-      } else if (mode === 'content') {
-        // Content mode: adjust column width and height
-        if (handle === 'nw') {
-          updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
-          updated.width = Math.max(100, (column.width || 300) - deltaX);
-          updated.height = Math.max(100, (column.height || 600) - deltaY);
-        }
-        if (handle === 'ne') {
-          updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
-          updated.width = Math.max(100, (column.width || 300) + deltaX);
-          updated.height = Math.max(100, (column.height || 600) - deltaY);
-        }
-        if (handle === 'sw') {
-          updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-          updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
-          updated.width = Math.max(100, (column.width || 300) - deltaX);
-          updated.height = Math.max(100, (column.height || 600) + deltaY);
-        }
-        if (handle === 'se') {
-          updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-          updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
-          updated.width = Math.max(100, (column.width || 300) + deltaX);
-          updated.height = Math.max(100, (column.height || 600) + deltaY);
-        }
+      // Unified resize: width, header_width, height, header_height all scale together
+      if (handle === 'nw') {
+        // Top-left: shrink from top-left
+        const newWidth = Math.max(100, (column.width || 300) - deltaX);
+        const newHeight = Math.max(100, (column.height || 600) - deltaY);
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+        updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
+      }
+      
+      if (handle === 'ne') {
+        // Top-right: expand right, shrink top
+        const newWidth = Math.max(100, (column.width || 300) + deltaX);
+        const newHeight = Math.max(100, (column.height || 600) - deltaY);
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+        updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
+      }
+      
+      if (handle === 'sw') {
+        // Bottom-left: shrink left, expand bottom
+        const newWidth = Math.max(100, (column.width || 300) - deltaX);
+        const newHeight = Math.max(100, (column.height || 600) + deltaY);
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+        updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
+      }
+      
+      if (handle === 'se') {
+        // Bottom-right: expand both
+        const newWidth = Math.max(100, (column.width || 300) + deltaX);
+        const newHeight = Math.max(100, (column.height || 600) + deltaY);
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+        updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
       }
       
       currentColumn = updated;
@@ -962,7 +975,7 @@ const Board = () => {
                 "flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
                 getGlowStyles(column.glow_type).header,
                 draggedColumn?.id === column.id && "opacity-40 scale-95",
-                isSelected && editMode && resizeMode === 'header' && "ring-2 ring-purple-500"
+                isSelected && editMode && "ring-2 ring-purple-500"
               )}
               style={{
                 height: `${displayColumn.header_height || 60}px`,
@@ -974,20 +987,19 @@ const Board = () => {
                 if (editMode) {
                   e.stopPropagation();
                   setSelectedColumn(column);
-                  setResizeMode('header');
                 }
               }}
             >
-              {/* Header resize handles */}
-              {isSelected && editMode && resizeMode === 'header' && (
+              {/* Unified resize handles */}
+              {isSelected && editMode && (
                 <>
                   <ResizeHandles 
-                    mode="header"
-                    onMouseDown={(e, handle) => startResize(e, displayColumn, handle, 'header')}
+                    mode="column"
+                    onMouseDown={(e, handle) => startResize(e, displayColumn, handle)}
                     activeHandle={resizeHandle}
                   />
                   <div 
-                    className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
+                    className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50 whitespace-nowrap"
                   >
                     Header: {displayColumn.header_height || 60}px × {displayColumn.header_width || displayColumn.width}px
                   </div>
@@ -1121,8 +1133,7 @@ const Board = () => {
               onDragOver={(e) => handleDragOver(e, column.id)}
               onDrop={(e) => handleDrop(e, column.id)}
               className={cn(
-                "flex-1 min-h-0 relative overflow-visible",
-                isSelected && editMode && resizeMode === 'content' && "ring-2 ring-purple-500 ring-inset"
+                "flex-1 min-h-0 relative overflow-visible"
               )}
               style={{
                 paddingTop: `${displayColumn.content_padding_top || 0}px`,
@@ -1134,25 +1145,10 @@ const Board = () => {
                 if (editMode) {
                   e.stopPropagation();
                   setSelectedColumn(column);
-                  setResizeMode('content');
                 }
               }}
             >
-              {/* Content resize handles */}
-              {isSelected && editMode && resizeMode === 'content' && (
-                <>
-                  <ResizeHandles 
-                    mode="content"
-                    onMouseDown={(e, handle) => startResize(e, displayColumn, handle, 'content')}
-                    activeHandle={resizeHandle}
-                  />
-                  <div 
-                    className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
-                  >
-                    Padding: T{displayColumn.content_padding_top || 0} R{displayColumn.content_padding_right || 0} B{displayColumn.content_padding_bottom || 0} L{displayColumn.content_padding_left || 0}
-                  </div>
-                </>
-              )}
+              {/* Task rendering */}
               <TaskStack>
                 {getColumnTasks(column.id).map((task) => {
                   const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
