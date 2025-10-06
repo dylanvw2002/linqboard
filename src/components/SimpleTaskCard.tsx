@@ -56,21 +56,24 @@ export const SimpleTaskCard = ({
 
       {assignees && assignees.length > 0 && (
         <div className="flex items-center gap-1 mt-3 relative z-[60]">
-          {assignees.slice(0, 3).map((assignee, idx) => (
-            <Tooltip key={assignee.user_id} delayDuration={200}>
-              <TooltipTrigger asChild>
-                <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-all shadow-lg" style={{ marginLeft: idx > 0 ? '-14px' : '0' }}>
-                  <AvatarImage src={assignee.avatar_url || undefined} />
-                  <AvatarFallback className="text-base font-black bg-gradient-to-br from-primary to-primary/70 text-white">
-                    {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </TooltipTrigger>
-              <TooltipContent side="top" className="z-[70] bg-foreground text-background">
-                <p className="font-bold text-sm">{assignee.full_name}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
+          {assignees.slice(0, 3).map((assignee, idx) => {
+            console.log('Task card assignee:', assignee);
+            return (
+              <Tooltip key={assignee.user_id} delayDuration={200}>
+                <TooltipTrigger asChild>
+                  <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-all shadow-lg" style={{ marginLeft: idx > 0 ? '-14px' : '0' }}>
+                    <AvatarImage src={assignee.avatar_url || undefined} />
+                    <AvatarFallback className="text-base font-black bg-gradient-to-br from-primary to-primary/70 text-white">
+                      {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="z-[70] bg-foreground text-background">
+                  <p className="font-bold text-sm">{assignee.full_name}</p>
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
           {assignees.length > 3 && (
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
