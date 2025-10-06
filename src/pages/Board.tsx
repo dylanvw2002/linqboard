@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -43,10 +45,16 @@ interface Column {
   glow_type?: GlowType;
   column_type?: ColumnType;
 }
+interface Assignee {
+  user_id: string;
+  full_name: string;
+}
+
 interface Task {
   id: string;
   column_id: string;
   title: string;
+  assignees?: Assignee[];
   description: string | null;
   priority: "low" | "medium" | "high";
   position: number;
@@ -77,6 +85,8 @@ const Board = () => {
   const [editTaskDescription, setEditTaskDescription] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
   const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [orgMembers, setOrgMembers] = useState<Assignee[]>([]);
+  const [editTaskAssignees, setEditTaskAssignees] = useState<string[]>([]);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -180,6 +190,7 @@ const Board = () => {
   useEffect(() => {
     checkAccess();
     fetchBoardData();
+    fetchOrgMembers();
   }, [organizationId]);
   useEffect(() => {
     if (!board?.id) return;
@@ -217,6 +228,25 @@ const Board = () => {
       navigate("/dashboard");
     }
   };
+
+  const fetchOrgMembers = async () => {
+    try {
+      const { data } = await supabase
+        .from("memberships")
+        .select("user_id, profiles(user_id, full_name)")
+        .eq("organization_id", organizationId);
+      
+      if (data) {
+        const members = data.map(m => ({
+          user_id: m.user_id,
+          full_name: (m.profiles as any)?.full_name || "Onbekend"
+        }));
+        setOrgMembers(members);
+      }
+    } catch (error) {
+      console.error("Fout bij laden van teamleden:", error);
+    }
+  };
   const fetchBoardData = async () => {
     try {
       const {
@@ -237,7 +267,30 @@ const Board = () => {
           const {
             data: tasksData
           } = await supabase.from("tasks").select("*").in("column_id", columnIds).order("position");
-          setTasks(tasksData || []);
+          
+          // Fetch assignees for all tasks
+          if (tasksData && tasksData.length > 0) {
+            const taskIds = tasksData.map(t => t.id);
+            const { data: assigneesData } = await supabase
+              .from("task_assignees")
+              .select("task_id, user_id, profiles(user_id, full_name)")
+              .in("task_id", taskIds);
+            
+            // Map assignees to tasks
+            const tasksWithAssignees = tasksData.map(task => ({
+              ...task,
+              assignees: assigneesData
+                ?.filter(a => a.task_id === task.id)
+                .map(a => ({
+                  user_id: a.user_id,
+                  full_name: (a.profiles as any)?.full_name || "Onbekend"
+                })) || []
+            }));
+            
+            setTasks(tasksWithAssignees);
+          } else {
+            setTasks([]);
+          }
         }
       }
     } catch (error: any) {
@@ -326,6 +379,38 @@ const Board = () => {
     setEditTaskDescription(task.description || "");
     setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
     setEditTaskPriority(task.priority);
+    setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
+  };
+
+  const handleAddAssignee = async (userId: string) => {
+    if (!editingTask) return;
+    try {
+      const { error } = await supabase.from("task_assignees").insert({
+        task_id: editingTask.id,
+        user_id: userId
+      });
+      if (error) throw error;
+      setEditTaskAssignees([...editTaskAssignees, userId]);
+      await fetchBoardData();
+    } catch (error) {
+      toast.error("Fout bij toevoegen van teamlid");
+    }
+  };
+
+  const handleRemoveAssignee = async (userId: string) => {
+    if (!editingTask) return;
+    try {
+      const { error } = await supabase
+        .from("task_assignees")
+        .delete()
+        .eq("task_id", editingTask.id)
+        .eq("user_id", userId);
+      if (error) throw error;
+      setEditTaskAssignees(editTaskAssignees.filter(id => id !== userId));
+      await fetchBoardData();
+    } catch (error) {
+      toast.error("Fout bij verwijderen van teamlid");
+    }
   };
   const handleEditTask = async () => {
     if (!editingTask) return;
@@ -950,7 +1035,7 @@ const Board = () => {
                 {getColumnTasks(column.id).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     if (isSimpleColumn) {
-                      return <SimpleTaskCard key={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} />;
+                      return <SimpleTaskCard key={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} />;
                     }
                     return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95")}>
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
@@ -971,6 +1056,22 @@ const Board = () => {
                     {task.description && <p className="text-muted-foreground text-[clamp(12px,1.2vw,14px)] relative z-10">
                         {task.description}
                       </p>}
+                    {task.assignees && task.assignees.length > 0 && (
+                      <div className="flex items-center gap-1 mt-2 relative z-10">
+                        {task.assignees.slice(0, 3).map((assignee, idx) => (
+                          <Avatar key={assignee.user_id} className="h-6 w-6 border-2 border-white" style={{ marginLeft: idx > 0 ? '-8px' : '0' }}>
+                            <AvatarFallback className="text-[10px] bg-primary/10">
+                              {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        ))}
+                        {task.assignees.length > 3 && (
+                          <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold" style={{ marginLeft: '-8px' }}>
+                            +{task.assignees.length - 3}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </article>;
                   })}
               </div>
@@ -1032,6 +1133,57 @@ const Board = () => {
                           </div>}
                       </PopoverContent>
                     </Popover>
+                  </div>
+                  
+                  <div>
+                    <Label>Toegewezen aan</Label>
+                    <div className="space-y-3">
+                      {editTaskAssignees.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {editTaskAssignees.map(userId => {
+                            const member = orgMembers.find(m => m.user_id === userId);
+                            if (!member) return null;
+                            return (
+                              <div key={userId} className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-lg">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarFallback className="text-xs">
+                                    {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm">{member.full_name}</span>
+                                <button
+                                  onClick={() => handleRemoveAssignee(userId)}
+                                  className="ml-1 text-muted-foreground hover:text-destructive"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      <Select
+                        value=""
+                        onValueChange={(value) => {
+                          if (value && !editTaskAssignees.includes(value)) {
+                            handleAddAssignee(value);
+                          }
+                        }}
+                      >
+                        <SelectTrigger>
+                          <span className="text-muted-foreground">Teamlid toevoegen...</span>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {orgMembers
+                            .filter(m => !editTaskAssignees.includes(m.user_id))
+                            .map(member => (
+                              <SelectItem key={member.user_id} value={member.user_id}>
+                                {member.full_name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   
                   {editingTask && <TaskAttachments taskId={editingTask.id} />}
