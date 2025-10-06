@@ -87,7 +87,7 @@ export const TaskStack = ({
   }, [isExpanded]);
 
   if (children.length === 0) {
-    return <div ref={containerRef} className="flex-1 px-1 pt-3.5 pb-1" />;
+    return <div ref={containerRef} className="flex-1 pt-3.5 pb-1" />;
   }
 
   if (!isOverflowing || isExpanded) {
@@ -96,7 +96,7 @@ export const TaskStack = ({
       <div 
         ref={containerRef}
         className={cn(
-          "flex-1 px-1 pt-3.5 pb-1 grid gap-3 content-start transition-all duration-300",
+          "flex-1 pt-3.5 pb-1 grid gap-3 content-start transition-all duration-300",
           isExpanded && "overflow-y-auto list"
         )}
       >
@@ -122,7 +122,7 @@ export const TaskStack = ({
   return (
     <div 
       ref={containerRef}
-      className="flex-1 px-1 pt-3.5 pb-1 relative"
+      className="flex-1 pt-3.5 pb-1 relative"
     >
       {/* Visible tasks */}
       <div className="grid gap-3 content-start pb-[20px]">
@@ -135,7 +135,7 @@ export const TaskStack = ({
 
       {/* Stacked tasks at bottom */}
       <div 
-        className="absolute bottom-1 left-1 right-1 cursor-pointer"
+        className="absolute bottom-1 left-0 right-0 cursor-pointer"
         onClick={handleStackClick}
       >
         <div className="relative h-[80px]">
