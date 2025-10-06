@@ -56,12 +56,17 @@ export const getGlowStyles = (glowType: GlowType = 'default'): GlowStyles => {
   return styles[glowType] || styles.default;
 };
 
-export const glowTypeLabels: Record<GlowType, string> = {
-  default: 'Standaard',
-  red: 'Rood',
-  green: 'Groen',
-  blue: 'Blauw',
-  yellow: 'Geel',
-  purple: 'Paars',
-  orange: 'Oranje'
+import i18next from 'i18next';
+
+export const getGlowTypeLabel = (type: GlowType): string => {
+  const labels: Record<GlowType, string> = {
+    default: i18next.t('column.glowDefault'),
+    red: i18next.t('column.glowRed'),
+    green: i18next.t('column.glowGreen'),
+    blue: i18next.t('column.glowBlue'),
+    yellow: i18next.t('column.glowYellow'),
+    purple: i18next.t('column.glowPurple'),
+    orange: i18next.t('column.glowOrange'),
+  };
+  return labels[type];
 };

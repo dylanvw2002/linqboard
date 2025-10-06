@@ -9,8 +9,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Trash2, GripVertical, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { getGlowStyles, glowTypeLabels, GlowType } from "@/lib/glowStyles";
-import { ColumnType, columnTypeOptions } from "@/lib/columnTypes";
+import { getGlowStyles, getGlowTypeLabel, GlowType } from "@/lib/glowStyles";
+import { ColumnType, getColumnTypeOptions } from "@/lib/columnTypes";
 
 interface Column {
   id: string;
@@ -266,7 +266,7 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {columnTypeOptions.map((option) => (
+                        {getColumnTypeOptions().map((option) => (
                           <SelectItem key={option.value} value={option.value}>
                             {option.label}
                           </SelectItem>
@@ -285,11 +285,11 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {(Object.keys(glowTypeLabels) as GlowType[]).map((type) => (
+                        {(['default', 'red', 'green', 'blue', 'yellow', 'purple', 'orange'] as GlowType[]).map((type) => (
                           <SelectItem key={type} value={type}>
                             <div className="flex items-center gap-2">
                               <div className={`w-4 h-4 rounded-full border ${getGlowStyles(type).header.split(' ')[0]}`} />
-                              {glowTypeLabels[type]}
+                              {getGlowTypeLabel(type)}
                             </div>
                           </SelectItem>
                         ))}

@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { X, Crop } from "lucide-react";
-import { getGlowStyles, glowTypeLabels, GlowType } from "@/lib/glowStyles";
+import { getGlowStyles, getGlowTypeLabel, GlowType } from "@/lib/glowStyles";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ColumnType, columnTypeOptions } from "@/lib/columnTypes";
+import { ColumnType, getColumnTypeOptions } from "@/lib/columnTypes";
 interface Column {
   id: string;
   name: string;
@@ -94,7 +94,7 @@ export const ColumnEditSidebar = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {columnTypeOptions.map(option => <SelectItem key={option.value} value={option.value}>
+                {getColumnTypeOptions().map(option => <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>)}
               </SelectContent>
@@ -111,10 +111,10 @@ export const ColumnEditSidebar = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {(Object.keys(glowTypeLabels) as GlowType[]).map(type => <SelectItem key={type} value={type}>
+                {(['default', 'red', 'green', 'blue', 'yellow', 'purple', 'orange'] as GlowType[]).map(type => <SelectItem key={type} value={type}>
                     <div className="flex items-center gap-2">
                       <div className={`w-4 h-4 rounded-full border ${getGlowStyles(type).header.split(' ')[0]}`} />
-                      {glowTypeLabels[type]}
+                      {getGlowTypeLabel(type)}
                     </div>
                   </SelectItem>)}
               </SelectContent>
