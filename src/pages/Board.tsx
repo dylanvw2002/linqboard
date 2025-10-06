@@ -101,9 +101,13 @@ const Board = () => {
 
   const handleAddColumn = async () => {
     try {
-      // Find a good position for the new column (to the right of existing columns)
-      const maxX = columns.length > 0 ? Math.max(...columns.map(c => c.x_position)) : 0;
-      const newX = maxX + 350; // Add some spacing
+      // Place new column in a visible area (not too far right)
+      // Find the rightmost column within reasonable bounds
+      const visibleColumns = columns.filter(c => c.x_position < 1500);
+      const maxX = visibleColumns.length > 0 
+        ? Math.max(...visibleColumns.map(c => c.x_position + (c.width || 300))) 
+        : 40;
+      const newX = maxX + 40; // Add some spacing
       
       const { data, error } = await supabase
         .from('columns')
@@ -124,6 +128,17 @@ const Board = () => {
 
       toast.success("Kolom toegevoegd");
       await fetchBoardData();
+      
+      // Scroll to the new column
+      setTimeout(() => {
+        const mainElement = document.querySelector('main');
+        if (mainElement && data) {
+          mainElement.scrollTo({
+            left: (newX - 100) * SCALE_FACTOR,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     } catch (error: any) {
       toast.error("Fout bij toevoegen: " + error.message);
     }
