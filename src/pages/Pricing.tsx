@@ -156,8 +156,8 @@ const Pricing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16">
-      <div className="container mx-auto px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+      <div className="container mx-auto px-6 py-12 pb-32">
         <Button
           variant="ghost"
           onClick={() => navigate('/dashboard')}
