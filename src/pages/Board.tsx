@@ -672,56 +672,98 @@ const Board = () => {
         ...column
       };
 
+      // Calculate snap guides
+      const guides: { x?: number; y?: number } = {};
+
       // Unified resize: width and header_width scale together, height adjusts independently
       if (handle === 'nw') {
         // Top-left: shrink from top-left
         const newWidth = Math.max(100, (column.width || 300) - deltaX);
         const newHeight = Math.max(100, (column.height || 600) - deltaY);
+        
+        // Check alignment with other columns
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        // header_height stays independent
         updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-        // Don't adjust left/right padding - cards should match header width
       }
       if (handle === 'ne') {
         // Top-right: expand right, shrink top
         const newWidth = Math.max(100, (column.width || 300) + deltaX);
         const newHeight = Math.max(100, (column.height || 600) - deltaY);
+        
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        // header_height stays independent
         updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-        // Don't adjust left/right padding - cards should match header width
       }
       if (handle === 'sw') {
         // Bottom-left: shrink left, expand bottom
         const newWidth = Math.max(100, (column.width || 300) - deltaX);
         const newHeight = Math.max(100, (column.height || 600) + deltaY);
+        
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        // header_height stays independent
         updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-        // Don't adjust left/right padding - cards should match header width
       }
       if (handle === 'se') {
         // Bottom-right: expand both
         const newWidth = Math.max(100, (column.width || 300) + deltaX);
         const newHeight = Math.max(100, (column.height || 600) + deltaY);
+        
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        // header_height stays independent
         updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-        // Don't adjust left/right padding - cards should match header width
       }
       if (handle === 'header-bottom') {
         // Header bottom: only adjust header height
         const newHeaderHeight = Math.max(40, (column.header_height || 60) + deltaY);
         updated.header_height = newHeaderHeight;
       }
+      
+      setSnapGuides(Object.keys(guides).length > 0 ? guides : null);
       currentColumn = updated;
       setSelectedColumn(updated);
     };
@@ -756,6 +798,7 @@ const Board = () => {
       setResizing(false);
       setResizeHandle(null);
       setResizeStart(null);
+      setSnapGuides(null);
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
