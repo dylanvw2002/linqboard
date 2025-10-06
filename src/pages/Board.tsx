@@ -1134,6 +1134,7 @@ const Board = () => {
                       <div className="flex items-center gap-1 mt-2 relative z-10">
                         {task.assignees.slice(0, 3).map((assignee, idx) => (
                           <Avatar key={assignee.user_id} className="h-6 w-6 border-2 border-white" style={{ marginLeft: idx > 0 ? '-8px' : '0' }}>
+                            <AvatarImage src={assignee.avatar_url || undefined} />
                             <AvatarFallback className="text-[10px] bg-primary/10">
                               {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </AvatarFallback>

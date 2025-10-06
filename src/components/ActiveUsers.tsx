@@ -21,6 +21,8 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
 
   useEffect(() => {
+    let roomChannel: RealtimeChannel | null = null;
+    
     const setupPresence = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -32,7 +34,7 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
         .eq("user_id", session.user.id)
         .single();
 
-      const roomChannel = supabase.channel(`board:${organizationId}`, {
+      roomChannel = supabase.channel(`board:${organizationId}`, {
         config: {
           presence: {
             key: session.user.id,
@@ -40,9 +42,20 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
         },
       });
 
+      const updatePresence = async () => {
+        if (roomChannel) {
+          await roomChannel.track({
+            user_id: session.user.id,
+            full_name: profile?.full_name || "Onbekende gebruiker",
+            avatar_url: profile?.avatar_url || null,
+            online_at: new Date().toISOString(),
+          });
+        }
+      };
+
       roomChannel
         .on("presence", { event: "sync" }, () => {
-          const state = roomChannel.presenceState();
+          const state = roomChannel!.presenceState();
           const users: UserPresence[] = [];
           
           Object.keys(state).forEach((userId) => {
@@ -57,24 +70,53 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
         })
         .subscribe(async (status) => {
           if (status === "SUBSCRIBED") {
-            await roomChannel.track({
-              user_id: session.user.id,
-              full_name: profile?.full_name || "Onbekende gebruiker",
-              avatar_url: profile?.avatar_url || null,
-              online_at: new Date().toISOString(),
-            });
+            await updatePresence();
           }
         });
 
       setChannel(roomChannel);
+
+      // Listen for profile updates and refresh presence
+      const profileChannel = supabase
+        .channel('profile-updates')
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `user_id=eq.${session.user.id}`
+        }, async () => {
+          // Refetch profile and update presence
+          const { data: updatedProfile } = await supabase
+            .from("profiles")
+            .select("full_name, avatar_url")
+            .eq("user_id", session.user.id)
+            .single();
+          
+          if (roomChannel && updatedProfile) {
+            await roomChannel.track({
+              user_id: session.user.id,
+              full_name: updatedProfile.full_name || "Onbekende gebruiker",
+              avatar_url: updatedProfile.avatar_url || null,
+              online_at: new Date().toISOString(),
+            });
+          }
+        })
+        .subscribe();
+
+      return profileChannel;
     };
 
-    setupPresence();
+    const profileChannelPromise = setupPresence();
 
     return () => {
       if (channel) {
         supabase.removeChannel(channel);
       }
+      profileChannelPromise.then(profileChannel => {
+        if (profileChannel) {
+          supabase.removeChannel(profileChannel);
+        }
+      });
     };
   }, [organizationId]);
 
