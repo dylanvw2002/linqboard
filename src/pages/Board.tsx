@@ -828,14 +828,25 @@ const Board = () => {
           <span className="text-sm font-semibold text-primary">
             🔧 Bewerkmodus actief - Klik op HEADER of TAAKGEBIED → sleep handles om te resizen
           </span>
-          <Button
-            onClick={handleAddColumn}
-            size="sm"
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Kolom toevoegen
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setColumnManagementOpen(true)}
+              size="sm"
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Kolommen beheren
+            </Button>
+            <Button
+              onClick={handleAddColumn}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Kolom toevoegen
+            </Button>
+          </div>
         </div>
       )}
       <main
