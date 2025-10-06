@@ -58,8 +58,8 @@ export const SimpleTaskCard = ({
           {assignees.slice(0, 3).map((assignee, idx) => (
             <Tooltip key={assignee.user_id} delayDuration={200}>
               <TooltipTrigger asChild>
-                <Avatar className="h-9 w-9 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-all shadow-lg" style={{ marginLeft: idx > 0 ? '-12px' : '0' }}>
-                  <AvatarFallback className="text-sm font-black bg-gradient-to-br from-primary to-primary/70 text-white">
+                <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-all shadow-lg" style={{ marginLeft: idx > 0 ? '-14px' : '0' }}>
+                  <AvatarFallback className="text-base font-black bg-gradient-to-br from-primary to-primary/70 text-white">
                     {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -72,7 +72,7 @@ export const SimpleTaskCard = ({
           {assignees.length > 3 && (
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
-                <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-sm font-black text-white cursor-pointer hover:scale-110 transition-all shadow-lg" style={{ marginLeft: '-12px' }}>
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-base font-black text-white cursor-pointer hover:scale-110 transition-all shadow-lg" style={{ marginLeft: '-14px' }}>
                   +{assignees.length - 3}
                 </div>
               </TooltipTrigger>
