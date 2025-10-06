@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users } from "lucide-react";
 import { RealtimeChannel } from "@supabase/supabase-js";
 
@@ -11,6 +12,7 @@ interface ActiveUsersProps {
 interface UserPresence {
   user_id: string;
   full_name: string;
+  avatar_url?: string;
   online_at: string;
 }
 
@@ -26,7 +28,7 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
       // Get user profile
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, avatar_url")
         .eq("user_id", session.user.id)
         .single();
 
@@ -57,6 +59,7 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
             await roomChannel.track({
               user_id: session.user.id,
               full_name: profile?.full_name || "Onbekende gebruiker",
+              avatar_url: profile?.avatar_url || null,
               online_at: new Date().toISOString(),
             });
           }
@@ -94,9 +97,17 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
           ) : (
             <ul className="space-y-2">
               {activeUsers.map((user) => (
-                <li key={user.user_id} className="flex items-center gap-2 text-sm">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>{user.full_name}</span>
+                <li key={user.user_id} className="flex items-center gap-3 text-sm p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                  <Avatar className="h-8 w-8 border-2 border-green-500">
+                    <AvatarImage src={user.avatar_url || undefined} />
+                    <AvatarFallback className="text-xs font-bold bg-primary/30 text-primary">
+                      {user.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="font-medium">{user.full_name}</span>
+                  </div>
                 </li>
               ))}
             </ul>
