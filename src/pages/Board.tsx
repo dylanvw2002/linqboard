@@ -285,7 +285,7 @@ const Board = () => {
             const userIds = [...new Set(assigneesData?.map(a => a.user_id) || [])];
             const { data: profiles } = await supabase
               .from("profiles")
-              .select("user_id, full_name")
+              .select("user_id, full_name, avatar_url")
               .in("user_id", userIds);
             
             // Map assignees to tasks
@@ -297,7 +297,8 @@ const Board = () => {
                   const profile = profiles?.find(p => p.user_id === a.user_id);
                   return {
                     user_id: a.user_id,
-                    full_name: profile?.full_name || "Onbekend"
+                    full_name: profile?.full_name || "Onbekend",
+                    avatar_url: profile?.avatar_url || null
                   };
                 }) || []
             }));
@@ -326,6 +327,14 @@ const Board = () => {
       schema: "public",
       table: "columns"
     }, () => {
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "profiles"
+    }, () => {
+      // Refresh both org members and tasks to update all avatars
+      fetchOrgMembers();
       fetchBoardData();
     }).subscribe();
     return () => {
