@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const JoinOrganization = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
 
@@ -39,10 +41,10 @@ const JoinOrganization = () => {
 
       if (error) throw error;
 
-      toast.success(data?.message || "Succesvol lid geworden!");
+      toast.success(data?.message || t('organization.joined'));
       navigate("/dashboard");
     } catch (error: any) {
-      toast.error(error.message || "Ongeldige code");
+      toast.error(error.message || t('organization.joinError'));
     } finally {
       setLoading(false);
     }
@@ -53,20 +55,20 @@ const JoinOrganization = () => {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-2">
           <CardTitle className="text-3xl font-bold text-center">
-            Sluit je aan bij een team
+            {t('organization.joinTitle')}
           </CardTitle>
           <CardDescription className="text-center">
-            Voer de uitnodigingscode in die je hebt ontvangen
+            {t('organization.joinDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleJoin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="inviteCode">Uitnodigingscode</Label>
+              <Label htmlFor="inviteCode">{t('organization.inviteCode')}</Label>
               <Input
                 id="inviteCode"
                 type="text"
-                placeholder="ABC123"
+                placeholder={t('organization.joinPlaceholder')}
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                 required
@@ -74,19 +76,16 @@ const JoinOrganization = () => {
                 maxLength={6}
                 className="text-center text-2xl tracking-wider font-bold"
               />
-              <p className="text-xs text-muted-foreground text-center">
-                6 karakters (letters en cijfers)
-              </p>
             </div>
 
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Lid worden...
+                  {t('common.loading')}
                 </>
               ) : (
-                "Wordt lid"
+                t('organization.joinButton')
               )}
             </Button>
           </form>
@@ -98,7 +97,7 @@ const JoinOrganization = () => {
               className="text-sm text-primary hover:underline"
               disabled={loading}
             >
-              Nog geen code? Maak een organisatie
+              {t('organization.orCreateNew')}
             </button>
           </div>
         </CardContent>

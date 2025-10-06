@@ -12,6 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
 interface Organization {
   id: string;
@@ -21,6 +23,7 @@ interface Organization {
 }
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [userName, setUserName] = useState("");
@@ -93,16 +96,16 @@ const Dashboard = () => {
       if (updateError) throw updateError;
 
       setAvatarUrl(publicUrl);
-      toast.success("Profielfoto bijgewerkt!");
+      toast.success(t('dashboard.avatarUpdated'));
     } catch (error: any) {
-      toast.error("Fout bij uploaden van foto");
+      toast.error(t('dashboard.uploadError'));
       console.error(error);
     }
   };
 
   const handleUpdateProfile = async () => {
     if (!editName.trim()) {
-      toast.error("Naam mag niet leeg zijn");
+      toast.error(t('dashboard.nameRequired'));
       return;
     }
 
@@ -116,9 +119,9 @@ const Dashboard = () => {
 
       setUserName(editName);
       setProfileDialogOpen(false);
-      toast.success("Profiel bijgewerkt!");
+      toast.success(t('dashboard.profileUpdated'));
     } catch (error: any) {
-      toast.error("Fout bij bijwerken van profiel");
+      toast.error(t('dashboard.updateProfileError'));
       console.error(error);
     }
   };
@@ -150,7 +153,7 @@ const Dashboard = () => {
       })).filter((org: any) => org.id) || [];
       setOrganizations(orgs);
     } catch (error: any) {
-      toast.error("Fout bij laden van organisaties");
+      toast.error(t('dashboard.loadOrgsError'));
     } finally {
       setLoading(false);
     }
@@ -169,11 +172,11 @@ const Dashboard = () => {
         error
       } = await supabase.from("organizations").delete().eq("id", deleteOrgId);
       if (error) throw error;
-      toast.success("Organisatie succesvol verwijderd");
+      toast.success(t('dashboard.orgDeletedSuccess'));
       setOrganizations(organizations.filter(org => org.id !== deleteOrgId));
       setDeleteOrgId(null);
     } catch (error: any) {
-      toast.error("Fout bij verwijderen van organisatie");
+      toast.error(t('dashboard.deleteOrgError'));
       console.error(error);
     }
   };
@@ -190,11 +193,11 @@ const Dashboard = () => {
         error
       } = await supabase.from("memberships").delete().eq("organization_id", leaveOrgId).eq("user_id", session.user.id);
       if (error) throw error;
-      toast.success("Je hebt de organisatie verlaten");
+      toast.success(t('dashboard.orgLeftSuccess'));
       setOrganizations(organizations.filter(org => org.id !== leaveOrgId));
       setLeaveOrgId(null);
     } catch (error: any) {
-      toast.error("Fout bij verlaten van organisatie");
+      toast.error(t('dashboard.leaveOrgError'));
       console.error(error);
     }
   };
@@ -202,7 +205,7 @@ const Dashboard = () => {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Dashboard laden...</p>
+          <p className="text-muted-foreground">{t('dashboard.title')}</p>
         </div>
       </div>;
   }
@@ -213,6 +216,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between gap-4">
             <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
             <div className="flex items-center gap-4">
+              <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
@@ -227,11 +231,11 @@ const Dashboard = () => {
                 <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
                   <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profiel bewerken</span>
+                    <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Uitloggen</span>
+                    <span>{t('auth.logout')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -245,18 +249,18 @@ const Dashboard = () => {
         <div className="mb-12">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 pb-2 flex items-center gap-3">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-0 py-[2px]">
-              Hoi {userName || "daar"}
+              {t('dashboard.hello')} {userName || t('dashboard.hello')}
             </span>
             <PartyPopper className="text-accent" size={56} />
           </h1>
           <p className="text-xl text-muted-foreground">
-            Welkom terug op je dashboard
+            {t('dashboard.welcomeBack')}
           </p>
         </div>
 
         {/* Organizations */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Jouw organisaties</h2>
+          <h2 className="text-3xl font-bold mb-6">{t('dashboard.yourOrganizations')}</h2>
           
           {organizations.length === 0 ? <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="max-w-md mx-auto">
@@ -264,15 +268,15 @@ const Dashboard = () => {
                   <Plus className="h-10 w-10 text-primary" />
                 </div>
                 <p className="text-lg text-muted-foreground mb-6">
-                  Je bent nog geen lid van een organisatie. Begin nu met het maken van je eerste team!
+                  {t('dashboard.noOrganizations')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button size="lg" onClick={() => navigate("/create-organization")} className="shadow-lg hover:shadow-xl transition-all">
                     <Plus className="mr-2 h-5 w-5" />
-                    Maak organisatie
+                    {t('dashboard.createOrganization')}
                   </Button>
                   <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
-                    Voeg code in
+                    {t('dashboard.joinOrganization')}
                   </Button>
                 </div>
               </div>
@@ -285,22 +289,22 @@ const Dashboard = () => {
                       <Trash2 className="h-5 w-5" />
                     </Button> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
               e.stopPropagation();
-              setLeaveOrgId(org.id);
-            }}>
-                      Verlaat
+               setLeaveOrgId(org.id);
+             }}>
+                      {t('dashboard.leave')}
                     </Button>}
                   <div className="cursor-pointer" onClick={() => handleOpenBoard(org.id)}>
                     <div className="mb-6">
                       <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Code:</span>
+                        <span>{t('common.code')}:</span>
                         <span className="font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
                           {org.invite_code}
                         </span>
                       </div>
                     </div>
                     <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105">
-                      Open board
+                      {t('dashboard.openBoard')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -310,14 +314,14 @@ const Dashboard = () => {
 
         {/* Quick actions */}
         {organizations.length > 0 && <div className="border-t border-border/50 pt-8">
-            <h3 className="text-xl font-semibold mb-4 text-muted-foreground">Snelle acties</h3>
+            <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2">
                 <Plus className="mr-2 h-5 w-5" />
-                Nieuwe organisatie
+                {t('dashboard.newOrganization')}
               </Button>
               <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
-                Sluit je aan bij team
+                {t('dashboard.joinTeam')}
               </Button>
             </div>
           </div>}
@@ -327,15 +331,15 @@ const Dashboard = () => {
       <AlertDialog open={!!deleteOrgId} onOpenChange={open => !open && setDeleteOrgId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Weet je het zeker?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dashboard.deleteOrgTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Deze actie kan niet ongedaan worden gemaakt. Dit zal permanent de organisatie en alle bijbehorende boards, taken en data verwijderen.
+              {t('dashboard.deleteOrgDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteOrganization} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Definitief verwijderen
+              {t('dashboard.deleteOrgConfirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -345,15 +349,15 @@ const Dashboard = () => {
       <AlertDialog open={!!leaveOrgId} onOpenChange={open => !open && setLeaveOrgId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Organisatie verlaten?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dashboard.leaveOrgTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Je zult geen toegang meer hebben tot deze organisatie. Je kunt alleen opnieuw lid worden met een uitnodigingscode.
+              {t('dashboard.leaveOrgDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleLeaveOrganization} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Verlaat organisatie
+              {t('dashboard.leaveOrgConfirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -363,7 +367,7 @@ const Dashboard = () => {
       <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Profiel bewerken</DialogTitle>
+            <DialogTitle>{t('dashboard.profileTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
             {/* Avatar display section */}
@@ -379,28 +383,28 @@ const Dashboard = () => {
                 size="sm"
                 onClick={() => setAvatarUploadOpen(true)}
               >
-                Foto wijzigen
+                {t('dashboard.changePhoto')}
               </Button>
             </div>
 
             {/* Name input */}
             <div className="space-y-2">
-              <Label htmlFor="name">Naam</Label>
+              <Label htmlFor="name">{t('dashboard.nameLabel')}</Label>
               <Input
                 id="name"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                placeholder="Je volledige naam"
+                placeholder={t('dashboard.namePlaceholder')}
               />
             </div>
 
             {/* Actions */}
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => setProfileDialogOpen(false)}>
-                Annuleren
+                {t('common.cancel')}
               </Button>
               <Button onClick={handleUpdateProfile}>
-                Opslaan
+                {t('common.save')}
               </Button>
             </div>
           </div>

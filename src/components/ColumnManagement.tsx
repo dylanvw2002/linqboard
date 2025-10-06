@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getGlowStyles, getGlowTypeLabel, GlowType } from "@/lib/glowStyles";
 import { ColumnType, getColumnTypeOptions } from "@/lib/columnTypes";
+import { useTranslation } from "react-i18next";
 
 interface Column {
   id: string;
@@ -31,6 +32,7 @@ interface ColumnManagementProps {
 }
 
 export function ColumnManagement({ open, onOpenChange, columns, boardId, onColumnsChange }: ColumnManagementProps) {
+  const { t } = useTranslation();
   const [editingColumns, setEditingColumns] = useState<Column[]>([]);
   const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; columnId: string | null }>({ open: false, columnId: null });
   const [isAddingColumn, setIsAddingColumn] = useState(false);
@@ -116,11 +118,11 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
         if (error) throw error;
       }
 
-      toast.success("Kolommen bijgewerkt");
+      toast.success(t('column.columnsUpdated'));
       onColumnsChange();
       onOpenChange(false);
     } catch (error: any) {
-      toast.error("Fout bij opslaan: " + error.message);
+      toast.error(t('column.columnsSaveError') + error.message);
     }
   };
 
@@ -138,7 +140,7 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
         // Move tasks to the first column
         const firstColumn = editingColumns.find(col => col.id !== columnId);
         if (!firstColumn) {
-          toast.error("Kan kolom niet verwijderen: er zijn geen andere kolommen");
+          toast.error(t('column.cannotDelete'));
           return;
         }
 
@@ -158,18 +160,18 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
 
       if (deleteError) throw deleteError;
 
-      toast.success("Kolom verwijderd");
+      toast.success(t('column.columnDeleted'));
       setEditingColumns(cols => cols.filter(col => col.id !== columnId));
       onColumnsChange();
       setDeleteConfirm({ open: false, columnId: null });
     } catch (error: any) {
-      toast.error("Fout bij verwijderen: " + error.message);
+      toast.error(t('column.columnUpdateError') + error.message);
     }
   };
 
   const handleAddColumn = async () => {
     if (!newColumnName.trim()) {
-      toast.error("Kolomnaam mag niet leeg zijn");
+      toast.error(t('column.nameRequired'));
       return;
     }
 
@@ -188,19 +190,24 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
 
       if (error) throw error;
 
-      toast.success("Kolom toegevoegd");
+      toast.success(t('column.columnAdded'));
       setEditingColumns([...editingColumns, data]);
       setNewColumnName("");
       setIsAddingColumn(false);
       onColumnsChange();
     } catch (error: any) {
-      toast.error("Fout bij toevoegen: " + error.message);
+      toast.error(t('column.columnAddError') + error.message);
     }
   };
 
   const getWidthLabel = (width: number) => {
-    const labels = { 1: "Klein", 2: "Gemiddeld", 3: "Groot", 4: "Extra groot" };
-    return labels[width as keyof typeof labels] || "Gemiddeld";
+    const labels = { 
+      1: t('common.small'), 
+      2: t('common.medium'), 
+      3: t('common.large'), 
+      4: t('common.extraLarge') 
+    };
+    return labels[width as keyof typeof labels] || t('common.medium');
   };
 
   return (
@@ -208,7 +215,7 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Kolommen beheren</DialogTitle>
+            <DialogTitle>{t('column.manage')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -232,18 +239,18 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
 
                 <div className="flex-1 space-y-3">
                   <div>
-                    <Label htmlFor={`name-${col.id}`}>Naam</Label>
+                    <Label htmlFor={`name-${col.id}`}>{t('common.name')}</Label>
                     <Input
                       id={`name-${col.id}`}
                       value={col.name}
                       onChange={(e) => updateColumnName(col.id, e.target.value)}
-                      placeholder="Kolomnaam"
+                      placeholder={t('column.newColumnName')}
                     />
                   </div>
 
                   <div>
                     <Label htmlFor={`width-${col.id}`}>
-                      Breedte: {getWidthLabel(col.width_ratio)}
+                      {t('common.width')}: {getWidthLabel(col.width_ratio)}
                     </Label>
                     <Slider
                       id={`width-${col.id}`}
@@ -257,7 +264,7 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                   </div>
 
                   <div>
-                    <Label htmlFor={`type-${col.id}`}>Kolom Type</Label>
+                    <Label htmlFor={`type-${col.id}`}>{t('column.type')}</Label>
                     <Select
                       value={col.column_type || 'regular'}
                       onValueChange={(value: ColumnType) => updateColumnType(col.id, value)}
@@ -276,7 +283,7 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                   </div>
 
                   <div>
-                    <Label htmlFor={`glow-${col.id}`}>Glow Effect</Label>
+                    <Label htmlFor={`glow-${col.id}`}>{t('column.glowEffect')}</Label>
                     <Select
                       value={col.glow_type || 'default'}
                       onValueChange={(value: GlowType) => updateColumnGlowType(col.id, value)}
@@ -315,15 +322,15 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                 <Input
                   value={newColumnName}
                   onChange={(e) => setNewColumnName(e.target.value)}
-                  placeholder="Nieuwe kolomnaam"
+                  placeholder={t('column.newColumnName')}
                   onKeyDown={(e) => e.key === 'Enter' && handleAddColumn()}
                 />
-                <Button onClick={handleAddColumn}>Toevoegen</Button>
+                <Button onClick={handleAddColumn}>{t('common.add')}</Button>
                 <Button variant="ghost" onClick={() => {
                   setIsAddingColumn(false);
                   setNewColumnName("");
                 }}>
-                  Annuleren
+                  {t('common.cancel')}
                 </Button>
               </div>
             ) : (
@@ -334,17 +341,17 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                 disabled={editingColumns.length >= 8}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Nieuwe kolom toevoegen
+                {t('column.addNewColumn')}
               </Button>
             )}
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Annuleren
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleSave}>
-              Opslaan
+              {t('common.save')}
             </Button>
           </div>
         </DialogContent>
@@ -353,18 +360,18 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
       <AlertDialog open={deleteConfirm.open} onOpenChange={(open) => setDeleteConfirm({ open, columnId: null })}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Kolom verwijderen?</AlertDialogTitle>
+            <AlertDialogTitle>{t('column.deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Alle taken in deze kolom worden verplaatst naar de eerste kolom. Deze actie kan niet ongedaan worden gemaakt.
+              {t('column.deleteConfirmDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteConfirm.columnId && handleDeleteColumn(deleteConfirm.columnId)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Verwijderen
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

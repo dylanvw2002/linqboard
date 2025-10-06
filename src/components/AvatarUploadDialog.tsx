@@ -4,6 +4,7 @@ import "react-image-crop/dist/ReactCrop.css";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface AvatarUploadDialogProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface AvatarUploadDialogProps {
 }
 
 export function AvatarUploadDialog({ open, onOpenChange, onUpload }: AvatarUploadDialogProps) {
+  const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>({
     unit: '%',
@@ -104,7 +106,7 @@ export function AvatarUploadDialog({ open, onOpenChange, onUpload }: AvatarUploa
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Profielfoto instellen</DialogTitle>
+          <DialogTitle>{t('avatar.title')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -137,9 +139,9 @@ export function AvatarUploadDialog({ open, onOpenChange, onUpload }: AvatarUploa
                     />
                   </svg>
                 </div>
-                <p className="text-lg font-medium mb-2">Klik om een foto te kiezen</p>
+                <p className="text-lg font-medium mb-2">{t('avatar.selectPrompt')}</p>
                 <p className="text-sm text-muted-foreground">
-                  JPG, PNG of GIF (max. 5MB)
+                  {t('avatar.supportedFormats')}
                 </p>
               </label>
             </div>
@@ -163,7 +165,7 @@ export function AvatarUploadDialog({ open, onOpenChange, onUpload }: AvatarUploa
                 </ReactCrop>
               </div>
               <p className="text-sm text-muted-foreground text-center">
-                Sleep om je foto te positioneren en schaal aan
+                {t('avatar.positionPrompt')}
               </p>
             </div>
           )}
@@ -171,17 +173,17 @@ export function AvatarUploadDialog({ open, onOpenChange, onUpload }: AvatarUploa
 
         <DialogFooter>
           <Button variant="outline" onClick={handleCancel} disabled={uploading}>
-            Annuleren
+            {t('common.cancel')}
           </Button>
           {selectedImage && (
             <Button onClick={handleUpload} disabled={uploading || !completedCrop}>
               {uploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Uploaden...
+                  {t('avatar.uploading')}
                 </>
               ) : (
-                "Opslaan"
+                t('avatar.save')
               )}
             </Button>
           )}

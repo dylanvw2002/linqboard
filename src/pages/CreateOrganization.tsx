@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Copy, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const CreateOrganization = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [organizationName, setOrganizationName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
@@ -33,7 +35,7 @@ const CreateOrganization = () => {
       const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
       
       if (sessionError || !session?.access_token) {
-        toast.error("Sessie verlopen. Log opnieuw in.");
+        toast.error(t('auth.loginError'));
         navigate("/auth?mode=create");
         return;
       }
@@ -47,7 +49,7 @@ const CreateOrganization = () => {
 
       if (error) {
         console.error("Edge function error:", error);
-        throw new Error(error.message || "Kon organisatie niet aanmaken");
+        throw new Error(error.message || t('organization.createError'));
       }
 
       if (data?.error) {
@@ -56,13 +58,13 @@ const CreateOrganization = () => {
 
       if (data?.organization?.invite_code) {
         setInviteCode(data.organization.invite_code);
-        toast.success("Organisatie succesvol aangemaakt!");
+        toast.success(t('organization.created'));
       } else {
-        throw new Error("Geen uitnodigingscode ontvangen");
+        throw new Error(t('organization.createError'));
       }
     } catch (error: any) {
       console.error("Error creating organization:", error);
-      toast.error(error.message || "Er is iets misgegaan bij het aanmaken van de organisatie");
+      toast.error(error.message || t('organization.createError'));
       setLoading(false);
     }
   };
@@ -70,7 +72,7 @@ const CreateOrganization = () => {
   const handleCopyCode = () => {
     navigator.clipboard.writeText(inviteCode);
     setCopied(true);
-    toast.success("Code gekopieerd!");
+    toast.success(t('common.download'));
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -87,16 +89,16 @@ const CreateOrganization = () => {
               <CheckCircle className="h-8 w-8 text-white" />
             </div>
             <CardTitle className="text-3xl font-bold text-center">
-              Organisatie aangemaakt!
+              {t('organization.successTitle')}
             </CardTitle>
             <CardDescription className="text-center">
-              Deel deze code met je teamleden
+              {t('organization.shareCode')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border-2 border-primary/20">
               <p className="text-sm text-muted-foreground mb-2 text-center">
-                Jouw uitnodigingscode
+                {t('organization.inviteCode')}
               </p>
               <div className="text-4xl font-bold text-center tracking-wider text-primary mb-4">
                 {inviteCode}
@@ -109,25 +111,23 @@ const CreateOrganization = () => {
                 {copied ? (
                   <>
                     <CheckCircle className="mr-2 h-4 w-4" />
-                    Gekopieerd!
+                    {t('common.download')}
                   </>
                 ) : (
                   <>
                     <Copy className="mr-2 h-4 w-4" />
-                    Kopieer code
+                    {t('common.code')}
                   </>
                 )}
               </Button>
             </div>
 
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p>✓ Je standaard board is aangemaakt</p>
-              <p>✓ Team members kunnen nu lid worden</p>
-              <p>✓ Begin direct met taken toevoegen</p>
+              <p>✓ {t('organization.successDescription')}</p>
             </div>
 
             <Button onClick={handleContinue} className="w-full" size="lg">
-              Ga naar dashboard
+              {t('organization.goToDashboard')}
             </Button>
           </CardContent>
         </Card>
@@ -140,20 +140,20 @@ const CreateOrganization = () => {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-2">
           <CardTitle className="text-3xl font-bold text-center">
-            Maak een organisatie
+            {t('organization.createTitle')}
           </CardTitle>
           <CardDescription className="text-center">
-            Start je team en ontvang een uitnodigingscode
+            {t('organization.createDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="orgName">Organisatienaam</Label>
+              <Label htmlFor="orgName">{t('organization.orgName')}</Label>
               <Input
                 id="orgName"
                 type="text"
-                placeholder="Mijn Geweldige Team"
+                placeholder={t('organization.createPlaceholder')}
                 value={organizationName}
                 onChange={(e) => setOrganizationName(e.target.value)}
                 required
@@ -165,10 +165,10 @@ const CreateOrganization = () => {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Organisatie aanmaken...
+                  {t('common.loading')}
                 </>
               ) : (
-                "Maak organisatie"
+                t('organization.createButton')
               )}
             </Button>
           </form>
@@ -180,7 +180,7 @@ const CreateOrganization = () => {
               className="text-sm text-primary hover:underline"
               disabled={loading}
             >
-              Heb je al een code? Sluit je aan
+              {t('organization.orCreateNew')}
             </button>
           </div>
         </CardContent>
