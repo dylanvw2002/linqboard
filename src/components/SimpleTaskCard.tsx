@@ -1,9 +1,15 @@
-import { format } from "date-fns";
-import { nl } from "date-fns/locale";
+import { format, Locale } from "date-fns";
+import { nl, enUS, es, de } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+
+const getDateLocale = (language: string) => {
+  const locales: Record<string, Locale> = { nl, en: enUS, es, de };
+  return locales[language] || nl;
+};
 
 interface Assignee {
   user_id: string;
@@ -30,6 +36,8 @@ export const SimpleTaskCard = ({
   assignees = [],
   glowGradient = ""
 }: SimpleTaskCardProps) => {
+  const { t, i18n } = useTranslation();
+  
   return (
     <div
       onClick={onClick}
@@ -49,7 +57,7 @@ export const SimpleTaskCard = ({
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground relative z-10">
           <Calendar className="h-3.5 w-3.5" />
           <span>
-            Terug: {format(new Date(dueDate), "d MMM", { locale: nl })}
+            {format(new Date(dueDate), "d MMM", { locale: getDateLocale(i18n.language) })}
           </span>
         </div>
       )}

@@ -7,8 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import logo from "@/assets/logo-transparent.png";
+
 const Auth = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const mode = searchParams.get("mode") || "login";
@@ -41,7 +45,7 @@ const Auth = () => {
           redirectTo: `${window.location.origin}/auth?mode=reset`
         });
         if (error) throw error;
-        toast.success("Controleer je email voor de reset link!");
+        toast.success(t('auth.checkEmailReset'));
         setIsForgotPassword(false);
         setEmail("");
       } else if (isLogin) {
@@ -54,12 +58,12 @@ const Auth = () => {
         });
         if (error) throw error;
         if (data.user) {
-          toast.success("Succesvol ingelogd!");
+          toast.success(t('auth.loginSuccess'));
           navigate("/dashboard");
         }
       } else {
         if (!fullName.trim()) {
-          toast.error("Vul je volledige naam in");
+          toast.error(t('auth.enterFullName'));
           setLoading(false);
           return;
         }
@@ -78,74 +82,77 @@ const Auth = () => {
         });
         if (error) throw error;
         if (data.user) {
-          toast.success("Account aangemaakt!");
+          toast.success(t('auth.accountCreated'));
           navigate("/dashboard");
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Er is iets misgegaan");
+      toast.error(error.message || t('auth.loginError'));
     } finally {
       setLoading(false);
     }
   };
   return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <Card className="w-full max-w-md shadow-xl">
         <div className="flex justify-center pt-8 pb-4">
           <img src={logo} alt="LinqBoard Logo" className="h-56" />
         </div>
         <CardHeader className="space-y-2 pt-2">
           <CardTitle className="text-3xl font-bold text-center">
-            {isForgotPassword ? "Wachtwoord resetten" : isLogin ? "Welkom terug" : "Account aanmaken"}
+            {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcome') : t('auth.createAccount')}
           </CardTitle>
           <CardDescription className="text-center">
-            {isForgotPassword ? "Voer je email in om een reset link te ontvangen" : isLogin ? "Log in om toegang te krijgen tot je boards" : "Maak een account aan om te starten"}
+            {isForgotPassword ? t('auth.resetPasswordDescription') : isLogin ? t('auth.loginDescription') : t('auth.signupDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAuth} className="space-y-4">
             {!isLogin && !isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="fullName">Volledige naam</Label>
-                <Input id="fullName" type="text" placeholder="Jan Jansen" value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} />
+                <Label htmlFor="fullName">{t('auth.fullName')}</Label>
+                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} />
               </div>}
             
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
-              <Input id="email" type="email" placeholder="jij@voorbeeld.nl" value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} />
+              <Label htmlFor="email">{t('auth.email')}</Label>
+              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} />
             </div>
             
             {!isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="password">Wachtwoord</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} disabled={loading} />
                 {!isLogin && <p className="text-xs text-muted-foreground">
-                    Minimaal 6 karakters
+                    {t('auth.minPasswordLength')}
                   </p>}
               </div>}
             
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Bezig...
-                </> : isForgotPassword ? "Verstuur reset link" : isLogin ? "Inloggen" : "Account aanmaken"}
+                  {t('auth.busy')}
+                </> : isForgotPassword ? t('auth.sendResetLink') : isLogin ? t('auth.login') : t('auth.signup')}
             </Button>
           </form>
           
           <div className="mt-6 text-center space-y-2">
             {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm text-primary hover:underline block w-full" disabled={loading}>
-                {isLogin ? "Nog geen account? Registreer hier" : "Al een account? Log in"}
+                {isLogin ? t('auth.noAccount') : t('auth.alreadyAccount')}
               </button>}
             
             {isLogin && !isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(true);
             setPassword("");
           }} className="text-sm text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
-                Wachtwoord vergeten?
+                {t('auth.forgotPassword')}
               </button>}
             
             {isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(false);
             setEmail("");
           }} className="text-sm text-primary hover:underline block w-full" disabled={loading}>
-                Terug naar inloggen
+                {t('auth.backToLogin')}
               </button>}
           </div>
         </CardContent>

@@ -4,6 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users } from "lucide-react";
 import { RealtimeChannel } from "@supabase/supabase-js";
+import { useTranslation } from "react-i18next";
 
 interface ActiveUsersProps {
   organizationId: string;
@@ -19,6 +20,7 @@ interface UserPresence {
 export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     let roomChannel: RealtimeChannel | null = null;
@@ -134,9 +136,9 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
       </PopoverTrigger>
       <PopoverContent className="w-64 p-3" align="end">
         <div>
-          <h3 className="font-semibold text-sm mb-2">Actieve gebruikers</h3>
+          <h3 className="font-semibold text-sm mb-2">{t('board.activeUsers')}</h3>
           {activeUsers.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Geen actieve gebruikers</p>
+            <p className="text-sm text-muted-foreground">{t('board.noActiveUsers')}</p>
           ) : (
             <ul className="space-y-2">
               {activeUsers.map((user) => (

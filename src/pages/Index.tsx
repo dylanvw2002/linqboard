@@ -1,22 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
 import todoBoardIllustration from "@/assets/todo-board-illustration.png";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const Index = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Header */}
       <header className="container mx-auto px-6 py-1">
         <div className="flex items-center justify-between">
           <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
-          <Link to="/auth">
-            <Button variant="outline" size="lg" className="border-2">
-              <LogIn className="mr-2 h-5 w-5" />
-              Inloggen
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <Link to="/auth">
+              <Button variant="outline" size="lg" className="border-2">
+                <LogIn className="mr-2 h-5 w-5" />
+                {t('auth.login')}
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -26,24 +33,24 @@ const Index = () => {
           {/* Left Content */}
           <div className="space-y-8">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              Teamwerk, moeiteloos georganiseerd
+              {t('landing.hero')}
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-xl">
-              Beheer taken, werk realtime samen en houd je team op één lijn met onze moderne taakmanagement tool
+              {t('landing.tagline')}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/auth?mode=create">
                 <Button size="lg" className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
-                  Aan de slag
+                  {t('landing.getStarted')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
               
               <Link to="/auth?mode=join">
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 w-full sm:w-auto">
-                  Ik heb een code
+                  {t('landing.haveCode')}
                 </Button>
               </Link>
             </div>
@@ -70,9 +77,9 @@ const Index = () => {
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4">
               <Zap className="h-7 w-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Realtime samenwerking</h3>
+            <h3 className="text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h3>
             <p className="text-muted-foreground">
-              Werk samen zoals in Google Sheets. Zie direct wie online is en wat er verandert.
+              {t('landing.realtimeDescription')}
             </p>
           </div>
 
@@ -80,9 +87,9 @@ const Index = () => {
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-accent to-primary flex items-center justify-center mb-4">
               <Users className="h-7 w-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Team management</h3>
+            <h3 className="text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h3>
             <p className="text-muted-foreground">
-              Nodig teamleden uit met een simpele code. Iedereen krijgt direct toegang.
+              {t('landing.teamManagementDescription')}
             </p>
           </div>
 
@@ -90,9 +97,9 @@ const Index = () => {
             <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4">
               <Shield className="h-7 w-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Veilig & privé</h3>
+            <h3 className="text-xl font-semibold mb-3">{t('landing.secureTitle')}</h3>
             <p className="text-muted-foreground">
-              Jouw data is beveiligd. Alleen teamleden hebben toegang tot jullie boards.
+              {t('landing.secureDescription')}
             </p>
           </div>
         </div>
@@ -101,7 +108,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-12 py-8">
         <div className="container mx-auto px-6 text-center text-muted-foreground">
-          <p>© 2025 LinqBoard. Samenwerken zonder gedoe.</p>
+          <p>{t('landing.footerText')}</p>
         </div>
       </footer>
     </div>
