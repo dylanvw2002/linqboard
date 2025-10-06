@@ -231,17 +231,21 @@ const Board = () => {
 
   const fetchOrgMembers = async () => {
     try {
-      const { data } = await supabase
+      const { data: memberships } = await supabase
         .from("memberships")
-        .select("user_id, profiles(user_id, full_name)")
+        .select("user_id")
         .eq("organization_id", organizationId);
       
-      if (data) {
-        const members = data.map(m => ({
-          user_id: m.user_id,
-          full_name: (m.profiles as any)?.full_name || "Onbekend"
-        }));
-        setOrgMembers(members);
+      if (memberships && memberships.length > 0) {
+        const userIds = memberships.map(m => m.user_id);
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, full_name")
+          .in("user_id", userIds);
+        
+        if (profiles) {
+          setOrgMembers(profiles);
+        }
       }
     } catch (error) {
       console.error("Fout bij laden van teamleden:", error);
@@ -273,18 +277,28 @@ const Board = () => {
             const taskIds = tasksData.map(t => t.id);
             const { data: assigneesData } = await supabase
               .from("task_assignees")
-              .select("task_id, user_id, profiles(user_id, full_name)")
+              .select("task_id, user_id")
               .in("task_id", taskIds);
+            
+            // Get unique user IDs from assignees
+            const userIds = [...new Set(assigneesData?.map(a => a.user_id) || [])];
+            const { data: profiles } = await supabase
+              .from("profiles")
+              .select("user_id, full_name")
+              .in("user_id", userIds);
             
             // Map assignees to tasks
             const tasksWithAssignees = tasksData.map(task => ({
               ...task,
               assignees: assigneesData
                 ?.filter(a => a.task_id === task.id)
-                .map(a => ({
-                  user_id: a.user_id,
-                  full_name: (a.profiles as any)?.full_name || "Onbekend"
-                })) || []
+                .map(a => {
+                  const profile = profiles?.find(p => p.user_id === a.user_id);
+                  return {
+                    user_id: a.user_id,
+                    full_name: profile?.full_name || "Onbekend"
+                  };
+                }) || []
             }));
             
             setTasks(tasksWithAssignees);
