@@ -35,6 +35,7 @@ interface Column {
   width: number;
   height: number;
   header_height: number;
+  header_width?: number;
   content_padding_top: number;
   content_padding_right: number;
   content_padding_bottom: number;
@@ -578,12 +579,19 @@ const Board = () => {
       const updated = { ...column };
       
       if (mode === 'header') {
-        // Header mode: adjust header_height from all corners
+        // Header mode: adjust header_height and header_width from corners
         if (handle === 'nw' || handle === 'ne') {
           updated.header_height = Math.max(20, (column.header_height || 60) - deltaY);
         }
         if (handle === 'sw' || handle === 'se') {
           updated.header_height = Math.max(20, (column.header_height || 60) + deltaY);
+        }
+        // Adjust width from left/right corners
+        if (handle === 'nw' || handle === 'sw') {
+          updated.header_width = Math.max(100, (column.header_width || column.width) - deltaX);
+        }
+        if (handle === 'ne' || handle === 'se') {
+          updated.header_width = Math.max(100, (column.header_width || column.width) + deltaX);
         }
       } else if (mode === 'content') {
         // Content mode: adjust column width and height
@@ -621,6 +629,7 @@ const Board = () => {
       try {
         const updateData: any = {
           header_height: Math.round(currentColumn.header_height || 60),
+          header_width: currentColumn.header_width ? Math.round(currentColumn.header_width) : null,
           content_padding_top: Math.round(currentColumn.content_padding_top || 0),
           content_padding_right: Math.round(currentColumn.content_padding_right || 0),
           content_padding_bottom: Math.round(currentColumn.content_padding_bottom || 0),
@@ -900,7 +909,9 @@ const Board = () => {
               )}
               style={{
                 height: `${displayColumn.header_height || 60}px`,
-                minHeight: `${displayColumn.header_height || 60}px`
+                minHeight: `${displayColumn.header_height || 60}px`,
+                width: displayColumn.header_width ? `${displayColumn.header_width}px` : '100%',
+                maxWidth: displayColumn.header_width ? `${displayColumn.header_width}px` : '100%'
               }}
               onClick={(e) => {
                 if (editMode) {
@@ -921,7 +932,7 @@ const Board = () => {
                   <div 
                     className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50"
                   >
-                    Header hoogte: {displayColumn.header_height || 60}px
+                    Header: {displayColumn.header_height || 60}px × {displayColumn.header_width || displayColumn.width}px
                   </div>
                 </>
               )}

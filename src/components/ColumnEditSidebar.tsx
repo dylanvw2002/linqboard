@@ -20,6 +20,7 @@ interface Column {
   width: number;
   height: number;
   header_height: number;
+  header_width?: number;
   content_padding_top: number;
   content_padding_right: number;
   content_padding_bottom: number;
@@ -47,6 +48,7 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           width: editedColumn.width,
           height: editedColumn.height,
           header_height: editedColumn.header_height,
+          header_width: editedColumn.header_width,
           content_padding_top: editedColumn.content_padding_top,
           content_padding_right: editedColumn.content_padding_right,
           content_padding_bottom: editedColumn.content_padding_bottom,
@@ -160,6 +162,26 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
               step={5}
               className="mt-2"
             />
+          </div>
+
+          <div>
+            <Label>Header Breedte: {editedColumn.header_width ? `${editedColumn.header_width}px` : 'Volledige breedte'}</Label>
+            <Slider
+              value={[editedColumn.header_width || editedColumn.width]}
+              onValueChange={(value) => setEditedColumn({...editedColumn, header_width: value[0]})}
+              min={100}
+              max={600}
+              step={10}
+              className="mt-2"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-2 w-full text-xs"
+              onClick={() => setEditedColumn({...editedColumn, header_width: undefined})}
+            >
+              Reset naar volledige breedte
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

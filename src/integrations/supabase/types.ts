@@ -91,6 +91,7 @@ export type Database = {
           created_at: string
           glow_type: Database["public"]["Enums"]["column_glow_type"]
           header_height: number | null
+          header_width: number | null
           height: number | null
           id: string
           name: string
@@ -109,6 +110,7 @@ export type Database = {
           created_at?: string
           glow_type?: Database["public"]["Enums"]["column_glow_type"]
           header_height?: number | null
+          header_width?: number | null
           height?: number | null
           id?: string
           name: string
@@ -127,6 +129,7 @@ export type Database = {
           created_at?: string
           glow_type?: Database["public"]["Enums"]["column_glow_type"]
           header_height?: number | null
+          header_width?: number | null
           height?: number | null
           id?: string
           name?: string
