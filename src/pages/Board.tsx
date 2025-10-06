@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
@@ -48,6 +48,7 @@ interface Column {
 interface Assignee {
   user_id: string;
   full_name: string;
+  avatar_url?: string;
 }
 
 interface Task {
@@ -240,7 +241,7 @@ const Board = () => {
         const userIds = memberships.map(m => m.user_id);
         const { data: profiles } = await supabase
           .from("profiles")
-          .select("user_id, full_name")
+          .select("user_id, full_name, avatar_url")
           .in("user_id", userIds);
         
         if (profiles) {
@@ -1213,6 +1214,7 @@ const Board = () => {
                             return (
                               <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
                                 <Avatar className="h-9 w-9">
+                                  <AvatarImage src={member.avatar_url || undefined} />
                                   <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
                                     {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                   </AvatarFallback>

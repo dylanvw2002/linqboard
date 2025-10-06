@@ -1,13 +1,14 @@
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Calendar } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface Assignee {
   user_id: string;
   full_name: string;
+  avatar_url?: string;
 }
 
 interface SimpleTaskCardProps {
@@ -59,6 +60,7 @@ export const SimpleTaskCard = ({
             <Tooltip key={assignee.user_id} delayDuration={200}>
               <TooltipTrigger asChild>
                 <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-all shadow-lg" style={{ marginLeft: idx > 0 ? '-14px' : '0' }}>
+                  <AvatarImage src={assignee.avatar_url || undefined} />
                   <AvatarFallback className="text-base font-black bg-gradient-to-br from-primary to-primary/70 text-white">
                     {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </AvatarFallback>
