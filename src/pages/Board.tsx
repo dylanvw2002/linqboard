@@ -708,7 +708,7 @@ const Board = () => {
             </p>
           </div>
           <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.08)] shrink-0 relative">
-            <div className="text-accent whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
+            <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
             <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold whitespace-nowrap relative z-10">{formatDate(currentTime)}</div>
           </div>
         </div>
