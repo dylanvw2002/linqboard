@@ -49,10 +49,34 @@ const CreateOrganization = () => {
 
       if (error) {
         console.error("Edge function error:", error);
+        
+        // Check if it's a limit error
+        if (error.message?.includes('limit') || error.message?.includes('403')) {
+          toast.error(t('subscription.orgLimitReached'), {
+            action: {
+              label: t('subscription.upgrade'),
+              onClick: () => navigate('/pricing')
+            }
+          });
+          setLoading(false);
+          return;
+        }
+        
         throw new Error(error.message || t('organization.createError'));
       }
 
       if (data?.error) {
+        // Check if it's a limit error from the response
+        if (data.error.includes('limit')) {
+          toast.error(t('subscription.orgLimitReached'), {
+            action: {
+              label: t('subscription.upgrade'),
+              onClick: () => navigate('/pricing')
+            }
+          });
+          setLoading(false);
+          return;
+        }
         throw new Error(data.error);
       }
 

@@ -328,5 +328,64 @@
     "title": "404",
     "message": "Hoppla! Seite nicht gefunden",
     "returnHome": "Zurück zur Startseite"
+  },
+  "pricing": {
+    "title": "Wählen Sie Ihren Plan",
+    "subtitle": "Wachsen Sie mit uns - vom Starter bis zum Enterprise",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "year": "Jahr",
+    "month": "Monat",
+    "save": "{percentage}% sparen",
+    "popular": "Beliebt",
+    "currentPlan": "Aktueller Plan",
+    "getStarted": "Loslegen",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "subscriptionError": "Fehler beim Erstellen des Abonnements",
+    "freeMessage": "Sie sind bereits auf dem kostenlosen Plan",
+    "footer": "Alle Preise verstehen sich exklusive MwSt. Sie können jederzeit kündigen.",
+    "free": {
+      "name": "Kostenlos",
+      "feature1": "1 Organisation",
+      "feature2": "Bis zu 2 Teammitglieder",
+      "feature3": "Basis Aufgabenverwaltung"
+    },
+    "pro": {
+      "name": "Pro",
+      "feature1": "Bis zu 3 Organisationen",
+      "feature2": "Bis zu 8 Teammitglieder pro Org",
+      "feature3": "Echtzeit-Zusammenarbeit",
+      "feature4": "Priority Support"
+    },
+    "team": {
+      "name": "Team",
+      "feature1": "Bis zu 8 Organisationen",
+      "feature2": "Bis zu 20 Teammitglieder pro Org",
+      "feature3": "Erweiterte Analysen",
+      "feature4": "Dedizierter Support"
+    },
+    "business": {
+      "name": "Business",
+      "feature1": "Unbegrenzte Organisationen",
+      "feature2": "Unbegrenzte Teammitglieder",
+      "feature3": "Enterprise-Funktionen",
+      "feature4": "24/7 Premium-Support"
+    }
+  },
+  "subscription": {
+    "yourPlan": "Ihr Abonnement",
+    "status": "Status",
+    "upgrade": "Upgrade",
+    "viewPlans": "Pläne ansehen",
+    "organizations": "Organisationen",
+    "membersPerOrg": "Mitglieder pro Organisation",
+    "orgLimitReached": "Sie haben die maximale Anzahl an Organisationen erreicht. Upgraden Sie Ihren Plan.",
+    "memberLimitReached": "Diese Organisation hat ihr Mitgliederlimit erreicht. Der Eigentümer muss upgraden.",
+    "cancel": "Abonnement kündigen",
+    "cancelConfirm": "Sind Sie sicher, dass Sie kündigen möchten?",
+    "cancelDescription": "Sie behalten Zugriff auf Ihren aktuellen Plan bis zum Ende des Zeitraums.",
+    "cancelled": "Abonnement gekündigt",
+    "cancelError": "Fehler beim Kündigen"
   }
 }

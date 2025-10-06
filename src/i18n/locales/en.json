@@ -328,5 +328,64 @@
     "title": "404",
     "message": "Oops! Page not found",
     "returnHome": "Return to Home"
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "subtitle": "Grow with us - from starter to enterprise",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "year": "year",
+    "month": "month",
+    "save": "Save {percentage}%",
+    "popular": "Popular",
+    "currentPlan": "Current plan",
+    "getStarted": "Get started",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "subscriptionError": "Error creating subscription",
+    "freeMessage": "You're already on the free plan",
+    "footer": "All prices exclude VAT. You can cancel anytime.",
+    "free": {
+      "name": "Free",
+      "feature1": "1 organization",
+      "feature2": "Up to 2 team members",
+      "feature3": "Basic task management"
+    },
+    "pro": {
+      "name": "Pro",
+      "feature1": "Up to 3 organizations",
+      "feature2": "Up to 8 team members per org",
+      "feature3": "Real-time collaboration",
+      "feature4": "Priority support"
+    },
+    "team": {
+      "name": "Team",
+      "feature1": "Up to 8 organizations",
+      "feature2": "Up to 20 team members per org",
+      "feature3": "Advanced analytics",
+      "feature4": "Dedicated support"
+    },
+    "business": {
+      "name": "Business",
+      "feature1": "Unlimited organizations",
+      "feature2": "Unlimited team members",
+      "feature3": "Enterprise features",
+      "feature4": "24/7 premium support"
+    }
+  },
+  "subscription": {
+    "yourPlan": "Your subscription",
+    "status": "Status",
+    "upgrade": "Upgrade",
+    "viewPlans": "View plans",
+    "organizations": "Organizations",
+    "membersPerOrg": "Members per organization",
+    "orgLimitReached": "You've reached the maximum number of organizations. Upgrade your plan.",
+    "memberLimitReached": "This organization has reached its member limit. The owner needs to upgrade.",
+    "cancel": "Cancel subscription",
+    "cancelConfirm": "Are you sure you want to cancel?",
+    "cancelDescription": "You'll retain access to your current plan until the end of the period.",
+    "cancelled": "Subscription cancelled",
+    "cancelError": "Error cancelling"
   }
 }

@@ -86,6 +86,26 @@ Deno.serve(async (req) => {
       )
     }
 
+    // Check member limit for the organization
+    const { data: canJoin, error: limitError } = await supabaseClient
+      .rpc('check_member_limit', { _org_id: org.id })
+
+    if (limitError) {
+      console.error('Error checking member limit:', limitError)
+      throw limitError
+    }
+
+    if (!canJoin) {
+      console.log('Organization has reached member limit')
+      return new Response(
+        JSON.stringify({ error: 'Organization has reached its member limit. Owner needs to upgrade.' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 403
+        }
+      )
+    }
+
     // Create membership
     const { error: memberError } = await supabaseClient
       .from('memberships')

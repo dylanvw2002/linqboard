@@ -328,5 +328,64 @@
     "title": "404",
     "message": "Oops! Page not found",
     "returnHome": "Return to Home"
+  },
+  "pricing": {
+    "title": "Kies jouw plan",
+    "subtitle": "Groei met ons mee - van starter tot enterprise",
+    "monthly": "Maandelijks",
+    "yearly": "Jaarlijks",
+    "year": "jaar",
+    "month": "maand",
+    "save": "Bespaar {percentage}%",
+    "popular": "Populair",
+    "currentPlan": "Huidig plan",
+    "getStarted": "Aan de slag",
+    "upgrade": "Upgrade",
+    "downgrade": "Downgrade",
+    "subscriptionError": "Fout bij aanmaken abonnement",
+    "freeMessage": "Je bent al op het gratis plan",
+    "footer": "Alle prijzen zijn exclusief BTW. Je kunt op elk moment opzeggen.",
+    "free": {
+      "name": "Free",
+      "feature1": "1 organisatie",
+      "feature2": "Tot 2 teamleden",
+      "feature3": "Basis taakbeheer"
+    },
+    "pro": {
+      "name": "Pro",
+      "feature1": "Tot 3 organisaties",
+      "feature2": "Tot 8 teamleden per org",
+      "feature3": "Realtime samenwerking",
+      "feature4": "Priority support"
+    },
+    "team": {
+      "name": "Team",
+      "feature1": "Tot 8 organisaties",
+      "feature2": "Tot 20 teamleden per org",
+      "feature3": "Geavanceerde analytics",
+      "feature4": "Dedicated support"
+    },
+    "business": {
+      "name": "Business",
+      "feature1": "Onbeperkte organisaties",
+      "feature2": "Onbeperkte teamleden",
+      "feature3": "Enterprise features",
+      "feature4": "24/7 premium support"
+    }
+  },
+  "subscription": {
+    "yourPlan": "Jouw abonnement",
+    "status": "Status",
+    "upgrade": "Upgrade",
+    "viewPlans": "Bekijk abonnementen",
+    "organizations": "Organisaties",
+    "membersPerOrg": "Leden per organisatie",
+    "orgLimitReached": "Je hebt het maximum aantal organisaties bereikt. Upgrade je abonnement.",
+    "memberLimitReached": "Deze organisatie heeft het maximum aantal leden bereikt. De eigenaar moet upgraden.",
+    "cancel": "Annuleer abonnement",
+    "cancelConfirm": "Weet je zeker dat je wilt annuleren?",
+    "cancelDescription": "Je behoudt toegang tot je huidige plan tot het einde van de periode.",
+    "cancelled": "Abonnement geannuleerd",
+    "cancelError": "Fout bij annuleren"
   }
 }

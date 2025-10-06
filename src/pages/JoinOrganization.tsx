@@ -39,7 +39,22 @@ const JoinOrganization = () => {
         body: { inviteCode: inviteCode.toUpperCase() },
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check if it's a member limit error
+        if (error.message?.includes('limit') || error.message?.includes('403')) {
+          toast.error(t('subscription.memberLimitReached'));
+          setLoading(false);
+          return;
+        }
+        throw error;
+      }
+
+      // Check for limit error in response data
+      if (data?.error && data.error.includes('limit')) {
+        toast.error(t('subscription.memberLimitReached'));
+        setLoading(false);
+        return;
+      }
 
       toast.success(data?.message || t('organization.joined'));
       navigate("/dashboard");

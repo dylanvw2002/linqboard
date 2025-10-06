@@ -4,22 +4,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
+
 interface Organization {
   id: string;
   name: string;
   invite_code: string;
   role: string;
+}
+
+interface SubscriptionLimits {
+  plan: string;
+  max_organizations: number;
+  max_members_per_org: number;
+  current_org_count: number;
 }
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -34,9 +43,12 @@ const Dashboard = () => {
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
+  const [subscriptionLimits, setSubscriptionLimits] = useState<SubscriptionLimits | null>(null);
+  
   useEffect(() => {
     checkUser();
     fetchOrganizations();
+    fetchSubscriptionLimits();
   }, []);
   const checkUser = async () => {
     const {
@@ -100,6 +112,27 @@ const Dashboard = () => {
     } catch (error: any) {
       toast.error(t('dashboard.uploadError'));
       console.error(error);
+    }
+  };
+
+  const fetchSubscriptionLimits = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase.functions.invoke('get-subscription-status', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.limits) {
+        setSubscriptionLimits(data.limits);
+      }
+    } catch (error: any) {
+      console.error('Error fetching subscription limits:', error);
     }
   };
 
@@ -258,9 +291,57 @@ const Dashboard = () => {
           </p>
         </div>
 
+        {/* Subscription Status Card */}
+        {subscriptionLimits && (
+          <Card className="mb-8 p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <Crown className="h-5 w-5 text-primary" />
+                  <h3 className="text-xl font-bold">
+                    {t('subscription.yourPlan')}: <span className="text-primary capitalize">{subscriptionLimits.plan}</span>
+                  </h3>
+                </div>
+                <div className="space-y-3 mt-4">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-muted-foreground">{t('subscription.organizations')}</span>
+                      <span className="font-semibold">
+                        {subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations}
+                      </span>
+                    </div>
+                    <Progress 
+                      value={subscriptionLimits.max_organizations === -1 ? 0 : (subscriptionLimits.current_org_count / subscriptionLimits.max_organizations) * 100} 
+                      className="h-2"
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {t('subscription.membersPerOrg')}: {subscriptionLimits.max_members_per_org === -1 ? '∞' : subscriptionLimits.max_members_per_org}
+                  </p>
+                </div>
+              </div>
+              {subscriptionLimits.plan !== 'business' && (
+                <Button onClick={() => navigate('/pricing')} size="lg" className="shrink-0">
+                  {t('subscription.upgrade')}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </Card>
+        )}
+
         {/* Organizations */}
         <div className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">{t('dashboard.yourOrganizations')}</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold">
+              {t('dashboard.yourOrganizations')}
+              {subscriptionLimits && (
+                <span className="text-muted-foreground text-xl ml-3">
+                  ({subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations})
+                </span>
+              )}
+            </h2>
+          </div>
           
           {organizations.length === 0 ? <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="max-w-md mx-auto">
@@ -316,12 +397,21 @@ const Dashboard = () => {
         {organizations.length > 0 && <div className="border-t border-border/50 pt-8">
             <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={() => navigate("/create-organization")} 
+                className="border-2"
+                disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}
+              >
                 <Plus className="mr-2 h-5 w-5" />
                 {t('dashboard.newOrganization')}
               </Button>
               <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
                 {t('dashboard.joinTeam')}
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2">
+                {t('subscription.viewPlans')}
               </Button>
             </div>
           </div>}

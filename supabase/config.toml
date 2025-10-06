@@ -1,1 +1,19 @@
 project_id = "jfdpljhkrcuietevzshr"
+
+[functions.create_org]
+verify_jwt = true
+
+[functions.join_org_with_code]
+verify_jwt = true
+
+[functions.create-mollie-subscription]
+verify_jwt = true
+
+[functions.mollie-webhook]
+verify_jwt = false
+
+[functions.cancel-mollie-subscription]
+verify_jwt = true
+
+[functions.get-subscription-status]
+verify_jwt = true

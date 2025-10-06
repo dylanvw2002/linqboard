@@ -49,6 +49,26 @@ Deno.serve(async (req) => {
 
     console.log('Creating organization:', { organizationName, userId: user.id })
 
+    // Check organization limit
+    const { data: canCreate, error: limitError } = await supabaseClient
+      .rpc('check_organization_limit', { _user_id: user.id })
+
+    if (limitError) {
+      console.error('Error checking organization limit:', limitError)
+      throw limitError
+    }
+
+    if (!canCreate) {
+      console.log('User has reached organization limit')
+      return new Response(
+        JSON.stringify({ error: 'Organization limit reached. Please upgrade your plan.' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 403
+        }
+      )
+    }
+
     // Generate invite code
     const { data: inviteCodeData, error: codeError } = await supabaseClient
       .rpc('generate_invite_code')
