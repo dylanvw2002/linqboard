@@ -1163,17 +1163,16 @@ const Board = () => {
                         </div>
                       )}
                       <Select
-                        value=""
                         onValueChange={(value) => {
                           if (value && !editTaskAssignees.includes(value)) {
                             handleAddAssignee(value);
                           }
                         }}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <span className="text-muted-foreground">Teamlid toevoegen...</span>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="z-[100]">
                           {orgMembers
                             .filter(m => !editTaskAssignees.includes(m.user_id))
                             .map(member => (
