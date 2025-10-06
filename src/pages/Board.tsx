@@ -270,85 +270,62 @@ const Board = () => {
   };
   const fetchBoardData = async () => {
     try {
-      // Parallel fetch: organization and board
-      const [orgResult, boardResult] = await Promise.all([
-        supabase.from("organizations").select("*").eq("id", organizationId).single(),
-        supabase.from("boards").select("*").eq("organization_id", organizationId).single()
-      ]);
-      
-      setOrganization(orgResult.data);
-      setBoard(boardResult.data);
-      
-      if (!boardResult.data) {
-        setLoading(false);
-        return;
-      }
-      
-      // Fetch columns
-      const { data: columnsData } = await supabase
-        .from("columns")
-        .select("*")
-        .eq("board_id", boardResult.data.id)
-        .order("position");
-      
-      setColumns(columnsData || []);
-      
-      if (columnsData && columnsData.length > 0) {
-        const columnIds = columnsData.map(c => c.id);
-        
-        // Fetch tasks
-        const { data: tasksData } = await supabase
-          .from("tasks")
-          .select("*")
-          .in("column_id", columnIds)
-          .order("position");
-        
-        if (tasksData && tasksData.length > 0) {
-          const taskIds = tasksData.map(t => t.id);
+      const {
+        data: org
+      } = await supabase.from("organizations").select("*").eq("id", organizationId).single();
+      setOrganization(org);
+      const {
+        data: boardData
+      } = await supabase.from("boards").select("*").eq("organization_id", organizationId).single();
+      setBoard(boardData);
+      if (boardData) {
+        const {
+          data: columnsData
+        } = await supabase.from("columns").select("*").eq("board_id", boardData.id).order("position");
+        setColumns(columnsData || []);
+        if (columnsData && columnsData.length > 0) {
+          const columnIds = columnsData.map(c => c.id);
+          const {
+            data: tasksData
+          } = await supabase.from("tasks").select("*").in("column_id", columnIds).order("position");
           
-          // Parallel fetch: assignees and profiles
-          const [assigneesResult, allProfilesResult] = await Promise.all([
-            supabase
+          // Fetch assignees for all tasks
+          if (tasksData && tasksData.length > 0) {
+            const taskIds = tasksData.map(t => t.id);
+            const { data: assigneesData } = await supabase
               .from("task_assignees")
               .select("task_id, user_id")
-              .in("task_id", taskIds),
-            // Fetch all org member profiles at once
-            supabase
-              .from("memberships")
-              .select("user_id")
-              .eq("organization_id", organizationId)
-              .then(async ({ data: memberships }) => {
-                if (!memberships || memberships.length === 0) return { data: [] };
-                const userIds = memberships.map(m => m.user_id);
-                return supabase
-                  .from("profiles")
-                  .select("user_id, full_name, avatar_url")
-                  .in("user_id", userIds);
-              })
-          ]);
-          
-          // Map assignees to tasks
-          const tasksWithAssignees = tasksData.map(task => ({
-            ...task,
-            assignees: assigneesResult.data
-              ?.filter(a => a.task_id === task.id)
-              .map(a => {
-                const profile = allProfilesResult.data?.find(p => p.user_id === a.user_id);
-                return {
-                  user_id: a.user_id,
-                  full_name: profile?.full_name || t('board.unknown'),
-                  avatar_url: profile?.avatar_url || null
-                };
-              }) || []
-          }));
-          
-          setTasks(tasksWithAssignees);
-        } else {
-          setTasks([]);
+              .in("task_id", taskIds);
+            
+            // Get unique user IDs from assignees
+            const userIds = [...new Set(assigneesData?.map(a => a.user_id) || [])];
+            const { data: profiles } = await supabase
+              .from("profiles")
+              .select("user_id, full_name, avatar_url")
+              .in("user_id", userIds);
+            
+            // Map assignees to tasks
+            const tasksWithAssignees = tasksData.map(task => ({
+              ...task,
+              assignees: assigneesData
+                ?.filter(a => a.task_id === task.id)
+                .map(a => {
+                  const profile = profiles?.find(p => p.user_id === a.user_id);
+                  return {
+                    user_id: a.user_id,
+                    full_name: profile?.full_name || t('board.unknown'),
+                    avatar_url: profile?.avatar_url || null
+                  };
+                }) || []
+            }));
+            
+            setTasks(tasksWithAssignees);
+          } else {
+            setTasks([]);
+          }
         }
       }
     } catch (error: any) {
-      console.error('Board fetch error:', error);
       toast.error(t('board.errorLoadingBoard'));
     } finally {
       setLoading(false);

@@ -63,6 +63,7 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
           Object.keys(state).forEach((userId) => {
             const presences = state[userId] as any[];
             if (presences.length > 0) {
+              console.log('Active user presence:', presences[0]);
               users.push(presences[0] as UserPresence);
             }
           });

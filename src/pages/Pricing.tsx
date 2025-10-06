@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Check, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { Check, Loader2, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -23,31 +22,30 @@ const Pricing = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<string | null>(null);
   const [isYearly, setIsYearly] = useState(false);
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
   const [currentPlan, setCurrentPlan] = useState<string>('free');
-  const [isLoading, setIsLoading] = useState(true);
-  
+  const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          setUser({ id: session.user.id, email: session.user.email || '' });
-          
-          const { data: limits } = await supabase.functions.invoke('get-subscription-status');
-          if (limits?.limits) {
-            setCurrentPlan(limits.limits.plan);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchData();
+    checkUser();
   }, []);
+
+  const checkUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      setUser(session.user);
+      
+      // Get current subscription
+      const { data } = await supabase
+        .from('user_subscriptions')
+        .select('plan')
+        .eq('user_id', session.user.id)
+        .single();
+      
+      if (data?.plan) {
+        setCurrentPlan(data.plan);
+      }
+    }
+  };
 
   const plans: Plan[] = [
     {
@@ -157,7 +155,7 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
-      <div className="container mx-auto px-6 py-12 pb-32">
+      <div className="container mx-auto px-6 py-12">
         <Button
           variant="ghost"
           onClick={() => navigate('/dashboard')}
@@ -175,54 +173,28 @@ const Pricing = () => {
             {t('pricing.subtitle')}
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-3 mb-8">
-            <div className="flex items-center gap-4">
-              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold' : ''}>
-                {t('pricing.monthly')}
-              </Label>
-              <Switch
-                id="billing-toggle"
-                checked={isYearly}
-                onCheckedChange={setIsYearly}
-              />
-              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold' : ''}>
-                {t('pricing.yearly')}
-              </Label>
-            </div>
-            <span 
-              className={`text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${
-                isYearly ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              {t('pricing.save', { percentage: '17' })}
-            </span>
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold' : ''}>
+              {t('pricing.monthly')}
+            </Label>
+            <Switch
+              id="billing-toggle"
+              checked={isYearly}
+              onCheckedChange={setIsYearly}
+            />
+            <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold' : ''}>
+              {t('pricing.yearly')}
+            </Label>
+            {isYearly && (
+              <span className="ml-2 text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full">
+                {t('pricing.save', { percentage: '17' })}
+              </span>
+            )}
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-          {isLoading ? (
-            // Loading skeletons
-            Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="relative">
-                <CardHeader>
-                  <Skeleton className="h-8 w-24 mb-2" />
-                  <Skeleton className="h-12 w-32" />
-                  <Skeleton className="h-4 w-full mt-2" />
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <Skeleton key={j} className="h-4 w-full" />
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Skeleton className="h-10 w-full" />
-                </CardFooter>
-              </Card>
-            ))
-          ) : (
-            plans.map((plan) => (
+          {plans.map((plan) => (
             <Card 
               key={plan.plan_id}
               className={`relative ${
@@ -280,10 +252,10 @@ const Pricing = () => {
                 </Button>
               </CardFooter>
             </Card>
-          )))}
+          ))}
         </div>
 
-        <div className="mt-16 mb-12 text-center">
+        <div className="mt-16 text-center">
           <p className="text-muted-foreground">
             {t('pricing.footer')}
           </p>

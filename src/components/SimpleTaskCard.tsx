@@ -65,6 +65,7 @@ export const SimpleTaskCard = ({
       {assignees && assignees.length > 0 && (
         <div className="flex items-center gap-1 mt-3 relative z-[60]">
           {assignees.slice(0, 3).map((assignee, idx) => {
+            console.log('Task card assignee:', assignee);
             return (
               <Tooltip key={assignee.user_id} delayDuration={200}>
                 <TooltipTrigger asChild>
