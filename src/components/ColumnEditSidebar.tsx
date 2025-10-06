@@ -9,6 +9,7 @@ import { X, Crop } from "lucide-react";
 import { getGlowStyles, getGlowTypeLabel, GlowType } from "@/lib/glowStyles";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ColumnType, getColumnTypeOptions } from "@/lib/columnTypes";
+import { useTranslation } from "react-i18next";
 interface Column {
   id: string;
   name: string;
@@ -38,6 +39,7 @@ export const ColumnEditSidebar = ({
   onClose,
   onSave
 }: ColumnEditSidebarProps) => {
+  const { t } = useTranslation();
   const [editedColumn, setEditedColumn] = useState(column);
   const handleSave = async () => {
     try {
@@ -59,17 +61,17 @@ export const ColumnEditSidebar = ({
         glow_type: editedColumn.glow_type || 'default'
       }).eq('id', editedColumn.id);
       if (error) throw error;
-      toast.success("Kolom opgeslagen");
+      toast.success(t('board.columnSaved'));
       onSave();
       onClose();
     } catch (error: any) {
-      toast.error("Fout bij opslaan: " + error.message);
+      toast.error(t('board.saveError') + error.message);
     }
   };
   return <div className="fixed right-0 top-0 h-full w-80 bg-background shadow-2xl z-50 overflow-y-auto border-l">
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-bold">Kolom bewerken</h3>
+          <h3 className="text-xl font-bold">{t('board.editColumn')}</h3>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -77,15 +79,15 @@ export const ColumnEditSidebar = ({
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="column-name">Naam</Label>
+            <Label htmlFor="column-name">{t('column.name')}</Label>
             <Input id="column-name" value={editedColumn.name} onChange={e => setEditedColumn({
             ...editedColumn,
             name: e.target.value
-          })} placeholder="Kolom naam" />
+          })} placeholder={t('column.namePlaceholder')} />
           </div>
 
           <div>
-            <Label htmlFor="column-type">Kolom Type</Label>
+            <Label htmlFor="column-type">{t('column.type')}</Label>
             <Select value={editedColumn.column_type || 'regular'} onValueChange={(value: ColumnType) => setEditedColumn({
             ...editedColumn,
             column_type: value
@@ -102,7 +104,7 @@ export const ColumnEditSidebar = ({
           </div>
 
           <div>
-            <Label htmlFor="glow-type">Glow Effect</Label>
+            <Label htmlFor="glow-type">{t('column.glowEffect')}</Label>
             <Select value={editedColumn.glow_type || 'default'} onValueChange={(value: GlowType) => setEditedColumn({
             ...editedColumn,
             glow_type: value
@@ -122,7 +124,7 @@ export const ColumnEditSidebar = ({
           </div>
 
           <div>
-            <Label htmlFor="x-position">X Positie: {editedColumn.x_position}px</Label>
+            <Label htmlFor="x-position">{t('column.xPosition')}: {editedColumn.x_position}px</Label>
             <Input id="x-position" type="number" value={editedColumn.x_position} onChange={e => setEditedColumn({
             ...editedColumn,
             x_position: parseInt(e.target.value) || 0
@@ -130,7 +132,7 @@ export const ColumnEditSidebar = ({
           </div>
 
           <div>
-            <Label htmlFor="y-position">Y Positie: {editedColumn.y_position}px</Label>
+            <Label htmlFor="y-position">{t('column.yPosition')}: {editedColumn.y_position}px</Label>
             <Input id="y-position" type="number" value={editedColumn.y_position} onChange={e => setEditedColumn({
             ...editedColumn,
             y_position: parseInt(e.target.value) || 0
@@ -138,7 +140,7 @@ export const ColumnEditSidebar = ({
           </div>
 
           <div>
-            <Label>Breedte: {editedColumn.width}px</Label>
+            <Label>{t('common.width')}: {editedColumn.width}px</Label>
             <Slider value={[editedColumn.width]} onValueChange={value => setEditedColumn({
             ...editedColumn,
             width: value[0]
@@ -146,7 +148,7 @@ export const ColumnEditSidebar = ({
           </div>
 
           <div>
-            <Label>Hoogte: {editedColumn.height}px</Label>
+            <Label>{t('common.height')}: {editedColumn.height}px</Label>
             <Slider value={[editedColumn.height]} onValueChange={value => setEditedColumn({
             ...editedColumn,
             height: value[0]
@@ -158,21 +160,21 @@ export const ColumnEditSidebar = ({
         <div className="space-y-4 pt-6 border-t">
           <h4 className="font-semibold flex items-center gap-2">
             <Crop className="h-4 w-4" />
-            Header & Taak Ruimte
+            {t('column.headerAndTaskArea')}
           </h4>
 
           <div className="p-3 bg-muted/50 rounded-lg space-y-2">
             <p className="text-sm text-muted-foreground">
-              💡 <strong>Tip:</strong> Klik op een kolom en sleep aan de hoeken/randen om te resizen
+              💡 <strong>{t('column.tip')}:</strong> {t('column.resizeInstructions')}
             </p>
             <p className="text-xs text-muted-foreground">
-              • Sleep hoeken/randen = kolom grootte<br />
-              • Houd Alt/Option + sleep = content ruimte
+              • {t('column.dragCornersEdges')}<br />
+              • {t('column.holdAlt')}
             </p>
           </div>
 
           <div>
-            <Label>Header Hoogte: {editedColumn.header_height || 60}px</Label>
+            <Label>{t('column.headerHeight')}: {editedColumn.header_height || 60}px</Label>
             <Slider value={[editedColumn.header_height || 60]} onValueChange={value => setEditedColumn({
             ...editedColumn,
             header_height: value[0]
@@ -180,7 +182,7 @@ export const ColumnEditSidebar = ({
           </div>
 
           <div>
-            <Label>Header Breedte: {editedColumn.header_width ? `${editedColumn.header_width}px` : 'Volledige breedte'}</Label>
+            <Label>{t('column.headerWidth')}: {editedColumn.header_width ? `${editedColumn.header_width}px` : t('column.fullWidth')}</Label>
             <Slider value={[editedColumn.header_width || editedColumn.width]} onValueChange={value => setEditedColumn({
             ...editedColumn,
             header_width: value[0]
@@ -189,7 +191,7 @@ export const ColumnEditSidebar = ({
             ...editedColumn,
             header_width: undefined
           })}>
-              Reset naar volledige breedte
+              {t('column.resetToFullWidth')}
             </Button>
           </div>
 
@@ -198,10 +200,10 @@ export const ColumnEditSidebar = ({
 
         <div className="flex gap-2">
           <Button onClick={handleSave} className="flex-1">
-            Opslaan
+            {t('common.save')}
           </Button>
           <Button variant="outline" onClick={onClose} className="flex-1">
-            Annuleren
+            {t('common.cancel')}
           </Button>
         </div>
       </div>
