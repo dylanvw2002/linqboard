@@ -617,18 +617,13 @@ const Board = () => {
     let currentColumn = { ...column };
     setSelectedColumn(currentColumn);
 
-    // Calculate initial aspect ratio for proportional scaling
-    const initialHeight = column.height || 600;
-    const initialHeaderHeight = column.header_height || 60;
-    const headerHeightRatio = initialHeaderHeight / initialHeight;
-
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const deltaX = (moveEvent.clientX / SCALE_FACTOR) - startX;
       const deltaY = (moveEvent.clientY / SCALE_FACTOR) - startY;
       
       const updated = { ...column };
       
-      // Unified resize: width, header_width, height, header_height all scale together
+      // Unified resize: width and header_width scale together, height adjusts independently
       if (handle === 'nw') {
         // Top-left: shrink from top-left
         const newWidth = Math.max(100, (column.width || 300) - deltaX);
@@ -637,7 +632,7 @@ const Board = () => {
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        // header_height stays independent
         updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
         updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
       }
@@ -650,7 +645,7 @@ const Board = () => {
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        // header_height stays independent
         updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
         updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
       }
@@ -663,7 +658,7 @@ const Board = () => {
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        // header_height stays independent
         updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
         updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
       }
@@ -676,7 +671,7 @@ const Board = () => {
         updated.width = newWidth;
         updated.header_width = newWidth;
         updated.height = newHeight;
-        updated.header_height = Math.max(20, Math.round(newHeight * headerHeightRatio));
+        // header_height stays independent
         updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
         updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
       }
