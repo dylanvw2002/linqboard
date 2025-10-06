@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, ArrowLeft, Trash2, Settings } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Settings, Plus } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl } from "date-fns/locale";
 import { z } from "zod";
@@ -98,6 +98,36 @@ const Board = () => {
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = 0.75; // UI scale factor
+
+  const handleAddColumn = async () => {
+    try {
+      // Find a good position for the new column (to the right of existing columns)
+      const maxX = columns.length > 0 ? Math.max(...columns.map(c => c.x_position)) : 0;
+      const newX = maxX + 350; // Add some spacing
+      
+      const { data, error } = await supabase
+        .from('columns')
+        .insert({
+          board_id: board?.id,
+          name: `Nieuwe kolom ${columns.length + 1}`,
+          position: columns.length,
+          width_ratio: 1,
+          x_position: newX,
+          y_position: 50,
+          width: 300,
+          height: 600
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast.success("Kolom toegevoegd");
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error("Fout bij toevoegen: " + error.message);
+    }
+  };
 
   useEffect(() => {
     checkAccess();
@@ -763,8 +793,18 @@ const Board = () => {
 
       {/* Canvas Board */}
       {editMode && (
-        <div className="px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg text-sm font-semibold text-primary">
-          🔧 Bewerkmodus actief - Klik op HEADER of TAAKGEBIED → sleep handles om te resizen
+        <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+          <span className="text-sm font-semibold text-primary">
+            🔧 Bewerkmodus actief - Klik op HEADER of TAAKGEBIED → sleep handles om te resizen
+          </span>
+          <Button
+            onClick={handleAddColumn}
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Kolom toevoegen
+          </Button>
         </div>
       )}
       <main
