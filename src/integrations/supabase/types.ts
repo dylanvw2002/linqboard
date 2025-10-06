@@ -84,6 +84,7 @@ export type Database = {
       columns: {
         Row: {
           board_id: string
+          column_type: Database["public"]["Enums"]["column_type"]
           content_padding_bottom: number | null
           content_padding_left: number | null
           content_padding_right: number | null
@@ -103,6 +104,7 @@ export type Database = {
         }
         Insert: {
           board_id: string
+          column_type?: Database["public"]["Enums"]["column_type"]
           content_padding_bottom?: number | null
           content_padding_left?: number | null
           content_padding_right?: number | null
@@ -122,6 +124,7 @@ export type Database = {
         }
         Update: {
           board_id?: string
+          column_type?: Database["public"]["Enums"]["column_type"]
           content_padding_bottom?: number | null
           content_padding_left?: number | null
           content_padding_right?: number | null
@@ -430,6 +433,7 @@ export type Database = {
         | "yellow"
         | "purple"
         | "orange"
+      column_type: "regular" | "sick_leave" | "vacation"
       task_priority: "low" | "medium" | "high"
     }
     CompositeTypes: {
@@ -568,6 +572,7 @@ export const Constants = {
         "purple",
         "orange",
       ],
+      column_type: ["regular", "sick_leave", "vacation"],
       task_priority: ["low", "medium", "high"],
     },
   },

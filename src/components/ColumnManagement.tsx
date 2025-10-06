@@ -10,6 +10,7 @@ import { Trash2, GripVertical, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { getGlowStyles, glowTypeLabels, GlowType } from "@/lib/glowStyles";
+import { ColumnType, columnTypeOptions } from "@/lib/columnTypes";
 
 interface Column {
   id: string;
@@ -18,6 +19,7 @@ interface Column {
   width_ratio: number;
   board_id: string;
   glow_type?: GlowType;
+  column_type?: ColumnType;
 }
 
 interface ColumnManagementProps {
@@ -56,6 +58,10 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
     setEditingColumns(cols => cols.map(col => col.id === id ? { ...col, glow_type: glowType } : col));
   };
 
+  const updateColumnType = (id: string, columnType: ColumnType) => {
+    setEditingColumns(cols => cols.map(col => col.id === id ? { ...col, column_type: columnType } : col));
+  };
+
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
@@ -85,12 +91,13 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
 
   const handleSave = async () => {
     try {
-      // Update all columns with new positions, names, widths, and glow types
+      // Update all columns with new positions, names, widths, column types, and glow types
       const updates = editingColumns.map((col, index) => ({
         id: col.id,
         name: col.name,
         position: index,
         width_ratio: col.width_ratio,
+        column_type: col.column_type || 'regular',
         glow_type: col.glow_type || 'default'
       }));
 
@@ -101,6 +108,7 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
             name: update.name, 
             position: update.position,
             width_ratio: update.width_ratio,
+            column_type: update.column_type,
             glow_type: update.glow_type
           })
           .eq('id', update.id);
@@ -249,7 +257,26 @@ export function ColumnManagement({ open, onOpenChange, columns, boardId, onColum
                   </div>
 
                   <div>
-                    <Label htmlFor={`glow-${col.id}`}>Glow Type</Label>
+                    <Label htmlFor={`type-${col.id}`}>Kolom Type</Label>
+                    <Select
+                      value={col.column_type || 'regular'}
+                      onValueChange={(value: ColumnType) => updateColumnType(col.id, value)}
+                    >
+                      <SelectTrigger id={`type-${col.id}`}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {columnTypeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor={`glow-${col.id}`}>Glow Effect</Label>
                     <Select
                       value={col.glow_type || 'default'}
                       onValueChange={(value: GlowType) => updateColumnGlowType(col.id, value)}

@@ -23,6 +23,7 @@ import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
+import { ColumnType } from "@/lib/columnTypes";
 
 interface Column {
   id: string;
@@ -41,6 +42,7 @@ interface Column {
   content_padding_bottom: number;
   content_padding_left: number;
   glow_type?: GlowType;
+  column_type?: ColumnType;
 }
 
 interface Task {

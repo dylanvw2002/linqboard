@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { X, Crop } from "lucide-react";
 import { getGlowStyles, glowTypeLabels, GlowType } from "@/lib/glowStyles";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ColumnType, columnTypeOptions } from "@/lib/columnTypes";
 
 interface Column {
   id: string;
@@ -26,6 +27,7 @@ interface Column {
   content_padding_bottom: number;
   content_padding_left: number;
   glow_type?: GlowType;
+  column_type?: ColumnType;
 }
 
 interface ColumnEditSidebarProps {
@@ -53,6 +55,7 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           content_padding_right: editedColumn.content_padding_right,
           content_padding_bottom: editedColumn.content_padding_bottom,
           content_padding_left: editedColumn.content_padding_left,
+          column_type: editedColumn.column_type || 'regular',
           glow_type: editedColumn.glow_type || 'default'
         })
         .eq('id', editedColumn.id);
@@ -232,7 +235,26 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
           </div>
 
           <div>
-            <Label htmlFor="glow-type">Glow Type</Label>
+            <Label htmlFor="column-type">Kolom Type</Label>
+            <Select
+              value={editedColumn.column_type || 'regular'}
+              onValueChange={(value: ColumnType) => setEditedColumn({...editedColumn, column_type: value})}
+            >
+              <SelectTrigger id="column-type">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {columnTypeOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="glow-type">Glow Effect</Label>
             <Select
               value={editedColumn.glow_type || 'default'}
               onValueChange={(value: GlowType) => setEditedColumn({...editedColumn, glow_type: value})}
