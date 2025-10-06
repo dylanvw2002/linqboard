@@ -31,16 +31,14 @@ export const TaskStack = ({
       let totalHeight = 0;
       let visibleTaskCount = 0;
       
-      // Only reserve space for the stacked indicator when needed (90px for stacked area)
-      // When not stacked, use almost full height (just small buffer)
-      const hasEnoughTasks = children.length > 3;
-      const reservedSpace = hasEnoughTasks ? 90 : 10;
+      // Reserve only 20px for the bottom padding instead of 80px
+      const reservedSpace = 20;
       
       for (let i = 0; i < taskElements.length; i++) {
         const taskHeight = taskElements[i].clientHeight;
-        const gap = i > 0 ? 12 : 0; // gap-3 = 12px (only between tasks)
+        const gap = 12; // gap-3 = 12px
         
-        if (totalHeight + taskHeight + gap > containerHeight - reservedSpace) {
+        if (totalHeight + taskHeight > containerHeight - reservedSpace) {
           break;
         }
         
@@ -49,8 +47,7 @@ export const TaskStack = ({
       }
       
       setVisibleCount(visibleTaskCount);
-      // Only show stacking if we have more than fit AND more than 3 total
-      setIsOverflowing(children.length > visibleTaskCount && visibleTaskCount > 0 && children.length > 3);
+      setIsOverflowing(children.length > visibleTaskCount && children.length > 3);
     };
 
     checkOverflow();

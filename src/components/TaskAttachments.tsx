@@ -448,14 +448,11 @@ export const TaskAttachments = ({
     </>;
 };
 export const AttachmentCount = ({
-  taskId,
-  count: providedCount
+  taskId
 }: {
   taskId: string;
-  count?: number;
 }) => {
-  const [count, setCount] = useState(providedCount || 0);
-  
+  const [count, setCount] = useState(0);
   const fetchCount = async () => {
     try {
       const {
@@ -465,69 +462,39 @@ export const AttachmentCount = ({
         count: "exact",
         head: true
       }).eq("task_id", taskId);
-      
-      if (error) {
-        if (error.message) {
-          console.error("Error fetching attachment count:", error.message);
-        }
-        return;
-      }
-      
+      if (error) throw error;
       setCount(attachmentCount || 0);
     } catch (error) {
-      // Silent fail
+      console.error("Error fetching attachment count:", error);
     }
   };
-  
   useEffect(() => {
-    // If count is provided as prop, use it
-    if (providedCount !== undefined) {
-      setCount(providedCount);
-      return;
-    }
+    fetchCount();
 
-    // Otherwise fetch it (fallback for backward compatibility)
-    let mounted = true;
-    
-    const loadCount = async () => {
-      if (mounted) {
-        await fetchCount();
-      }
-    };
-    
-    loadCount();
-
+    // Luister naar custom events voor directe updates
     const handleAttachmentChange = (e: Event) => {
       const customEvent = e as CustomEvent;
-      if (customEvent.detail?.taskId === taskId && mounted) {
+      if (customEvent.detail?.taskId === taskId) {
         fetchCount();
       }
     };
-    
     window.addEventListener('attachment-deleted', handleAttachmentChange);
     window.addEventListener('attachment-uploaded', handleAttachmentChange);
-    
     const channel = supabase.channel(`attachments-count-${taskId}`).on("postgres_changes", {
       event: "*",
       schema: "public",
       table: "task_attachments",
       filter: `task_id=eq.${taskId}`
     }, () => {
-      if (mounted) {
-        fetchCount();
-      }
+      fetchCount();
     }).subscribe();
-    
     return () => {
-      mounted = false;
       window.removeEventListener('attachment-deleted', handleAttachmentChange);
       window.removeEventListener('attachment-uploaded', handleAttachmentChange);
       supabase.removeChannel(channel);
     };
-  }, [taskId, providedCount]);
-  
+  }, [taskId]);
   if (count === 0) return null;
-  
   return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
       <Paperclip className="w-3 h-3" />
       {count}
