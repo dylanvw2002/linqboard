@@ -357,14 +357,24 @@ const Board = () => {
       supabase.removeChannel(channel);
     };
   };
+  const getLocaleString = () => {
+    const langMap: { [key: string]: string } = {
+      'nl': 'nl-NL',
+      'en': 'en-US',
+      'es': 'es-ES',
+      'de': 'de-DE'
+    };
+    return langMap[i18n.language] || 'nl-NL';
+  };
+
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("nl-NL", {
+    return date.toLocaleTimeString(getLocaleString(), {
       hour: "2-digit",
       minute: "2-digit"
     });
   };
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("nl-NL", {
+    return date.toLocaleDateString(getLocaleString(), {
       weekday: "short",
       day: "numeric",
       month: "short"
