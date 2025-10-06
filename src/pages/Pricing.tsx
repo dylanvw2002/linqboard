@@ -283,7 +283,7 @@ const Pricing = () => {
           )))}
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-16 mb-12 text-center">
           <p className="text-muted-foreground">
             {t('pricing.footer')}
           </p>
