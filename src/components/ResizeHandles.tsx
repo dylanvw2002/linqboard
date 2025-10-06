@@ -4,19 +4,21 @@ interface ResizeHandlesProps {
   mode: 'column' | 'content' | 'header';
   onMouseDown: (e: React.MouseEvent, handle: string) => void;
   activeHandle: string | null;
+  headerHeight?: number;
 }
 
-export const ResizeHandles = ({ mode, onMouseDown, activeHandle }: ResizeHandlesProps) => {
+export const ResizeHandles = ({ mode, onMouseDown, activeHandle, headerHeight = 60 }: ResizeHandlesProps) => {
   const isColumn = mode === 'column';
   const color = isColumn ? 'bg-purple-600' : 'bg-purple-600';
   const hoverColor = isColumn ? 'hover:bg-purple-700' : 'hover:bg-purple-700';
   
-  // Only corner handles
+  // Corner handles + header bottom handle
   const handles = [
     { name: 'nw', cursor: 'nwse-resize', style: { top: -6, left: -6 }, title: 'Noordwest hoek' },
     { name: 'ne', cursor: 'nesw-resize', style: { top: -6, right: -6 }, title: 'Noordoost hoek' },
     { name: 'se', cursor: 'nwse-resize', style: { bottom: -6, right: -6 }, title: 'Zuidoost hoek' },
-    { name: 'sw', cursor: 'nesw-resize', style: { bottom: -6, left: -6 }, title: 'Zuidwest hoek' }
+    { name: 'sw', cursor: 'nesw-resize', style: { bottom: -6, left: -6 }, title: 'Zuidwest hoek' },
+    { name: 'header-bottom', cursor: 'ns-resize', style: { top: headerHeight - 6, left: '50%', transform: 'translateX(-50%)' }, title: 'Header hoogte' }
   ];
 
   return (

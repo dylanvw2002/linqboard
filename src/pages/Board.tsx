@@ -676,6 +676,12 @@ const Board = () => {
         // Don't adjust left/right padding - cards should match header width
       }
       
+      if (handle === 'header-bottom') {
+        // Header bottom: only adjust header height
+        const newHeaderHeight = Math.max(40, (column.header_height || 60) + deltaY);
+        updated.header_height = newHeaderHeight;
+      }
+      
       currentColumn = updated;
       setSelectedColumn(updated);
     };
@@ -971,6 +977,7 @@ const Board = () => {
                   mode="column"
                   onMouseDown={(e, handle) => startResize(e, displayColumn, handle)}
                   activeHandle={resizeHandle}
+                  headerHeight={displayColumn.header_height || 60}
                 />
                 <div 
                   className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50 whitespace-nowrap"
