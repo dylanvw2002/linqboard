@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Loader2, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 interface Plan {
   name: string;
@@ -22,30 +25,13 @@ const Pricing = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<string | null>(null);
   const [isYearly, setIsYearly] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState<string>('free');
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      setUser(session.user);
-      
-      // Get current subscription
-      const { data } = await supabase
-        .from('user_subscriptions')
-        .select('plan')
-        .eq('user_id', session.user.id)
-        .single();
-      
-      if (data?.plan) {
-        setCurrentPlan(data.plan);
-      }
-    }
-  };
+  
+  const { data: userData, isLoading: isUserLoading } = useUserProfile();
+  const { data: subscriptionData, isLoading: isSubscriptionLoading } = useSubscription();
+  
+  const currentPlan = subscriptionData?.limits?.plan || 'free';
+  const user = userData ? { id: userData.id, email: userData.email } : null;
+  const isLoading = isUserLoading || isSubscriptionLoading;
 
   const plans: Plan[] = [
     {
@@ -194,7 +180,29 @@ const Pricing = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-          {plans.map((plan) => (
+          {isLoading ? (
+            // Loading skeletons
+            Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="relative">
+                <CardHeader>
+                  <Skeleton className="h-8 w-24 mb-2" />
+                  <Skeleton className="h-12 w-32" />
+                  <Skeleton className="h-4 w-full mt-2" />
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <Skeleton key={j} className="h-4 w-full" />
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Skeleton className="h-10 w-full" />
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            plans.map((plan) => (
             <Card 
               key={plan.plan_id}
               className={`relative ${
@@ -252,7 +260,7 @@ const Pricing = () => {
                 </Button>
               </CardFooter>
             </Card>
-          ))}
+          )))}
         </div>
 
         <div className="mt-16 text-center">
