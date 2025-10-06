@@ -453,6 +453,8 @@ export const AttachmentCount = ({
   taskId: string;
 }) => {
   const [count, setCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const fetchCount = async () => {
     try {
       const {
@@ -462,39 +464,66 @@ export const AttachmentCount = ({
         count: "exact",
         head: true
       }).eq("task_id", taskId);
-      if (error) throw error;
+      
+      if (error) {
+        // Only log if there's an actual error message
+        if (error.message) {
+          console.error("Error fetching attachment count:", error.message);
+        }
+        return;
+      }
+      
       setCount(attachmentCount || 0);
     } catch (error) {
-      console.error("Error fetching attachment count:", error);
+      // Silent fail - no console spam
+    } finally {
+      setIsLoading(false);
     }
   };
+  
   useEffect(() => {
-    fetchCount();
+    let mounted = true;
+    
+    const loadCount = async () => {
+      if (mounted) {
+        await fetchCount();
+      }
+    };
+    
+    loadCount();
 
     // Luister naar custom events voor directe updates
     const handleAttachmentChange = (e: Event) => {
       const customEvent = e as CustomEvent;
-      if (customEvent.detail?.taskId === taskId) {
+      if (customEvent.detail?.taskId === taskId && mounted) {
         fetchCount();
       }
     };
+    
     window.addEventListener('attachment-deleted', handleAttachmentChange);
     window.addEventListener('attachment-uploaded', handleAttachmentChange);
+    
     const channel = supabase.channel(`attachments-count-${taskId}`).on("postgres_changes", {
       event: "*",
       schema: "public",
       table: "task_attachments",
       filter: `task_id=eq.${taskId}`
     }, () => {
-      fetchCount();
+      if (mounted) {
+        fetchCount();
+      }
     }).subscribe();
+    
     return () => {
+      mounted = false;
       window.removeEventListener('attachment-deleted', handleAttachmentChange);
       window.removeEventListener('attachment-uploaded', handleAttachmentChange);
       supabase.removeChannel(channel);
     };
   }, [taskId]);
-  if (count === 0) return null;
+  
+  if (isLoading || count === 0) return null;
+  
   return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
       <Paperclip className="w-3 h-3" />
       {count}
