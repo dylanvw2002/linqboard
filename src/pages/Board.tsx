@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -95,6 +96,7 @@ const Board = () => {
   const [resizing, setResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState<string | null>(null);
   const [resizeStart, setResizeStart] = useState<{x: number, y: number, col: Column} | null>(null);
+  const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
@@ -142,6 +144,45 @@ const Board = () => {
       }, 100);
     } catch (error: any) {
       toast.error("Fout bij toevoegen: " + error.message);
+    }
+  };
+
+  const handleDeleteColumn = async () => {
+    if (!deleteColumnId) return;
+
+    try {
+      // First, check if there are tasks in this column
+      const columnTasks = tasks.filter(t => t.column_id === deleteColumnId);
+      
+      if (columnTasks.length > 0) {
+        // Move all tasks to the first column
+        const firstColumn = columns.find(c => c.id !== deleteColumnId);
+        
+        if (firstColumn) {
+          await Promise.all(
+            columnTasks.map(task => 
+              supabase
+                .from('tasks')
+                .update({ column_id: firstColumn.id })
+                .eq('id', task.id)
+            )
+          );
+        }
+      }
+
+      // Delete the column
+      const { error } = await supabase
+        .from('columns')
+        .delete()
+        .eq('id', deleteColumnId);
+
+      if (error) throw error;
+
+      toast.success("Kolom verwijderd");
+      await fetchBoardData();
+      setDeleteColumnId(null);
+    } catch (error: any) {
+      toast.error("Fout bij verwijderen: " + error.message);
     }
   };
 
@@ -1033,9 +1074,22 @@ const Board = () => {
               </div>
               <Dialog open={openDialog === column.id} onOpenChange={(open) => setOpenDialog(open ? column.id : null)}>
                 <DialogTrigger asChild>
-                  <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                    +
-                  </button>
+                  {editMode ? (
+                    <button 
+                      className="backdrop-blur-[60px] bg-destructive/80 hover:bg-destructive text-destructive-foreground border-2 border-destructive/40 px-2.5 py-1.5 rounded-xl font-bold text-sm transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteColumnId(column.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  ) : (
+                    <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                      +
+                    </button>
+                  )}
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
@@ -1363,6 +1417,24 @@ const Board = () => {
           onSave={fetchBoardData}
         />
       )}
+
+      {/* Delete Column Confirmation */}
+      <AlertDialog open={!!deleteColumnId} onOpenChange={(open) => !open && setDeleteColumnId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Kolom verwijderen</AlertDialogTitle>
+            <AlertDialogDescription>
+              Weet je zeker dat je deze kolom wilt verwijderen? Alle taken in deze kolom worden verplaatst naar de eerste kolom.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteColumn} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
         </div>
       </div>
