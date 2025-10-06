@@ -4,8 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Camera } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import logo from "@/assets/logo-transparent.png";
 interface Organization {
   id: string;
@@ -18,8 +23,13 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [userName, setUserName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string>("");
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [leaveOrgId, setLeaveOrgId] = useState<string | null>(null);
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   useEffect(() => {
     checkUser();
     fetchOrganizations();
@@ -35,12 +45,99 @@ const Dashboard = () => {
       return;
     }
 
+    setUserId(session.user.id);
+
     // Get user profile
     const {
       data: profile
-    } = await supabase.from("profiles").select("full_name").eq("user_id", session.user.id).single();
+    } = await supabase.from("profiles").select("full_name, avatar_url").eq("user_id", session.user.id).single();
     if (profile) {
       setUserName(profile.full_name);
+      setAvatarUrl(profile.avatar_url);
+      setEditName(profile.full_name);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Bestand is te groot. Maximaal 5MB toegestaan.");
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast.error("Alleen afbeeldingen zijn toegestaan.");
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      // Delete old avatar if exists
+      if (avatarUrl) {
+        const oldPath = avatarUrl.split('/').pop();
+        if (oldPath) {
+          await supabase.storage.from('avatars').remove([`${userId}/${oldPath}`]);
+        }
+      }
+
+      // Upload new avatar
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${userId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      // Update profile
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', userId);
+
+      if (updateError) throw updateError;
+
+      setAvatarUrl(publicUrl);
+      toast.success("Profielfoto bijgewerkt!");
+    } catch (error: any) {
+      toast.error("Fout bij uploaden van foto");
+      console.error(error);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!editName.trim()) {
+      toast.error("Naam mag niet leeg zijn");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: editName })
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      setUserName(editName);
+      setProfileDialogOpen(false);
+      toast.success("Profiel bijgewerkt!");
+    } catch (error: any) {
+      toast.error("Fout bij bijwerken van profiel");
+      console.error(error);
     }
   };
   const fetchOrganizations = async () => {
@@ -133,10 +230,30 @@ const Dashboard = () => {
         <div className="container mx-auto px-6 py-0">
           <div className="flex items-center justify-between gap-4">
             <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
-            <Button variant="outline" onClick={handleLogout} size="lg" className="border-2">
-              <LogOut className="mr-2 h-5 w-5" />
-              Uitloggen
-            </Button>
+            <div className="flex items-center gap-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
+                    <Avatar className="h-12 w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                      <AvatarImage src={avatarUrl || undefined} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-lg">
+                        {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
+                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profiel bewerken</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Uitloggen</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>
@@ -259,6 +376,63 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Profile Edit Dialog */}
+      <Dialog open={profileDialogOpen} onOpenChange={setProfileDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Profiel bewerken</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Avatar upload section */}
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative group">
+                <Avatar className="h-24 w-24 border-4 border-primary/20">
+                  <AvatarImage src={avatarUrl || undefined} />
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-3xl">
+                    {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+                <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                  <Camera className="h-8 w-8 text-white" />
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                  disabled={uploadingAvatar}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Klik op de foto om te wijzigen
+              </p>
+            </div>
+
+            {/* Name input */}
+            <div className="space-y-2">
+              <Label htmlFor="name">Naam</Label>
+              <Input
+                id="name"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                placeholder="Je volledige naam"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setProfileDialogOpen(false)}>
+                Annuleren
+              </Button>
+              <Button onClick={handleUpdateProfile} disabled={uploadingAvatar}>
+                Opslaan
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>;
 };
 export default Dashboard;
