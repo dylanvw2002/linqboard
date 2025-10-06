@@ -746,7 +746,13 @@ const Board = () => {
       <main className="relative flex-1 min-h-0 overflow-auto bg-gradient-to-br from-blue-50 to-blue-100" style={{
           minWidth: '3000px',
           minHeight: '2000px'
-        }} onDragOver={editMode ? e => {
+        }} 
+        onClick={(e) => {
+          if (editMode && selectedColumn && e.target === e.currentTarget) {
+            setSelectedColumn(null);
+          }
+        }}
+        onDragOver={editMode ? e => {
           e.preventDefault();
           if (!draggedColumn) return;
           const canvas = e.currentTarget.getBoundingClientRect();
