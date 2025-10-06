@@ -365,7 +365,7 @@ export type Database = {
           due_date: string | null
           id: string
           position: number
-          priority: Database["public"]["Enums"]["task_priority"]
+          priority: Database["public"]["Enums"]["task_priority"] | null
           title: string
           updated_at: string
         }
@@ -376,7 +376,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           position?: number
-          priority?: Database["public"]["Enums"]["task_priority"]
+          priority?: Database["public"]["Enums"]["task_priority"] | null
           title: string
           updated_at?: string
         }
@@ -387,7 +387,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           position?: number
-          priority?: Database["public"]["Enums"]["task_priority"]
+          priority?: Database["public"]["Enums"]["task_priority"] | null
           title?: string
           updated_at?: string
         }

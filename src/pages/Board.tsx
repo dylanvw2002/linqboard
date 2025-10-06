@@ -56,7 +56,7 @@ interface Task {
   title: string;
   assignees?: Assignee[];
   description: string | null;
-  priority: "low" | "medium" | "high";
+  priority: "low" | "medium" | "high" | null;
   position: number;
   due_date?: string | null;
 }
@@ -78,13 +78,13 @@ const Board = () => {
   const [openDialog, setOpenDialog] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
-  const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
-  const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high">("medium");
+  const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [orgMembers, setOrgMembers] = useState<Assignee[]>([]);
   const [editTaskAssignees, setEditTaskAssignees] = useState<string[]>([]);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
@@ -368,7 +368,9 @@ const Board = () => {
       return "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]";
     }
   };
-  const getPriorityBadge = (priority: "low" | "medium" | "high") => {
+  const getPriorityBadge = (priority: "low" | "medium" | "high" | null) => {
+    if (!priority) return null;
+    
     const config = {
       high: {
         label: "Hoog",
@@ -1015,6 +1017,9 @@ const Board = () => {
                     {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                       <Label>Prioriteit</Label>
                       <div className="flex gap-2">
+                        <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
+                          Geen
+                        </Button>
                         <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
                           Laag
                         </Button>
@@ -1060,9 +1065,11 @@ const Board = () => {
                             locale: nl
                           })}
                         </span>}
-                      <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority).color)}>
-                        {getPriorityBadge(task.priority).label}
-                      </span>
+                      {task.priority && getPriorityBadge(task.priority) && (
+                        <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                          {getPriorityBadge(task.priority)!.label}
+                        </span>
+                      )}
                     </div>
                     <h4 className="font-extrabold text-[clamp(14px,1.6vw,18px)] mb-1 text-foreground relative z-10">
                       {task.title}
@@ -1116,6 +1123,9 @@ const Board = () => {
                   {!isSimpleColumn && <div>
                       <Label>Prioriteit</Label>
                       <div className="flex gap-2">
+                        <Button type="button" variant={editTaskPriority === null ? "default" : "outline"} onClick={() => setEditTaskPriority(null)} className="flex-1">
+                          Geen
+                        </Button>
                         <Button type="button" variant={editTaskPriority === "low" ? "default" : "outline"} onClick={() => setEditTaskPriority("low")} className="flex-1">
                           Laag
                         </Button>
