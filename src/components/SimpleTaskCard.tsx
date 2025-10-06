@@ -15,12 +15,12 @@ export const SimpleTaskCard = ({
   description,
   dueDate,
   onClick,
-  glowShadow = "shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:shadow-[0_15px_40px_rgba(2,6,23,0.12)]"
+  glowShadow = "shadow-[0_8px_24px_rgba(2,6,23,0.08)] hover:shadow-[0_12px_36px_rgba(2,6,23,0.15)]"
 }: SimpleTaskCardProps) => {
   return (
     <div
       onClick={onClick}
-      className={`bg-card rounded-[18px] p-3 ${glowShadow} transition-all duration-200 border border-border/50 cursor-pointer`}
+      className={`bg-card rounded-[18px] p-3 ${glowShadow} transition-all duration-200 border border-border/50 cursor-pointer hover:scale-[1.02]`}
     >
       <h4 className="font-semibold text-sm text-foreground mb-1 leading-snug">
         {title}
