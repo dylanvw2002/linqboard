@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -25,13 +25,26 @@ const Pricing = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<string | null>(null);
   const [isYearly, setIsYearly] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
   
-  const { data: userData, isLoading: isUserLoading } = useUserProfile();
-  const { data: subscriptionData, isLoading: isSubscriptionLoading } = useSubscription();
+  const { data: userData, isLoading: isUserLoading, refetch: refetchUser } = useUserProfile();
+  const { data: subscriptionData, isLoading: isSubscriptionLoading, refetch: refetchSubscription } = useSubscription();
   
   const currentPlan = subscriptionData?.limits?.plan || 'free';
   const user = userData ? { id: userData.id, email: userData.email } : null;
   const isLoading = isUserLoading || isSubscriptionLoading;
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setHasSession(true);
+        refetchUser();
+        refetchSubscription();
+      }
+    };
+    checkSession();
+  }, [refetchUser, refetchSubscription]);
 
   const plans: Plan[] = [
     {

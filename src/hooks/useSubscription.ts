@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useState } from 'react';
 
 interface SubscriptionLimits {
   plan: string;
@@ -22,38 +21,6 @@ interface SubscriptionData {
 }
 
 export const useSubscription = () => {
-  const [hasSession, setHasSession] = useState<boolean>(false);
-
-  useEffect(() => {
-    let subscription: { unsubscribe: () => void } | null = null;
-
-    const initAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log('useSubscription: Initial session check', !!session);
-        setHasSession(!!session);
-
-        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-          console.log('useSubscription: Auth state changed', !!session);
-          setHasSession(!!session);
-        });
-        
-        subscription = data.subscription;
-      } catch (error) {
-        console.error('useSubscription: Error initializing auth', error);
-        setHasSession(false);
-      }
-    };
-
-    initAuth();
-
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, []);
-
   return useQuery({
     queryKey: ['subscription'],
     queryFn: async (): Promise<SubscriptionData> => {
@@ -65,9 +32,9 @@ export const useSubscription = () => {
       if (error) throw error;
       return data;
     },
-    enabled: hasSession,
     staleTime: 60 * 1000, // 1 minute
     gcTime: 5 * 60 * 1000, // 5 minutes
-    retry: 1,
+    retry: false,
+    enabled: false, // Disabled by default - will be enabled by components when needed
   });
 };
