@@ -9,8 +9,6 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { useSubscription } from "@/hooks/useSubscription";
-import { useUserProfile } from "@/hooks/useUserProfile";
 
 interface Plan {
   name: string;
@@ -25,13 +23,31 @@ const Pricing = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState<string | null>(null);
   const [isYearly, setIsYearly] = useState(false);
+  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+  const [currentPlan, setCurrentPlan] = useState<string>('free');
+  const [isLoading, setIsLoading] = useState(true);
   
-  const { data: userData, isLoading: isUserLoading } = useUserProfile();
-  const { data: subscriptionData, isLoading: isSubscriptionLoading } = useSubscription();
-  
-  const currentPlan = subscriptionData?.limits?.plan || 'free';
-  const user = userData ? { id: userData.id, email: userData.email } : null;
-  const isLoading = isUserLoading || isSubscriptionLoading;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setUser({ id: session.user.id, email: session.user.email || '' });
+          
+          const { data: limits } = await supabase.functions.invoke('get-subscription-status');
+          if (limits?.limits) {
+            setCurrentPlan(limits.limits.plan);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   const plans: Plan[] = [
     {

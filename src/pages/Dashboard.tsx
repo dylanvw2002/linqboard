@@ -16,8 +16,6 @@ import { Progress } from "@/components/ui/progress";
 import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
-import { useSubscription } from "@/hooks/useSubscription";
-import { useUserProfile } from "@/hooks/useUserProfile";
 import logo from "@/assets/logo-transparent.png";
 
 interface Organization {
@@ -33,6 +31,7 @@ interface SubscriptionLimits {
   max_members_per_org: number;
   current_org_count: number;
 }
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -43,14 +42,10 @@ const Dashboard = () => {
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
-  
-  const { data: userData, isLoading: isUserLoading } = useUserProfile();
-  const { data: subscriptionData, isLoading: isSubscriptionLoading } = useSubscription();
-  
-  const subscriptionLimits = subscriptionData?.limits || null;
-  const userName = userData?.full_name || "";
-  const avatarUrl = userData?.avatar_url || null;
-  const userId = userData?.id || "";
+  const [subscriptionLimits, setSubscriptionLimits] = useState<SubscriptionLimits | null>(null);
+  const [userName, setUserName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userId, setUserId] = useState("");
   
   useEffect(() => {
     const checkAccess = async () => {
@@ -60,19 +55,40 @@ const Dashboard = () => {
         return;
       }
       
-      // Set edit name from user data
-      if (userData) {
-        setEditName(userData.full_name);
-      }
-      
-      // Fetch organizations
+      // Fetch user profile and subscription
+      await fetchUserData(session.user.id);
       await fetchOrganizations();
     };
     
-    if (!isUserLoading) {
-      checkAccess();
+    checkAccess();
+  }, [navigate]);
+  
+  const fetchUserData = async (userId: string) => {
+    try {
+      setUserId(userId);
+      
+      // Fetch profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (profile) {
+        setUserName(profile.full_name || "");
+        setEditName(profile.full_name || "");
+        setAvatarUrl(profile.avatar_url || null);
+      }
+      
+      // Fetch subscription limits
+      const { data: limits } = await supabase.functions.invoke('get-subscription-status');
+      if (limits) {
+        setSubscriptionLimits(limits.limits);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
-  }, [isUserLoading, userData]);
+  };
 
   const handleAvatarUpload = async (blob: Blob) => {
     try {
@@ -214,7 +230,7 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-  const isPageLoading = loading || isUserLoading || isSubscriptionLoading;
+  const isPageLoading = loading;
 
   if (isPageLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
