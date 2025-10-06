@@ -634,7 +634,7 @@ const Board = () => {
         updated.height = newHeight;
         // header_height stays independent
         updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-        updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
+        // Don't adjust left/right padding - cards should match header width
       }
       
       if (handle === 'ne') {
@@ -647,7 +647,7 @@ const Board = () => {
         updated.height = newHeight;
         // header_height stays independent
         updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
-        updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
+        // Don't adjust left/right padding - cards should match header width
       }
       
       if (handle === 'sw') {
@@ -660,7 +660,7 @@ const Board = () => {
         updated.height = newHeight;
         // header_height stays independent
         updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-        updated.content_padding_left = Math.max(0, (column.content_padding_left || 0) + deltaX);
+        // Don't adjust left/right padding - cards should match header width
       }
       
       if (handle === 'se') {
@@ -673,7 +673,7 @@ const Board = () => {
         updated.height = newHeight;
         // header_height stays independent
         updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
-        updated.content_padding_right = Math.max(0, (column.content_padding_right || 0) - deltaX);
+        // Don't adjust left/right padding - cards should match header width
       }
       
       currentColumn = updated;
