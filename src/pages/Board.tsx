@@ -1211,13 +1211,13 @@ const Board = () => {
                             const member = orgMembers.find(m => m.user_id === userId);
                             if (!member) return null;
                             return (
-                              <div key={userId} className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-lg">
-                                <Avatar className="h-6 w-6">
-                                  <AvatarFallback className="text-xs">
+                              <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                                <Avatar className="h-9 w-9">
+                                  <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
                                     {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
-                                <span className="text-sm">{member.full_name}</span>
+                                <span className="text-sm font-medium">{member.full_name}</span>
                                 <button
                                   onClick={() => handleRemoveAssignee(userId)}
                                   className="ml-1 text-muted-foreground hover:text-destructive"
