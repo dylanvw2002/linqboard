@@ -32,9 +32,8 @@ export const useSubscription = () => {
       if (error) throw error;
       return data;
     },
-    staleTime: 60 * 1000, // 1 minute
-    gcTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 60 * 1000,
+    gcTime: 5 * 60 * 1000,
     retry: false,
-    enabled: false, // Disabled by default - will be enabled by components when needed
   });
 };

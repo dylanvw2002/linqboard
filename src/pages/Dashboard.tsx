@@ -37,7 +37,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
-  const [hasSession, setHasSession] = useState(false);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [leaveOrgId, setLeaveOrgId] = useState<string | null>(null);
@@ -45,8 +44,8 @@ const Dashboard = () => {
   const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
   
-  const { data: userData, isLoading: isUserLoading, refetch: refetchUser } = useUserProfile();
-  const { data: subscriptionData, isLoading: isSubscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const { data: userData, isLoading: isUserLoading } = useUserProfile();
+  const { data: subscriptionData, isLoading: isSubscriptionLoading } = useSubscription();
   
   const subscriptionLimits = subscriptionData?.limits || null;
   const userName = userData?.full_name || "";
@@ -60,11 +59,6 @@ const Dashboard = () => {
         navigate("/auth");
         return;
       }
-      
-      setHasSession(true);
-      // Fetch user and subscription data
-      refetchUser();
-      refetchSubscription();
       
       // Set edit name from user data
       if (userData) {

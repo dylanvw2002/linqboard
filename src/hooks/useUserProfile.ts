@@ -19,7 +19,7 @@ export const useUserProfile = () => {
         .from('profiles')
         .select('user_id, full_name, avatar_url')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -30,9 +30,8 @@ export const useUserProfile = () => {
         avatar_url: profile?.avatar_url,
       };
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     retry: false,
-    enabled: false, // Disabled by default - will be enabled by components when needed
   });
 };
