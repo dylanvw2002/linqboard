@@ -248,7 +248,7 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-12">
           <h1 className="text-5xl md:text-6xl font-bold mb-4 pb-2 flex items-center gap-3">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-0 py-[2px]">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-1">
               {t('dashboard.hello')} {userName || t('dashboard.hello')}
             </span>
             <PartyPopper className="text-accent" size={56} />
