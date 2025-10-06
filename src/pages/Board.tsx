@@ -62,6 +62,7 @@ const Board = () => {
   const [board, setBoard] = useState<any>(null);
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [attachmentCounts, setAttachmentCounts] = useState<Record<string, number>>({});
   const [currentTime, setCurrentTime] = useState(new Date());
   const [openDialog, setOpenDialog] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -144,6 +145,33 @@ const Board = () => {
     }
   };
 
+  const fetchAttachmentCounts = async (taskIds: string[]) => {
+    if (taskIds.length === 0) {
+      setAttachmentCounts({});
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("task_attachments")
+        .select("task_id")
+        .in("task_id", taskIds);
+
+      if (error) throw error;
+
+      // Count attachments per task
+      const counts: Record<string, number> = {};
+      data?.forEach((att) => {
+        counts[att.task_id] = (counts[att.task_id] || 0) + 1;
+      });
+
+      setAttachmentCounts(counts);
+    } catch (error) {
+      console.error("Error fetching attachment counts:", error);
+      setAttachmentCounts({});
+    }
+  };
+
   const fetchBoardData = async () => {
     try {
       const { data: org } = await supabase
@@ -180,6 +208,12 @@ const Board = () => {
             .order("position");
 
           setTasks(tasksData || []);
+
+          // Fetch all attachment counts in one query
+          if (tasksData && tasksData.length > 0) {
+            const taskIds = tasksData.map(t => t.id);
+            await fetchAttachmentCounts(taskIds);
+          }
         }
       }
     } catch (error: any) {
@@ -212,6 +246,21 @@ const Board = () => {
         },
         () => {
           fetchBoardData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "task_attachments",
+        },
+        () => {
+          // Refresh attachment counts when attachments change
+          const taskIds = tasks.map(t => t.id);
+          if (taskIds.length > 0) {
+            fetchAttachmentCounts(taskIds);
+          }
         }
       )
       .subscribe();
@@ -1094,7 +1143,7 @@ const Board = () => {
                   >
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                     <div className="flex items-center gap-1.5 justify-end mb-1 relative z-10">
-                      <AttachmentCount taskId={task.id} />
+                      <AttachmentCount taskId={task.id} count={attachmentCounts[task.id]} />
                       {task.due_date && (
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", { locale: nl })}

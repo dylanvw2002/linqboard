@@ -448,12 +448,13 @@ export const TaskAttachments = ({
     </>;
 };
 export const AttachmentCount = ({
-  taskId
+  taskId,
+  count: providedCount
 }: {
   taskId: string;
+  count?: number;
 }) => {
-  const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [count, setCount] = useState(providedCount || 0);
   
   const fetchCount = async () => {
     try {
@@ -466,7 +467,6 @@ export const AttachmentCount = ({
       }).eq("task_id", taskId);
       
       if (error) {
-        // Only log if there's an actual error message
         if (error.message) {
           console.error("Error fetching attachment count:", error.message);
         }
@@ -475,13 +475,18 @@ export const AttachmentCount = ({
       
       setCount(attachmentCount || 0);
     } catch (error) {
-      // Silent fail - no console spam
-    } finally {
-      setIsLoading(false);
+      // Silent fail
     }
   };
   
   useEffect(() => {
+    // If count is provided as prop, use it
+    if (providedCount !== undefined) {
+      setCount(providedCount);
+      return;
+    }
+
+    // Otherwise fetch it (fallback for backward compatibility)
     let mounted = true;
     
     const loadCount = async () => {
@@ -492,7 +497,6 @@ export const AttachmentCount = ({
     
     loadCount();
 
-    // Luister naar custom events voor directe updates
     const handleAttachmentChange = (e: Event) => {
       const customEvent = e as CustomEvent;
       if (customEvent.detail?.taskId === taskId && mounted) {
@@ -520,9 +524,9 @@ export const AttachmentCount = ({
       window.removeEventListener('attachment-uploaded', handleAttachmentChange);
       supabase.removeChannel(channel);
     };
-  }, [taskId]);
+  }, [taskId, providedCount]);
   
-  if (isLoading || count === 0) return null;
+  if (count === 0) return null;
   
   return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
       <Paperclip className="w-3 h-3" />
