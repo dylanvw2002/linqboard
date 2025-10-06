@@ -1011,7 +1011,7 @@ const Board = () => {
               <Dialog open={openDialog === column.id} onOpenChange={(open) => setOpenDialog(open ? column.id : null)}>
                 <DialogTrigger asChild>
                   <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                    ＋ Taak
+                    +
                   </button>
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
@@ -1020,27 +1020,27 @@ const Board = () => {
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor={`title-${column.id}`}>{column.name === "Ziek" || column.name === "Verlof" ? "Naam" : "Titel"} *</Label>
+                      <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Naam" : "Titel"} *</Label>
                       <Input
                         id={`title-${column.id}`}
                         value={newTaskTitle}
                         onChange={(e) => setNewTaskTitle(e.target.value)}
-                        placeholder={column.name === "Ziek" || column.name === "Verlof" ? "Naam van de persoon" : "Titel van de taak"}
+                        placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Naam van de persoon" : "Titel van de taak"}
                         maxLength={200}
                       />
                     </div>
                     <div>
-                      <Label htmlFor={`description-${column.id}`}>{column.name === "Ziek" || column.name === "Verlof" ? "Reden" : "Beschrijving"}</Label>
+                      <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Reden" : "Beschrijving"}</Label>
                       <Textarea
                         id={`description-${column.id}`}
                         value={newTaskDescription}
                         onChange={(e) => setNewTaskDescription(e.target.value)}
-                        placeholder={column.name === "Ziek" || column.name === "Verlof" ? "Reden voor afwezigheid..." : "Extra details..."}
+                        placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Reden voor afwezigheid..." : "Extra details..."}
                         maxLength={1000}
                       />
                     </div>
                     <div>
-                      <Label>{column.name === "Ziek" || column.name === "Verlof" ? "Terug verwacht op" : "Deadline"}</Label>
+                      <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Terug verwacht op" : "Deadline"}</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button
@@ -1076,7 +1076,7 @@ const Board = () => {
                         </PopoverContent>
                       </Popover>
                     </div>
-                    {!(column.name === "Ziek" || column.name === "Verlof") && (
+                    {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && (
                     <div>
                       <Label>Prioriteit</Label>
                       <div className="flex gap-2">
@@ -1155,7 +1155,7 @@ const Board = () => {
               )}
               <TaskStack>
                 {getColumnTasks(column.id).map((task) => {
-                  const isSimpleColumn = column.name === "Ziek" || column.name === "Verlof";
+                  const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                   
                   if (isSimpleColumn) {
                     return (
@@ -1225,7 +1225,7 @@ const Board = () => {
           <div className="space-y-4">
             {(() => {
               const taskColumn = columns.find(c => c.id === editingTask?.column_id);
-              const isSimpleColumn = taskColumn && (taskColumn.name === "Ziek" || taskColumn.name === "Verlof");
+              const isSimpleColumn = taskColumn && (taskColumn.column_type === 'sick_leave' || taskColumn.column_type === 'vacation');
               
               return (
                 <>
