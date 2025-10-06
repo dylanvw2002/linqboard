@@ -874,7 +874,7 @@ const Board = () => {
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
             <p className="text-muted-foreground font-semibold text-[clamp(12px,1.4vw,16px)]">
-              Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen
+              {t('board.liveOverview')}
             </p>
           </div>
           <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.08)] shrink-0 relative">
