@@ -159,20 +159,22 @@ const Pricing = () => {
             {t('pricing.subtitle')}
           </p>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold' : ''}>
-              {t('pricing.monthly')}
-            </Label>
-            <Switch
-              id="billing-toggle"
-              checked={isYearly}
-              onCheckedChange={setIsYearly}
-            />
-            <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold' : ''}>
-              {t('pricing.yearly')}
-            </Label>
+          <div className="flex flex-col items-center justify-center gap-3 mb-8">
+            <div className="flex items-center gap-4">
+              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold' : ''}>
+                {t('pricing.monthly')}
+              </Label>
+              <Switch
+                id="billing-toggle"
+                checked={isYearly}
+                onCheckedChange={setIsYearly}
+              />
+              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold' : ''}>
+                {t('pricing.yearly')}
+              </Label>
+            </div>
             <span 
-              className={`ml-2 text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${
+              className={`text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${
                 isYearly ? 'opacity-100' : 'opacity-0'
               }`}
             >
