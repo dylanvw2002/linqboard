@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-transparent.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { ActiveUsers } from "@/components/ActiveUsers";
-import { TaskStack } from "@/components/TaskStack";
+
 import { ColumnManagement } from "@/components/ColumnManagement";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
@@ -1214,7 +1214,7 @@ const Board = () => {
               }}
             >
               {/* Task rendering */}
-              <TaskStack>
+              <div className="space-y-2.5">
                 {getColumnTasks(column.id).map((task) => {
                   const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                   
@@ -1270,7 +1270,7 @@ const Board = () => {
                   </article>
                   );
                 })}
-              </TaskStack>
+              </div>
             </div>
           </section>
         );
