@@ -3,37 +3,45 @@ export type GlowType = 'default' | 'red' | 'green' | 'blue' | 'yellow' | 'purple
 interface GlowStyles {
   header: string;
   content: string;
+  cardShadow: string;
 }
 
 export const getGlowStyles = (glowType: GlowType = 'default'): GlowStyles => {
   const styles: Record<GlowType, GlowStyles> = {
     default: {
-      header: "bg-white/15 dark:bg-card/15 border-white/40 dark:border-white/20",
-      content: "bg-card/50 border-border"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:shadow-[0_15px_40px_rgba(2,6,23,0.12)]"
     },
     red: {
-      header: "bg-red-100 border-red-200",
-      content: "bg-red-50/50 border-red-200"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(239,68,68,0.3)] hover:shadow-[0_15px_40px_rgba(239,68,68,0.4)]"
     },
     green: {
-      header: "bg-green-100 border-green-200",
-      content: "bg-green-50/50 border-green-200"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(34,197,94,0.3)] hover:shadow-[0_15px_40px_rgba(34,197,94,0.4)]"
     },
     blue: {
-      header: "bg-blue-100 border-blue-200",
-      content: "bg-blue-50/50 border-blue-200"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(59,130,246,0.3)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.4)]"
     },
     yellow: {
-      header: "bg-yellow-100 border-yellow-200",
-      content: "bg-yellow-50/50 border-yellow-200"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_rgba(234,179,8,0.4)]"
     },
     purple: {
-      header: "bg-purple-100 border-purple-200",
-      content: "bg-purple-50/50 border-purple-200"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(168,85,247,0.3)] hover:shadow-[0_15px_40px_rgba(168,85,247,0.4)]"
     },
     orange: {
-      header: "bg-orange-100 border-orange-200",
-      content: "bg-orange-50/50 border-orange-200"
+      header: "bg-card border-border",
+      content: "bg-card/50 border-border",
+      cardShadow: "shadow-[0_10px_30px_rgba(249,115,22,0.3)] hover:shadow-[0_15px_40px_rgba(249,115,22,0.4)]"
     }
   };
 

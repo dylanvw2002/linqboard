@@ -1097,6 +1097,7 @@ const Board = () => {
                         description={task.description}
                         dueDate={task.due_date}
                         onClick={() => !isDragging && openEditDialog(task)}
+                        glowShadow={getGlowStyles(column.glow_type).cardShadow}
                       />
                     );
                   }
