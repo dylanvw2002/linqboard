@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface Assignee {
@@ -53,20 +54,40 @@ export const SimpleTaskCard = ({
       )}
 
       {assignees && assignees.length > 0 && (
-        <div className="flex items-center gap-1 mt-2 relative z-10">
-          {assignees.slice(0, 3).map((assignee, idx) => (
-            <Avatar key={assignee.user_id} className="h-5 w-5 border border-white" style={{ marginLeft: idx > 0 ? '-6px' : '0' }}>
-              <AvatarFallback className="text-[9px] bg-primary/10">
-                {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          ))}
-          {assignees.length > 3 && (
-            <div className="h-5 w-5 rounded-full bg-muted flex items-center justify-center text-[9px] font-bold" style={{ marginLeft: '-6px' }}>
-              +{assignees.length - 3}
-            </div>
-          )}
-        </div>
+        <TooltipProvider>
+          <div className="flex items-center gap-1 mt-2 relative z-10">
+            {assignees.slice(0, 3).map((assignee, idx) => (
+              <Tooltip key={assignee.user_id}>
+                <TooltipTrigger asChild>
+                  <Avatar className="h-6 w-6 border-2 border-white dark:border-gray-800 cursor-pointer hover:scale-110 transition-transform" style={{ marginLeft: idx > 0 ? '-8px' : '0' }}>
+                    <AvatarFallback className="text-[10px] font-semibold bg-primary/20 text-primary">
+                      {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{assignee.full_name}</p>
+                </TooltipContent>
+              </Tooltip>
+            ))}
+            {assignees.length > 3 && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold cursor-pointer hover:scale-110 transition-transform" style={{ marginLeft: '-8px' }}>
+                    +{assignees.length - 3}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="flex flex-col gap-1">
+                    {assignees.slice(3).map(assignee => (
+                      <p key={assignee.user_id}>{assignee.full_name}</p>
+                    ))}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+        </TooltipProvider>
       )}
     </div>
   );
