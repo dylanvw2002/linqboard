@@ -14,8 +14,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
-import { nl } from "date-fns/locale";
+import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
+import type { Locale } from "date-fns";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-transparent.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
@@ -61,11 +63,14 @@ interface Task {
   position: number;
   due_date?: string | null;
 }
-const taskSchema = z.object({
-  title: z.string().trim().min(1, "Titel is verplicht").max(200, "Titel mag maximaal 200 tekens zijn"),
-  description: z.string().trim().max(1000, "Beschrijving mag maximaal 1000 tekens zijn").optional()
-});
 const Board = () => {
+  const { t, i18n } = useTranslation();
+  
+  const taskSchema = z.object({
+    title: z.string().trim().min(1, t('board.titleRequired')).max(200, t('board.titleMaxLength')),
+    description: z.string().trim().max(1000, t('board.descriptionMaxLength')).optional()
+  });
+  
   const {
     organizationId
   } = useParams();
@@ -122,6 +127,17 @@ const Board = () => {
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = 0.75; // UI scale factor
 
+  // Get date-fns locale based on current language
+  const getDateLocale = (): Locale => {
+    switch (i18n.language) {
+      case 'nl': return nl;
+      case 'en': return enUS;
+      case 'es': return es;
+      case 'de': return de;
+      default: return nl;
+    }
+  };
+
   const handleAddColumn = async () => {
     try {
       // Place new column in a visible area (not too far right)
@@ -135,7 +151,7 @@ const Board = () => {
         error
       } = await supabase.from('columns').insert({
         board_id: board?.id,
-        name: `Nieuwe kolom ${columns.length + 1}`,
+        name: `${t('board.newColumn')} ${columns.length + 1}`,
         position: columns.length,
         width_ratio: 1,
         x_position: newX,
@@ -144,7 +160,7 @@ const Board = () => {
         height: 600
       }).select().single();
       if (error) throw error;
-      toast.success("Kolom toegevoegd");
+      toast.success(t('board.columnAdded'));
       await fetchBoardData();
 
       // Scroll to the new column
@@ -181,11 +197,11 @@ const Board = () => {
         error
       } = await supabase.from('columns').delete().eq('id', deleteColumnId);
       if (error) throw error;
-      toast.success("Kolom verwijderd");
+      toast.success(t('board.columnDeleted'));
       await fetchBoardData();
       setDeleteColumnId(null);
     } catch (error: any) {
-      toast.error("Fout bij verwijderen: " + error.message);
+      toast.error(t('board.deleteError') + error.message);
     }
   };
   useEffect(() => {
@@ -225,7 +241,7 @@ const Board = () => {
       data: membership
     } = await supabase.from("memberships").select("*").eq("user_id", session.user.id).eq("organization_id", organizationId).single();
     if (!membership) {
-      toast.error("Je hebt geen toegang tot deze organisatie");
+      toast.error(t('board.noAccess'));
       navigate("/dashboard");
     }
   };
@@ -249,7 +265,7 @@ const Board = () => {
         }
       }
     } catch (error) {
-      console.error("Fout bij laden van teamleden:", error);
+      console.error(t('board.errorLoadingMembers'), error);
     }
   };
   const fetchBoardData = async () => {
@@ -297,7 +313,7 @@ const Board = () => {
                   const profile = profiles?.find(p => p.user_id === a.user_id);
                   return {
                     user_id: a.user_id,
-                    full_name: profile?.full_name || "Onbekend",
+                    full_name: profile?.full_name || t('board.unknown'),
                     avatar_url: profile?.avatar_url || null
                   };
                 }) || []
@@ -310,7 +326,7 @@ const Board = () => {
         }
       }
     } catch (error: any) {
-      toast.error("Fout bij laden van board");
+      toast.error(t('board.errorLoadingBoard'));
     } finally {
       setLoading(false);
     }
@@ -357,11 +373,11 @@ const Board = () => {
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
       case "high":
-        return "Hoog";
+        return t('board.priorityHigh');
       case "medium":
-        return "Middel";
+        return t('board.priorityMedium');
       case "low":
-        return "Laag";
+        return t('board.priorityLow');
       default:
         return priority;
     }
@@ -383,15 +399,15 @@ const Board = () => {
     
     const config = {
       high: {
-        label: "Hoog",
+        label: t('board.priorityHigh'),
         color: "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]"
       },
       medium: {
-        label: "Middel",
+        label: t('board.priorityMedium'),
         color: "bg-[#fef3c7] text-[#92400e] border-[#fde68a]"
       },
       low: {
-        label: "Laag",
+        label: t('board.priorityLow'),
         color: "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
       }
     };
@@ -419,7 +435,7 @@ const Board = () => {
       setEditTaskAssignees([...editTaskAssignees, userId]);
       await fetchBoardData();
     } catch (error) {
-      toast.error("Fout bij toevoegen van teamlid");
+      toast.error(t('board.errorAddingAssignee'));
     }
   };
 
@@ -435,7 +451,7 @@ const Board = () => {
       setEditTaskAssignees(editTaskAssignees.filter(id => id !== userId));
       await fetchBoardData();
     } catch (error) {
-      toast.error("Fout bij verwijderen van teamlid");
+      toast.error(t('board.errorRemovingAssignee'));
     }
   };
   const handleEditTask = async () => {
@@ -458,11 +474,11 @@ const Board = () => {
         priority: editTaskPriority
       }).eq("id", editingTask.id);
       if (error) throw error;
-      toast.success("Taak bijgewerkt");
+      toast.success(t('board.taskUpdated'));
       setEditingTask(null);
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij bijwerken taak");
+      toast.error(t('board.errorUpdatingTask'));
     }
   };
   const handleCompleteFromDialog = async () => {
@@ -478,11 +494,11 @@ const Board = () => {
   };
   const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
   const handleClearCompleted = async () => {
-    const completedColumn = columns.find(col => col.name === "Afgerond");
+    const completedColumn = columns.find(col => col.name === t('board.completedColumn'));
     if (!completedColumn) return;
     const completedTasks = tasks.filter(task => task.column_id === completedColumn.id);
     if (completedTasks.length === 0) {
-      toast.error("Er zijn geen voltooide taken om te wissen");
+      toast.error(t('board.noCompletedTasks'));
       return;
     }
     try {
@@ -490,10 +506,10 @@ const Board = () => {
         error
       } = await supabase.from("tasks").delete().eq("column_id", completedColumn.id);
       if (error) throw error;
-      toast.success(`${completedTasks.length} voltooide taken verwijderd`);
+      toast.success(t('board.completedTasksDeleted', { count: completedTasks.length }));
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij wissen taken");
+      toast.error(t('board.errorDeletingTasks'));
     }
   };
   const handleFullscreen = () => {
@@ -515,7 +531,7 @@ const Board = () => {
       }
       const column = columns.find(col => col.id === columnId);
       if (!column) {
-        toast.error("Kolom niet gevonden");
+        toast.error(t('board.columnNotFound'));
         return;
       }
       const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
@@ -530,7 +546,7 @@ const Board = () => {
         position: maxPosition + 1
       });
       if (error) throw error;
-      toast.success("Taak toegevoegd");
+      toast.success(t('board.taskAdded'));
       setOpenDialog(null);
       setNewTaskTitle("");
       setNewTaskDescription("");
@@ -538,7 +554,7 @@ const Board = () => {
       setNewTaskDueDate(undefined);
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij toevoegen taak");
+      toast.error(t('board.errorAddingTask'));
     }
   };
   const handleDeleteTask = async (taskId: string) => {
@@ -547,16 +563,16 @@ const Board = () => {
         error
       } = await supabase.from("tasks").delete().eq("id", taskId);
       if (error) throw error;
-      toast.success("Taak verwijderd");
+      toast.success(t('board.taskDeleted'));
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij verwijderen taak");
+      toast.error(t('board.errorDeletingTask'));
     }
   };
   const handleMarkDone = async (task: Task) => {
-    const completedColumn = columns.find(col => col.name === "Afgerond");
+    const completedColumn = columns.find(col => col.name === t('board.completedColumn'));
     if (!completedColumn) {
-      toast.error("Afgerond kolom niet gevonden");
+      toast.error(t('board.completedColumnNotFound'));
       return;
     }
     try {
@@ -568,10 +584,10 @@ const Board = () => {
         position: maxPosition + 1
       }).eq("id", task.id);
       if (error) throw error;
-      toast.success("Taak voltooid");
+      toast.success(t('board.taskCompleted'));
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij voltooien taak");
+      toast.error(t('board.errorCompletingTask'));
     }
   };
   const handleChangePriority = async (taskId: string, newPriority: "low" | "medium" | "high") => {
@@ -582,10 +598,10 @@ const Board = () => {
         priority: newPriority
       }).eq("id", taskId);
       if (error) throw error;
-      toast.success(`Prioriteit aangepast naar ${getPriorityLabel(newPriority)}`);
+      toast.success(t('board.priorityChanged', { priority: getPriorityLabel(newPriority) }));
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij aanpassen prioriteit");
+      toast.error(t('board.errorChangingPriority'));
     }
   };
   const calculateSnap = (x: number, y: number) => {
@@ -655,10 +671,10 @@ const Board = () => {
         position: maxPosition + 1
       }).eq("id", draggedTask.id);
       if (error) throw error;
-      toast.success(`Taak verplaatst naar ${targetColumn.name}`);
+      toast.success(t('board.taskMoved', { column: targetColumn.name }));
       await fetchBoardData();
     } catch (error: any) {
-      toast.error("Fout bij verplaatsen taak");
+      toast.error(t('board.errorMovingTask'));
     }
     setDraggedTask(null);
     setDraggedOverColumn(null);
@@ -799,11 +815,11 @@ const Board = () => {
           error
         } = await supabase.from('columns').update(updateData).eq('id', currentColumn.id);
         if (error) throw error;
-        toast.success("Kolom aangepast");
+        toast.success(t('board.columnUpdated'));
         await fetchBoardData();
       } catch (error: any) {
         console.error('Update error:', error);
-        toast.error("Fout bij aanpassen: " + error.message);
+        toast.error(t('board.updateError') + error.message);
       }
       setResizing(false);
       setResizeHandle(null);
@@ -819,7 +835,7 @@ const Board = () => {
     return <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Board laden...</p>
+          <p className="mt-4 text-gray-600">{t('board.loadingBoard')}</p>
         </div>
       </div>;
   }
@@ -869,12 +885,12 @@ const Board = () => {
         <div className="flex gap-2.5 relative z-10">
           <button onClick={() => navigate("/dashboard")} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] flex items-center gap-2 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
             <ArrowLeft className="w-4 h-4" />
-            Dashboard
+            {t('dashboard.title')}
           </button>
           <button onClick={handleFullscreen} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-            ⛶ Volledig scherm
+            ⛶ {t('board.fullscreen')}
           </button>
-          <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? "Bewerkmodus uit" : "Bewerkmodus inschakelen"}>
+          <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
             <Pencil size={20} />
           </button>
           <button onClick={handleClearCompleted} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
@@ -887,13 +903,13 @@ const Board = () => {
       {/* Canvas Board */}
       {editMode && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg">
           <span className="text-sm font-semibold text-primary">
-            🔧 Bewerkmodus actief - Klik op HEADER of TAAKGEBIED → sleep handles om te resizen
+            🔧 {t('board.editModeActive')}
           </span>
           <div className="flex items-center gap-2">
             
             <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              Kolom toevoegen
+              {t('board.addColumn')}
             </Button>
           </div>
         </div>}
@@ -931,10 +947,10 @@ const Board = () => {
               x_position: dragPreview.x,
               y_position: dragPreview.y
             }).eq('id', draggedColumn.id);
-            toast.success("Kolom verplaatst");
+            toast.success(t('board.columnMoved'));
             await fetchBoardData();
           } catch (error: any) {
-            toast.error("Fout bij verplaatsen: " + error.message);
+            toast.error(t('board.moveError') + error.message);
           }
           setDraggedColumn(null);
           setDragPreview(null);
@@ -1035,57 +1051,57 @@ const Board = () => {
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl">
                   <DialogHeader>
-                    <DialogTitle>Nieuwe taak toevoegen - {column.name}</DialogTitle>
+                    <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Naam" : "Titel"} *</Label>
-                      <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Naam van de persoon" : "Titel van de taak"} maxLength={200} />
+                      <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
+                      <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
                     </div>
                     <div>
-                      <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Reden" : "Beschrijving"}</Label>
-                      <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Reden voor afwezigheid..." : "Extra details..."} maxLength={1000} />
+                      <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
+                      <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
                     </div>
                     <div>
-                      <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? "Terug verwacht op" : "Deadline"}</Label>
+                      <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {newTaskDueDate ? format(newTaskDueDate, "PPP", {
-                                locale: nl
-                              }) : "Selecteer datum"}
+                                locale: getDateLocale()
+                              }) : t('board.selectDate')}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
                           {newTaskDueDate && <div className="p-3 border-t">
                               <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
-                                Verwijder datum
+                                {t('board.removeDate')}
                               </Button>
                             </div>}
                         </PopoverContent>
                       </Popover>
                     </div>
                     {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
-                      <Label>Prioriteit</Label>
+                      <Label>{t('board.priority')}</Label>
                       <div className="flex gap-2">
                         <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
-                          Geen
+                          {t('board.priorityNone')}
                         </Button>
                         <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
-                          Laag
+                          {t('board.priorityLow')}
                         </Button>
                         <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
-                          Middel
+                          {t('board.priorityMedium')}
                         </Button>
                         <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
-                          Hoog
+                          {t('board.priorityHigh')}
                         </Button>
                       </div>
                     </div>}
                     <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
-                      Toevoegen
+                      {t('common.add')}
                     </button>
                   </div>
                 </DialogContent>
@@ -1115,7 +1131,7 @@ const Board = () => {
                       <AttachmentCount taskId={task.id} />
                       {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                           📅 {format(new Date(task.due_date), "d MMM", {
-                            locale: nl
+                            locale: getDateLocale()
                           })}
                         </span>}
                       {task.priority && getPriorityBadge(task.priority) && (
@@ -1159,7 +1175,7 @@ const Board = () => {
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Taak bewerken</DialogTitle>
+            <DialogTitle>{t('board.editTask')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {(() => {
@@ -1167,46 +1183,46 @@ const Board = () => {
                 const isSimpleColumn = taskColumn && (taskColumn.column_type === 'sick_leave' || taskColumn.column_type === 'vacation');
                 return <>
                   <div>
-                    <Label htmlFor="edit-title">{isSimpleColumn ? "Naam" : "Titel"} *</Label>
-                    <Input id="edit-title" value={editTaskTitle} onChange={e => setEditTaskTitle(e.target.value)} placeholder={isSimpleColumn ? "Naam van de persoon" : "Titel van de taak"} maxLength={200} />
+                    <Label htmlFor="edit-title">{isSimpleColumn ? t('board.name') : t('board.title')} *</Label>
+                    <Input id="edit-title" value={editTaskTitle} onChange={e => setEditTaskTitle(e.target.value)} placeholder={isSimpleColumn ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
                   </div>
                   <div>
-                    <Label htmlFor="edit-description">{isSimpleColumn ? "Reden" : "Beschrijving"}</Label>
-                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? "Reden voor afwezigheid..." : "Extra details..."} maxLength={1000} />
+                    <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
+                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
                   </div>
                   {!isSimpleColumn && <div>
-                      <Label>Prioriteit</Label>
+                      <Label>{t('board.priority')}</Label>
                       <div className="flex gap-2">
                         <Button type="button" variant={editTaskPriority === null ? "default" : "outline"} onClick={() => setEditTaskPriority(null)} className="flex-1">
-                          Geen
+                          {t('board.priorityNone')}
                         </Button>
                         <Button type="button" variant={editTaskPriority === "low" ? "default" : "outline"} onClick={() => setEditTaskPriority("low")} className="flex-1">
-                          Laag
+                          {t('board.priorityLow')}
                         </Button>
                         <Button type="button" variant={editTaskPriority === "medium" ? "default" : "outline"} onClick={() => setEditTaskPriority("medium")} className="flex-1">
-                          Middel
+                          {t('board.priorityMedium')}
                         </Button>
                         <Button type="button" variant={editTaskPriority === "high" ? "default" : "outline"} onClick={() => setEditTaskPriority("high")} className="flex-1">
-                          Hoog
+                          {t('board.priorityHigh')}
                         </Button>
                       </div>
                     </div>}
                   <div>
-                    <Label>{isSimpleColumn ? "Terug verwacht op" : "Deadline"}</Label>
+                    <Label>{isSimpleColumn ? t('board.expectedReturn') : t('board.deadline')}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !editTaskDueDate && "text-muted-foreground")}>
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {editTaskDueDate ? format(editTaskDueDate, "PPP", {
-                            locale: nl
-                          }) : "Selecteer datum"}
+                            locale: getDateLocale()
+                          }) : t('board.selectDate')}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar mode="single" selected={editTaskDueDate} onSelect={setEditTaskDueDate} initialFocus locale={nl} className="pointer-events-auto" />
+                        <Calendar mode="single" selected={editTaskDueDate} onSelect={setEditTaskDueDate} initialFocus locale={getDateLocale()} className="pointer-events-auto" />
                         {editTaskDueDate && <div className="p-3 border-t">
                             <Button variant="ghost" className="w-full" onClick={() => setEditTaskDueDate(undefined)}>
-                              Wis datum
+                              {t('board.clearDate')}
                             </Button>
                           </div>}
                       </PopoverContent>
@@ -1214,7 +1230,7 @@ const Board = () => {
                   </div>
                   
                   <div>
-                    <Label>Toegewezen aan</Label>
+                    <Label>{t('board.assignedTo')}</Label>
                     <div className="space-y-3">
                       {editTaskAssignees.length > 0 && (
                         <div className="flex flex-wrap gap-2">
@@ -1249,7 +1265,7 @@ const Board = () => {
                         }}
                       >
                         <SelectTrigger className="w-full">
-                          <span className="text-muted-foreground">Teamlid toevoegen...</span>
+                          <span className="text-muted-foreground">{t('board.addTeamMember')}</span>
                         </SelectTrigger>
                         <SelectContent className="z-[100]">
                           {orgMembers
@@ -1268,13 +1284,13 @@ const Board = () => {
                   
                   <div className="flex gap-2 pt-4">
                     <Button onClick={handleDeleteFromDialog} variant="destructive">
-                      Verwijderen
+                      {t('common.delete')}
                     </Button>
                     <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
-                      ✔ Voltooien
+                      ✔ {t('board.complete')}
                     </Button>
                     <Button onClick={handleEditTask} className="flex-1">
-                      Opslaan
+                      {t('common.save')}
                     </Button>
                   </div>
                 </>;
@@ -1293,15 +1309,15 @@ const Board = () => {
       <AlertDialog open={!!deleteColumnId} onOpenChange={open => !open && setDeleteColumnId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Kolom verwijderen</AlertDialogTitle>
+            <AlertDialogTitle>{t('board.deleteColumn')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Weet je zeker dat je deze kolom wilt verwijderen? Alle taken in deze kolom worden verplaatst naar de eerste kolom.
+              {t('board.deleteColumnConfirmation')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteColumn} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Verwijderen
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

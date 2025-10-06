@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { useTranslation } from "react-i18next";
 
 // PDF.js worker configureren
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
@@ -87,6 +88,7 @@ const FilePreview = ({
 export const TaskAttachments = ({
   taskId
 }: TaskAttachmentsProps) => {
+  const { t } = useTranslation();
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -142,12 +144,12 @@ export const TaskAttachments = ({
     // Validatie
     const maxSize = 10 * 1024 * 1024; // 10 MB
     if (file.size > maxSize) {
-      toast.error("Bestand is te groot. Maximale grootte is 10 MB");
+      toast.error(t('attachments.fileTooLarge'));
       return;
     }
     const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/gif"];
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Bestandstype niet ondersteund. Alleen PDF, Word, Excel en afbeeldingen zijn toegestaan");
+      toast.error(t('attachments.unsupportedType'));
       return;
     }
     setUploading(true);
@@ -157,7 +159,7 @@ export const TaskAttachments = ({
           user
         }
       } = await supabase.auth.getUser();
-      if (!user) throw new Error("Niet ingelogd");
+      if (!user) throw new Error(t('auth.notLoggedIn'));
 
       // Upload naar storage
       const fileExt = file.name.split(".").pop();
@@ -189,9 +191,9 @@ export const TaskAttachments = ({
           taskId
         }
       }));
-      toast.success("Bestand geüpload");
+      toast.success(t('attachments.uploaded'));
     } catch (error: any) {
-      toast.error("Fout bij uploaden: " + error.message);
+      toast.error(t('attachments.uploadError') + error.message);
     } finally {
       setUploading(false);
     }
@@ -221,7 +223,7 @@ export const TaskAttachments = ({
   };
   const handleView = async (attachment: Attachment) => {
     try {
-      toast.success("Bestand wordt geladen...");
+      toast.success(t('attachments.loading'));
 
       // Download het bestand direct
       const {
@@ -238,9 +240,9 @@ export const TaskAttachments = ({
       setFileUrl(url);
       setViewingAttachment(attachment);
       setViewerOpen(true);
-      toast.success("Bestand geladen");
+      toast.success(t('attachments.loaded'));
     } catch (error: any) {
-      toast.error("Fout bij openen: " + error.message);
+      toast.error(t('attachments.openError') + error.message);
     }
   };
   const handleCloseViewer = () => {
@@ -283,7 +285,7 @@ export const TaskAttachments = ({
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error: any) {
-      toast.error("Fout bij downloaden: " + error.message);
+      toast.error(t('attachments.downloadError') + error.message);
     }
   };
   const handleDelete = async (attachment: Attachment) => {
@@ -317,10 +319,10 @@ export const TaskAttachments = ({
           taskId
         }
       }));
-      toast.success("Bijlage verwijderd");
+      toast.success(t('attachments.deleted'));
     } catch (error: any) {
       console.error("Delete error:", error);
-      toast.error("Fout bij verwijderen: " + error.message);
+      toast.error(t('attachments.deleteError') + error.message);
     }
   };
   const formatFileSize = (bytes: number) => {
@@ -330,7 +332,7 @@ export const TaskAttachments = ({
   };
   return <>
       <div className="space-y-3">
-        <Label>Bijlagen</Label>
+        <Label>{t('attachments.title')}</Label>
 
       {/* Upload sectie */}
       <div className={`border-2 border-dashed rounded-lg p-4 transition-colors ${isDragging ? "border-primary bg-primary/10" : "border-border hover:bg-accent/5"}`} onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
@@ -338,16 +340,16 @@ export const TaskAttachments = ({
         <label htmlFor={`file-upload-${taskId}`} className="flex flex-col items-center justify-center cursor-pointer">
           <Upload className="w-8 h-8 text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground text-center">
-            {uploading ? "Uploaden..." : "Sleep een bestand hierheen of klik om te uploaden"}
+            {uploading ? t('attachments.uploading') : t('attachments.dropOrClick')}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            PDF, Word, Excel of afbeeldingen (max 10 MB)
+            {t('attachments.supportedTypes')}
           </p>
         </label>
       </div>
 
       {/* Bijlagen lijst */}
-      {loading ? <div className="text-sm text-muted-foreground">Bijlagen laden...</div> : attachments.length > 0 ? <div className="space-y-2">
+      {loading ? <div className="text-sm text-muted-foreground">{t('attachments.loadingAttachments')}</div> : attachments.length > 0 ? <div className="space-y-2">
           {attachments.map(attachment => <div key={attachment.id} className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-border hover:bg-accent/10 transition-colors">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <FilePreview attachment={attachment} />
@@ -359,18 +361,18 @@ export const TaskAttachments = ({
                 </div>
               </div>
               <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleView(attachment)} title="Openen">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleView(attachment)} title={t('common.open')}>
                   <Eye className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(attachment)} title="Downloaden">
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(attachment)} title={t('common.download')}>
                   <Download className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(attachment)} title="Verwijderen">
+                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(attachment)} title={t('common.delete')}>
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             </div>)}
-        </div> : <p className="text-sm text-muted-foreground">Nog geen bijlagen toegevoegd</p>}
+        </div> : <p className="text-sm text-muted-foreground">{t('attachments.noAttachments')}</p>}
       </div>
 
       {/* File Viewer Modal */}
@@ -404,7 +406,7 @@ export const TaskAttachments = ({
                   </>}
                 <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
                   <Download className="h-4 w-4 mr-2" />
-                  Download
+                  {t('common.download')}
                 </Button>
               </div>
             </DialogTitle>
@@ -415,15 +417,15 @@ export const TaskAttachments = ({
                     <img src={fileUrl} alt={viewingAttachment.file_name} className="max-w-full max-h-full object-contain" />
                   </div> : viewingAttachment.file_type.includes("pdf") ? <div className="flex justify-center">
                     <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="flex items-center justify-center p-8">
-                          <p className="text-muted-foreground">PDF laden...</p>
+                          <p className="text-muted-foreground">{t('attachments.loadingPDF')}</p>
                         </div>} error={<div className="flex items-center justify-center p-8 text-center">
                           <div>
                             <p className="text-destructive mb-4">
-                              Fout bij laden van PDF
+                              {t('attachments.pdfError')}
                             </p>
                             <Button onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
                               <Download className="h-4 w-4 mr-2" />
-                              Download PDF
+                              {t('attachments.downloadPDF')}
                             </Button>
                           </div>
                         </div>}>
