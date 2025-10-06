@@ -989,9 +989,7 @@ const Board = () => {
               )}
               style={{
                 height: `${displayColumn.header_height || 60}px`,
-                minHeight: `${displayColumn.header_height || 60}px`,
-                width: displayColumn.header_width ? `${displayColumn.header_width}px` : '100%',
-                maxWidth: displayColumn.header_width ? `${displayColumn.header_width}px` : '100%'
+                minHeight: `${displayColumn.header_height || 60}px`
               }}
               onClick={(e) => {
                 if (editMode) {
@@ -1131,8 +1129,6 @@ const Board = () => {
                 "flex-1 min-h-0 relative overflow-visible"
               )}
               style={{
-                width: displayColumn.header_width ? `${displayColumn.header_width}px` : '100%',
-                maxWidth: displayColumn.header_width ? `${displayColumn.header_width}px` : '100%',
                 paddingTop: `${displayColumn.content_padding_top || 0}px`,
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
