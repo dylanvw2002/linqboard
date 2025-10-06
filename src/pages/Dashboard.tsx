@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Camera } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
 import logo from "@/assets/logo-transparent.png";
 interface Organization {
   id: string;
@@ -28,8 +29,8 @@ const Dashboard = () => {
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [leaveOrgId, setLeaveOrgId] = useState<string | null>(null);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   useEffect(() => {
     checkUser();
     fetchOrganizations();
@@ -58,23 +59,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Bestand is te groot. Maximaal 5MB toegestaan.");
-      return;
-    }
-
-    // Check file type
-    if (!file.type.startsWith('image/')) {
-      toast.error("Alleen afbeeldingen zijn toegestaan.");
-      return;
-    }
-
-    setUploadingAvatar(true);
+  const handleAvatarUpload = async (blob: Blob) => {
     try {
       // Delete old avatar if exists
       if (avatarUrl) {
@@ -85,13 +70,12 @@ const Dashboard = () => {
       }
 
       // Upload new avatar
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `${Math.random()}.jpg`;
       const filePath = `${userId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, blob);
 
       if (uploadError) throw uploadError;
 
@@ -113,8 +97,6 @@ const Dashboard = () => {
     } catch (error: any) {
       toast.error("Fout bij uploaden van foto");
       console.error(error);
-    } finally {
-      setUploadingAvatar(false);
     }
   };
 
@@ -384,30 +366,21 @@ const Dashboard = () => {
             <DialogTitle>Profiel bewerken</DialogTitle>
           </DialogHeader>
           <div className="space-y-6">
-            {/* Avatar upload section */}
+            {/* Avatar display section */}
             <div className="flex flex-col items-center gap-4">
-              <div className="relative group">
-                <Avatar className="h-24 w-24 border-4 border-primary/20">
-                  <AvatarImage src={avatarUrl || undefined} />
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-3xl">
-                    {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <label htmlFor="avatar-upload" className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-                  <Camera className="h-8 w-8 text-white" />
-                </label>
-                <input
-                  id="avatar-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarUpload}
-                  disabled={uploadingAvatar}
-                />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Klik op de foto om te wijzigen
-              </p>
+              <Avatar className="h-24 w-24 border-4 border-primary/20">
+                <AvatarImage src={avatarUrl || undefined} />
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-3xl">
+                  {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAvatarUploadOpen(true)}
+              >
+                Foto wijzigen
+              </Button>
             </div>
 
             {/* Name input */}
@@ -426,13 +399,20 @@ const Dashboard = () => {
               <Button variant="outline" onClick={() => setProfileDialogOpen(false)}>
                 Annuleren
               </Button>
-              <Button onClick={handleUpdateProfile} disabled={uploadingAvatar}>
+              <Button onClick={handleUpdateProfile}>
                 Opslaan
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Avatar Upload Dialog */}
+      <AvatarUploadDialog
+        open={avatarUploadOpen}
+        onOpenChange={setAvatarUploadOpen}
+        onUpload={handleAvatarUpload}
+      />
     </div>;
 };
 export default Dashboard;
