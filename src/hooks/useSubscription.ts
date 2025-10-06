@@ -25,15 +25,33 @@ export const useSubscription = () => {
   const [hasSession, setHasSession] = useState<boolean>(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setHasSession(!!session);
-    });
+    let subscription: { unsubscribe: () => void } | null = null;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setHasSession(!!session);
-    });
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('useSubscription: Initial session check', !!session);
+        setHasSession(!!session);
 
-    return () => subscription.unsubscribe();
+        const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+          console.log('useSubscription: Auth state changed', !!session);
+          setHasSession(!!session);
+        });
+        
+        subscription = data.subscription;
+      } catch (error) {
+        console.error('useSubscription: Error initializing auth', error);
+        setHasSession(false);
+      }
+    };
+
+    initAuth();
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
   return useQuery({
