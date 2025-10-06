@@ -404,11 +404,81 @@ export type Database = {
           },
         ]
       }
+      user_subscriptions: {
+        Row: {
+          billing_interval:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          max_members_per_org: number
+          max_organizations: number
+          mollie_customer_id: string | null
+          mollie_subscription_id: string | null
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          status: Database["public"]["Enums"]["subscription_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          billing_interval?:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          max_members_per_org: number
+          max_organizations: number
+          mollie_customer_id?: string | null
+          mollie_subscription_id?: string | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          billing_interval?:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          max_members_per_org?: number
+          max_organizations?: number
+          mollie_customer_id?: string | null
+          mollie_subscription_id?: string | null
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      check_member_limit: {
+        Args: { _org_id: string }
+        Returns: boolean
+      }
+      check_organization_limit: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       generate_invite_code: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -416,6 +486,15 @@ export type Database = {
       get_user_org_id: {
         Args: { _board_id: string; _user_id: string }
         Returns: string
+      }
+      get_user_subscription_limits: {
+        Args: { _user_id: string }
+        Returns: {
+          current_org_count: number
+          max_members_per_org: number
+          max_organizations: number
+          plan: Database["public"]["Enums"]["subscription_plan"]
+        }[]
       }
       is_org_member: {
         Args: { _org_id: string; _user_id: string }
@@ -428,6 +507,7 @@ export type Database = {
     }
     Enums: {
       app_role: "owner" | "member"
+      billing_interval: "monthly" | "yearly"
       column_glow_type:
         | "default"
         | "red"
@@ -437,6 +517,8 @@ export type Database = {
         | "purple"
         | "orange"
       column_type: "regular" | "sick_leave" | "vacation"
+      subscription_plan: "free" | "pro" | "team" | "business"
+      subscription_status: "active" | "canceled" | "expired" | "past_due"
       task_priority: "low" | "medium" | "high"
     }
     CompositeTypes: {
@@ -566,6 +648,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["owner", "member"],
+      billing_interval: ["monthly", "yearly"],
       column_glow_type: [
         "default",
         "red",
@@ -576,6 +659,8 @@ export const Constants = {
         "orange",
       ],
       column_type: ["regular", "sick_leave", "vacation"],
+      subscription_plan: ["free", "pro", "team", "business"],
+      subscription_status: ["active", "canceled", "expired", "past_due"],
       task_priority: ["low", "medium", "high"],
     },
   },
