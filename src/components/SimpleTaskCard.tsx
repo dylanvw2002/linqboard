@@ -1,13 +1,11 @@
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Calendar } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface SimpleTaskCardProps {
   title: string;
   description: string | null;
   dueDate: string | null;
-  glowStyles?: string;
   onClick: () => void;
 }
 
@@ -15,30 +13,28 @@ export const SimpleTaskCard = ({
   title,
   description,
   dueDate,
-  glowStyles,
   onClick
 }: SimpleTaskCardProps) => {
   return (
     <div
       onClick={onClick}
-      className={cn(
-        "p-4 rounded-lg border-2 shadow-sm cursor-pointer transition-all",
-        glowStyles
-      )}
+      className="bg-card rounded-[18px] p-3 shadow-[0_10px_30px_rgba(2,6,23,0.08)] hover:shadow-[0_15px_40px_rgba(2,6,23,0.12)] transition-all duration-200 border border-border/50 cursor-pointer"
     >
-      <h4 className="font-semibold text-base mb-2">{title}</h4>
+      <h4 className="font-semibold text-sm text-foreground mb-1 leading-snug">
+        {title}
+      </h4>
       
       {description && (
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+        <p className="text-xs text-muted-foreground mb-2">
           {description}
         </p>
       )}
       
       {dueDate && (
-        <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-          <span className="text-muted-foreground">
-            Terug: {format(new Date(dueDate), "d MMM yyyy", { locale: nl })}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Calendar className="h-3.5 w-3.5" />
+          <span>
+            Terug: {format(new Date(dueDate), "d MMM", { locale: nl })}
           </span>
         </div>
       )}

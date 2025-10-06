@@ -222,7 +222,7 @@ export const ColumnEditSidebar = ({ column, onClose, onSave }: ColumnEditSidebar
                 {(Object.keys(glowTypeLabels) as GlowType[]).map((type) => (
                   <SelectItem key={type} value={type}>
                     <div className="flex items-center gap-2">
-                      <div className={`w-4 h-4 rounded-full border-2 ${getGlowStyles(type).card}`} />
+                      <div className={`w-4 h-4 rounded-full border ${getGlowStyles(type).header.split(' ')[0]}`} />
                       {glowTypeLabels[type]}
                     </div>
                   </SelectItem>
