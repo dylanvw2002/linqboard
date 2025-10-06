@@ -1110,7 +1110,8 @@ const Board = () => {
                     onDragEnd={handleDragEnd}
                     onClick={() => !isDragging && openEditDialog(task)}
                     className={cn(
-                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] animate-[pop_0.2s_ease-out] cursor-move hover:shadow-[0_16px_40px_rgba(0,0,0,0.2),inset_0_3px_3px_rgba(255,255,255,0.7)] hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                      "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[24px] p-3.5 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                      getGlowStyles(column.glow_type).cardShadow,
                       draggedTask?.id === task.id && "opacity-50 scale-95"
                     )}
                   >
