@@ -355,17 +355,23 @@
     "pro": {
       "name": "Pro",
       "feature1": "Up to 3 organizations",
-      "feature2": "Up to 8 team members per org"
+      "feature2": "Up to 8 team members per org",
+      "feature3": "Priority management",
+      "feature4": "Custom columns"
     },
     "team": {
       "name": "Team",
       "feature1": "Up to 8 organizations",
-      "feature2": "Up to 20 team members per org"
+      "feature2": "Up to 20 team members per org",
+      "feature3": "Real-time collaboration",
+      "feature4": "Advanced task management"
     },
     "business": {
       "name": "Business",
       "feature1": "Unlimited organizations",
-      "feature2": "Unlimited team members"
+      "feature2": "Unlimited team members",
+      "feature3": "Real-time collaboration",
+      "feature4": "Priority support"
     }
   },
   "subscription": {

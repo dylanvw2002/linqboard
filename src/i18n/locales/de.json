@@ -355,17 +355,23 @@
     "pro": {
       "name": "Pro",
       "feature1": "Bis zu 3 Organisationen",
-      "feature2": "Bis zu 8 Teammitglieder pro Org"
+      "feature2": "Bis zu 8 Teammitglieder pro Org",
+      "feature3": "Prioritätsverwaltung",
+      "feature4": "Anpassbare Spalten"
     },
     "team": {
       "name": "Team",
       "feature1": "Bis zu 8 Organisationen",
-      "feature2": "Bis zu 20 Teammitglieder pro Org"
+      "feature2": "Bis zu 20 Teammitglieder pro Org",
+      "feature3": "Echtzeit-Zusammenarbeit",
+      "feature4": "Erweiterte Aufgabenverwaltung"
     },
     "business": {
       "name": "Business",
       "feature1": "Unbegrenzte Organisationen",
-      "feature2": "Unbegrenzte Teammitglieder"
+      "feature2": "Unbegrenzte Teammitglieder",
+      "feature3": "Echtzeit-Zusammenarbeit",
+      "feature4": "Prioritätsunterstützung"
     }
   },
   "subscription": {
