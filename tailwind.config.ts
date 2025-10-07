@@ -127,6 +127,16 @@ export default {
             transform: "rotate(10deg)",
           },
         },
+        "pulse-red": {
+          "0%, 100%": {
+            borderColor: "hsl(0 84% 60%)",
+            backgroundColor: "hsl(0 84% 60% / 0.1)",
+          },
+          "50%": {
+            borderColor: "hsl(0 84% 50%)",
+            backgroundColor: "hsl(0 84% 50% / 0.2)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -136,6 +146,7 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "wiggle": "wiggle 1s ease-in-out infinite",
+        "pulse-red": "pulse-red 2s ease-in-out infinite",
       },
     },
   },
