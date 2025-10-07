@@ -366,14 +366,14 @@
       "feature1": "Hasta 8 organizaciones",
       "feature2": "Hasta 20 miembros por org",
       "feature3": "Colaboración en tiempo real",
-      "feature4": "Gestión avanzada de tareas"
+      "feature4": "Fondos personalizados"
     },
     "business": {
       "name": "Empresa",
       "feature1": "Organizaciones ilimitadas",
       "feature2": "Miembros ilimitados",
       "feature3": "Colaboración en tiempo real",
-      "feature4": "Soporte prioritario"
+      "feature4": "Fondos personalizados"
     }
   },
   "subscription": {

@@ -366,14 +366,14 @@
       "feature1": "Bis zu 8 Organisationen",
       "feature2": "Bis zu 20 Teammitglieder pro Org",
       "feature3": "Echtzeit-Zusammenarbeit",
-      "feature4": "Erweiterte Aufgabenverwaltung"
+      "feature4": "Anpassbare Hintergründe"
     },
     "business": {
       "name": "Business",
       "feature1": "Unbegrenzte Organisationen",
       "feature2": "Unbegrenzte Teammitglieder",
       "feature3": "Echtzeit-Zusammenarbeit",
-      "feature4": "Prioritätsunterstützung"
+      "feature4": "Anpassbare Hintergründe"
     }
   },
   "subscription": {

@@ -366,14 +366,14 @@
       "feature1": "Up to 8 organizations",
       "feature2": "Up to 20 team members per org",
       "feature3": "Real-time collaboration",
-      "feature4": "Advanced task management"
+      "feature4": "Custom backgrounds"
     },
     "business": {
       "name": "Business",
       "feature1": "Unlimited organizations",
       "feature2": "Unlimited team members",
       "feature3": "Real-time collaboration",
-      "feature4": "Priority support"
+      "feature4": "Custom backgrounds"
     }
   },
   "subscription": {
