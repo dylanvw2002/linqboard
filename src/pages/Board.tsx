@@ -126,6 +126,7 @@ const Board = () => {
     col: Column;
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
+  const [userPlan, setUserPlan] = useState<string>('free');
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = 0.75; // UI scale factor
@@ -300,7 +301,21 @@ const Board = () => {
     checkAccess();
     fetchBoardData();
     fetchOrgMembers();
+    fetchUserPlan();
   }, [organizationId]);
+  
+  const fetchUserPlan = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-subscription-status');
+      if (error) throw error;
+      if (data?.limits?.plan) {
+        setUserPlan(data.limits.plan);
+      }
+    } catch (error) {
+      console.error('Error fetching user plan:', error);
+    }
+  };
+  
   useEffect(() => {
     if (!board?.id) return;
     const cleanup = setupRealtimeSubscriptions();
@@ -1041,52 +1056,59 @@ const Board = () => {
             🔧 {t('board.editModeActive')}
           </span>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
-              <Select value={selectedBackground} onValueChange={handleBackgroundChange} disabled={!!backgroundImageUrl}>
-                <SelectTrigger className="w-[180px]">
-                  <span>🎨 Kleur</span>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
-                  <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
-                  <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
-                  <SelectItem value="from-orange-50 to-yellow-100">Oranje-Geel</SelectItem>
-                  <SelectItem value="from-gray-50 to-gray-100">Grijs</SelectItem>
-                  <SelectItem value="from-rose-50 to-pink-100">Roze</SelectItem>
-                  <SelectItem value="from-cyan-50 to-blue-100">Cyaan</SelectItem>
-                  <SelectItem value="from-indigo-50 to-purple-100">Indigo</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              {backgroundImageUrl ? (
-                <Button 
-                  size="sm" 
-                  variant="destructive"
-                  onClick={handleRemoveBackgroundImage}
-                  className="flex items-center gap-1"
-                >
-                  <X className="h-4 w-4" />
-                  Verwijder afbeelding
-                </Button>
-              ) : (
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  disabled={uploadingBackground}
-                  className="relative flex items-center gap-1"
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleBackgroundImageUpload}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
+            {(userPlan === 'team' || userPlan === 'business') && (
+              <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
+                <Select value={selectedBackground} onValueChange={handleBackgroundChange} disabled={!!backgroundImageUrl}>
+                  <SelectTrigger className="w-[180px]">
+                    <span>🎨 Kleur</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
+                    <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
+                    <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
+                    <SelectItem value="from-orange-50 to-yellow-100">Oranje-Geel</SelectItem>
+                    <SelectItem value="from-gray-50 to-gray-100">Grijs</SelectItem>
+                    <SelectItem value="from-rose-50 to-pink-100">Roze</SelectItem>
+                    <SelectItem value="from-cyan-50 to-blue-100">Cyaan</SelectItem>
+                    <SelectItem value="from-indigo-50 to-purple-100">Indigo</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {backgroundImageUrl ? (
+                  <Button 
+                    size="sm" 
+                    variant="destructive"
+                    onClick={handleRemoveBackgroundImage}
+                    className="flex items-center gap-1"
+                  >
+                    <X className="h-4 w-4" />
+                    Verwijder afbeelding
+                  </Button>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
                     disabled={uploadingBackground}
-                  />
-                  <Image className="h-4 w-4" />
-                  {uploadingBackground ? 'Uploaden...' : 'Upload afbeelding'}
-                </Button>
-              )}
-            </div>
+                    className="relative flex items-center gap-1"
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBackgroundImageUpload}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      disabled={uploadingBackground}
+                    />
+                    <Image className="h-4 w-4" />
+                    {uploadingBackground ? 'Uploaden...' : 'Upload afbeelding'}
+                  </Button>
+                )}
+              </div>
+            )}
+            {(userPlan === 'free' || userPlan === 'pro') && (
+              <div className="text-xs text-muted-foreground border-r border-primary/20 pr-2">
+                🎨 {t('board.backgroundUpgradeRequired')}
+              </div>
+            )}
             
             <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />

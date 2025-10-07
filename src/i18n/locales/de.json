@@ -220,7 +220,8 @@
     "editModeActive": "Bearbeitungsmodus aktiv - Klicken Sie auf HEADER oder AUFGABENBEREICH → ziehen Sie die Griffe zum Ändern der Größe",
     "deleteColumn": "Spalte löschen",
     "deleteColumnConfirmation": "Sind Sie sicher, dass Sie diese Spalte löschen möchten? Alle Aufgaben in dieser Spalte werden in die erste Spalte verschoben.",
-    "backgroundUpdated": "Hintergrund aktualisiert"
+    "backgroundUpdated": "Hintergrund aktualisiert",
+    "backgroundUpgradeRequired": "Hintergrund anpassen ab Team-Plan"
   },
   "column": {
     "name": "Name",

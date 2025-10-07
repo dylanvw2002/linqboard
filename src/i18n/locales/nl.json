@@ -220,7 +220,8 @@
     "editModeActive": "Bewerkmodus actief - Klik op HEADER of TAAKGEBIED → sleep handles om te resizen",
     "deleteColumn": "Kolom verwijderen",
     "deleteColumnConfirmation": "Weet je zeker dat je deze kolom wilt verwijderen? Alle taken in deze kolom worden verplaatst naar de eerste kolom.",
-    "backgroundUpdated": "Achtergrond bijgewerkt"
+    "backgroundUpdated": "Achtergrond bijgewerkt",
+    "backgroundUpgradeRequired": "Achtergrond aanpassen vanaf Team plan"
   },
   "column": {
     "name": "Naam",
