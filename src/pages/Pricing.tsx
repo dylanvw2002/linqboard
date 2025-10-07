@@ -347,7 +347,7 @@ const Pricing = () => {
       </div>
 
       {/* Logo at bottom left */}
-      <div className="fixed bottom-2 left-2 z-10">
+      <div className="fixed bottom-0 left-2 z-10">
         <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
       </div>
     </div>;
