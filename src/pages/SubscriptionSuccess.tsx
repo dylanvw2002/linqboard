@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
+import successImage from "@/assets/subscription-success.jpeg";
 
 const SubscriptionSuccess = () => {
   const navigate = useNavigate();
@@ -69,9 +70,9 @@ const SubscriptionSuccess = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 relative overflow-hidden">
-      {/* Animated background elements */}
+      {/* Animated confetti elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 30 }).map((_, i) => (
           <div
             key={i}
             className="absolute animate-float"
@@ -82,30 +83,35 @@ const SubscriptionSuccess = () => {
               animationDuration: `${3 + Math.random() * 4}s`
             }}
           >
-            <Sparkles 
-              className="text-primary/30" 
-              size={12 + Math.random() * 20}
+            <div 
+              className="w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: ['#8B5CF6', '#F59E0B', '#EC4899', '#3B82F6'][Math.floor(Math.random() * 4)],
+                opacity: 0.4
+              }}
             />
           </div>
         ))}
       </div>
 
       <div className="container mx-auto px-6 py-12 relative z-10">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {/* Success Card */}
-          <Card className="animate-scale-in border-2 border-primary/30 shadow-2xl bg-card/95 backdrop-blur">
-            <CardHeader className="text-center pb-4">
-              <div className="flex justify-center mb-4">
-                <div className="relative">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                    <Check className="w-10 h-10 text-white" />
-                  </div>
-                </div>
-              </div>
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <Card className="animate-scale-in border-2 border-primary/30 shadow-2xl bg-card/95 backdrop-blur overflow-hidden">
+            {/* Hero Image Section */}
+            <div className="relative w-full h-64 md:h-80 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
+              <img 
+                src={successImage} 
+                alt="Success celebration" 
+                className="w-full h-full object-cover object-center"
+              />
+            </div>
+
+            <CardHeader className="text-center pb-4 pt-8">
+              <CardTitle className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 {t('subscriptionSuccess.title')}
               </CardTitle>
-              <p className="text-muted-foreground mt-2">
+              <p className="text-muted-foreground mt-2 text-lg">
                 {t('subscriptionSuccess.subtitle')}
               </p>
             </CardHeader>
