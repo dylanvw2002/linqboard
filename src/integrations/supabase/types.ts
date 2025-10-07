@@ -54,18 +54,21 @@ export type Database = {
       }
       boards: {
         Row: {
+          background_gradient: string | null
           created_at: string
           id: string
           name: string
           organization_id: string
         }
         Insert: {
+          background_gradient?: string | null
           created_at?: string
           id?: string
           name: string
           organization_id: string
         }
         Update: {
+          background_gradient?: string | null
           created_at?: string
           id?: string
           name?: string

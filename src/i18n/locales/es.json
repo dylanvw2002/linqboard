@@ -219,7 +219,8 @@
     "editModeOff": "Modo de edición desactivado",
     "editModeActive": "Modo de edición activo - Haz clic en ENCABEZADO o ÁREA DE TAREAS → arrastra los controladores para redimensionar",
     "deleteColumn": "Eliminar columna",
-    "deleteColumnConfirmation": "¿Estás seguro de que quieres eliminar esta columna? Todas las tareas en esta columna se moverán a la primera columna."
+    "deleteColumnConfirmation": "¿Estás seguro de que quieres eliminar esta columna? Todas las tareas en esta columna se moverán a la primera columna.",
+    "backgroundUpdated": "Fondo actualizado"
   },
   "column": {
     "name": "Nombre",

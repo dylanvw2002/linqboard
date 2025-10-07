@@ -99,6 +99,7 @@ const Board = () => {
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [selectedBackground, setSelectedBackground] = useState<string>("from-blue-50 to-blue-100");
   const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
   const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
   const [editingColumn, setEditingColumn] = useState<Column | null>(null);
@@ -177,6 +178,23 @@ const Board = () => {
       toast.error("Fout bij toevoegen: " + error.message);
     }
   };
+
+  const handleBackgroundChange = async (gradient: string) => {
+    try {
+      setSelectedBackground(gradient);
+      
+      const { error } = await supabase
+        .from("boards")
+        .update({ background_gradient: gradient })
+        .eq("id", board?.id);
+      
+      if (error) throw error;
+      toast.success(t('board.backgroundUpdated') || 'Achtergrond bijgewerkt');
+    } catch (error: any) {
+      toast.error("Fout bij bijwerken achtergrond: " + error.message);
+    }
+  };
+
   const handleDeleteColumn = async () => {
     if (!deleteColumnId) return;
     try {
@@ -282,6 +300,11 @@ const Board = () => {
       if (!boardResult.data) {
         setLoading(false);
         return;
+      }
+      
+      // Set background gradient from board data
+      if (boardResult.data.background_gradient) {
+        setSelectedBackground(boardResult.data.background_gradient);
       }
       
       // Fetch columns
@@ -939,6 +962,21 @@ const Board = () => {
             🔧 {t('board.editModeActive')}
           </span>
           <div className="flex items-center gap-2">
+            <Select value={selectedBackground} onValueChange={handleBackgroundChange}>
+              <SelectTrigger className="w-[200px]">
+                <span>🎨 Achtergrond</span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
+                <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
+                <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
+                <SelectItem value="from-orange-50 to-yellow-100">Oranje-Geel</SelectItem>
+                <SelectItem value="from-gray-50 to-gray-100">Grijs</SelectItem>
+                <SelectItem value="from-rose-50 to-pink-100">Roze</SelectItem>
+                <SelectItem value="from-cyan-50 to-blue-100">Cyaan</SelectItem>
+                <SelectItem value="from-indigo-50 to-purple-100">Indigo</SelectItem>
+              </SelectContent>
+            </Select>
             
             <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
@@ -946,7 +984,7 @@ const Board = () => {
             </Button>
           </div>
         </div>}
-      <main className="relative flex-1 min-h-0 overflow-auto bg-gradient-to-br from-blue-50 to-blue-100" style={{
+      <main className={cn("relative flex-1 min-h-0 overflow-auto bg-gradient-to-br", selectedBackground)} style={{
           minWidth: '3000px',
           minHeight: '2000px'
         }} 
