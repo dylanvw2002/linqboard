@@ -176,9 +176,7 @@ const Pricing = () => {
               </Label>
             </div>
             <span className={`text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
-              {t('pricing.save', {
-              percentage: '17'
-            })}
+              {t('pricing.yearlyBonus')}
             </span>
           </div>
         </div>
