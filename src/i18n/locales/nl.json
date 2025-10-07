@@ -396,6 +396,7 @@
     "cancelConfirm": "Weet je zeker dat je wilt annuleren?",
     "cancelDescription": "Je behoudt toegang tot je huidige plan tot het einde van de periode.",
     "cancelled": "Abonnement geannuleerd",
-    "cancelError": "Fout bij annuleren"
+    "cancelError": "Fout bij annuleren",
+    "activationSuccess": "Abonnement succesvol geactiveerd!"
   }
 }

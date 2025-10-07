@@ -32,6 +32,15 @@ interface SubscriptionLimits {
   current_org_count: number;
 }
 
+interface Subscription {
+  plan: string;
+  status: string;
+  billing_interval?: string;
+  current_period_end?: string;
+  mollie_customer_id?: string;
+  mollie_subscription_id?: string;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -43,6 +52,9 @@ const Dashboard = () => {
   const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
   const [subscriptionLimits, setSubscriptionLimits] = useState<SubscriptionLimits | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [userName, setUserName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [userId, setUserId] = useState("");
@@ -58,6 +70,14 @@ const Dashboard = () => {
       // Fetch user profile and subscription
       await fetchUserData(session.user.id);
       await fetchOrganizations();
+      
+      // Check for subscription success message
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('subscription') === 'success') {
+        toast.success(t('subscription.activationSuccess') || 'Subscription activated successfully!');
+        // Clean up URL
+        window.history.replaceState({}, '', '/dashboard');
+      }
     };
     
     checkAccess();
@@ -84,6 +104,7 @@ const Dashboard = () => {
       const { data: limits } = await supabase.functions.invoke('get-subscription-status');
       if (limits) {
         setSubscriptionLimits(limits.limits);
+        setSubscription(limits.subscription);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -152,6 +173,35 @@ const Dashboard = () => {
     } catch (error: any) {
       toast.error(t('dashboard.updateProfileError'));
       console.error(error);
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    setCancelling(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+
+      const { data, error } = await supabase.functions.invoke('cancel-mollie-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success(t('subscription.cancelled'));
+      setCancelDialogOpen(false);
+      
+      // Refresh subscription data
+      await fetchUserData(userId);
+    } catch (error: any) {
+      console.error('Error cancelling subscription:', error);
+      toast.error(error.message || t('subscription.cancelError'));
+    } finally {
+      setCancelling(false);
     }
   };
   const fetchOrganizations = async () => {
@@ -300,6 +350,33 @@ const Dashboard = () => {
                     {t('subscription.yourPlan')}: <span className="text-primary capitalize">{subscriptionLimits.plan}</span>
                   </h3>
                 </div>
+                {subscription && subscription.status && (
+                  <div className="mb-3">
+                    <span className="text-sm text-muted-foreground">
+                      {t('subscription.status')}:{" "}
+                      <span className={`font-semibold ${
+                        subscription.status === 'active' ? 'text-green-600' : 
+                        subscription.status === 'canceled' ? 'text-orange-600' : 
+                        'text-red-600'
+                      }`}>
+                        {subscription.status === 'active' && 'Actief'}
+                        {subscription.status === 'canceled' && 'Geannuleerd'}
+                        {subscription.status === 'past_due' && 'Betaling achterstallig'}
+                        {subscription.status === 'pending' && 'In behandeling'}
+                      </span>
+                    </span>
+                    {subscription.billing_interval && (
+                      <span className="text-sm text-muted-foreground ml-4">
+                        • {subscription.billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'}
+                      </span>
+                    )}
+                    {subscription.current_period_end && (
+                      <span className="text-sm text-muted-foreground ml-4">
+                        • Verlengt op {new Date(subscription.current_period_end).toLocaleDateString('nl-NL')}
+                      </span>
+                    )}
+                  </div>
+                )}
                 <div className="space-y-3 mt-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
@@ -318,12 +395,24 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-              {subscriptionLimits.plan !== 'business' && (
-                <Button onClick={() => navigate('/pricing')} size="lg" className="shrink-0">
-                  {t('subscription.upgrade')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
+              <div className="flex flex-col gap-2 shrink-0">
+                {subscriptionLimits.plan !== 'business' && (
+                  <Button onClick={() => navigate('/pricing')} size="lg">
+                    {t('subscription.upgrade')}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                )}
+                {subscription && subscription.mollie_subscription_id && subscription.status === 'active' && (
+                  <Button 
+                    onClick={() => setCancelDialogOpen(true)} 
+                    size="lg" 
+                    variant="outline"
+                    className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                  >
+                    {t('subscription.cancel')}
+                  </Button>
+                )}
+              </div>
             </div>
           </Card>
         )}
@@ -505,6 +594,35 @@ const Dashboard = () => {
         onOpenChange={setAvatarUploadOpen}
         onUpload={handleAvatarUpload}
       />
+
+      {/* Cancel Subscription Dialog */}
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('subscription.cancelConfirm')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('subscription.cancelDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={cancelling}>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleCancelSubscription} 
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={cancelling}
+            >
+              {cancelling ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('common.loading')}
+                </>
+              ) : (
+                t('subscription.cancel')
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>;
 };
 export default Dashboard;

@@ -101,21 +101,42 @@ Deno.serve(async (req) => {
     const subscription = await subscriptionResponse.json()
     console.log('Mollie subscription created:', subscription.id)
 
-    // Update user_subscriptions in database
-    const { error: updateError } = await supabase
+    // Check if user already has a subscription
+    const { data: existingSubscription } = await supabase
       .from('user_subscriptions')
-      .upsert({
-        user_id: user.id,
-        plan,
-        billing_interval,
-        status: 'active',
-        mollie_customer_id: customer.id,
-        mollie_subscription_id: subscription.id,
-        max_organizations: PRICING[plan].orgs,
-        max_members_per_org: PRICING[plan].members,
-        current_period_start: new Date().toISOString(),
-        current_period_end: new Date(Date.now() + (billing_interval === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString()
-      })
+      .select('*')
+      .eq('user_id', user.id)
+      .single()
+
+    // Update or insert user_subscriptions in database
+    const subscriptionData = {
+      user_id: user.id,
+      plan,
+      billing_interval,
+      status: 'pending',
+      mollie_customer_id: customer.id,
+      mollie_subscription_id: subscription.id,
+      max_organizations: PRICING[plan].orgs,
+      max_members_per_org: PRICING[plan].members,
+      current_period_start: new Date().toISOString(),
+      current_period_end: new Date(Date.now() + (billing_interval === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString()
+    }
+
+    let updateError
+    if (existingSubscription) {
+      // Update existing subscription
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .update(subscriptionData)
+        .eq('user_id', user.id)
+      updateError = error
+    } else {
+      // Insert new subscription
+      const { error } = await supabase
+        .from('user_subscriptions')
+        .insert(subscriptionData)
+      updateError = error
+    }
 
     if (updateError) {
       console.error('Error updating subscription:', updateError)
