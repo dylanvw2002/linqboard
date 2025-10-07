@@ -12,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
@@ -100,6 +100,8 @@ const Board = () => {
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedBackground, setSelectedBackground] = useState<string>("from-blue-50 to-blue-100");
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null);
+  const [uploadingBackground, setUploadingBackground] = useState(false);
   const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
   const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
   const [editingColumn, setEditingColumn] = useState<Column | null>(null);
@@ -182,16 +184,88 @@ const Board = () => {
   const handleBackgroundChange = async (gradient: string) => {
     try {
       setSelectedBackground(gradient);
+      setBackgroundImageUrl(null); // Clear image when selecting gradient
       
       const { error } = await supabase
         .from("boards")
-        .update({ background_gradient: gradient })
+        .update({ 
+          background_gradient: gradient,
+          background_image_url: null 
+        })
         .eq("id", board?.id);
       
       if (error) throw error;
       toast.success(t('board.backgroundUpdated') || 'Achtergrond bijgewerkt');
     } catch (error: any) {
       toast.error("Fout bij bijwerken achtergrond: " + error.message);
+    }
+  };
+
+  const handleBackgroundImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Selecteer een afbeelding');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Afbeelding te groot (max 5MB)');
+        return;
+      }
+      
+      setUploadingBackground(true);
+      
+      // Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${board?.id}-${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('board-backgrounds')
+        .upload(filePath, file, { upsert: true });
+      
+      if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('board-backgrounds')
+        .getPublicUrl(filePath);
+      
+      // Update board with image URL
+      const { error: updateError } = await supabase
+        .from("boards")
+        .update({ background_image_url: publicUrl })
+        .eq("id", board?.id);
+      
+      if (updateError) throw updateError;
+      
+      setBackgroundImageUrl(publicUrl);
+      toast.success('Achtergrondafbeelding geüpload');
+    } catch (error: any) {
+      toast.error("Fout bij uploaden: " + error.message);
+    } finally {
+      setUploadingBackground(false);
+    }
+  };
+
+  const handleRemoveBackgroundImage = async () => {
+    try {
+      const { error } = await supabase
+        .from("boards")
+        .update({ background_image_url: null })
+        .eq("id", board?.id);
+      
+      if (error) throw error;
+      
+      setBackgroundImageUrl(null);
+      toast.success('Achtergrondafbeelding verwijderd');
+    } catch (error: any) {
+      toast.error("Fout bij verwijderen: " + error.message);
     }
   };
 
@@ -305,6 +379,11 @@ const Board = () => {
       // Set background gradient from board data
       if (boardResult.data.background_gradient) {
         setSelectedBackground(boardResult.data.background_gradient);
+      }
+      
+      // Set background image from board data
+      if (boardResult.data.background_image_url) {
+        setBackgroundImageUrl(boardResult.data.background_image_url);
       }
       
       // Fetch columns
@@ -962,21 +1041,52 @@ const Board = () => {
             🔧 {t('board.editModeActive')}
           </span>
           <div className="flex items-center gap-2">
-            <Select value={selectedBackground} onValueChange={handleBackgroundChange}>
-              <SelectTrigger className="w-[200px]">
-                <span>🎨 Achtergrond</span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
-                <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
-                <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
-                <SelectItem value="from-orange-50 to-yellow-100">Oranje-Geel</SelectItem>
-                <SelectItem value="from-gray-50 to-gray-100">Grijs</SelectItem>
-                <SelectItem value="from-rose-50 to-pink-100">Roze</SelectItem>
-                <SelectItem value="from-cyan-50 to-blue-100">Cyaan</SelectItem>
-                <SelectItem value="from-indigo-50 to-purple-100">Indigo</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
+              <Select value={selectedBackground} onValueChange={handleBackgroundChange} disabled={!!backgroundImageUrl}>
+                <SelectTrigger className="w-[180px]">
+                  <span>🎨 Kleur</span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
+                  <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
+                  <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
+                  <SelectItem value="from-orange-50 to-yellow-100">Oranje-Geel</SelectItem>
+                  <SelectItem value="from-gray-50 to-gray-100">Grijs</SelectItem>
+                  <SelectItem value="from-rose-50 to-pink-100">Roze</SelectItem>
+                  <SelectItem value="from-cyan-50 to-blue-100">Cyaan</SelectItem>
+                  <SelectItem value="from-indigo-50 to-purple-100">Indigo</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              {backgroundImageUrl ? (
+                <Button 
+                  size="sm" 
+                  variant="destructive"
+                  onClick={handleRemoveBackgroundImage}
+                  className="flex items-center gap-1"
+                >
+                  <X className="h-4 w-4" />
+                  Verwijder afbeelding
+                </Button>
+              ) : (
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  disabled={uploadingBackground}
+                  className="relative flex items-center gap-1"
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBackgroundImageUpload}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    disabled={uploadingBackground}
+                  />
+                  <Image className="h-4 w-4" />
+                  {uploadingBackground ? 'Uploaden...' : 'Upload afbeelding'}
+                </Button>
+              )}
+            </div>
             
             <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
@@ -984,9 +1094,17 @@ const Board = () => {
             </Button>
           </div>
         </div>}
-      <main className={cn("relative flex-1 min-h-0 overflow-auto bg-gradient-to-br", selectedBackground)} style={{
+      <main 
+        className={cn("relative flex-1 min-h-0 overflow-auto", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} 
+        style={{
           minWidth: '3000px',
-          minHeight: '2000px'
+          minHeight: '2000px',
+          ...(backgroundImageUrl && {
+            backgroundImage: `url(${backgroundImageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          })
         }} 
         onClick={(e) => {
           if (editMode && selectedColumn && e.target === e.currentTarget) {

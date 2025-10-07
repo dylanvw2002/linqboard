@@ -55,6 +55,7 @@ export type Database = {
       boards: {
         Row: {
           background_gradient: string | null
+          background_image_url: string | null
           created_at: string
           id: string
           name: string
@@ -62,6 +63,7 @@ export type Database = {
         }
         Insert: {
           background_gradient?: string | null
+          background_image_url?: string | null
           created_at?: string
           id?: string
           name: string
@@ -69,6 +71,7 @@ export type Database = {
         }
         Update: {
           background_gradient?: string | null
+          background_image_url?: string | null
           created_at?: string
           id?: string
           name?: string
