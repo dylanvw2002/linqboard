@@ -373,7 +373,8 @@
       "feature1": "Up to 8 organizations",
       "feature2": "Up to 20 team members per org",
       "feature3": "Real-time collaboration",
-      "feature4": "Custom backgrounds"
+      "feature4": "Priority management",
+      "feature5": "Custom backgrounds"
     },
     "business": {
       "name": "Business",
