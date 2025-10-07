@@ -171,3 +171,19 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes overdue-glow {
+  0% {
+    box-shadow: 0 0 30px 6px hsl(0 84% 60% / 0.2);
+  }
+  50% {
+    box-shadow: 0 0 50px 10px hsl(0 84% 60% / 0.5);
+  }
+  100% {
+    box-shadow: 0 0 30px 6px hsl(0 84% 60% / 0.2);
+  }
+}
+
+.animate-overdue-glow {
+  animation: overdue-glow 15s ease-in-out infinite;
+}
