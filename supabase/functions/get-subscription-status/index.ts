@@ -25,21 +25,19 @@ Deno.serve(async (req) => {
       throw new Error('Authentication failed')
     }
 
-    // Get subscription limits using the database function
-    const { data, error } = await supabase
-      .rpc('get_user_subscription_limits', { _user_id: user.id })
+    // Get both subscription limits and details in a single query
+    const [limitsResult, subscriptionResult] = await Promise.all([
+      supabase.rpc('get_user_subscription_limits', { _user_id: user.id }),
+      supabase.from('user_subscriptions').select('*').eq('user_id', user.id).single()
+    ])
 
-    if (error) {
-      console.error('Error getting subscription limits:', error)
-      throw error
+    if (limitsResult.error) {
+      console.error('Error getting subscription limits:', limitsResult.error)
+      throw limitsResult.error
     }
 
-    // Get full subscription details
-    const { data: subscription } = await supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
+    const data = limitsResult.data
+    const subscription = subscriptionResult.data
 
     return new Response(
       JSON.stringify({ 

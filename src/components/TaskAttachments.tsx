@@ -117,7 +117,6 @@ export const TaskAttachments = ({
   };
   useEffect(() => {
     fetchAttachments();
-    console.log("Setting up realtime subscription for task:", taskId);
     const channel = supabase.channel(`task-attachments-${taskId}`, {
       config: {
         broadcast: {
@@ -130,13 +129,9 @@ export const TaskAttachments = ({
       table: "task_attachments",
       filter: `task_id=eq.${taskId}`
     }, payload => {
-      console.log("Realtime event received:", payload);
       fetchAttachments();
-    }).subscribe(status => {
-      console.log("Subscription status:", status);
-    });
+    }).subscribe();
     return () => {
-      console.log("Cleaning up realtime subscription for task:", taskId);
       supabase.removeChannel(channel);
     };
   }, [taskId]);
@@ -290,24 +285,16 @@ export const TaskAttachments = ({
   };
   const handleDelete = async (attachment: Attachment) => {
     try {
-      console.log("Deleting attachment:", attachment);
-
       // Verwijder uit storage
       const {
         error: storageError
       } = await supabase.storage.from("task-attachments").remove([attachment.file_path]);
-      console.log("Storage delete result:", {
-        error: storageError
-      });
       if (storageError) throw storageError;
 
       // Verwijder uit database
       const {
         error: dbError
       } = await supabase.from("task_attachments").delete().eq("id", attachment.id);
-      console.log("Database delete result:", {
-        error: dbError
-      });
       if (dbError) throw dbError;
 
       // Direct de lijst updaten zonder te wachten op realtime

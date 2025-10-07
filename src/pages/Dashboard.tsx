@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -30,47 +31,62 @@ interface SubscriptionLimits {
   max_members_per_org: number;
   current_org_count: number;
 }
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [userName, setUserName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string>("");
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
   const [leaveOrgId, setLeaveOrgId] = useState<string | null>(null);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
   const [subscriptionLimits, setSubscriptionLimits] = useState<SubscriptionLimits | null>(null);
+  const [userName, setUserName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userId, setUserId] = useState("");
   
   useEffect(() => {
-    checkUser();
-    fetchOrganizations();
-    fetchSubscriptionLimits();
-  }, []);
-  const checkUser = async () => {
-    const {
-      data: {
-        session
+    const checkAccess = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+        return;
       }
-    } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/auth");
-      return;
-    }
-
-    setUserId(session.user.id);
-
-    // Get user profile
-    const {
-      data: profile
-    } = await supabase.from("profiles").select("full_name, avatar_url").eq("user_id", session.user.id).single();
-    if (profile) {
-      setUserName(profile.full_name);
-      setAvatarUrl(profile.avatar_url);
-      setEditName(profile.full_name);
+      
+      // Fetch user profile and subscription
+      await fetchUserData(session.user.id);
+      await fetchOrganizations();
+    };
+    
+    checkAccess();
+  }, [navigate]);
+  
+  const fetchUserData = async (userId: string) => {
+    try {
+      setUserId(userId);
+      
+      // Fetch profile
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url')
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (profile) {
+        setUserName(profile.full_name || "");
+        setEditName(profile.full_name || "");
+        setAvatarUrl(profile.avatar_url || null);
+      }
+      
+      // Fetch subscription limits
+      const { data: limits } = await supabase.functions.invoke('get-subscription-status');
+      if (limits) {
+        setSubscriptionLimits(limits.limits);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
     }
   };
 
@@ -107,34 +123,14 @@ const Dashboard = () => {
 
       if (updateError) throw updateError;
 
-      setAvatarUrl(publicUrl);
       toast.success(t('dashboard.avatarUpdated'));
+      // Profile hook will auto-refetch
     } catch (error: any) {
       toast.error(t('dashboard.uploadError'));
       console.error(error);
     }
   };
 
-  const fetchSubscriptionLimits = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { data, error } = await supabase.functions.invoke('get-subscription-status', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-
-      if (error) throw error;
-
-      if (data?.limits) {
-        setSubscriptionLimits(data.limits);
-      }
-    } catch (error: any) {
-      console.error('Error fetching subscription limits:', error);
-    }
-  };
 
   const handleUpdateProfile = async () => {
     if (!editName.trim()) {
@@ -150,9 +146,9 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      setUserName(editName);
       setProfileDialogOpen(false);
       toast.success(t('dashboard.profileUpdated'));
+      // Profile hook will auto-refetch
     } catch (error: any) {
       toast.error(t('dashboard.updateProfileError'));
       console.error(error);
@@ -234,7 +230,9 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-  if (loading) {
+  const isPageLoading = loading;
+
+  if (isPageLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
