@@ -74,7 +74,7 @@ const Index = () => {
       <div className="container mx-auto px-6 py-20">
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
-            <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
               <Zap className="h-7 w-7 text-white" />
             </div>
             <h3 className="text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h3>
@@ -84,7 +84,7 @@ const Index = () => {
           </div>
 
           <div className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
-            <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
               <Users className="h-7 w-7 text-white" />
             </div>
             <h3 className="text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h3>
@@ -94,7 +94,7 @@ const Index = () => {
           </div>
 
           <div className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
-            <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center mb-4">
+            <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
               <Shield className="h-7 w-7 text-white" />
             </div>
             <h3 className="text-xl font-semibold mb-3">{t('landing.secureTitle')}</h3>
