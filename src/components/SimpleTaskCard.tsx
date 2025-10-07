@@ -38,7 +38,10 @@ export const SimpleTaskCard = ({
 }: SimpleTaskCardProps) => {
   const { t, i18n } = useTranslation();
   
-  const isOverdue = dueDate && new Date(dueDate) < new Date();
+  // Check if deadline has passed - compare with start of today
+  const isOverdue = dueDate ? new Date(dueDate) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
+  
+  console.log('Task:', title, 'Due date:', dueDate, 'Is overdue:', isOverdue);
   
   return (
     <div
