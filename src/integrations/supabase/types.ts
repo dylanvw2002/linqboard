@@ -524,7 +524,13 @@ export type Database = {
         | "orange"
       column_type: "regular" | "sick_leave" | "vacation"
       subscription_plan: "free" | "pro" | "team" | "business"
-      subscription_status: "active" | "canceled" | "expired" | "past_due"
+      subscription_status:
+        | "active"
+        | "canceled"
+        | "expired"
+        | "past_due"
+        | "pending"
+        | "cancelled"
       task_priority: "low" | "medium" | "high"
     }
     CompositeTypes: {
@@ -666,7 +672,14 @@ export const Constants = {
       ],
       column_type: ["regular", "sick_leave", "vacation"],
       subscription_plan: ["free", "pro", "team", "business"],
-      subscription_status: ["active", "canceled", "expired", "past_due"],
+      subscription_status: [
+        "active",
+        "canceled",
+        "expired",
+        "past_due",
+        "pending",
+        "cancelled",
+      ],
       task_priority: ["low", "medium", "high"],
     },
   },

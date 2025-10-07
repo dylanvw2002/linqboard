@@ -102,33 +102,67 @@ const Pricing = () => {
       navigate('/auth');
       return;
     }
+    
+    // Handle Free plan (downgrade/cancel)
     if (plan.plan_id === 'free') {
-      toast.info(t('pricing.freeMessage'));
+      if (currentPlan === 'free') {
+        toast.info(t('pricing.freeMessage'));
+        return;
+      }
+      
+      // This is a downgrade/cancel
+      const confirmed = window.confirm(t('pricing.confirmCancel'));
+      if (!confirmed) return;
+      
+      setLoading(plan.plan_id);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('Not authenticated');
+
+        const { error } = await supabase.functions.invoke('cancel-mollie-subscription', {
+          headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+
+        if (error) throw error;
+
+        toast.success(t('pricing.cancelSuccess'));
+        setCurrentPlan('free');
+        
+        // Refresh the page after a short delay
+        setTimeout(() => window.location.reload(), 1500);
+      } catch (error: any) {
+        console.error('Error cancelling subscription:', error);
+        toast.error(error.message || t('pricing.cancelError'));
+      } finally {
+        setLoading(null);
+      }
       return;
     }
+
+    const currentLevel = getPlanLevel(currentPlan);
+    const planLevel = getPlanLevel(plan.plan_id);
+    
+    // Handle downgrade (to non-free plan)
+    if (planLevel < currentLevel) {
+      const confirmed = window.confirm(t('pricing.confirmDowngrade'));
+      if (!confirmed) return;
+    }
+    
     setLoading(plan.plan_id);
     try {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error('Not authenticated');
-      }
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke('create-mollie-subscription', {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase.functions.invoke('create-mollie-subscription', {
         body: {
           plan: plan.plan_id,
           billing_interval: isYearly ? 'yearly' : 'monthly'
         },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
+        headers: { Authorization: `Bearer ${session.access_token}` }
       });
+
       if (error) throw error;
+
       if (data?.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {

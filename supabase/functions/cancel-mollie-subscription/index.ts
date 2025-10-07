@@ -59,10 +59,10 @@ Deno.serve(async (req) => {
 
     console.log('Mollie subscription cancelled')
 
-    // Update database - mark as canceled but keep active until period ends
+    // Update database - mark as cancelled but keep active until period ends
     const { error: updateError } = await supabase
       .from('user_subscriptions')
-      .update({ status: 'canceled' })
+      .update({ status: 'cancelled' })
       .eq('user_id', user.id)
 
     if (updateError) {
