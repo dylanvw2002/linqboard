@@ -11,7 +11,7 @@ const SubscriptionFailed = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="h-screen bg-gradient-to-br from-destructive/20 via-background to-muted/20 relative overflow-hidden flex items-center justify-center">
+    <div className="h-screen bg-gradient-to-br from-muted/20 via-background to-accent/10 relative overflow-hidden flex items-center justify-center">
       {/* Animated confetti elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -28,7 +28,7 @@ const SubscriptionFailed = () => {
             <div 
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: ['#EF4444', '#F97316', '#8B5CF6'][Math.floor(Math.random() * 3)],
+                backgroundColor: ['#8B5CF6', '#F59E0B', '#6B7280'][Math.floor(Math.random() * 3)],
                 opacity: 0.3
               }}
             />
@@ -39,9 +39,9 @@ const SubscriptionFailed = () => {
       <div className="container mx-auto px-4 py-8 relative z-10 max-h-screen overflow-hidden">
         <div className="max-w-4xl mx-auto h-full flex items-center">
           {/* Failed Card */}
-          <Card className="animate-scale-in border-2 border-destructive/30 shadow-lg bg-card/95 backdrop-blur overflow-hidden">
+          <Card className="animate-scale-in border-2 border-border shadow-lg bg-card/95 backdrop-blur overflow-hidden">
             {/* Hero Image Section */}
-            <div className="relative w-full h-80 md:h-96 overflow-hidden bg-gradient-to-br from-destructive/10 to-muted/10 -mt-2">
+            <div className="relative w-full h-96 md:h-[28rem] overflow-hidden bg-gradient-to-br from-muted/10 to-accent/5 -mt-2">
               <img 
                 src={failedImage} 
                 alt="Payment failed" 
@@ -50,7 +50,7 @@ const SubscriptionFailed = () => {
             </div>
 
             <CardHeader className="text-center pb-2 pt-4">
-              <CardTitle className="text-2xl md:text-3xl font-bold text-destructive">
+              <CardTitle className="text-2xl md:text-3xl font-bold text-foreground">
                 {t('subscriptionFailed.title')}
               </CardTitle>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -60,8 +60,8 @@ const SubscriptionFailed = () => {
 
             <CardContent className="space-y-3 pb-4">
               {/* Reason */}
-              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-                <p className="text-sm text-center">
+              <div className="bg-muted/50 border border-border rounded-lg p-4">
+                <p className="text-sm text-center text-muted-foreground">
                   {t('subscriptionFailed.reason')}
                 </p>
               </div>
@@ -73,15 +73,15 @@ const SubscriptionFailed = () => {
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>{t('subscriptionFailed.step1')}</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>{t('subscriptionFailed.step2')}</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>{t('subscriptionFailed.step3')}</span>
                   </li>
                 </ul>
