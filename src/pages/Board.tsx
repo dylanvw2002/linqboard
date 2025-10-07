@@ -976,7 +976,7 @@ const Board = () => {
   }
   return <div className="h-screen overflow-hidden relative bg-background">
       <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-blue-50">
-        <div className="flex flex-col gap-[18px] p-[22px] h-screen">
+        <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
       
       <style>{`
         @keyframes pop {
@@ -1002,7 +1002,7 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="flex items-center justify-between gap-4 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-5 py-[18px] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] relative overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none">
+      <header className="flex items-center justify-between gap-4 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-5 py-[18px] mx-[22px] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] relative overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none">
         <div className="flex items-center gap-4 relative z-10 min-w-0">
           <div className="min-w-0">
             <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm">
@@ -1036,7 +1036,7 @@ const Board = () => {
       </header>
 
       {/* Canvas Board */}
-      {editMode && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+      {editMode && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg mx-[22px]">
           <span className="text-sm font-semibold text-primary">
             🔧 {t('board.editModeActive')}
           </span>
