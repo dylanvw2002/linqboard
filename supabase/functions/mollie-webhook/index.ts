@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     // Update subscription status based on payment status
     if (payment.status === 'paid') {
       // This was the first payment, now create the actual subscription
-      const { plan, billing_interval, user_id } = payment.metadata
+      const { plan, billing_interval, user_id, user_name } = payment.metadata
       
       if (!plan || !billing_interval || !user_id) {
         console.error('Missing metadata in payment:', payment.metadata)
@@ -51,6 +51,8 @@ Deno.serve(async (req) => {
       
       const price = PRICING[plan][billing_interval]
       const interval = billing_interval === 'monthly' ? '1 month' : '1 year'
+      const planName = plan.charAt(0).toUpperCase() + plan.slice(1)
+      const intervalText = billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'
       
       // Create recurring subscription at Mollie
       const subResponse = await fetch(`https://api.mollie.com/v2/customers/${subscription.mollie_customer_id}/subscriptions`, {
@@ -62,8 +64,13 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           amount: { currency: 'EUR', value: price.toFixed(2) },
           interval: interval,
-          description: `LinqBoard ${plan} plan`,
-          webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`
+          description: `LinqBoard ${planName} Abonnement`,
+          webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`,
+          metadata: {
+            user_name: user_name,
+            plan: planName,
+            interval: intervalText
+          }
         })
       })
       

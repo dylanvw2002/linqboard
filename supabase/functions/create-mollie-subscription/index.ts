@@ -62,6 +62,10 @@ Deno.serve(async (req) => {
 
     console.log('User profile:', profile)
 
+    const userName = profile?.full_name || 'LinqBoard User'
+    const planName = plan.charAt(0).toUpperCase() + plan.slice(1)
+    const intervalText = billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'
+
     // Create or get Mollie customer
     const customerResponse = await fetch('https://api.mollie.com/v2/customers', {
       method: 'POST',
@@ -70,7 +74,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        name: profile?.full_name || 'LinqBoard User',
+        name: `${userName} - LinqBoard`,
         email: user.email
       })
     })
@@ -90,14 +94,16 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         amount: { currency: 'EUR', value: price.toFixed(2) },
-        description: `LinqBoard ${plan} plan - Eerste betaling`,
+        description: `LinqBoard ${planName} (${intervalText})`,
         redirectUrl: `${req.headers.get('origin')}/subscription-success`,
         webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`,
         sequenceType: 'first',
         metadata: {
           plan: plan,
           billing_interval: billing_interval,
-          user_id: user.id
+          user_id: user.id,
+          user_name: userName,
+          user_email: user.email
         }
       })
     })
