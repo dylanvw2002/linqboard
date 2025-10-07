@@ -3,7 +3,7 @@ import { ArrowRight, Users, Zap, Shield, LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
-import todoBoardIllustration from "@/assets/todo-board-hero.png";
+import todoBoardIllustration from "@/assets/todo-board-illustration.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 const Index = () => {
