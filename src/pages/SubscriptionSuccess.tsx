@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
-import successImage from "@/assets/subscription-success.jpeg";
+import successImage from "@/assets/subscription-success.png";
 
 const SubscriptionSuccess = () => {
   const navigate = useNavigate();
