@@ -79,14 +79,34 @@ Deno.serve(async (req) => {
         periodEnd.setFullYear(periodEnd.getFullYear() + 1)
       }
 
+      // Check if there's a pending plan change
+      const { data: currentSub } = await supabase
+        .from('user_subscriptions')
+        .select('pending_plan, pending_billing_interval')
+        .eq('user_id', user_id)
+        .single()
+
+      const updateData: any = { 
+        status: 'active',
+        mollie_subscription_id: mollieSubscription.id,
+        current_period_start: periodStart.toISOString(),
+        current_period_end: periodEnd.toISOString()
+      }
+
+      // If there's a pending plan, activate it now
+      if (currentSub?.pending_plan) {
+        console.log('Activating pending plan:', currentSub.pending_plan)
+        updateData.plan = currentSub.pending_plan
+        updateData.billing_interval = currentSub.pending_billing_interval
+        updateData.max_organizations = PRICING[currentSub.pending_plan].orgs
+        updateData.max_members_per_org = PRICING[currentSub.pending_plan].members
+        updateData.pending_plan = null
+        updateData.pending_billing_interval = null
+      }
+
       await supabase
         .from('user_subscriptions')
-        .update({ 
-          status: 'active',
-          mollie_subscription_id: mollieSubscription.id,
-          current_period_start: periodStart.toISOString(),
-          current_period_end: periodEnd.toISOString()
-        })
+        .update(updateData)
         .eq('user_id', user_id)
       
       console.log('Subscription activated')

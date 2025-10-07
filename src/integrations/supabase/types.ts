@@ -423,6 +423,10 @@ export type Database = {
           max_organizations: number
           mollie_customer_id: string | null
           mollie_subscription_id: string | null
+          pending_billing_interval:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
+          pending_plan: Database["public"]["Enums"]["subscription_plan"] | null
           plan: Database["public"]["Enums"]["subscription_plan"]
           status: Database["public"]["Enums"]["subscription_status"]
           updated_at: string
@@ -440,6 +444,10 @@ export type Database = {
           max_organizations: number
           mollie_customer_id?: string | null
           mollie_subscription_id?: string | null
+          pending_billing_interval?:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
+          pending_plan?: Database["public"]["Enums"]["subscription_plan"] | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
           status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
@@ -457,6 +465,10 @@ export type Database = {
           max_organizations?: number
           mollie_customer_id?: string | null
           mollie_subscription_id?: string | null
+          pending_billing_interval?:
+            | Database["public"]["Enums"]["billing_interval"]
+            | null
+          pending_plan?: Database["public"]["Enums"]["subscription_plan"] | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
           status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string

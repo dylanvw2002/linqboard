@@ -332,6 +332,7 @@
     "returnHome": "Volver al inicio"
   },
   "pricing": {
+    "downgradeScheduled": "Degradación programada para el próximo ciclo de facturación",
     "title": "Elige tu plan",
     "subtitle": "Crece con nosotros - desde principiante hasta empresa",
     "monthly": "Mensual",

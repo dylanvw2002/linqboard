@@ -332,6 +332,7 @@
     "returnHome": "Return to Home"
   },
   "pricing": {
+    "downgradeScheduled": "Downgrade gepland voor volgende betaling",
     "title": "Kies jouw plan",
     "subtitle": "Groei met ons mee - van starter tot enterprise",
     "monthly": "Maandelijks",

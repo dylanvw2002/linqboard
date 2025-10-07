@@ -332,6 +332,7 @@
     "returnHome": "Return to Home"
   },
   "pricing": {
+    "downgradeScheduled": "Downgrade scheduled for next billing cycle",
     "title": "Choose your plan",
     "subtitle": "Grow with us - from starter to enterprise",
     "monthly": "Monthly",

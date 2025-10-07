@@ -332,6 +332,7 @@
     "returnHome": "Zurück zur Startseite"
   },
   "pricing": {
+    "downgradeScheduled": "Downgrade für nächsten Abrechnungszeitraum geplant",
     "title": "Wählen Sie Ihren Plan",
     "subtitle": "Wachsen Sie mit uns - vom Starter bis zum Enterprise",
     "monthly": "Monatlich",
