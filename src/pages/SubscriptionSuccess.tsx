@@ -97,10 +97,7 @@ const SubscriptionSuccess = () => {
             <CardHeader className="text-center pb-4">
               <div className="flex justify-center mb-4">
                 <div className="relative">
-                  <div className="absolute inset-0 animate-ping">
-                    <div className="w-20 h-20 rounded-full bg-primary/30"></div>
-                  </div>
-                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
                     <Check className="w-10 h-10 text-white" />
                   </div>
                 </div>
