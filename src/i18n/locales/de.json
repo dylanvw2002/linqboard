@@ -403,7 +403,7 @@
     "cancelError": "Fehler beim Kündigen"
   },
   "subscriptionSuccess": {
-    "title": "🎉 Willkommen bei Ihrem neuen Plan!",
+    "title": "Willkommen bei Ihrem neuen Plan!",
     "subtitle": "Ihr Abonnement wurde erfolgreich aktiviert",
     "featuresTitle": "Was Sie jetzt tun können:",
     "goToDashboard": "Zum Dashboard",

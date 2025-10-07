@@ -404,7 +404,7 @@
     "activationSuccess": "Abonnement succesvol geactiveerd!"
   },
   "subscriptionSuccess": {
-    "title": "🎉 Welkom bij je nieuwe plan!",
+    "title": "Welkom bij je nieuwe plan!",
     "subtitle": "Je abonnement is succesvol geactiveerd",
     "featuresTitle": "Wat je nu kunt doen:",
     "goToDashboard": "Ga naar Dashboard",

@@ -403,7 +403,7 @@
     "cancelError": "Error cancelling"
   },
   "subscriptionSuccess": {
-    "title": "🎉 Welcome to your new plan!",
+    "title": "Welcome to your new plan!",
     "subtitle": "Your subscription has been successfully activated",
     "featuresTitle": "What you can do now:",
     "goToDashboard": "Go to Dashboard",
