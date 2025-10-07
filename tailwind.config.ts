@@ -138,6 +138,17 @@ export default {
             boxShadow: "0 0 30px 6px hsl(0 84% 60% / 0.2)",
           },
         },
+        "slow-red-glow": {
+          "0%": {
+            boxShadow: "0 0 30px 6px hsl(0 84% 60% / 0.2)",
+          },
+          "50%": {
+            boxShadow: "0 0 50px 10px hsl(0 84% 60% / 0.5)",
+          },
+          "100%": {
+            boxShadow: "0 0 30px 6px hsl(0 84% 60% / 0.2)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -148,6 +159,7 @@ export default {
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "wiggle": "wiggle 1s ease-in-out infinite",
         "pulse-red": "pulse-red 8s ease-in-out infinite",
+        "slow-red-glow": "slow-red-glow 15s ease-in-out infinite",
       },
     },
   },
