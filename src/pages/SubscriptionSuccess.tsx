@@ -69,7 +69,7 @@ const SubscriptionSuccess = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 relative overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 relative overflow-hidden flex items-center justify-center">
       {/* Animated confetti elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 30 }).map((_, i) => (
@@ -94,12 +94,12 @@ const SubscriptionSuccess = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-6 py-12 relative z-10">
-        <div className="max-w-3xl mx-auto">
+      <div className="container mx-auto px-4 py-4 relative z-10 max-h-screen overflow-hidden">
+        <div className="max-w-3xl mx-auto h-full flex items-center">
           {/* Success Card */}
           <Card className="animate-scale-in border-2 border-primary/30 shadow-2xl bg-card/95 backdrop-blur overflow-hidden">
             {/* Hero Image Section */}
-            <div className="relative w-full h-80 md:h-96 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
+            <div className="relative w-full h-32 md:h-40 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
               <img 
                 src={successImage} 
                 alt="Success celebration" 
@@ -107,67 +107,63 @@ const SubscriptionSuccess = () => {
               />
             </div>
 
-            <CardHeader className="text-center pb-4 pt-8">
-              <CardTitle className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <CardHeader className="text-center pb-2 pt-4">
+              <CardTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 {t('subscriptionSuccess.title')}
               </CardTitle>
-              <p className="text-muted-foreground mt-2 text-lg">
+              <p className="text-muted-foreground mt-1 text-sm">
                 {t('subscriptionSuccess.subtitle')}
               </p>
             </CardHeader>
 
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-3 pb-4">
               {/* Plan Badge */}
               <div className="flex justify-center">
-                <div className="px-6 py-2 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30">
-                  <span className="text-lg font-bold capitalize">
+                <div className="px-4 py-1 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30">
+                  <span className="text-sm font-bold capitalize">
                     {t(`pricing.${plan}.name`)}
                   </span>
                 </div>
               </div>
 
               {/* Features List */}
-              <div className="space-y-3">
-                <h3 className="font-semibold text-center mb-4">
+              <div className="space-y-1.5">
+                <h3 className="font-semibold text-center text-sm mb-2">
                   {t('subscriptionSuccess.featuresTitle')}
                 </h3>
-                {getPlanFeatures(plan).map((feature, index) => (
+                {getPlanFeatures(plan).slice(0, 3).map((feature, index) => (
                   <div 
                     key={index}
-                    className="flex items-start gap-3 animate-fade-in"
+                    className="flex items-start gap-2 animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="mt-0.5 rounded-full bg-primary/20 p-1">
-                      <Check className="w-4 h-4 text-primary" />
+                    <div className="mt-0.5 rounded-full bg-primary/20 p-0.5">
+                      <Check className="w-3 h-3 text-primary" />
                     </div>
-                    <span className="text-sm">{feature}</span>
+                    <span className="text-xs">{feature}</span>
                   </div>
                 ))}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col gap-3 pt-6">
+              <div className="flex flex-col gap-2 pt-3">
                 <Button 
                   onClick={() => navigate('/dashboard')}
                   className="w-full group"
-                  size="lg"
+                  size="sm"
                 >
                   {t('subscriptionSuccess.goToDashboard')}
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 h-3 w-3 transition-transform group-hover:translate-x-1" />
                 </Button>
                 <Button 
                   onClick={() => navigate('/pricing')}
                   variant="outline"
                   className="w-full"
+                  size="sm"
                 >
                   {t('subscriptionSuccess.viewPlans')}
                 </Button>
               </div>
-
-              {/* Thank you message */}
-              <p className="text-center text-sm text-muted-foreground pt-4 border-t">
-                {t('subscriptionSuccess.thankYou')}
-              </p>
             </CardContent>
           </Card>
         </div>
