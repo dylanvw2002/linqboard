@@ -144,7 +144,7 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "wiggle": "wiggle 1s ease-in-out infinite",
-        "pulse-red": "pulse-red 2s ease-in-out infinite",
+        "pulse-red": "pulse-red 4s ease-in-out infinite",
       },
     },
   },
