@@ -233,11 +233,11 @@ const Pricing = () => {
     
     return null;
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16 relative">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-4 relative">
       {/* Header with back button and language switcher */}
-      <header className="container mx-auto px-6 py-4">
+      <header className="container mx-auto px-6 py-2">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t('common.back')}
           </Button>
@@ -245,52 +245,51 @@ const Pricing = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-4">
 
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
             {t('pricing.title')}
           </h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <p className="text-base text-muted-foreground mb-4">
             {t('pricing.subtitle')}
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-3 mb-8">
+          <div className="flex flex-col items-center justify-center gap-2 mb-4">
             <div className="flex items-center gap-4">
-              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold' : ''}>
+              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold text-sm' : 'text-sm'}>
                 {t('pricing.monthly')}
               </Label>
               <Switch id="billing-toggle" checked={isYearly} onCheckedChange={setIsYearly} />
-              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold' : ''}>
+              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold text-sm' : 'text-sm'}>
                 {t('pricing.yearly')}
               </Label>
             </div>
-            <span className={`text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
+            <span className={`text-xs text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
               {t('pricing.yearlyBonus')}
             </span>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
           {isLoading ?
         // Loading skeletons
         Array.from({
           length: 4
         }).map((_, i) => <Card key={i} className="relative">
-                <CardHeader>
-                  <Skeleton className="h-8 w-24 mb-2" />
-                  <Skeleton className="h-12 w-32" />
-                  <Skeleton className="h-4 w-full mt-2" />
+                <CardHeader className="pb-3">
+                  <Skeleton className="h-6 w-20 mb-2" />
+                  <Skeleton className="h-8 w-24" />
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                <CardContent className="pb-3">
+                  <div className="space-y-2">
                     {Array.from({
-                length: 5
-              }).map((_, j) => <Skeleton key={j} className="h-4 w-full" />)}
+                length: 4
+              }).map((_, j) => <Skeleton key={j} className="h-3 w-full" />)}
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-9 w-full" />
                 </CardFooter>
               </Card>) : plans.map((plan, index) => <Card 
               key={plan.plan_id} 
@@ -299,19 +298,19 @@ const Pricing = () => {
             >
               {getPlanBadge(plan)}
               
-              <CardHeader>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xl">{plan.name}</CardTitle>
                 <CardDescription>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-foreground">
+                  <div className="mt-2">
+                    <span className="text-2xl font-bold text-foreground">
                       €{isYearly ? plan.price.yearly.toFixed(2) : plan.price.monthly.toFixed(2)}
                     </span>
-                    <span className="text-muted-foreground ml-2">
+                    <span className="text-sm text-muted-foreground ml-1">
                       /{isYearly ? t('pricing.year') : t('pricing.month')}
                     </span>
                     {getYearlySavings(plan) && (
-                      <div className="mt-2">
-                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                      <div className="mt-1">
+                        <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
                           {t('pricing.saveAmount').replace('{amount}', getYearlySavings(plan) || '')}
                         </Badge>
                       </div>
@@ -320,19 +319,19 @@ const Pricing = () => {
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <ul className="space-y-3">
+              <CardContent className="pb-3">
+                <ul className="space-y-2">
                   {plan.features.map((feature, index) => <li key={index} className="flex items-start gap-2">
-                      <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm">{feature}</span>
+                      <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span className="text-xs">{feature}</span>
                     </li>)}
                 </ul>
               </CardContent>
 
               <CardFooter>
-                <Button onClick={() => handleSubscribe(plan)} disabled={isButtonDisabled(plan)} className="w-full" variant={plan.popular ? 'default' : 'outline'}>
+                <Button onClick={() => handleSubscribe(plan)} disabled={isButtonDisabled(plan)} className="w-full" size="sm" variant={plan.popular ? 'default' : 'outline'}>
                   {loading === plan.plan_id ? <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                       {t('common.loading')}
                     </> : getButtonText(plan)}
                 </Button>
@@ -340,16 +339,16 @@ const Pricing = () => {
             </Card>)}
         </div>
 
-        <div className="mt-16 mb-12 text-center">
-          <p className="text-muted-foreground">
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted-foreground">
             {t('pricing.footer')}
           </p>
         </div>
       </div>
 
       {/* Logo at bottom left */}
-      <div className="fixed bottom-6 left-6 z-10">
-        <img src={logo} alt="LinqBoard Logo" className="h-32 w-auto" />
+      <div className="fixed bottom-2 left-2 z-10">
+        <img src={logo} alt="LinqBoard Logo" className="h-20 w-auto" />
       </div>
     </div>;
 };
