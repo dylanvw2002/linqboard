@@ -185,5 +185,5 @@ All colors MUST be HSL.
 }
 
 .animate-overdue-glow {
-  animation: overdue-glow 5s ease-in-out infinite;
+  animation: overdue-glow 3s ease-in-out infinite;
 }
