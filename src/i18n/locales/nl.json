@@ -354,23 +354,17 @@
     "pro": {
       "name": "Pro",
       "feature1": "Tot 3 organisaties",
-      "feature2": "Tot 8 teamleden per org",
-      "feature3": "Realtime samenwerking",
-      "feature4": "Priority support"
+      "feature2": "Tot 8 teamleden per org"
     },
     "team": {
       "name": "Team",
       "feature1": "Tot 8 organisaties",
-      "feature2": "Tot 20 teamleden per org",
-      "feature3": "Geavanceerde analytics",
-      "feature4": "Dedicated support"
+      "feature2": "Tot 20 teamleden per org"
     },
     "business": {
       "name": "Business",
       "feature1": "Onbeperkte organisaties",
-      "feature2": "Onbeperkte teamleden",
-      "feature3": "Enterprise features",
-      "feature4": "24/7 premium support"
+      "feature2": "Onbeperkte teamleden"
     }
   },
   "subscription": {

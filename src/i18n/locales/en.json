@@ -354,23 +354,17 @@
     "pro": {
       "name": "Pro",
       "feature1": "Up to 3 organizations",
-      "feature2": "Up to 8 team members per org",
-      "feature3": "Real-time collaboration",
-      "feature4": "Priority support"
+      "feature2": "Up to 8 team members per org"
     },
     "team": {
       "name": "Team",
       "feature1": "Up to 8 organizations",
-      "feature2": "Up to 20 team members per org",
-      "feature3": "Advanced analytics",
-      "feature4": "Dedicated support"
+      "feature2": "Up to 20 team members per org"
     },
     "business": {
       "name": "Business",
       "feature1": "Unlimited organizations",
-      "feature2": "Unlimited team members",
-      "feature3": "Enterprise features",
-      "feature4": "24/7 premium support"
+      "feature2": "Unlimited team members"
     }
   },
   "subscription": {

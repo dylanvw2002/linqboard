@@ -354,23 +354,17 @@
     "pro": {
       "name": "Pro",
       "feature1": "Hasta 3 organizaciones",
-      "feature2": "Hasta 8 miembros por org",
-      "feature3": "Colaboración en tiempo real",
-      "feature4": "Soporte prioritario"
+      "feature2": "Hasta 8 miembros por org"
     },
     "team": {
       "name": "Equipo",
       "feature1": "Hasta 8 organizaciones",
-      "feature2": "Hasta 20 miembros por org",
-      "feature3": "Análisis avanzados",
-      "feature4": "Soporte dedicado"
+      "feature2": "Hasta 20 miembros por org"
     },
     "business": {
       "name": "Empresa",
       "feature1": "Organizaciones ilimitadas",
-      "feature2": "Miembros ilimitados",
-      "feature3": "Características empresariales",
-      "feature4": "Soporte premium 24/7"
+      "feature2": "Miembros ilimitados"
     }
   },
   "subscription": {
