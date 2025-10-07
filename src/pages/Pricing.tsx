@@ -160,7 +160,7 @@ const Pricing = () => {
     }
     
     if (plan.popular) {
-      return `${baseClasses} border-2 border-primary shadow-xl scale-105 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20 animate-pulse`;
+      return `${baseClasses} border-2 border-primary shadow-xl scale-105 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20`;
     }
     
     if (plan.plan_id === 'team') {
