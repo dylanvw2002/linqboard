@@ -11,10 +11,10 @@ const SubscriptionFailed = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="h-screen bg-gradient-to-br from-muted/20 via-background to-accent/10 relative overflow-hidden flex items-center justify-center">
+    <div className="h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 relative overflow-hidden flex items-center justify-center">
       {/* Animated confetti elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: 30 }).map((_, i) => (
           <div
             key={i}
             className="absolute animate-float"
@@ -28,8 +28,8 @@ const SubscriptionFailed = () => {
             <div 
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: ['#8B5CF6', '#F59E0B', '#6B7280'][Math.floor(Math.random() * 3)],
-                opacity: 0.3
+                backgroundColor: ['#8B5CF6', '#A78BFA', '#C4B5FD', '#6B7280'][Math.floor(Math.random() * 4)],
+                opacity: 0.4
               }}
             />
           </div>
@@ -39,9 +39,9 @@ const SubscriptionFailed = () => {
       <div className="container mx-auto px-4 py-8 relative z-10 max-h-screen overflow-hidden">
         <div className="max-w-4xl mx-auto h-full flex items-center">
           {/* Failed Card */}
-          <Card className="animate-scale-in border-2 border-border shadow-lg bg-card/95 backdrop-blur overflow-hidden">
+          <Card className="animate-scale-in border-2 border-primary/30 shadow-lg bg-card/95 backdrop-blur overflow-hidden">
             {/* Hero Image Section */}
-            <div className="relative w-full h-96 md:h-[28rem] overflow-hidden bg-gradient-to-br from-muted/10 to-accent/5 -mt-2">
+            <div className="relative w-full h-80 md:h-96 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10 -mt-2">
               <img 
                 src={failedImage} 
                 alt="Payment failed" 
