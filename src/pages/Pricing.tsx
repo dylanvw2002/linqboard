@@ -139,15 +139,26 @@ const Pricing = () => {
       setLoading(null);
     }
   };
+  const getPlanLevel = (planId: string): number => {
+    const levels = { free: 0, pro: 1, team: 2, business: 3 };
+    return levels[planId as keyof typeof levels] || 0;
+  };
+
   const getButtonText = (plan: Plan) => {
     if (currentPlan === plan.plan_id) {
       return t('pricing.currentPlan');
     }
-    if (plan.plan_id === 'free') {
-      return user ? t('pricing.downgrade') : t('pricing.getStarted');
+    
+    const currentLevel = getPlanLevel(currentPlan);
+    const planLevel = getPlanLevel(plan.plan_id);
+    
+    if (planLevel > currentLevel) {
+      return t('pricing.upgrade');
+    } else {
+      return t('pricing.downgrade');
     }
-    return t('pricing.upgrade');
   };
+  
   const isButtonDisabled = (plan: Plan) => {
     return currentPlan === plan.plan_id || loading !== null;
   };
@@ -185,6 +196,15 @@ const Pricing = () => {
   };
 
   const getPlanBadge = (plan: Plan) => {
+    // Show current plan badge first (highest priority)
+    if (currentPlan === plan.plan_id) {
+      return (
+        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white hover:bg-green-600">
+          {t('pricing.currentPlan')}
+        </Badge>
+      );
+    }
+    
     if (plan.plan_id === 'pro' && plan.popular) {
       return (
         <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground hover:bg-primary/90">
