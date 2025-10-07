@@ -365,16 +365,14 @@
       "name": "Pro",
       "feature1": "Tot 3 organisaties",
       "feature2": "Tot 8 teamleden per org",
-      "feature3": "Real-time samenwerking",
-      "feature4": "Prioriteitsbeheer"
+      "feature3": "Real-time samenwerking"
     },
     "team": {
       "name": "Team",
       "feature1": "Tot 8 organisaties",
       "feature2": "Tot 20 teamleden per org",
       "feature3": "Real-time samenwerking",
-      "feature4": "Prioriteitsbeheer",
-      "feature5": "Achtergrond aanpassen"
+      "feature4": "Achtergrond aanpassen"
     },
     "business": {
       "name": "Business",

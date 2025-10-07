@@ -79,7 +79,7 @@ const Pricing = () => {
     },
     plan_id: 'pro',
     popular: true,
-    features: [t('pricing.pro.feature1'), t('pricing.pro.feature2'), t('pricing.pro.feature3'), t('pricing.pro.feature4')]
+    features: [t('pricing.pro.feature1'), t('pricing.pro.feature2'), t('pricing.pro.feature3')]
   }, {
     name: t('pricing.team.name'),
     price: {
@@ -87,7 +87,7 @@ const Pricing = () => {
       yearly: 199.00
     },
     plan_id: 'team',
-    features: [t('pricing.team.feature1'), t('pricing.team.feature2'), t('pricing.team.feature3'), t('pricing.team.feature4'), t('pricing.team.feature5')]
+    features: [t('pricing.team.feature1'), t('pricing.team.feature2'), t('pricing.team.feature3'), t('pricing.team.feature4')]
   }, {
     name: t('pricing.business.name'),
     price: {
