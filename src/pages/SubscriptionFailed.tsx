@@ -60,8 +60,8 @@ const SubscriptionFailed = () => {
 
             <CardContent className="space-y-3 pb-4">
               {/* Reason */}
-              <div className="bg-muted/50 border border-border rounded-lg p-4">
-                <p className="text-sm text-center text-muted-foreground">
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
+                <p className="text-sm text-center text-destructive">
                   {t('subscriptionFailed.reason')}
                 </p>
               </div>
