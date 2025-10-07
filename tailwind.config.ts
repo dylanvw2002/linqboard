@@ -128,11 +128,14 @@ export default {
           },
         },
         "pulse-red": {
-          "0%, 100%": {
-            boxShadow: "0 0 8px 1px hsl(0 84% 60% / 0.15)",
+          "0%": {
+            boxShadow: "0 0 30px 6px hsl(0 84% 60% / 0.2)",
           },
           "50%": {
-            boxShadow: "0 0 12px 2px hsl(0 84% 60% / 0.25)",
+            boxShadow: "0 0 50px 10px hsl(0 84% 60% / 0.5)",
+          },
+          "100%": {
+            boxShadow: "0 0 30px 6px hsl(0 84% 60% / 0.2)",
           },
         },
       },
@@ -144,7 +147,7 @@ export default {
         "shimmer": "shimmer 2s infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "wiggle": "wiggle 1s ease-in-out infinite",
-        "pulse-red": "pulse-red 30s ease-in-out infinite",
+        "pulse-red": "pulse-red 8s ease-in-out infinite",
       },
     },
   },
