@@ -437,5 +437,8 @@
     "step3": "Intenta de nuevo o contacta con soporte",
     "tryAgain": "Intentar de nuevo",
     "goToDashboard": "Ir al Panel"
+  },
+  "support": {
+    "contact": "Contactar Soporte"
   }
 }

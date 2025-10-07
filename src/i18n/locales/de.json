@@ -437,5 +437,8 @@
     "step3": "Versuchen Sie es erneut oder kontaktieren Sie den Support",
     "tryAgain": "Erneut versuchen",
     "goToDashboard": "Zum Dashboard"
+  },
+  "support": {
+    "contact": "Support Kontaktieren"
   }
 }

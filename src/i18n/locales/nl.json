@@ -438,5 +438,8 @@
     "step3": "Probeer het opnieuw of neem contact op met support",
     "tryAgain": "Probeer opnieuw",
     "goToDashboard": "Ga naar Dashboard"
+  },
+  "support": {
+    "contact": "Contact Support"
   }
 }
