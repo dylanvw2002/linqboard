@@ -426,5 +426,16 @@
       "feature3": "Anpassbare Hintergründe",
       "feature4": "Dedicated Support"
     }
+  },
+  "subscriptionFailed": {
+    "title": "Zahlung Fehlgeschlagen",
+    "subtitle": "Wir konnten Ihre Zahlung nicht verarbeiten",
+    "reason": "Die Zahlung war nicht erfolgreich. Dies kann verschiedene Gründe haben.",
+    "nextSteps": "Was können Sie tun?",
+    "step1": "Überprüfen Sie, ob Sie ausreichend Guthaben haben",
+    "step2": "Überprüfen Sie, ob Ihre Zahlungsdaten korrekt sind",
+    "step3": "Versuchen Sie es erneut oder kontaktieren Sie den Support",
+    "tryAgain": "Erneut versuchen",
+    "goToDashboard": "Zum Dashboard"
   }
 }

@@ -426,5 +426,16 @@
       "feature3": "Fondos personalizados",
       "feature4": "Soporte dedicado"
     }
+  },
+  "subscriptionFailed": {
+    "title": "Pago Fallido",
+    "subtitle": "No pudimos procesar tu pago",
+    "reason": "El pago no tuvo éxito. Esto puede tener varias razones.",
+    "nextSteps": "¿Qué puedes hacer?",
+    "step1": "Verifica que tienes saldo suficiente",
+    "step2": "Verifica que tus datos de pago son correctos",
+    "step3": "Intenta de nuevo o contacta con soporte",
+    "tryAgain": "Intentar de nuevo",
+    "goToDashboard": "Ir al Panel"
   }
 }

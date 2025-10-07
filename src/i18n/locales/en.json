@@ -426,5 +426,16 @@
       "feature3": "Custom backgrounds",
       "feature4": "Dedicated support"
     }
+  },
+  "subscriptionFailed": {
+    "title": "Payment Failed",
+    "subtitle": "We couldn't process your payment",
+    "reason": "The payment was unsuccessful. This can have various reasons.",
+    "nextSteps": "What can you do?",
+    "step1": "Check if you have sufficient balance",
+    "step2": "Verify your payment details are correct",
+    "step3": "Try again or contact support",
+    "tryAgain": "Try Again",
+    "goToDashboard": "Go to Dashboard"
   }
 }

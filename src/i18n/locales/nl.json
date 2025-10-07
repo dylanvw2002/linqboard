@@ -427,5 +427,16 @@
       "feature3": "Aangepaste achtergronden",
       "feature4": "Dedicated support"
     }
+  },
+  "subscriptionFailed": {
+    "title": "Betaling mislukt",
+    "subtitle": "We konden je betaling niet verwerken",
+    "reason": "De betaling is niet geslaagd. Dit kan verschillende redenen hebben.",
+    "nextSteps": "Wat kun je doen?",
+    "step1": "Controleer of je voldoende saldo hebt",
+    "step2": "Controleer of je betaalgegevens correct zijn",
+    "step3": "Probeer het opnieuw of neem contact op met support",
+    "tryAgain": "Probeer opnieuw",
+    "goToDashboard": "Ga naar Dashboard"
   }
 }
