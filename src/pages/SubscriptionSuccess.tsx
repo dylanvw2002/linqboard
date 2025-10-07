@@ -94,16 +94,16 @@ const SubscriptionSuccess = () => {
         ))}
       </div>
 
-      <div className="container mx-auto px-4 py-4 relative z-10 max-h-screen overflow-hidden">
-        <div className="max-w-3xl mx-auto h-full flex items-center">
+      <div className="container mx-auto px-4 py-8 relative z-10 max-h-screen overflow-hidden">
+        <div className="max-w-4xl mx-auto h-full flex items-center">
           {/* Success Card */}
           <Card className="animate-scale-in border-2 border-primary/30 shadow-lg bg-card/95 backdrop-blur overflow-hidden">
             {/* Hero Image Section */}
-            <div className="relative w-full h-32 md:h-40 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
+            <div className="relative w-full h-64 md:h-80 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10 -mt-2">
               <img 
                 src={successImage} 
                 alt="Success celebration" 
-                className="w-full h-full object-contain object-center"
+                className="w-full h-full object-cover object-center scale-110"
               />
             </div>
 
