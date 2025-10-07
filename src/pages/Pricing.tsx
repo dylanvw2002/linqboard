@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import logo from "@/assets/logo-transparent.png";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 interface Plan {
   name: string;
   price: {
@@ -232,6 +234,14 @@ const Pricing = () => {
     return null;
   };
   return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16">
+      {/* Header */}
+      <header className="container mx-auto px-6 py-1">
+        <div className="flex items-center justify-between">
+          <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
+          <LanguageSwitcher />
+        </div>
+      </header>
+
       <div className="container mx-auto px-6 py-12">
         <Button variant="ghost" onClick={() => navigate('/dashboard')} className="mb-8">
           <ArrowLeft className="mr-2 h-4 w-4" />
