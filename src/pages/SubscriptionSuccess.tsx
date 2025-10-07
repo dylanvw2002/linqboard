@@ -97,7 +97,7 @@ const SubscriptionSuccess = () => {
       <div className="container mx-auto px-4 py-4 relative z-10 max-h-screen overflow-hidden">
         <div className="max-w-3xl mx-auto h-full flex items-center">
           {/* Success Card */}
-          <Card className="animate-scale-in border-2 border-primary/30 shadow-2xl bg-card/95 backdrop-blur overflow-hidden">
+          <Card className="animate-scale-in border-2 border-primary/30 shadow-lg bg-card/95 backdrop-blur overflow-hidden">
             {/* Hero Image Section */}
             <div className="relative w-full h-32 md:h-40 overflow-hidden bg-gradient-to-br from-primary/10 to-accent/10">
               <img 
