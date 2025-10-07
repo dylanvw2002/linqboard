@@ -234,18 +234,18 @@ const Pricing = () => {
     return null;
   };
   return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16 relative">
-      {/* Header with language switcher */}
+      {/* Header with back button and language switcher */}
       <header className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t('common.back')}
+          </Button>
           <LanguageSwitcher />
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-12">
-        <Button variant="ghost" onClick={() => navigate('/dashboard')} className="mb-8">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {t('common.back')}
-        </Button>
+      <div className="container mx-auto px-6 py-8">
 
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
