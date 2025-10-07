@@ -283,7 +283,7 @@ const Pricing = () => {
                     {getYearlySavings(plan) && (
                       <div className="mt-2">
                         <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
-                          {t('pricing.saveAmount', { amount: getYearlySavings(plan) })}
+                          {t('pricing.saveAmount').replace('{amount}', getYearlySavings(plan) || '')}
                         </Badge>
                       </div>
                     )}
