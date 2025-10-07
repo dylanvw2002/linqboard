@@ -168,7 +168,7 @@ const Pricing = () => {
     }
     
     if (plan.plan_id === 'business') {
-      return `${baseClasses} border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 via-orange-500/10 to-amber-500/5 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/20`;
+      return `${baseClasses} border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/5 via-yellow-600/10 to-yellow-500/5 hover:scale-[1.02] hover:shadow-2xl hover:shadow-yellow-500/20`;
     }
     
     return `${baseClasses} border-border/50`;
@@ -193,7 +193,7 @@ const Pricing = () => {
     
     if (plan.plan_id === 'business') {
       return (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white hover:bg-amber-600">
+        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-500 text-white hover:bg-yellow-600">
           {t('pricing.badges.enterprise')}
         </Badge>
       );
