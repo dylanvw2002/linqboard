@@ -348,7 +348,7 @@
     "free": {
       "name": "Free",
       "feature1": "1 organisatie",
-      "feature2": "Tot 2 teamleden",
+      "feature2": "Tot 2 teamleden per org",
       "feature3": "Basis taakbeheer"
     },
     "pro": {

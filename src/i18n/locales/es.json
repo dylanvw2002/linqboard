@@ -348,7 +348,7 @@
     "free": {
       "name": "Gratis",
       "feature1": "1 organización",
-      "feature2": "Hasta 2 miembros del equipo",
+      "feature2": "Hasta 2 miembros por org",
       "feature3": "Gestión básica de tareas"
     },
     "pro": {
