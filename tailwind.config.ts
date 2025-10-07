@@ -129,12 +129,10 @@ export default {
         },
         "pulse-red": {
           "0%, 100%": {
-            borderColor: "hsl(0 84% 60%)",
-            boxShadow: "0 0 0 0 hsl(0 84% 60% / 0.4)",
+            boxShadow: "0 0 15px 2px hsl(0 84% 60% / 0.3)",
           },
           "50%": {
-            borderColor: "hsl(0 84% 45%)",
-            boxShadow: "0 0 20px 5px hsl(0 84% 60% / 0.6)",
+            boxShadow: "0 0 25px 4px hsl(0 84% 60% / 0.5)",
           },
         },
       },
