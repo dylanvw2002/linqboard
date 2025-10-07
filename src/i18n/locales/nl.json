@@ -401,5 +401,30 @@
     "cancelled": "Abonnement geannuleerd",
     "cancelError": "Fout bij annuleren",
     "activationSuccess": "Abonnement succesvol geactiveerd!"
+  },
+  "subscriptionSuccess": {
+    "title": "🎉 Welkom bij je nieuwe plan!",
+    "subtitle": "Je abonnement is succesvol geactiveerd",
+    "featuresTitle": "Wat je nu kunt doen:",
+    "goToDashboard": "Ga naar Dashboard",
+    "viewPlans": "Bekijk alle abonnementen",
+    "thankYou": "Bedankt voor je vertrouwen in LinqBoard!",
+    "pro": {
+      "feature1": "Tot 3 organisaties beheren",
+      "feature2": "Tot 8 teamleden per organisatie",
+      "feature3": "Onbeperkte real-time samenwerking"
+    },
+    "team": {
+      "feature1": "Tot 8 organisaties beheren",
+      "feature2": "Tot 20 teamleden per organisatie",
+      "feature3": "Aangepaste achtergronden",
+      "feature4": "Priority support"
+    },
+    "business": {
+      "feature1": "Onbeperkte organisaties",
+      "feature2": "Onbeperkte teamleden",
+      "feature3": "Aangepaste achtergronden",
+      "feature4": "Dedicated support"
+    }
   }
 }

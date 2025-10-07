@@ -91,7 +91,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         amount: { currency: 'EUR', value: price.toFixed(2) },
         description: `LinqBoard ${plan} plan - Eerste betaling`,
-        redirectUrl: `${req.headers.get('origin')}/dashboard?subscription=success`,
+        redirectUrl: `${req.headers.get('origin')}/subscription-success`,
         webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`,
         sequenceType: 'first',
         metadata: {

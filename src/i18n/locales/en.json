@@ -400,5 +400,30 @@
     "cancelDescription": "You'll retain access to your current plan until the end of the period.",
     "cancelled": "Subscription cancelled",
     "cancelError": "Error cancelling"
+  },
+  "subscriptionSuccess": {
+    "title": "🎉 Welcome to your new plan!",
+    "subtitle": "Your subscription has been successfully activated",
+    "featuresTitle": "What you can do now:",
+    "goToDashboard": "Go to Dashboard",
+    "viewPlans": "View all plans",
+    "thankYou": "Thank you for trusting LinqBoard!",
+    "pro": {
+      "feature1": "Manage up to 3 organizations",
+      "feature2": "Up to 8 team members per organization",
+      "feature3": "Unlimited real-time collaboration"
+    },
+    "team": {
+      "feature1": "Manage up to 8 organizations",
+      "feature2": "Up to 20 team members per organization",
+      "feature3": "Custom backgrounds",
+      "feature4": "Priority support"
+    },
+    "business": {
+      "feature1": "Unlimited organizations",
+      "feature2": "Unlimited team members",
+      "feature3": "Custom backgrounds",
+      "feature4": "Dedicated support"
+    }
   }
 }
