@@ -128,9 +128,9 @@ const Board = () => {
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
-  const [scaleFactor, setScaleFactor] = useState(0.75);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
+  const SCALE_FACTOR = 0.75; // UI scale factor
 
   // Get date-fns locale based on current language
   const getDateLocale = (): Locale => {
@@ -141,24 +141,6 @@ const Board = () => {
       case 'de': return de;
       default: return nl;
     }
-  };
-
-  // Calculate dynamic scale factor for responsive board
-  const calculateScaleFactor = () => {
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    const canvasWidth = 3000;
-    const canvasHeight = 2000;
-    
-    // Calculate scale factor for both dimensions with 5% padding
-    const scaleX = (viewportWidth * 0.95) / canvasWidth;
-    const scaleY = (viewportHeight * 0.95) / canvasHeight;
-    
-    // Use the smallest scale factor to ensure everything fits
-    const scale = Math.min(scaleX, scaleY, 1); // Max 1 (100%)
-    
-    setScaleFactor(scale);
   };
 
   const handleAddColumn = async () => {
@@ -191,7 +173,7 @@ const Board = () => {
         const mainElement = document.querySelector('main');
         if (mainElement && data) {
           mainElement.scrollTo({
-            left: (newX - 100) * scaleFactor,
+            left: (newX - 100) * SCALE_FACTOR,
             behavior: 'smooth'
           });
         }
@@ -380,18 +362,6 @@ const Board = () => {
       setSelectedColumn(null);
     }
   }, [editMode]);
-
-  // Handle window resize for responsive scaling
-  useEffect(() => {
-    calculateScaleFactor();
-    
-    const handleResize = () => {
-      calculateScaleFactor();
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
   const checkAccess = async () => {
     const {
       data: {
@@ -893,15 +863,15 @@ const Board = () => {
     e.stopPropagation();
     setResizing(true);
     setResizeHandle(handle);
-    const startX = e.clientX / scaleFactor;
-    const startY = e.clientY / scaleFactor;
+    const startX = e.clientX / SCALE_FACTOR;
+    const startY = e.clientY / SCALE_FACTOR;
     let currentColumn = {
       ...column
     };
     setSelectedColumn(currentColumn);
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const deltaX = moveEvent.clientX / scaleFactor - startX;
-      const deltaY = moveEvent.clientY / scaleFactor - startY;
+      const deltaX = moveEvent.clientX / SCALE_FACTOR - startX;
+      const deltaY = moveEvent.clientY / SCALE_FACTOR - startY;
       const updated = {
         ...column
       };
@@ -1048,14 +1018,7 @@ const Board = () => {
       </div>;
   }
   return <div className="h-screen overflow-hidden relative bg-background">
-      <div 
-        className="origin-top-left overflow-hidden bg-blue-50"
-        style={{
-          transform: `scale(${scaleFactor})`,
-          width: `${100 / scaleFactor}vw`,
-          height: `${100 / scaleFactor}vh`,
-        }}
-      >
+      <div className="origin-top-left scale-[0.75] w-[133.33vw] h-[133.33vh] overflow-hidden bg-blue-50">
         <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
       
       <style>{`
@@ -1204,8 +1167,8 @@ const Board = () => {
           if (!draggedColumn) return;
           const canvas = e.currentTarget.getBoundingClientRect();
           // Account for UI scale factor
-          const rawX = Math.max(0, (e.clientX - canvas.left) / scaleFactor - dragOffset.x);
-          const rawY = Math.max(0, (e.clientY - canvas.top) / scaleFactor - dragOffset.y);
+          const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - dragOffset.x);
+          const rawY = Math.max(0, (e.clientY - canvas.top) / SCALE_FACTOR - dragOffset.y);
           const {
             snappedX,
             snappedY,
