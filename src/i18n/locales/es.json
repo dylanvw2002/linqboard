@@ -342,6 +342,11 @@
     "yearlyBonus": "¡Toma una suscripción anual y obtén 2 meses gratis!",
     "popular": "Popular",
     "currentPlan": "Plan actual",
+    "badges": {
+      "bestValue": "Mejor Valor",
+      "forTeams": "Para Equipos",
+      "enterprise": "Enterprise"
+    },
     "getStarted": "Comenzar",
     "upgrade": "Mejorar",
     "downgrade": "Bajar de plan",

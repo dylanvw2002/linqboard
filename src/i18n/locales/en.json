@@ -342,6 +342,11 @@
     "yearlyBonus": "Take a yearly subscription and get 2 months free!",
     "popular": "Popular",
     "currentPlan": "Current plan",
+    "badges": {
+      "bestValue": "Best Value",
+      "forTeams": "For Teams",
+      "enterprise": "Enterprise"
+    },
     "getStarted": "Get started",
     "upgrade": "Upgrade",
     "downgrade": "Downgrade",

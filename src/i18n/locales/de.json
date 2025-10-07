@@ -342,6 +342,11 @@
     "yearlyBonus": "Nehmen Sie ein Jahresabonnement und erhalten Sie 2 Monate gratis!",
     "popular": "Beliebt",
     "currentPlan": "Aktueller Plan",
+    "badges": {
+      "bestValue": "Bester Wert",
+      "forTeams": "Für Teams",
+      "enterprise": "Enterprise"
+    },
     "getStarted": "Loslegen",
     "upgrade": "Upgrade",
     "downgrade": "Downgrade",

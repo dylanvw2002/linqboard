@@ -342,6 +342,11 @@
     "yearlyBonus": "Neem een jaar abonnement en ontvang 2 maanden gratis!",
     "popular": "Populair",
     "currentPlan": "Huidig plan",
+    "badges": {
+      "bestValue": "Beste Waarde",
+      "forTeams": "Voor Teams",
+      "enterprise": "Enterprise"
+    },
     "getStarted": "Aan de slag",
     "upgrade": "Upgrade",
     "downgrade": "Downgrade",
