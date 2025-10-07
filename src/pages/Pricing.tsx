@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Check, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
@@ -151,56 +150,6 @@ const Pricing = () => {
   const isButtonDisabled = (plan: Plan) => {
     return currentPlan === plan.plan_id || loading !== null;
   };
-
-  const getCardClassName = (plan: Plan) => {
-    const baseClasses = "relative transition-all duration-300";
-    
-    if (plan.plan_id === 'free') {
-      return `${baseClasses} border-border/50`;
-    }
-    
-    if (plan.popular) {
-      return `${baseClasses} border-2 border-primary shadow-xl scale-105 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20`;
-    }
-    
-    if (plan.plan_id === 'team') {
-      return `${baseClasses} border-2 border-blue-500/30 bg-gradient-to-br from-blue-500/5 via-purple-500/10 to-blue-500/5 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20`;
-    }
-    
-    if (plan.plan_id === 'business') {
-      return `${baseClasses} border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 via-orange-500/10 to-amber-500/5 hover:scale-[1.02] hover:shadow-2xl hover:shadow-amber-500/20`;
-    }
-    
-    return `${baseClasses} border-border/50`;
-  };
-
-  const getPlanBadge = (plan: Plan) => {
-    if (plan.plan_id === 'pro' && plan.popular) {
-      return (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground hover:bg-primary/90">
-          {t('pricing.badges.bestValue')}
-        </Badge>
-      );
-    }
-    
-    if (plan.plan_id === 'team') {
-      return (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white hover:bg-blue-600">
-          {t('pricing.badges.forTeams')}
-        </Badge>
-      );
-    }
-    
-    if (plan.plan_id === 'business') {
-      return (
-        <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-white hover:bg-amber-600">
-          {t('pricing.badges.enterprise')}
-        </Badge>
-      );
-    }
-    
-    return null;
-  };
   return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16">
       <div className="container mx-auto px-6 py-12">
         <Button variant="ghost" onClick={() => navigate('/dashboard')} className="mb-8">
@@ -227,7 +176,9 @@ const Pricing = () => {
               </Label>
             </div>
             <span className={`text-sm text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
-              {t('pricing.yearlyBonus')}
+              {t('pricing.save', {
+              percentage: '17'
+            })}
             </span>
           </div>
         </div>
@@ -251,17 +202,12 @@ const Pricing = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full mx-px" />
                 </CardFooter>
-              </Card>) : plans.map((plan, index) => <Card 
-              key={plan.plan_id} 
-              className={`${getCardClassName(plan)} animate-fade-in`}
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold z-10">
+              </Card>) : plans.map(plan => <Card key={plan.plan_id} className={`relative ${plan.popular ? 'border-2 border-primary shadow-xl scale-105' : 'border-border/50'}`}>
+              {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold">
                   {t('pricing.popular')}
                 </div>}
-              {getPlanBadge(plan)}
               
               <CardHeader>
                 <CardTitle className="text-2xl">{plan.name}</CardTitle>
