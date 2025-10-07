@@ -78,28 +78,37 @@ Deno.serve(async (req) => {
     const customer = await customerResponse.json()
     console.log('Mollie customer created:', customer.id)
 
-    // Create subscription with Mollie
+    // Create first payment (which will create the subscription after payment)
     const price = PRICING[plan][billing_interval as 'monthly' | 'yearly']
     const interval = billing_interval === 'monthly' ? '1 month' : '1 year'
     
-    const subscriptionResponse = await fetch('https://api.mollie.com/v2/subscriptions', {
+    const paymentResponse = await fetch(`https://api.mollie.com/v2/customers/${customer.id}/payments`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${MOLLIE_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        customerId: customer.id,
         amount: { currency: 'EUR', value: price.toFixed(2) },
-        interval: interval,
-        description: `LinqBoard ${plan} plan`,
+        description: `LinqBoard ${plan} plan - Eerste betaling`,
+        redirectUrl: `${req.headers.get('origin')}/dashboard?subscription=success`,
         webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`,
-        redirectUrl: `${req.headers.get('origin')}/dashboard?subscription=success`
+        sequenceType: 'first',
+        metadata: {
+          plan: plan,
+          billing_interval: billing_interval,
+          user_id: user.id
+        }
       })
     })
     
-    const subscription = await subscriptionResponse.json()
-    console.log('Mollie subscription created:', subscription.id)
+    const payment = await paymentResponse.json()
+    console.log('Mollie payment created:', payment.id)
+    
+    if (!payment.id || !payment._links?.checkout?.href) {
+      console.error('Invalid Mollie payment response:', payment)
+      throw new Error('Failed to create Mollie payment')
+    }
 
     // Check if user already has a subscription
     const { data: existingSubscription } = await supabase
@@ -115,11 +124,11 @@ Deno.serve(async (req) => {
       billing_interval,
       status: 'pending',
       mollie_customer_id: customer.id,
-      mollie_subscription_id: subscription.id,
+      mollie_subscription_id: payment.id, // Temporarily store payment ID, will be updated after first payment
       max_organizations: PRICING[plan].orgs,
       max_members_per_org: PRICING[plan].members,
-      current_period_start: new Date().toISOString(),
-      current_period_end: new Date(Date.now() + (billing_interval === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000).toISOString()
+      current_period_start: null,
+      current_period_end: null
     }
 
     let updateError
@@ -147,7 +156,7 @@ Deno.serve(async (req) => {
 
     return new Response(
       JSON.stringify({ 
-        checkoutUrl: subscription._links?.checkout?.href || subscription._links?.self?.href,
+        checkoutUrl: payment._links.checkout.href,
         success: true
       }),
       {

@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
     })
     const payment = await response.json()
     
-    console.log('Payment status:', payment.status)
+    console.log('Payment status:', payment.status, 'Metadata:', payment.metadata)
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -22,17 +22,58 @@ Deno.serve(async (req) => {
 
     // Update subscription status based on payment status
     if (payment.status === 'paid') {
+      // This was the first payment, now create the actual subscription
+      const { plan, billing_interval, user_id } = payment.metadata
+      
+      if (!plan || !billing_interval || !user_id) {
+        console.error('Missing metadata in payment:', payment.metadata)
+        return new Response(null, { status: 400 })
+      }
+      
+      // Get customer ID from database
+      const { data: subscription } = await supabase
+        .from('user_subscriptions')
+        .select('mollie_customer_id')
+        .eq('user_id', user_id)
+        .single()
+      
+      if (!subscription?.mollie_customer_id) {
+        console.error('No customer found for user:', user_id)
+        return new Response(null, { status: 400 })
+      }
+      
+      // Determine pricing
+      const PRICING: Record<string, any> = {
+        pro: { monthly: 7.99, yearly: 79.90, orgs: 3, members: 8 },
+        team: { monthly: 19.99, yearly: 199.00, orgs: 8, members: 20 },
+        business: { monthly: 39.00, yearly: 390.00, orgs: -1, members: -1 }
+      }
+      
+      const price = PRICING[plan][billing_interval]
+      const interval = billing_interval === 'monthly' ? '1 month' : '1 year'
+      
+      // Create recurring subscription at Mollie
+      const subResponse = await fetch(`https://api.mollie.com/v2/customers/${subscription.mollie_customer_id}/subscriptions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${MOLLIE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: { currency: 'EUR', value: price.toFixed(2) },
+          interval: interval,
+          description: `LinqBoard ${plan} plan`,
+          webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`
+        })
+      })
+      
+      const mollieSubscription = await subResponse.json()
+      console.log('Mollie subscription created:', mollieSubscription.id)
+      
       const periodStart = new Date()
       const periodEnd = new Date()
       
-      // Check if it's monthly or yearly subscription
-      const { data: subscription } = await supabase
-        .from('user_subscriptions')
-        .select('billing_interval')
-        .eq('mollie_subscription_id', payment.subscriptionId)
-        .single()
-      
-      if (subscription?.billing_interval === 'monthly') {
+      if (billing_interval === 'monthly') {
         periodEnd.setMonth(periodEnd.getMonth() + 1)
       } else {
         periodEnd.setFullYear(periodEnd.getFullYear() + 1)
@@ -42,19 +83,22 @@ Deno.serve(async (req) => {
         .from('user_subscriptions')
         .update({ 
           status: 'active',
+          mollie_subscription_id: mollieSubscription.id,
           current_period_start: periodStart.toISOString(),
           current_period_end: periodEnd.toISOString()
         })
-        .eq('mollie_subscription_id', payment.subscriptionId)
+        .eq('user_id', user_id)
       
       console.log('Subscription activated')
     } else if (payment.status === 'failed') {
+      const { user_id } = payment.metadata
+      
       await supabase
         .from('user_subscriptions')
         .update({ status: 'past_due' })
-        .eq('mollie_subscription_id', payment.subscriptionId)
+        .eq('user_id', user_id)
       
-      console.log('Subscription marked as past_due')
+      console.log('Payment failed, subscription marked as past_due')
     }
 
     return new Response(null, { status: 200 })
