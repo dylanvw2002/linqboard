@@ -45,7 +45,7 @@ const SubscriptionFailed = () => {
               <img 
                 src={failedImage} 
                 alt="Payment failed" 
-                className="w-full h-full object-contain object-center"
+                className="w-full h-full object-cover object-center scale-110"
               />
             </div>
 
