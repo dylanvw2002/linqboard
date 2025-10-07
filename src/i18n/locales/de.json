@@ -339,6 +339,7 @@
     "year": "Jahr",
     "month": "Monat",
     "save": "{percentage}% sparen",
+    "saveAmount": "€{amount} sparen",
     "yearlyBonus": "Nehmen Sie ein Jahresabonnement und erhalten Sie 2 Monate gratis!",
     "popular": "Beliebt",
     "currentPlan": "Aktueller Plan",

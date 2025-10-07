@@ -153,14 +153,14 @@ const Pricing = () => {
   };
 
   const getCardClassName = (plan: Plan) => {
-    const baseClasses = "relative transition-all duration-300";
+    const baseClasses = "relative transition-all duration-300 hover:[transform:perspective(1000px)_rotateX(2deg)]";
     
     if (plan.plan_id === 'free') {
       return `${baseClasses} border-border/50`;
     }
     
     if (plan.popular) {
-      return `${baseClasses} border-2 border-primary shadow-xl scale-105 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20`;
+      return `${baseClasses} border-2 border-primary shadow-xl scale-105 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20 animate-pulse`;
     }
     
     if (plan.plan_id === 'team') {
@@ -172,6 +172,16 @@ const Pricing = () => {
     }
     
     return `${baseClasses} border-border/50`;
+  };
+
+  const getYearlySavings = (plan: Plan) => {
+    if (plan.plan_id === 'free' || !isYearly) return null;
+    
+    const monthlyCost = plan.price.monthly * 12;
+    const yearlyCost = plan.price.yearly;
+    const savings = (monthlyCost - yearlyCost).toFixed(2);
+    
+    return savings;
   };
 
   const getPlanBadge = (plan: Plan) => {
@@ -270,6 +280,13 @@ const Pricing = () => {
                     <span className="text-muted-foreground ml-2">
                       /{isYearly ? t('pricing.year') : t('pricing.month')}
                     </span>
+                    {getYearlySavings(plan) && (
+                      <div className="mt-2">
+                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                          {t('pricing.saveAmount', { amount: getYearlySavings(plan) })}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
                 </CardDescription>
               </CardHeader>

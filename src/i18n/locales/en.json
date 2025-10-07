@@ -339,6 +339,7 @@
     "year": "year",
     "month": "month",
     "save": "Save {percentage}%",
+    "saveAmount": "Save €{amount}",
     "yearlyBonus": "Take a yearly subscription and get 2 months free!",
     "popular": "Popular",
     "currentPlan": "Current plan",
