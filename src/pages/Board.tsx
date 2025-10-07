@@ -127,6 +127,7 @@ const Board = () => {
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
+  const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = 0.75; // UI scale factor
@@ -183,6 +184,11 @@ const Board = () => {
   };
 
   const handleBackgroundChange = async (gradient: string) => {
+    if (!canCustomizeBackground) {
+      toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
+      return;
+    }
+    
     try {
       setSelectedBackground(gradient);
       setBackgroundImageUrl(null); // Clear image when selecting gradient
@@ -203,6 +209,11 @@ const Board = () => {
   };
 
   const handleBackgroundImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canCustomizeBackground) {
+      toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
+      return;
+    }
+    
     try {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -302,6 +313,7 @@ const Board = () => {
     fetchBoardData();
     fetchOrgMembers();
     fetchUserPlan();
+    checkBackgroundPermission();
   }, [organizationId]);
   
   const fetchUserPlan = async () => {
@@ -313,6 +325,22 @@ const Board = () => {
       }
     } catch (error) {
       console.error('Error fetching user plan:', error);
+    }
+  };
+  
+  const checkBackgroundPermission = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const { data, error } = await supabase.functions.invoke('check-background-permission');
+      if (error) throw error;
+      
+      if (data) {
+        setCanCustomizeBackground(data.canCustomize);
+      }
+    } catch (error) {
+      console.error('Error checking background permission:', error);
     }
   };
   
@@ -1058,7 +1086,7 @@ const Board = () => {
           <div className="flex items-center gap-2">
             {(userPlan === 'team' || userPlan === 'business') && (
               <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
-                <Select value={selectedBackground} onValueChange={handleBackgroundChange} disabled={!!backgroundImageUrl}>
+                <Select value={selectedBackground} onValueChange={handleBackgroundChange} disabled={!!backgroundImageUrl || !canCustomizeBackground}>
                   <SelectTrigger className="w-[180px]">
                     <span>🎨 Kleur</span>
                   </SelectTrigger>
@@ -1079,6 +1107,7 @@ const Board = () => {
                     size="sm" 
                     variant="destructive"
                     onClick={handleRemoveBackgroundImage}
+                    disabled={!canCustomizeBackground}
                     className="flex items-center gap-1"
                   >
                     <X className="h-4 w-4" />
@@ -1088,7 +1117,7 @@ const Board = () => {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    disabled={uploadingBackground}
+                    disabled={uploadingBackground || !canCustomizeBackground}
                     className="relative flex items-center gap-1"
                   >
                     <input
@@ -1096,7 +1125,7 @@ const Board = () => {
                       accept="image/*"
                       onChange={handleBackgroundImageUpload}
                       className="absolute inset-0 opacity-0 cursor-pointer"
-                      disabled={uploadingBackground}
+                      disabled={uploadingBackground || !canCustomizeBackground}
                     />
                     <Image className="h-4 w-4" />
                     {uploadingBackground ? 'Uploaden...' : 'Upload afbeelding'}

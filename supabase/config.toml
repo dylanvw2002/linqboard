@@ -17,3 +17,6 @@ verify_jwt = true
 
 [functions.get-subscription-status]
 verify_jwt = true
+
+[functions.check-background-permission]
+verify_jwt = true

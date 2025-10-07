@@ -364,13 +364,13 @@
     "pro": {
       "name": "Pro",
       "feature1": "Tot 3 organisaties",
-      "feature2": "Tot 8 teamleden per org",
+      "feature2": "Tot 8 teamleden per organisatie",
       "feature3": "Real-time samenwerking"
     },
     "team": {
       "name": "Team",
       "feature1": "Tot 8 organisaties",
-      "feature2": "Tot 20 teamleden per org",
+      "feature2": "Tot 20 teamleden per organisatie",
       "feature3": "Real-time samenwerking",
       "feature4": "Achtergrond aanpassen"
     },

@@ -364,13 +364,13 @@
     "pro": {
       "name": "Pro",
       "feature1": "Bis zu 3 Organisationen",
-      "feature2": "Bis zu 8 Teammitglieder pro Org",
+      "feature2": "Bis zu 8 Teammitglieder pro Organisation",
       "feature3": "Echtzeit-Zusammenarbeit"
     },
     "team": {
       "name": "Team",
       "feature1": "Bis zu 8 Organisationen",
-      "feature2": "Bis zu 20 Teammitglieder pro Org",
+      "feature2": "Bis zu 20 Teammitglieder pro Organisation",
       "feature3": "Echtzeit-Zusammenarbeit",
       "feature4": "Anpassbare Hintergründe"
     },

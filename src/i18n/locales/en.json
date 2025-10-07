@@ -364,13 +364,13 @@
     "pro": {
       "name": "Pro",
       "feature1": "Up to 3 organizations",
-      "feature2": "Up to 8 team members per org",
+      "feature2": "Up to 8 team members per organization",
       "feature3": "Real-time collaboration"
     },
     "team": {
       "name": "Team",
       "feature1": "Up to 8 organizations",
-      "feature2": "Up to 20 team members per org",
+      "feature2": "Up to 20 team members per organization",
       "feature3": "Real-time collaboration",
       "feature4": "Custom backgrounds"
     },
