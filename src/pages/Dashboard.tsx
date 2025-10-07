@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import SupportButton from "@/components/SupportButton";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
 
@@ -623,6 +624,8 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <SupportButton />
     </div>;
 };
 export default Dashboard;
