@@ -233,11 +233,10 @@ const Pricing = () => {
     
     return null;
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16">
-      {/* Header */}
-      <header className="container mx-auto px-6 py-1">
-        <div className="flex items-center justify-between">
-          <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
+  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-16 relative">
+      {/* Header with language switcher */}
+      <header className="container mx-auto px-6 py-4">
+        <div className="flex items-center justify-end">
           <LanguageSwitcher />
         </div>
       </header>
@@ -346,6 +345,11 @@ const Pricing = () => {
             {t('pricing.footer')}
           </p>
         </div>
+      </div>
+
+      {/* Logo at bottom left */}
+      <div className="fixed bottom-6 left-6">
+        <img src={logo} alt="LinqBoard Logo" className="h-32 w-auto opacity-50 hover:opacity-100 transition-opacity" />
       </div>
     </div>;
 };
