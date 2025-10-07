@@ -350,14 +350,15 @@
       "name": "Free",
       "feature1": "1 organisatie",
       "feature2": "Tot 2 teamleden per org",
-      "feature3": "Basis taakbeheer"
+      "feature3": "Real-time samenwerking",
+      "feature4": "Basis taakbeheer"
     },
     "pro": {
       "name": "Pro",
       "feature1": "Tot 3 organisaties",
       "feature2": "Tot 8 teamleden per org",
-      "feature3": "Prioriteitsbeheer",
-      "feature4": "Aangepaste kolommen"
+      "feature3": "Real-time samenwerking",
+      "feature4": "Prioriteitsbeheer"
     },
     "team": {
       "name": "Team",
