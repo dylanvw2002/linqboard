@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import logo from "@/assets/logo-transparent.png";
+import authIllustration from "@/assets/auth-illustration.png";
 
 const Auth = () => {
   const { t } = useTranslation();
@@ -123,7 +123,7 @@ const Auth = () => {
       </div>
       <Card className="w-full max-w-md shadow-xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
         <div className="flex justify-center pt-8 pb-4">
-          <img src={logo} alt="LinqBoard Logo" className="h-56" />
+          <img src={authIllustration} alt="LinqBoard Authentication" className="h-56 w-auto" />
         </div>
         <CardHeader className="space-y-2 pt-2">
           <CardTitle className="text-3xl font-bold text-center">
