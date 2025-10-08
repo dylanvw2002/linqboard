@@ -12,7 +12,7 @@ const Index = () => {
   return (
     <div className="bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Header */}
-      <header className="container mx-auto px-6 py-1 mt-12">
+      <header className="container mx-auto px-6 py-1 mt-4">
         <div className="flex items-center justify-between -my-[50px]">
           <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
           <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ const Index = () => {
       </div>
 
       {/* Features Section */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-4">
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
             <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
@@ -106,7 +106,7 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8">
+      <footer className="border-t border-border py-4">
         <div className="container mx-auto px-6 text-center text-muted-foreground">
           <p>{t('landing.footerText')}</p>
         </div>
