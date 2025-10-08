@@ -61,7 +61,7 @@ const InvoicePreview = () => {
               background-clip: text;
             }
             .invoice-logo {
-              height: 50px;
+              height: 80px;
               width: auto;
             }
             .company-info {
@@ -174,7 +174,6 @@ const InvoicePreview = () => {
               <div>
                 <h1>
                   <img src={logoImage} alt="LinqBoard" className="invoice-logo" />
-                  LinqBoard
                 </h1>
               </div>
               <div className="company-info">
