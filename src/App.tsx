@@ -14,7 +14,6 @@ import Pricing from "./pages/Pricing";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import SubscriptionFailed from "./pages/SubscriptionFailed";
 import NotFound from "./pages/NotFound";
-import AdminAvatarUpload from "./pages/AdminAvatarUpload";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +43,6 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/subscription-success" element={<SubscriptionSuccess />} />
           <Route path="/subscription-failed" element={<SubscriptionFailed />} />
-          <Route path="/admin/avatar-upload" element={<AdminAvatarUpload />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
