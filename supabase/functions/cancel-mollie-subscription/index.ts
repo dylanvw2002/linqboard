@@ -53,11 +53,19 @@ Deno.serve(async (req) => {
     )
 
     if (!cancelResponse.ok) {
-      console.error('Mollie cancellation failed:', await cancelResponse.text())
-      throw new Error('Failed to cancel subscription with Mollie')
+      const errorText = await cancelResponse.text()
+      const errorData = JSON.parse(errorText)
+      
+      // If subscription is already cancelled, that's fine - just proceed to update database
+      if (cancelResponse.status === 422 && errorData.detail?.includes('cancelled')) {
+        console.log('Subscription already cancelled in Mollie, updating database')
+      } else {
+        console.error('Mollie cancellation failed:', errorText)
+        throw new Error('Failed to cancel subscription with Mollie')
+      }
+    } else {
+      console.log('Mollie subscription cancelled')
     }
-
-    console.log('Mollie subscription cancelled')
 
     // Update database - mark as cancelled but keep active until period ends
     const { error: updateError } = await supabase
