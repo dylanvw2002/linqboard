@@ -1445,42 +1445,42 @@ const Board = () => {
                     if (isSimpleColumn) {
                       return <SimpleTaskCard key={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} />;
                     }
-                    return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[20px] p-2.5 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[20px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[19px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95", isOverdue && "animate-overdue-glow")}>
-                    <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
+                    return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[22px] p-3 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[22px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[21px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95", isOverdue && "animate-overdue-glow")}>
+                    <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                     <div className="flex gap-2 items-start">
                       <div className="flex-1 min-w-0 pl-4">
                         <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
                           <AttachmentCount taskId={task.id} />
-                          {task.due_date && <span className={`inline-block px-1.5 py-0.5 rounded-full text-[10px] font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                          {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                               📅 {format(new Date(task.due_date), "d MMM", {
                                 locale: getDateLocale()
                               })}
                             </span>}
                           {task.priority && getPriorityBadge(task.priority) && (
-                            <span className={cn("inline-block px-1.5 py-0.5 rounded-full text-[10px] font-bold border", getPriorityBadge(task.priority)!.color)}>
+                            <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
                               {getPriorityBadge(task.priority)!.label}
                             </span>
                           )}
                         </div>
-                        <h4 className="font-extrabold text-[clamp(12px,1.4vw,15px)] mb-0.5 text-foreground relative z-10">
+                        <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
                           {task.title}
                         </h4>
-                        {task.description && <p className="text-muted-foreground text-[clamp(10px,1.1vw,12px)] relative z-10 line-clamp-2">
+                        {task.description && <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2">
                             {task.description}
                           </p>}
                       </div>
                       {task.assignees && task.assignees.length > 0 && (
                         <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
                           {task.assignees.slice(0, 3).map((assignee, idx) => (
-                            <Avatar key={assignee.user_id} className="h-8 w-8 border-2 border-white" style={{ marginLeft: idx > 0 ? '-6px' : '0' }}>
+                            <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{ marginLeft: idx > 0 ? '-6px' : '0' }}>
                               <AvatarImage src={assignee.avatar_url || undefined} />
-                              <AvatarFallback className="text-[10px] bg-primary/10">
+                              <AvatarFallback className="text-xs bg-primary/10">
                                 {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                               </AvatarFallback>
                             </Avatar>
                           ))}
                           {task.assignees.length > 3 && (
-                            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold" style={{ marginLeft: '-6px' }}>
+                            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{ marginLeft: '-6px' }}>
                               +{task.assignees.length - 3}
                             </div>
                           )}
