@@ -113,7 +113,7 @@ const InvoicePreview = () => {
               box-shadow: 0 4px 12px -4px rgba(139, 123, 232, 0.1);
             }
             .invoice-table th {
-              background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
+              background: #8B7BE8;
               color: white;
               padding: 15px;
               text-align: left;
