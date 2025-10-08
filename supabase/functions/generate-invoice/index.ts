@@ -64,72 +64,136 @@ function generateInvoiceHTML(data: InvoiceData): string {
       max-width: 800px;
       margin: 0 auto;
       padding: 40px;
-      color: #333;
+      color: #333333;
+      background: #F7F8FA;
     }
     .header {
       display: flex;
       justify-content: space-between;
       margin-bottom: 40px;
-      border-bottom: 2px solid #0066cc;
+      border-bottom: 3px solid transparent;
+      border-image: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
+      border-image-slice: 1;
       padding-bottom: 20px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px -8px rgba(139, 123, 232, 0.15);
     }
     .company-info {
       font-size: 14px;
     }
     .company-info h1 {
-      margin: 0 0 10px 0;
-      color: #0066cc;
-      font-size: 24px;
+      margin: 0 0 15px 0;
+      background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 28px;
+      font-weight: bold;
     }
     .invoice-info {
       text-align: right;
       font-size: 14px;
     }
     .invoice-info h2 {
-      margin: 0 0 10px 0;
-      font-size: 20px;
-      color: #0066cc;
+      margin: 0 0 15px 0;
+      font-size: 22px;
+      color: #8B7BE8;
+      font-weight: bold;
     }
     .customer-info {
       margin: 30px 0;
-      padding: 20px;
-      background: #f5f5f5;
-      border-radius: 5px;
+      padding: 25px;
+      background: #F3F1FD;
+      border-radius: 12px;
+      border-left: 4px solid #8B7BE8;
+      box-shadow: 0 4px 12px -4px rgba(139, 123, 232, 0.1);
     }
     .customer-info h3 {
       margin-top: 0;
-      color: #0066cc;
+      background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 18px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 30px 0;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
     }
     th, td {
-      padding: 12px;
+      padding: 16px;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #E5E7EB;
     }
     th {
-      background: #0066cc;
+      background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
       color: white;
       font-weight: bold;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    tbody tr:nth-child(even) {
+      background: #FAFAFA;
+    }
+    tbody tr:hover {
+      background: #F3F1FD;
     }
     .amount {
       text-align: right;
+      font-weight: 500;
     }
     .total-row {
       font-weight: bold;
       font-size: 16px;
-      background: #f0f0f0;
+      background: linear-gradient(135deg, rgba(139, 123, 232, 0.1) 0%, rgba(183, 124, 232, 0.1) 100%) !important;
+      border-top: 2px solid #8B7BE8;
     }
     .footer {
       margin-top: 60px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-      font-size: 12px;
+      padding: 30px;
+      border-top: 3px solid transparent;
+      border-image: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
+      border-image-slice: 1;
+      font-size: 11px;
       color: #666;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    .footer-section {
+      text-align: left;
+    }
+    .footer-section h4 {
+      color: #8B7BE8;
+      margin: 0 0 10px 0;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .footer-section p {
+      margin: 5px 0;
+      line-height: 1.6;
+    }
+    .footer-legal {
       text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #E5E7EB;
+      font-style: italic;
+      color: #999;
     }
   </style>
 </head>
@@ -138,10 +202,10 @@ function generateInvoiceHTML(data: InvoiceData): string {
     <div class="company-info">
       <h1>LinqBoard</h1>
       <p>
-        NRG Totaal B.V.<br>
-        Adres<br>
-        Postcode Plaats<br>
-        BTW-nummer: NL123456789B01
+        Sikkelvoorde 4<br>
+        3204 EJ Spijkenisse<br>
+        KVK: 97289388<br>
+        BTW: NL005260317B10
       </p>
     </div>
     <div class="invoice-info">
@@ -195,8 +259,38 @@ function generateInvoiceHTML(data: InvoiceData): string {
   ${vatNote}
 
   <div class="footer">
-    <p>Bedankt voor uw abonnement op LinqBoard</p>
-    <p>Deze factuur is automatisch gegenereerd en digitaal geldig zonder handtekening</p>
+    <div class="footer-grid">
+      <div class="footer-section">
+        <h4>Betalingsinformatie</h4>
+        <p>
+          <strong>IBAN:</strong> NL49 KNAB 0776 5216 59<br>
+          <strong>T.n.v.:</strong> LinqBoard<br>
+          <strong>Betaaltermijn:</strong> 14 dagen
+        </p>
+      </div>
+      <div class="footer-section">
+        <h4>Bedrijfsgegevens</h4>
+        <p>
+          <strong>LinqBoard</strong><br>
+          Sikkelvoorde 4<br>
+          3204 EJ Spijkenisse<br>
+          KVK: 97289388<br>
+          BTW: NL005260317B10
+        </p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p>
+          <strong>Email:</strong> info@linqboard.io<br>
+          <strong>Website:</strong> www.linqboard.io
+        </p>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>Bedankt voor uw abonnement op LinqBoard</p>
+      <p>Deze factuur is automatisch gegenereerd en digitaal geldig zonder handtekening</p>
+      <p>Graag betalen binnen 14 dagen onder vermelding van het factuurnummer</p>
+    </div>
   </div>
 </body>
 </html>
