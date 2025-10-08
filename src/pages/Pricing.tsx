@@ -142,41 +142,13 @@ const Pricing = () => {
     const currentLevel = getPlanLevel(currentPlan);
     const planLevel = getPlanLevel(plan.plan_id);
     
-    // Handle downgrade (to non-free plan)
+    // Handle downgrade (to non-free plan) - also go to checkout
     if (planLevel < currentLevel) {
       const confirmed = window.confirm(t('pricing.confirmDowngrade'));
       if (!confirmed) return;
-      
-      // For downgrades, schedule the change for next billing cycle
-      setLoading(plan.plan_id);
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) throw new Error('Not authenticated');
-
-        const { error } = await supabase.functions.invoke('update-subscription-plan', {
-          body: {
-            new_plan: plan.plan_id,
-            billing_interval: isYearly ? 'yearly' : 'monthly'
-          },
-          headers: { Authorization: `Bearer ${session.access_token}` }
-        });
-
-        if (error) throw error;
-
-        toast.success(t('pricing.downgradeScheduled'));
-        
-        // Refresh after short delay
-        setTimeout(() => window.location.reload(), 1500);
-      } catch (error: any) {
-        console.error('Error scheduling downgrade:', error);
-        toast.error(error.message || t('pricing.subscriptionError'));
-      } finally {
-        setLoading(null);
-      }
-      return;
     }
     
-    // Navigate to checkout page for new subscriptions/upgrades
+    // Navigate to checkout page for new subscriptions/upgrades/downgrades
     navigate(`/checkout?plan=${plan.plan_id}&interval=${isYearly ? 'yearly' : 'monthly'}`);
   };
   const getPlanLevel = (planId: string): number => {

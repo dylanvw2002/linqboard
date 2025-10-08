@@ -77,14 +77,38 @@ Deno.serve(async (req) => {
     const planName = plan.charAt(0).toUpperCase() + plan.slice(1)
     const intervalText = billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'
 
-    // Check if user already has a Mollie customer ID
+    // Check if user already has an active subscription
     const { data: existingSub } = await supabase
       .from('user_subscriptions')
-      .select('mollie_customer_id')
+      .select('mollie_customer_id, mollie_subscription_id, plan')
       .eq('user_id', user.id)
       .maybeSingle()
 
     let customerId: string
+
+    // If there's an active Mollie subscription, cancel it first
+    if (existingSub?.mollie_subscription_id && existingSub?.mollie_customer_id) {
+      console.log('Cancelling existing Mollie subscription:', existingSub.mollie_subscription_id)
+      
+      try {
+        const cancelResponse = await fetch(
+          `https://api.mollie.com/v2/customers/${existingSub.mollie_customer_id}/subscriptions/${existingSub.mollie_subscription_id}`,
+          {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${MOLLIE_API_KEY}` }
+          }
+        )
+
+        if (cancelResponse.ok) {
+          console.log('Previous subscription cancelled successfully')
+        } else {
+          console.log('Failed to cancel previous subscription, continuing anyway')
+        }
+      } catch (error) {
+        console.error('Error cancelling previous subscription:', error)
+        // Continue anyway, might already be cancelled
+      }
+    }
 
     if (existingSub?.mollie_customer_id) {
       // Use existing customer ID
