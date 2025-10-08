@@ -784,6 +784,10 @@ export type Database = {
         Args: { _membership_id: string; _user_id: string }
         Returns: boolean
       }
+      users_share_organization: {
+        Args: { _user_id1: string; _user_id2: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "owner" | "member"
