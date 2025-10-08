@@ -30,11 +30,17 @@ function generateInvoicePDF(data: InvoiceData): string {
   doc.setFillColor(139, 123, 232);
   doc.rect(0, 0, 210, 40, 'F');
   
-  // Logo text
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(32);
-  doc.setFont('helvetica', 'bold');
-  doc.text('LinqBoard', 20, 28);
+  // Logo image
+  const logoUrl = 'https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-transparent.png';
+  try {
+    doc.addImage(logoUrl, 'PNG', 15, 10, 40, 20);
+  } catch (error) {
+    // Fallback to text if image fails
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(32);
+    doc.setFont('helvetica', 'bold');
+    doc.text('LinqBoard', 20, 28);
+  }
   
   // Reset text color
   doc.setTextColor(0, 0, 0);
@@ -173,7 +179,7 @@ serve(async (req) => {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #8B7BE8, #6E59D9); padding: 30px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px;">LinqBoard</h1>
+          <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-transparent.png" alt="LinqBoard" style="height: 60px; width: auto;" />
         </div>
         
         <div style="padding: 30px; background: white;">
