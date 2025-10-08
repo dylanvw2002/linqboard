@@ -1469,15 +1469,15 @@ const Board = () => {
                     {task.assignees && task.assignees.length > 0 && (
                       <div className="flex items-center gap-1 mt-2 relative z-10">
                         {task.assignees.slice(0, 3).map((assignee, idx) => (
-                          <Avatar key={assignee.user_id} className="h-6 w-6 border-2 border-white" style={{ marginLeft: idx > 0 ? '-8px' : '0' }}>
+                          <Avatar key={assignee.user_id} className="h-10 w-10 border-2 border-white" style={{ marginLeft: idx > 0 ? '-8px' : '0' }}>
                             <AvatarImage src={assignee.avatar_url || undefined} />
-                            <AvatarFallback className="text-[10px] bg-primary/10">
+                            <AvatarFallback className="text-xs bg-primary/10">
                               {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         ))}
                         {task.assignees.length > 3 && (
-                          <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold" style={{ marginLeft: '-8px' }}>
+                          <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{ marginLeft: '-8px' }}>
                             +{task.assignees.length - 3}
                           </div>
                         )}
