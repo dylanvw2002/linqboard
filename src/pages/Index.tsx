@@ -28,7 +28,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-6 pt-8 pb-1">
+      <div className="container mx-auto px-6 pt-12 pb-1">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8">
