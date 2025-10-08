@@ -10,15 +10,22 @@ const EBOEKHOUDEN_SECURITY_CODE1 = Deno.env.get('EBOEKHOUDEN_SECURITY_CODE1')
 const EBOEKHOUDEN_SECURITY_CODE2 = Deno.env.get('EBOEKHOUDEN_SECURITY_CODE2')
 const SOAP_ENDPOINT = 'https://soap.e-boekhouden.nl/soap.asmx'
 
-// Validate credentials on startup
+// Validate credentials on startup with detailed logging
 if (!EBOEKHOUDEN_USERNAME || !EBOEKHOUDEN_SECURITY_CODE1 || !EBOEKHOUDEN_SECURITY_CODE2) {
   console.error('Missing e-Boekhouden credentials:', {
     hasUsername: !!EBOEKHOUDEN_USERNAME,
+    usernameLength: EBOEKHOUDEN_USERNAME?.length || 0,
     hasSecurityCode1: !!EBOEKHOUDEN_SECURITY_CODE1,
-    hasSecurityCode2: !!EBOEKHOUDEN_SECURITY_CODE2
+    code1Length: EBOEKHOUDEN_SECURITY_CODE1?.length || 0,
+    hasSecurityCode2: !!EBOEKHOUDEN_SECURITY_CODE2,
+    code2Length: EBOEKHOUDEN_SECURITY_CODE2?.length || 0
   })
 } else {
-  console.log('E-Boekhouden credentials loaded successfully')
+  console.log('E-Boekhouden credentials loaded:', {
+    username: EBOEKHOUDEN_USERNAME,
+    code1Length: EBOEKHOUDEN_SECURITY_CODE1.length,
+    code2Length: EBOEKHOUDEN_SECURITY_CODE2.length
+  })
 }
 
 interface AddRelatieParams {
@@ -81,9 +88,15 @@ Deno.serve(async (req) => {
 })
 
 async function soapRequest(action: string, body: string) {
-  // Check credentials before making request
-  if (!EBOEKHOUDEN_USERNAME || !EBOEKHOUDEN_SECURITY_CODE1 || !EBOEKHOUDEN_SECURITY_CODE2) {
-    throw new Error('E-boekhouden credentials not configured')
+  // Check credentials before making request with detailed validation
+  if (!EBOEKHOUDEN_USERNAME || EBOEKHOUDEN_USERNAME.trim() === '') {
+    throw new Error('E-boekhouden USERNAME not configured or empty')
+  }
+  if (!EBOEKHOUDEN_SECURITY_CODE1 || EBOEKHOUDEN_SECURITY_CODE1.trim() === '') {
+    throw new Error('E-boekhouden SECURITY_CODE1 not configured or empty')
+  }
+  if (!EBOEKHOUDEN_SECURITY_CODE2 || EBOEKHOUDEN_SECURITY_CODE2.trim() === '') {
+    throw new Error('E-boekhouden SECURITY_CODE2 not configured or empty')
   }
 
   const envelope = `<?xml version="1.0" encoding="utf-8"?>
