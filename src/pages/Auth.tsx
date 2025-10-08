@@ -93,11 +93,35 @@ const Auth = () => {
       setLoading(false);
     }
   };
-  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
-      <div className="absolute top-4 right-4">
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4 relative overflow-hidden">
+      {/* Subtle animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${4 + Math.random() * 4}s`
+            }}
+          >
+            <div 
+              className="w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: ['#8B5CF6', '#3B82F6'][Math.floor(Math.random() * 2)],
+                opacity: 0.2
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher />
       </div>
-      <Card className="w-full max-w-md shadow-xl">
+      <Card className="w-full max-w-md shadow-xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
         <div className="flex justify-center pt-8 pb-4">
           <img src={logo} alt="LinqBoard Logo" className="h-56" />
         </div>
