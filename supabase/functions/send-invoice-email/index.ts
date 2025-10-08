@@ -31,7 +31,7 @@ function generateInvoicePDF(data: InvoiceData): string {
   doc.rect(0, 0, 210, 40, 'F');
   
   // Logo image
-  const logoUrl = 'https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-transparent.png';
+  const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
   try {
     doc.addImage(logoUrl, 'PNG', 15, 10, 40, 20);
   } catch (error) {
@@ -179,7 +179,7 @@ serve(async (req) => {
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #8B7BE8, #6E59D9); padding: 30px; text-align: center;">
-          <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-transparent.png" alt="LinqBoard" style="height: 60px; width: auto;" />
+          <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="height: 60px; width: auto;" />
         </div>
         
         <div style="padding: 30px; background: white;">
