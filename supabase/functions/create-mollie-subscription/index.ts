@@ -77,27 +77,43 @@ Deno.serve(async (req) => {
     const planName = plan.charAt(0).toUpperCase() + plan.slice(1)
     const intervalText = billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'
 
-    // Create or get Mollie customer
-    const customerResponse = await fetch('https://api.mollie.com/v2/customers', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${MOLLIE_API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: `${userName} - LinqBoard`,
-        email: user.email
+    // Check if user already has a Mollie customer ID
+    const { data: existingSub } = await supabase
+      .from('user_subscriptions')
+      .select('mollie_customer_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    let customerId: string
+
+    if (existingSub?.mollie_customer_id) {
+      // Use existing customer ID
+      customerId = existingSub.mollie_customer_id
+      console.log('Using existing Mollie customer:', customerId)
+    } else {
+      // Create new Mollie customer
+      const customerResponse = await fetch('https://api.mollie.com/v2/customers', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${MOLLIE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: `${userName} - LinqBoard`,
+          email: user.email
+        })
       })
-    })
-    
-    const customer = await customerResponse.json()
-    console.log('Mollie customer created:', customer.id)
+      
+      const customer = await customerResponse.json()
+      customerId = customer.id
+      console.log('Mollie customer created:', customerId)
+    }
 
     // Use calculated VAT amount
     const totalAmount = amount_incl_vat
     const interval = billing_interval === 'monthly' ? '1 month' : '1 year'
     
-    const paymentResponse = await fetch(`https://api.mollie.com/v2/customers/${customer.id}/payments`, {
+    const paymentResponse = await fetch(`https://api.mollie.com/v2/customers/${customerId}/payments`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${MOLLIE_API_KEY}`,
@@ -148,7 +164,7 @@ Deno.serve(async (req) => {
       plan,
       billing_interval,
       status: 'pending',
-      mollie_customer_id: customer.id,
+      mollie_customer_id: customerId,
       mollie_subscription_id: payment.id, // Temporarily store payment ID, will be updated after first payment
       max_organizations: PRICING[plan].orgs,
       max_members_per_org: PRICING[plan].members,
@@ -161,7 +177,9 @@ Deno.serve(async (req) => {
       price_excl_vat: amount_excl_vat,
       vat_rate: vat_rate,
       vat_amount: vat_amount,
-      price_incl_vat: amount_incl_vat
+      price_incl_vat: amount_incl_vat,
+      pending_plan: null,
+      pending_billing_interval: null
     }
 
     let updateError
