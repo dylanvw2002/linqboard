@@ -176,33 +176,8 @@ const Pricing = () => {
       return;
     }
     
-    // Handle upgrade - requires immediate payment
-    setLoading(plan.plan_id);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Not authenticated');
-
-      const { data, error } = await supabase.functions.invoke('create-mollie-subscription', {
-        body: {
-          plan: plan.plan_id,
-          billing_interval: isYearly ? 'yearly' : 'monthly'
-        },
-        headers: { Authorization: `Bearer ${session.access_token}` }
-      });
-
-      if (error) throw error;
-
-      if (data?.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        throw new Error('No checkout URL received');
-      }
-    } catch (error: any) {
-      console.error('Error creating subscription:', error);
-      toast.error(error.message || t('pricing.subscriptionError'));
-    } finally {
-      setLoading(null);
-    }
+    // Navigate to checkout page for new subscriptions/upgrades
+    navigate(`/checkout?plan=${plan.plan_id}&interval=${isYearly ? 'yearly' : 'monthly'}`);
   };
   const getPlanLevel = (planId: string): number => {
     const levels = { free: 0, pro: 1, team: 2, business: 3 };

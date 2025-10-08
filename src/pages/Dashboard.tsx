@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import SupportButton from "@/components/SupportButton";
+import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
 
@@ -298,6 +299,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between gap-4">
             <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
             <div className="flex items-center gap-4">
+              <AdminVatReportLink />
               <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -397,6 +399,16 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 shrink-0">
+                {subscriptionLimits.plan !== 'free' && (
+                  <Button 
+                    onClick={() => navigate('/invoices')} 
+                    size="lg"
+                    variant="outline"
+                  >
+                    <FileText className="mr-2 h-4 w-4" />
+                    Bekijk facturen
+                  </Button>
+                )}
                 {subscriptionLimits.plan !== 'business' && (
                   <Button onClick={() => navigate('/pricing')} size="lg">
                     {t('subscription.upgrade')}

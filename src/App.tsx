@@ -12,6 +12,7 @@ import Board from "./pages/Board";
 import BoardDemo from "./pages/BoardDemo";
 import Pricing from "./pages/Pricing";
 import Checkout from "./pages/Checkout";
+import Invoices from "./pages/Invoices";
 import VatReports from "./pages/VatReports";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import SubscriptionFailed from "./pages/SubscriptionFailed";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/board-demo" element={<BoardDemo />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/invoices" element={<Invoices />} />
           <Route path="/vat-reports" element={<VatReports />} />
           <Route path="/subscription-success" element={<SubscriptionSuccess />} />
           <Route path="/subscription-failed" element={<SubscriptionFailed />} />
