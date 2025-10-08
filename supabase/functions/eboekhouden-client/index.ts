@@ -103,9 +103,9 @@ async function soapRequest(action: string, body: string) {
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <${action} xmlns="http://www.e-boekhouden.nl/soap">
-      <Username>${EBOEKHOUDEN_USERNAME}</Username>
-      <SecurityCode1>${EBOEKHOUDEN_SECURITY_CODE1}</SecurityCode1>
-      <SecurityCode2>${EBOEKHOUDEN_SECURITY_CODE2}</SecurityCode2>
+      <Username>${escapeXml(EBOEKHOUDEN_USERNAME)}</Username>
+      <SecurityCode1>${escapeXml(EBOEKHOUDEN_SECURITY_CODE1)}</SecurityCode1>
+      <SecurityCode2>${escapeXml(EBOEKHOUDEN_SECURITY_CODE2)}</SecurityCode2>
       ${body}
     </${action}>
   </soap:Body>
