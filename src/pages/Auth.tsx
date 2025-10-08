@@ -112,7 +112,7 @@ const Auth = () => {
               className="w-2 h-2 rounded-full"
               style={{
                 backgroundColor: ['#8B5CF6', '#3B82F6'][Math.floor(Math.random() * 2)],
-                opacity: 0.2
+                opacity: 0.4
               }}
             />
           </div>
