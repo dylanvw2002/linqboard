@@ -214,6 +214,22 @@ const Auth = () => {
           </div>
         </CardContent>
       </Card>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.3;
+          }
+          50% {
+            transform: translateY(-20px) rotate(180deg);
+            opacity: 0.8;
+          }
+        }
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
+      `}</style>
     </div>;
 };
 export default Auth;
