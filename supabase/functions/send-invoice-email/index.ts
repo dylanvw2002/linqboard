@@ -213,11 +213,11 @@ serve(async (req) => {
           </div>
           
           <p style="color: #666; line-height: 1.6;">
-            Je factuur vind je als bijlage bij deze email. Je kunt de factuur ook altijd terugvinden in je <a href="${supabaseUrl.replace('https://jfdpljhkrcuietevzshr.supabase.co', 'https://linqboard.lovable.app')}/invoices" style="color: #8B7BE8;">factuuroverzicht</a>.
+            Je factuur vind je als bijlage bij deze email. Je kunt de factuur ook altijd terugvinden in je <a href="https://linqboard.lovable.app/invoices" style="color: #8B7BE8;">factuuroverzicht</a>.
           </p>
           
           <div style="margin: 30px 0; text-align: center;">
-            <a href="${supabaseUrl.replace('https://jfdpljhkrcuietevzshr.supabase.co', 'https://linqboard.lovable.app')}/dashboard" 
+            <a href="https://linqboard.lovable.app/dashboard"
                style="background: #8B7BE8; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block;">
               Naar Dashboard
             </a>
@@ -233,7 +233,7 @@ serve(async (req) => {
 
     // Send email with HTML attachment
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'LinqBoard <onboarding@resend.dev>',
+      from: 'LinqBoard <noreply@linqboard.nl>',
       to: [userEmail],
       subject: `Factuur ${invoice.invoice_number} - LinqBoard`,
       html: emailHtml,

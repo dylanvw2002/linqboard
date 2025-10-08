@@ -281,7 +281,7 @@ export function getBtwCode(country: string, customerType: string, vatNumberValid
   const euCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']
   
   if (euCountries.includes(country) && customerType === 'business' && vatNumberValid) {
-    return 'VERL_VERK'
+    return 'VERLEGD'
   }
   
   // EU Private customers - 21% (OSS threshold check should be done separately)
