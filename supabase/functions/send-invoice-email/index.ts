@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@4.0.0";
+import { encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -231,6 +232,9 @@ serve(async (req) => {
       </div>
     `;
 
+    // Encode HTML content to base64 (UTF-8 safe)
+    const base64 = encode(htmlContent);
+    
     // Send email with HTML attachment
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'LinqBoard <info@linqboard.io>',
@@ -240,7 +244,7 @@ serve(async (req) => {
       attachments: [
         {
           filename: `${invoice.invoice_number}.html`,
-          content: btoa(htmlContent),
+          content: base64,
         },
       ],
     });

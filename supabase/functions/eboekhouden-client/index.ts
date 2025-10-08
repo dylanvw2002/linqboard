@@ -128,12 +128,11 @@ Deno.serve(async (req) => {
 async function getRelatie(relatiecode: string) {
   const token = await getSessionToken()
   
-  // Search for relation by code
   const response = await fetch(
     `${EBOEKHOUDEN_API_URL}/v1/relation?code=${encodeURIComponent(relatiecode)}`,
     {
       headers: {
-        'Authorization': token,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       }
     }
@@ -169,7 +168,7 @@ async function addRelatie(params: AddRelatieParams) {
   const response = await fetch(`${EBOEKHOUDEN_API_URL}/v1/relation`, {
     method: 'POST',
     headers: {
-      'Authorization': token,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(relationData)
@@ -197,12 +196,11 @@ async function addRelatie(params: AddRelatieParams) {
 async function addFactuur(params: AddFactuurParams) {
   const token = await getSessionToken()
   
-  // First, get the relation by code to get the ID
   const relationResponse = await fetch(
     `${EBOEKHOUDEN_API_URL}/v1/relation?code=${encodeURIComponent(params.relatiecode)}`,
     {
       headers: {
-        'Authorization': token,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       }
     }
@@ -242,7 +240,7 @@ async function addFactuur(params: AddFactuurParams) {
   const response = await fetch(`${EBOEKHOUDEN_API_URL}/v1/invoice`, {
     method: 'POST',
     headers: {
-      'Authorization': token,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(invoiceData)
