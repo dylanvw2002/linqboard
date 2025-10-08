@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,18 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Memorize confetti dots so they don't regenerate on every render
+  const confettiDots = useMemo(() => {
+    return Array.from({ length: 15 }).map((_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 4 + Math.random() * 4,
+      color: ['#8B5CF6', '#3B82F6'][Math.floor(Math.random() * 2)]
+    }));
+  }, []);
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({
@@ -97,21 +109,21 @@ const Auth = () => {
   return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4 relative overflow-hidden">
       {/* Subtle animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {confettiDots.map((dot) => (
           <div
-            key={i}
+            key={dot.id}
             className="absolute animate-float"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${4 + Math.random() * 4}s`
+              left: `${dot.left}%`,
+              top: `${dot.top}%`,
+              animationDelay: `${dot.delay}s`,
+              animationDuration: `${dot.duration}s`
             }}
           >
             <div 
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: ['#8B5CF6', '#3B82F6'][Math.floor(Math.random() * 2)],
+                backgroundColor: dot.color,
                 opacity: 0.4
               }}
             />
