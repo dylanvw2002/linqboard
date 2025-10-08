@@ -285,14 +285,14 @@ const Dashboard = () => {
   const isPageLoading = loading;
 
   if (isPageLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">{t('dashboard.title')}</p>
         </div>
       </div>;
   }
-  return <div className="relative min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+  return <div className="relative min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20">
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-6 py-0">
