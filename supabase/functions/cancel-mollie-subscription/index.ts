@@ -43,28 +43,35 @@ Deno.serve(async (req) => {
 
     console.log('Found subscription:', subscription.mollie_subscription_id)
 
-    // Cancel in Mollie
-    const cancelResponse = await fetch(
-      `https://api.mollie.com/v2/customers/${subscription.mollie_customer_id}/subscriptions/${subscription.mollie_subscription_id}`,
-      {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${MOLLIE_API_KEY}` }
-      }
-    )
+    // Check if it's a payment ID (tr_) or subscription ID (sub_)
+    // Only cancel in Mollie if it's an actual subscription
+    if (subscription.mollie_subscription_id.startsWith('sub_')) {
+      // Cancel in Mollie
+      const cancelResponse = await fetch(
+        `https://api.mollie.com/v2/customers/${subscription.mollie_customer_id}/subscriptions/${subscription.mollie_subscription_id}`,
+        {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${MOLLIE_API_KEY}` }
+        }
+      )
 
-    if (!cancelResponse.ok) {
-      const errorText = await cancelResponse.text()
-      const errorData = JSON.parse(errorText)
-      
-      // If subscription is already cancelled, that's fine - just proceed to update database
-      if (cancelResponse.status === 422 && errorData.detail?.includes('cancelled')) {
-        console.log('Subscription already cancelled in Mollie, updating database')
+      if (!cancelResponse.ok) {
+        const errorText = await cancelResponse.text()
+        const errorData = JSON.parse(errorText)
+        
+        // If subscription is already cancelled, that's fine - just proceed to update database
+        if (cancelResponse.status === 422 && errorData.detail?.includes('cancelled')) {
+          console.log('Subscription already cancelled in Mollie, updating database')
+        } else {
+          console.error('Mollie cancellation failed:', errorText)
+          throw new Error('Failed to cancel subscription with Mollie')
+        }
       } else {
-        console.error('Mollie cancellation failed:', errorText)
-        throw new Error('Failed to cancel subscription with Mollie')
+        console.log('Mollie subscription cancelled')
       }
-    } else {
-      console.log('Mollie subscription cancelled')
+    } else if (subscription.mollie_subscription_id.startsWith('tr_')) {
+      // It's just a pending payment, no need to cancel in Mollie
+      console.log('Pending payment found, skipping Mollie cancellation')
     }
 
     // Update database - downgrade to free plan
