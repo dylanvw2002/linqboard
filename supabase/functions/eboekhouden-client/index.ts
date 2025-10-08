@@ -10,6 +10,15 @@ const EBOEKHOUDEN_SECURITY_CODE1 = Deno.env.get('EBOEKHOUDEN_SECURITY_CODE1')
 const EBOEKHOUDEN_SECURITY_CODE2 = Deno.env.get('EBOEKHOUDEN_SECURITY_CODE2')
 const SOAP_ENDPOINT = 'https://soap.e-boekhouden.nl/soap.asmx'
 
+// Validate credentials
+if (!EBOEKHOUDEN_USERNAME || !EBOEKHOUDEN_SECURITY_CODE1 || !EBOEKHOUDEN_SECURITY_CODE2) {
+  console.error('Missing e-Boekhouden credentials:', {
+    hasUsername: !!EBOEKHOUDEN_USERNAME,
+    hasSecurityCode1: !!EBOEKHOUDEN_SECURITY_CODE1,
+    hasSecurityCode2: !!EBOEKHOUDEN_SECURITY_CODE2
+  })
+}
+
 interface AddRelatieParams {
   relatiecode: string
   bedrijf: string
@@ -70,6 +79,11 @@ Deno.serve(async (req) => {
 })
 
 async function soapRequest(action: string, body: string) {
+  // Check credentials before making request
+  if (!EBOEKHOUDEN_USERNAME || !EBOEKHOUDEN_SECURITY_CODE1 || !EBOEKHOUDEN_SECURITY_CODE2) {
+    throw new Error('E-boekhouden credentials not configured')
+  }
+
   const envelope = `<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -83,6 +97,7 @@ async function soapRequest(action: string, body: string) {
 </soap:Envelope>`
 
   console.log('SOAP Request:', action)
+  console.log('SOAP Envelope (masked):', envelope.replace(/<SecurityCode\d>[^<]+/g, '<SecurityCodeX>***'))
   
   const response = await fetch(SOAP_ENDPOINT, {
     method: 'POST',
