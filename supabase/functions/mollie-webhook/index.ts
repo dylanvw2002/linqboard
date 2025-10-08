@@ -271,18 +271,13 @@ Deno.serve(async (req) => {
         status: 'active',
         mollie_subscription_id: mollieSubscription.id,
         current_period_start: periodStart.toISOString(),
-        current_period_end: periodEnd.toISOString()
-      }
-
-      // If there's a pending plan, activate it now
-      if (currentSub?.pending_plan) {
-        console.log('Activating pending plan:', currentSub.pending_plan)
-        updateData.plan = currentSub.pending_plan
-        updateData.billing_interval = currentSub.pending_billing_interval
-        updateData.max_organizations = PRICING[currentSub.pending_plan].orgs
-        updateData.max_members_per_org = PRICING[currentSub.pending_plan].members
-        updateData.pending_plan = null
-        updateData.pending_billing_interval = null
+        current_period_end: periodEnd.toISOString(),
+        plan: currentSub?.pending_plan || plan,
+        billing_interval: currentSub?.pending_billing_interval || billing_interval,
+        max_organizations: PRICING[currentSub?.pending_plan || plan].orgs,
+        max_members_per_org: PRICING[currentSub?.pending_plan || plan].members,
+        pending_plan: null,
+        pending_billing_interval: null
       }
 
       await supabase
@@ -419,28 +414,18 @@ Deno.serve(async (req) => {
         original_max_members_per_org 
       } = payment.metadata
       
-      // Reset to original plan on failed payment
+      // Clear pending plan on failed payment, keep original plan
       await supabase
         .from('user_subscriptions')
         .update({ 
           status: 'active',
-          plan: original_plan || 'free',
-          max_organizations: parseInt(original_max_organizations) || 1,
-          max_members_per_org: parseInt(original_max_members_per_org) || 2,
           mollie_subscription_id: null,
-          current_period_start: null,
-          current_period_end: null,
-          billing_interval: null,
-          price_excl_vat: null,
-          price_incl_vat: null,
-          vat_amount: null,
-          vat_rate: null,
           pending_plan: null,
           pending_billing_interval: null
         })
         .eq('user_id', user_id)
       
-      console.log('Payment failed, subscription reset to original plan:', original_plan)
+      console.log('Payment failed, pending plan cleared, keeping original plan:', original_plan)
     }
 
     return new Response(null, { status: 200 })

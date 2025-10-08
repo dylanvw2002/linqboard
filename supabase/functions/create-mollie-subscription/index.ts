@@ -193,15 +193,9 @@ Deno.serve(async (req) => {
     // Update or insert user_subscriptions in database
     const subscriptionData = {
       user_id: user.id,
-      plan,
-      billing_interval,
       status: 'pending',
       mollie_customer_id: customerId,
       mollie_subscription_id: payment.id, // Temporarily store payment ID, will be updated after first payment
-      max_organizations: PRICING[plan].orgs,
-      max_members_per_org: PRICING[plan].members,
-      current_period_start: null,
-      current_period_end: null,
       country: country,
       customer_type: customer_type,
       vat_number: vat_number || null,
@@ -210,8 +204,9 @@ Deno.serve(async (req) => {
       vat_rate: vat_rate,
       vat_amount: vat_amount,
       price_incl_vat: amount_incl_vat,
-      pending_plan: null,
-      pending_billing_interval: null
+      // Store as pending - will be activated after successful payment
+      pending_plan: plan,
+      pending_billing_interval: billing_interval
     }
 
     let updateError
