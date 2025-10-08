@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@4.0.0";
-import { encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
+import jsPDF from "https://esm.sh/jspdf@2.5.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,142 +23,122 @@ interface InvoiceData {
   amount_incl_vat: number;
 }
 
-function generateInvoiceHTML(data: InvoiceData): string {
-  return `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      background: white;
-    }
-    .invoice-container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      padding: 40px;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 40px;
-      padding-bottom: 20px;
-      border-bottom: 2px solid #8B7BE8;
-    }
-    .logo {
-      font-size: 32px;
-      font-weight: bold;
-      color: #8B7BE8;
-    }
-    .invoice-details {
-      text-align: right;
-    }
-    .section {
-      margin-bottom: 30px;
-    }
-    .section-title {
-      font-size: 14px;
-      font-weight: bold;
-      color: #666;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 20px 0;
-    }
-    th {
-      background: #8B7BE8;
-      color: white;
-      padding: 12px;
-      text-align: left;
-      font-weight: 600;
-    }
-    td {
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-    }
-    .total-row {
-      font-weight: bold;
-      background: #f9f9f9;
-    }
-    .footer {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-      text-align: center;
-      color: #666;
-      font-size: 12px;
-    }
-  </style>
-</head>
-<body>
-  <div class="invoice-container">
-    <div class="header">
-      <div class="logo">LinqBoard</div>
-      <div class="invoice-details">
-        <h1>FACTUUR</h1>
-        <p><strong>${data.invoice_number}</strong></p>
-        <p>Datum: ${new Date(data.invoice_date).toLocaleDateString('nl-NL')}</p>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Van</div>
-      <p><strong>LinqBoard B.V.</strong><br>
-      Voorbeeldstraat 123<br>
-      1234 AB Amsterdam<br>
-      Nederland<br>
-      BTW: NL123456789B01</p>
-    </div>
-
-    <div class="section">
-      <div class="section-title">Aan</div>
-      <p><strong>${data.customer_name}</strong><br>
-      ${data.customer_email}<br>
-      ${data.customer_country}
-      ${data.vat_number ? `<br>BTW-nummer: ${data.vat_number}` : ''}</p>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Omschrijving</th>
-          <th style="text-align: right;">Bedrag</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>LinqBoard Abonnement</td>
-          <td style="text-align: right;">€${data.amount_excl_vat.toFixed(2)}</td>
-        </tr>
-        <tr>
-          <td>BTW (${data.vat_rate}%)</td>
-          <td style="text-align: right;">€${data.vat_amount.toFixed(2)}</td>
-        </tr>
-        <tr class="total-row">
-          <td><strong>Totaal</strong></td>
-          <td style="text-align: right;"><strong>€${data.amount_incl_vat.toFixed(2)}</strong></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="footer">
-      <p>Bedankt voor uw betaling!</p>
-      <p>LinqBoard B.V. | KvK: 12345678 | IBAN: NL99BANK0123456789</p>
-    </div>
-  </div>
-</body>
-</html>`;
+function generateInvoicePDF(data: InvoiceData): string {
+  const doc = new jsPDF();
+  
+  // Header with gradient effect (simulated with rectangle)
+  doc.setFillColor(139, 123, 232);
+  doc.rect(0, 0, 210, 40, 'F');
+  
+  // Logo text
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(32);
+  doc.setFont('helvetica', 'bold');
+  doc.text('LinqBoard', 20, 28);
+  
+  // Reset text color
+  doc.setTextColor(0, 0, 0);
+  
+  // Invoice title and number
+  doc.setFontSize(24);
+  doc.setFont('helvetica', 'bold');
+  doc.text('FACTUUR', 150, 28);
+  
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+  doc.text(data.invoice_number, 150, 36);
+  
+  const invoiceDate = new Date(data.invoice_date).toLocaleDateString('nl-NL');
+  doc.text(`Datum: ${invoiceDate}`, 150, 42);
+  
+  // From section
+  let yPos = 60;
+  doc.setFontSize(10);
+  doc.setTextColor(102, 102, 102);
+  doc.setFont('helvetica', 'bold');
+  doc.text('VAN', 20, yPos);
+  
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
+  yPos += 6;
+  doc.text('LinqBoard B.V.', 20, yPos);
+  yPos += 5;
+  doc.text('Voorbeeldstraat 123', 20, yPos);
+  yPos += 5;
+  doc.text('1234 AB Amsterdam', 20, yPos);
+  yPos += 5;
+  doc.text('Nederland', 20, yPos);
+  yPos += 5;
+  doc.text('BTW: NL123456789B01', 20, yPos);
+  
+  // To section
+  yPos += 15;
+  doc.setTextColor(102, 102, 102);
+  doc.setFont('helvetica', 'bold');
+  doc.text('AAN', 20, yPos);
+  
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
+  yPos += 6;
+  doc.text(data.customer_name, 20, yPos);
+  yPos += 5;
+  doc.text(data.customer_email, 20, yPos);
+  yPos += 5;
+  doc.text(data.customer_country, 20, yPos);
+  if (data.vat_number) {
+    yPos += 5;
+    doc.text(`BTW-nummer: ${data.vat_number}`, 20, yPos);
+  }
+  
+  // Table
+  yPos += 15;
+  
+  // Table header
+  doc.setFillColor(139, 123, 232);
+  doc.rect(20, yPos, 170, 10, 'F');
+  
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Omschrijving', 25, yPos + 7);
+  doc.text('Bedrag', 155, yPos + 7);
+  
+  yPos += 10;
+  
+  // Table rows
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'normal');
+  
+  // Line items
+  yPos += 8;
+  doc.text('LinqBoard Abonnement', 25, yPos);
+  doc.text(`€${data.amount_excl_vat.toFixed(2)}`, 155, yPos);
+  
+  yPos += 8;
+  doc.text(`BTW (${data.vat_rate}%)`, 25, yPos);
+  doc.text(`€${data.vat_amount.toFixed(2)}`, 155, yPos);
+  
+  // Divider line
+  yPos += 5;
+  doc.setDrawColor(200, 200, 200);
+  doc.line(20, yPos, 190, yPos);
+  
+  // Total
+  yPos += 8;
+  doc.setFont('helvetica', 'bold');
+  doc.text('Totaal', 25, yPos);
+  doc.text(`€${data.amount_incl_vat.toFixed(2)}`, 155, yPos);
+  
+  // Footer
+  yPos = 270;
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(102, 102, 102);
+  doc.text('Bedankt voor uw betaling!', 105, yPos, { align: 'center' });
+  yPos += 5;
+  doc.text('LinqBoard B.V. | KvK: 12345678 | IBAN: NL99BANK0123456789', 105, yPos, { align: 'center' });
+  
+  // Return base64 PDF
+  return doc.output('datauristring').split(',')[1];
 }
 
 serve(async (req) => {
@@ -188,9 +168,6 @@ serve(async (req) => {
     if (invoiceError || !invoice) {
       throw new Error(`Invoice not found: ${invoiceError?.message}`);
     }
-
-    // Generate HTML
-    const htmlContent = generateInvoiceHTML(invoice);
 
     // Create email template
     const emailHtml = `
@@ -232,10 +209,10 @@ serve(async (req) => {
       </div>
     `;
 
-    // Encode HTML content to base64 (UTF-8 safe)
-    const base64 = encode(htmlContent);
+    // Generate PDF
+    const pdfBase64 = generateInvoicePDF(invoice);
     
-    // Send email with HTML attachment
+    // Send email with PDF attachment
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'LinqBoard <info@linqboard.io>',
       to: [userEmail],
@@ -243,8 +220,8 @@ serve(async (req) => {
       html: emailHtml,
       attachments: [
         {
-          filename: `${invoice.invoice_number}.html`,
-          content: base64,
+          filename: `${invoice.invoice_number}.pdf`,
+          content: pdfBase64,
         },
       ],
     });
