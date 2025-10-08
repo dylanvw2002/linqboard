@@ -103,6 +103,19 @@ const Auth = () => {
         });
         if (error) throw error;
         
+        // Send welcome email
+        try {
+          await supabase.functions.invoke('send-welcome-email', {
+            body: {
+              email,
+              userName: fullName
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't block signup if email fails
+        }
+        
         // Show success message and switch back to login
         toast.success(t('auth.accountCreatedConfirmEmail'));
         setIsLogin(true);
