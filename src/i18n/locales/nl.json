@@ -50,6 +50,8 @@
     "namePlaceholder": "Jan Jansen",
     "loginSuccess": "Succesvol ingelogd!",
     "accountCreated": "Account aangemaakt!",
+    "accountCreatedConfirmEmail": "Account aangemaakt! Check je email om je account te bevestigen voordat je kunt inloggen.",
+    "emailNotConfirmed": "Email nog niet bevestigd. Check je inbox voor de bevestigingslink.",
     "checkEmailReset": "Controleer je email voor de reset link!",
     "loginError": "Er is iets misgegaan",
     "busy": "Bezig..."

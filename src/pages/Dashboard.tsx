@@ -294,7 +294,7 @@ const Dashboard = () => {
             <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
             <div className="flex items-center gap-4">
               <AdminVatReportLink />
-              <LanguageSwitcher className="my-0 py-[10px]" />
+              <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">

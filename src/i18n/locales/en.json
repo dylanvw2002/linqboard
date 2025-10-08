@@ -50,6 +50,8 @@
     "namePlaceholder": "John Doe",
     "loginSuccess": "Successfully logged in!",
     "accountCreated": "Account created!",
+    "accountCreatedConfirmEmail": "Account created! Check your email to verify your account before you can log in.",
+    "emailNotConfirmed": "Email not confirmed yet. Check your inbox for the confirmation link.",
     "checkEmailReset": "Check your email for the reset link!",
     "loginError": "Something went wrong",
     "busy": "Loading..."

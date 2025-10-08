@@ -50,6 +50,8 @@
     "namePlaceholder": "Juan Pérez",
     "loginSuccess": "¡Sesión iniciada con éxito!",
     "accountCreated": "¡Cuenta creada!",
+    "accountCreatedConfirmEmail": "¡Cuenta creada! Revisa tu correo para verificar tu cuenta antes de poder iniciar sesión.",
+    "emailNotConfirmed": "Correo aún no confirmado. Revisa tu bandeja de entrada para el enlace de confirmación.",
     "checkEmailReset": "¡Revisa tu correo para el enlace de restablecimiento!",
     "loginError": "Algo salió mal",
     "busy": "Cargando..."

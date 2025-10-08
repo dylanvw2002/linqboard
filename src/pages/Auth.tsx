@@ -70,7 +70,15 @@ const Auth = () => {
           email,
           password
         });
-        if (error) throw error;
+        if (error) {
+          // Check for unconfirmed email error
+          if (error.message.toLowerCase().includes('email') && error.message.toLowerCase().includes('confirm')) {
+            toast.error(t('auth.emailNotConfirmed'));
+            setLoading(false);
+            return;
+          }
+          throw error;
+        }
         if (data.user) {
           toast.success(t('auth.loginSuccess'));
           navigate("/dashboard");
@@ -82,7 +90,6 @@ const Auth = () => {
           return;
         }
         const {
-          data,
           error
         } = await supabase.auth.signUp({
           email,
@@ -95,10 +102,13 @@ const Auth = () => {
           }
         });
         if (error) throw error;
-        if (data.user) {
-          toast.success(t('auth.accountCreated'));
-          navigate("/dashboard");
-        }
+        
+        // Show success message and switch back to login
+        toast.success(t('auth.accountCreatedConfirmEmail'));
+        setIsLogin(true);
+        setEmail("");
+        setPassword("");
+        setFullName("");
       }
     } catch (error: any) {
       toast.error(error.message || t('auth.loginError'));

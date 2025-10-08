@@ -50,6 +50,8 @@
     "namePlaceholder": "Max Mustermann",
     "loginSuccess": "Erfolgreich angemeldet!",
     "accountCreated": "Konto erstellt!",
+    "accountCreatedConfirmEmail": "Konto erstellt! Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen, bevor Sie sich anmelden können.",
+    "emailNotConfirmed": "E-Mail noch nicht bestätigt. Überprüfen Sie Ihren Posteingang für den Bestätigungslink.",
     "checkEmailReset": "Überprüfen Sie Ihre E-Mail für den Reset-Link!",
     "loginError": "Etwas ist schiefgelaufen",
     "busy": "Lädt..."
