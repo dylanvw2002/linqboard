@@ -41,10 +41,15 @@ let sessionExpiry: number = 0
 async function getSessionToken(): Promise<string> {
   // Check if we have a valid cached session
   if (sessionToken !== null && Date.now() < sessionExpiry) {
+    console.log('Using cached session token')
     return sessionToken
   }
 
   console.log('Creating new e-Boekhouden session')
+  
+  if (!EBOEKHOUDEN_API_TOKEN || EBOEKHOUDEN_API_TOKEN.trim() === '') {
+    throw new Error('E-boekhouden API token is not configured')
+  }
   
   const response = await fetch(`${EBOEKHOUDEN_API_URL}/v1/session`, {
     method: 'POST',
@@ -59,8 +64,12 @@ async function getSessionToken(): Promise<string> {
 
   if (!response.ok) {
     const errorText = await response.text()
-    console.error('Session creation failed:', response.status, errorText)
-    throw new Error(`Failed to create session: ${response.status}`)
+    console.error('Session creation failed:', {
+      status: response.status,
+      statusText: response.statusText,
+      body: errorText
+    })
+    throw new Error(`Failed to create e-Boekhouden session: ${response.status} - ${errorText}`)
   }
 
   const data = await response.json()
@@ -68,7 +77,7 @@ async function getSessionToken(): Promise<string> {
   // Session tokens typically last 15 minutes, we'll refresh after 10
   sessionExpiry = Date.now() + (10 * 60 * 1000)
   
-  console.log('Session created successfully')
+  console.log('E-boekhouden session created successfully')
   return data.sessionToken
 }
 

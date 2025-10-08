@@ -337,36 +337,54 @@ Deno.serve(async (req) => {
       } else {
         console.log('Invoice created:', newInvoice.invoice_number)
         
-        // Sync to E-boekhouden.nl in background
-        syncToEboekhouden(
-          supabase,
-          newInvoice,
-          user_id,
-          user_name,
-          user_email,
-          country,
-          customer_type,
-          vat_number,
-          vat_number_valid === 'true',
-          planName,
-          intervalText,
-          userSub?.eboekhouden_relation_code
-        ).catch(err => console.error('E-boekhouden sync error:', err))
-        
-        // Send invoice email (non-blocking)
-        const { data: profile } = await supabase
+        // Get profile for email
+        const { data: profileData } = await supabase
           .from('profiles')
           .select('full_name')
           .eq('user_id', user_id)
-          .maybeSingle();
-
-        supabase.functions.invoke('send-invoice-email', {
-          body: { 
-            invoiceId: newInvoice.id,
-            userEmail: user_email,
-            userName: profile?.full_name || user_name || 'Klant'
+          .maybeSingle()
+        
+        // Send invoice email first (most important)
+        try {
+          console.log('Sending invoice email...')
+          const emailResult = await supabase.functions.invoke('send-invoice-email', {
+            body: { 
+              invoiceId: newInvoice.id,
+              userEmail: user_email,
+              userName: profileData?.full_name || user_name || 'Klant'
+            }
+          })
+          
+          if (emailResult.error) {
+            console.error('Email send error:', emailResult.error)
+          } else {
+            console.log('Invoice email sent successfully')
           }
-        }).catch(err => console.error('Email send error:', err));
+        } catch (emailError) {
+          console.error('Failed to send invoice email:', emailError)
+        }
+        
+        // Sync to E-boekhouden.nl (non-critical, can fail)
+        try {
+          console.log('Starting E-boekhouden sync...')
+          await syncToEboekhouden(
+            supabase,
+            newInvoice,
+            user_id,
+            user_name,
+            user_email,
+            country,
+            customer_type,
+            vat_number,
+            vat_number_valid === 'true',
+            planName,
+            intervalText,
+            userSub?.eboekhouden_relation_code
+          )
+          console.log('E-boekhouden sync completed')
+        } catch (ebError) {
+          console.error('E-boekhouden sync failed (non-critical):', ebError)
+        }
       }
 
         // Update EU sales summary for EU B2C customers
