@@ -82,7 +82,9 @@ Deno.serve(async (req) => {
         price_excl_vat: null,
         price_incl_vat: null,
         vat_amount: null,
-        vat_rate: null
+        vat_rate: null,
+        pending_plan: null,
+        pending_billing_interval: null
       })
       .eq('user_id', user.id)
 
