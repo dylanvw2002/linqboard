@@ -295,44 +295,46 @@ const Dashboard = () => {
   return <div className="relative min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20">
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
-        <div className="container mx-auto px-6 py-0">
-          <div className="flex items-center justify-between gap-4">
-            <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
-            <div className="flex items-center gap-4">
-              <AdminVatReportLink />
-              <LanguageSwitcher />
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
-                    <Avatar className="h-12 w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
-                      <AvatarImage src={avatarUrl || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-lg">
-                        {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
-                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>{t('dashboard.profile')}</span>
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-end gap-4">
+            <AdminVatReportLink />
+            <LanguageSwitcher />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
+                  <Avatar className="h-12 w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                    <AvatarImage src={avatarUrl || undefined} />
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-lg">
+                      {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
+                <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <span>{t('dashboard.profile')}</span>
+                </DropdownMenuItem>
+                {subscriptionLimits && subscriptionLimits.plan !== 'free' && (
+                  <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Bekijk facturen</span>
                   </DropdownMenuItem>
-                  {subscriptionLimits && subscriptionLimits.plan !== 'free' && (
-                    <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
-                      <FileText className="mr-2 h-4 w-4" />
-                      <span>Bekijk facturen</span>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>{t('auth.logout')}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+                )}
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>{t('auth.logout')}</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
+
+      {/* Logo at bottom left */}
+      <div className="fixed -bottom-14 left-2 z-10">
+        <img src={logo} alt="LinqBoard Logo" className="h-40 w-auto cursor-pointer" onClick={() => navigate("/")} />
+      </div>
 
       <div className="container mx-auto px-6 py-12">
         {/* Welcome Section */}
