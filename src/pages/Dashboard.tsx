@@ -305,6 +305,9 @@ const Dashboard = () => {
                 </span>
                 <PartyPopper className="text-accent" size={28} />
               </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                {t('dashboard.welcomeBack')}
+              </p>
             </div>
             
             <div className="flex items-center gap-4">
