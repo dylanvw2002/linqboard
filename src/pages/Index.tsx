@@ -106,7 +106,7 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8">
+      <footer className="border-t border-border mt-2 py-8">
         <div className="container mx-auto px-6 text-center text-muted-foreground">
           <p>{t('landing.footerText')}</p>
         </div>
