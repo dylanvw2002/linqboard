@@ -1448,7 +1448,7 @@ const Board = () => {
                     return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[20px] p-2.5 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[20px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[19px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95", isOverdue && "animate-overdue-glow")}>
                     <div className="absolute top-2 left-2 text-muted-foreground/50 text-xs select-none pointer-events-none">☰</div>
                     <div className="flex gap-2 items-start">
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 pl-4">
                         <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
                           <AttachmentCount taskId={task.id} />
                           {task.due_date && <span className={`inline-block px-1.5 py-0.5 rounded-full text-[10px] font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
