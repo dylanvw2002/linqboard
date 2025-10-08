@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import logoImage from "@/assets/logo-transparent.png";
 
 const InvoicePreview = () => {
   const navigate = useNavigate();
@@ -48,13 +49,20 @@ const InvoicePreview = () => {
               box-shadow: 0 4px 12px -4px rgba(139, 123, 232, 0.1);
             }
             .invoice-header h1 {
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin: 0;
+              font-size: 28px;
+              font-weight: bold;
               background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
               -webkit-background-clip: text;
               -webkit-text-fill-color: transparent;
               background-clip: text;
-              margin: 0;
-              font-size: 28px;
-              font-weight: bold;
+            }
+            .invoice-logo {
+              height: 50px;
+              width: auto;
             }
             .company-info {
               text-align: right;
@@ -164,7 +172,10 @@ const InvoicePreview = () => {
           <div className="invoice-container">
             <div className="invoice-header">
               <div>
-                <h1>LinqBoard</h1>
+                <h1>
+                  <img src={logoImage} alt="LinqBoard" className="invoice-logo" />
+                  LinqBoard
+                </h1>
               </div>
               <div className="company-info">
                 <strong>LinqBoard</strong><br />
