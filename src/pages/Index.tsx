@@ -71,7 +71,7 @@ const Index = () => {
       </div>
 
       {/* Features Section */}
-      <div className="container mx-auto px-6 pt-16 pb-4">
+      <div className="container mx-auto px-6 pt-24 pb-4">
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
             <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
