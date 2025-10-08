@@ -299,13 +299,13 @@ const Dashboard = () => {
           <div className="flex items-center justify-between gap-4">
             {/* Welcome Section */}
             <div className="flex-1">
-              <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+              <h1 className="text-4xl md:text-5xl font-bold flex items-center gap-2">
                 <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   {t('dashboard.hello')} {userName || t('dashboard.hello')}
                 </span>
-                <PartyPopper className="text-accent" size={28} />
+                <PartyPopper className="text-accent" size={40} />
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-lg text-muted-foreground mt-2">
                 {t('dashboard.welcomeBack')}
               </p>
             </div>
