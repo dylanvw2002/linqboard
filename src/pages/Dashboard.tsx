@@ -296,37 +296,49 @@ const Dashboard = () => {
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-end gap-4">
-            <AdminVatReportLink />
-            <LanguageSwitcher />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
-                  <Avatar className="h-12 w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
-                    <AvatarImage src={avatarUrl || undefined} />
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-lg">
-                      {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
-                <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>{t('dashboard.profile')}</span>
-                </DropdownMenuItem>
-                {subscriptionLimits && subscriptionLimits.plan !== 'free' && (
-                  <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>Bekijk facturen</span>
+          <div className="flex items-center justify-between gap-4">
+            {/* Welcome Section */}
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  {t('dashboard.hello')} {userName || t('dashboard.hello')}
+                </span>
+                <PartyPopper className="text-accent" size={28} />
+              </h1>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <AdminVatReportLink />
+              <LanguageSwitcher />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
+                    <Avatar className="h-12 w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                      <AvatarImage src={avatarUrl || undefined} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-lg">
+                        {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
+                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t('auth.logout')}</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  {subscriptionLimits && subscriptionLimits.plan !== 'free' && (
+                    <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Bekijk facturen</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>{t('auth.logout')}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>
@@ -337,19 +349,6 @@ const Dashboard = () => {
       </div>
 
       <div className="container mx-auto px-6 py-12">
-        {/* Welcome Section */}
-        <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 flex items-center gap-3">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline-block pb-3 leading-tight">
-              {t('dashboard.hello')} {userName || t('dashboard.hello')}
-            </span>
-            <PartyPopper className="text-accent" size={56} />
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            {t('dashboard.welcomeBack')}
-          </p>
-        </div>
-
         {/* Subscription Status Card */}
         {subscriptionLimits && (
           <Card className="mb-8 p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
