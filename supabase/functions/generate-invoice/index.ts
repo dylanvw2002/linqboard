@@ -36,21 +36,11 @@ function generateInvoiceHTML(data: InvoiceData): string {
   } = data;
 
   const date = new Date(invoiceDate);
-  const formattedDate = date.toLocaleDateString('nl-NL', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  const formattedDate = date.toLocaleDateString('nl-NL');
+  const dueDate = new Date(date.getTime() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('nl-NL');
 
   const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
   const intervalText = billingInterval === 'monthly' ? 'Maandelijks' : 'Jaarlijks';
-
-  let vatNote = '';
-  if (vatRate === 0 && customerType === 'business' && vatNumber) {
-    vatNote = '<p style="font-style: italic; color: #666;">BTW verlegd naar klant (reverse charge mechanism)</p>';
-  } else if (vatRate === 0 && customerCountry !== 'NL') {
-    vatNote = '<p style="font-style: italic; color: #666;">BTW-vrijgesteld (buiten EU)</p>';
-  }
 
   return `
 <!DOCTYPE html>
@@ -61,112 +51,106 @@ function generateInvoiceHTML(data: InvoiceData): string {
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #F7F8FA;
+      padding: 40px;
+      margin: 0;
+    }
+    .invoice-container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 40px;
-      color: #333333;
-      background: #F7F8FA;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 40px;
-      border-bottom: 3px solid transparent;
-      border-image: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
-      border-image-slice: 1;
-      padding-bottom: 20px;
       background: white;
-      padding: 30px;
+      padding: 40px;
       border-radius: 12px;
       box-shadow: 0 8px 24px -8px rgba(139, 123, 232, 0.15);
     }
-    .company-info {
-      font-size: 14px;
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid;
+      border-image: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%) 1;
+      box-shadow: 0 4px 12px -4px rgba(139, 123, 232, 0.1);
     }
-    .company-info h1 {
-      margin: 0 0 15px 0;
-      background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-size: 28px;
-      font-weight: bold;
+    .invoice-logo {
+      height: 180px;
+      width: auto;
+    }
+    .company-info {
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #333333;
     }
     .invoice-info {
-      text-align: right;
-      font-size: 14px;
+      margin-bottom: 30px;
+      color: #333333;
     }
     .invoice-info h2 {
+      color: #8B7BE8;
       margin: 0 0 15px 0;
       font-size: 22px;
-      color: #8B7BE8;
       font-weight: bold;
     }
+    .invoice-info p {
+      margin: 5px 0;
+    }
     .customer-info {
-      margin: 30px 0;
-      padding: 25px;
       background: #F3F1FD;
+      padding: 20px;
+      margin-bottom: 30px;
       border-radius: 12px;
       border-left: 4px solid #8B7BE8;
       box-shadow: 0 4px 12px -4px rgba(139, 123, 232, 0.1);
     }
     .customer-info h3 {
-      margin-top: 0;
-      background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-size: 18px;
+      color: #8B7BE8;
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      font-weight: 600;
     }
-    table {
+    .customer-info p {
+      margin: 5px 0;
+      line-height: 1.6;
+      color: #333333;
+    }
+    .invoice-table {
       width: 100%;
-      border-collapse: collapse;
-      margin: 30px 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 30px;
       background: white;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px -4px rgba(139, 123, 232, 0.1);
     }
-    th, td {
-      padding: 16px;
-      text-align: left;
-      border-bottom: 1px solid #E5E7EB;
-    }
-    th {
-      background: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
+    .invoice-table th {
+      background: #8B7BE8;
       color: white;
-      font-weight: bold;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
     }
-    tbody tr:nth-child(even) {
-      background: #FAFAFA;
+    .invoice-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #333333;
     }
-    tbody tr:hover {
-      background: #F3F1FD;
+    .invoice-table tr:nth-child(even) {
+      background: #F9FAFB;
     }
-    .amount {
-      text-align: right;
-      font-weight: 500;
+    .invoice-table tr:last-child td {
+      border-bottom: none;
     }
     .total-row {
+      background: linear-gradient(135deg, #F3F1FD 0%, #FAF9FE 100%) !important;
       font-weight: bold;
-      font-size: 16px;
-      background: linear-gradient(135deg, rgba(139, 123, 232, 0.1) 0%, rgba(183, 124, 232, 0.1) 100%) !important;
-      border-top: 2px solid #8B7BE8;
+      color: #8B7BE8;
     }
-    .footer {
-      margin-top: 60px;
-      padding: 30px;
-      border-top: 3px solid transparent;
-      border-image: linear-gradient(135deg, #8B7BE8 0%, #B77CE8 100%);
-      border-image-slice: 1;
-      font-size: 11px;
-      color: #666;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+    .invoice-footer {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 2px solid #F3F1FD;
     }
     .footer-grid {
       display: grid;
@@ -174,122 +158,141 @@ function generateInvoiceHTML(data: InvoiceData): string {
       gap: 30px;
       margin-bottom: 20px;
     }
-    .footer-section {
-      text-align: left;
-    }
     .footer-section h4 {
       color: #8B7BE8;
       margin: 0 0 10px 0;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 14px;
+      font-weight: 600;
     }
     .footer-section p {
       margin: 5px 0;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #333333;
+    }
+    .legal-text {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      font-size: 11px;
+      color: #6b7280;
+      text-align: center;
       line-height: 1.6;
     }
-    .footer-legal {
+    .text-right {
+      text-align: right;
+    }
+    .text-center {
       text-align: center;
-      padding-top: 20px;
-      border-top: 1px solid #E5E7EB;
-      font-style: italic;
-      color: #999;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="company-info">
-      <h1>LinqBoard</h1>
-      <p>
+  <div class="invoice-container">
+    <div class="invoice-header">
+      <div>
+        <svg class="invoice-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#8B7BE8;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#B77CE8;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <text x="100" y="100" font-family="Arial" font-size="48" font-weight="bold" fill="url(#logoGradient)" text-anchor="middle" dominant-baseline="middle">LinqBoard</text>
+        </svg>
+      </div>
+      <div class="company-info">
+        <strong>LinqBoard</strong><br>
         Sikkelvoorde 4<br>
         3204 EJ Spijkenisse<br>
+        Nederland<br>
+        <br>
         KVK: 97289388<br>
         BTW: NL005260317B10
-      </p>
+      </div>
     </div>
+
     <div class="invoice-info">
       <h2>FACTUUR</h2>
+      <p><strong>Factuurnummer:</strong> ${invoiceNumber}</p>
+      <p><strong>Factuurdatum:</strong> ${formattedDate}</p>
+      <p><strong>Vervaldatum:</strong> ${dueDate}</p>
+    </div>
+
+    <div class="customer-info">
+      <h3>Factuur aan:</h3>
       <p>
-        <strong>Factuurnummer:</strong> ${invoiceNumber}<br>
-        <strong>Factuurdatum:</strong> ${formattedDate}
+        <strong>${customerName}</strong><br>
+        ${customerEmail}<br>
+        ${customerCountry}
+        ${vatNumber ? `<br><strong>BTW-nummer:</strong> ${vatNumber}` : ''}
       </p>
     </div>
-  </div>
 
-  <div class="customer-info">
-    <h3>Klantgegevens</h3>
-    <p>
-      <strong>${customerName}</strong><br>
-      ${customerEmail}<br>
-      ${customerCountry}
-      ${vatNumber ? `<br><strong>BTW-nummer:</strong> ${vatNumber}` : ''}
-    </p>
-  </div>
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Omschrijving</th>
+          <th class="text-center">Aantal</th>
+          <th class="text-right">Prijs</th>
+          <th class="text-right">BTW</th>
+          <th class="text-right">Totaal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LinqBoard ${planName} Abonnement - ${intervalText}</td>
+          <td class="text-center">1</td>
+          <td class="text-right">€${amountExclVat.toFixed(2)}</td>
+          <td class="text-right">€${vatAmount.toFixed(2)}</td>
+          <td class="text-right">€${amountInclVat.toFixed(2)}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4" class="text-right"><strong>Totaal te betalen</strong></td>
+          <td class="text-right"><strong>€${amountInclVat.toFixed(2)}</strong></td>
+        </tr>
+      </tbody>
+    </table>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Omschrijving</th>
-        <th class="amount">Aantal</th>
-        <th class="amount">Bedrag excl. BTW</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>LinqBoard ${planName} Abonnement - ${intervalText}</td>
-        <td class="amount">1</td>
-        <td class="amount">€ ${amountExclVat.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td colspan="2">Subtotaal excl. BTW</td>
-        <td class="amount">€ ${amountExclVat.toFixed(2)}</td>
-      </tr>
-      <tr>
-        <td colspan="2">BTW (${vatRate}%)</td>
-        <td class="amount">€ ${vatAmount.toFixed(2)}</td>
-      </tr>
-      <tr class="total-row">
-        <td colspan="2">Totaal incl. BTW</td>
-        <td class="amount">€ ${amountInclVat.toFixed(2)}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  ${vatNote}
-
-  <div class="footer">
-    <div class="footer-grid">
-      <div class="footer-section">
-        <h4>Betalingsinformatie</h4>
-        <p>
-          <strong>IBAN:</strong> NL49 KNAB 0776 5216 59<br>
-          <strong>T.n.v.:</strong> LinqBoard<br>
-          <strong>Betaaltermijn:</strong> 14 dagen
-        </p>
+    <div class="invoice-footer">
+      <div class="footer-grid">
+        <div class="footer-section">
+          <h4>Betalingsinformatie</h4>
+          <p><strong>IBAN:</strong> NL49 KNAB 0776 5216 59</p>
+          <p><strong>Ten name van:</strong> LinqBoard</p>
+          <p><strong>Betaaltermijn:</strong> 14 dagen</p>
+          <p style="margin-top: 10px; color: #8B7BE8;">
+            <strong>Gelieve bij betaling het factuurnummer te vermelden</strong>
+          </p>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Bedrijfsgegevens</h4>
+          <p><strong>LinqBoard</strong></p>
+          <p>Sikkelvoorde 4</p>
+          <p>3204 EJ Spijkenisse</p>
+          <p>Nederland</p>
+          <p style="margin-top: 10px;">
+            <strong>KVK:</strong> 97289388<br>
+            <strong>BTW:</strong> NL005260317B10
+          </p>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p><strong>Email:</strong> info@linqboard.io</p>
+          <p><strong>Website:</strong> www.linqboard.io</p>
+          <p style="margin-top: 15px; color: #8B7BE8;">
+            <strong>Vragen?</strong><br>
+            Neem gerust contact met ons op
+          </p>
+        </div>
       </div>
-      <div class="footer-section">
-        <h4>Bedrijfsgegevens</h4>
-        <p>
-          <strong>LinqBoard</strong><br>
-          Sikkelvoorde 4<br>
-          3204 EJ Spijkenisse<br>
-          KVK: 97289388<br>
-          BTW: NL005260317B10
-        </p>
+      
+      <div class="legal-text">
+        <p><strong>Deze factuur is automatisch gegenereerd en digitaal geldig</strong></p>
+        <p>Graag betalen binnen 14 dagen onder vermelding van het factuurnummer</p>
       </div>
-      <div class="footer-section">
-        <h4>Contact</h4>
-        <p>
-          <strong>Email:</strong> info@linqboard.io<br>
-          <strong>Website:</strong> www.linqboard.io
-        </p>
-      </div>
-    </div>
-    <div class="footer-legal">
-      <p>Bedankt voor uw abonnement op LinqBoard</p>
-      <p>Deze factuur is automatisch gegenereerd en digitaal geldig zonder handtekening</p>
-      <p>Graag betalen binnen 14 dagen onder vermelding van het factuurnummer</p>
     </div>
   </div>
 </body>
