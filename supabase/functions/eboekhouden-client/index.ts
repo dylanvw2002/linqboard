@@ -10,13 +10,15 @@ const EBOEKHOUDEN_SECURITY_CODE1 = Deno.env.get('EBOEKHOUDEN_SECURITY_CODE1')
 const EBOEKHOUDEN_SECURITY_CODE2 = Deno.env.get('EBOEKHOUDEN_SECURITY_CODE2')
 const SOAP_ENDPOINT = 'https://soap.e-boekhouden.nl/soap.asmx'
 
-// Validate credentials
+// Validate credentials on startup
 if (!EBOEKHOUDEN_USERNAME || !EBOEKHOUDEN_SECURITY_CODE1 || !EBOEKHOUDEN_SECURITY_CODE2) {
   console.error('Missing e-Boekhouden credentials:', {
     hasUsername: !!EBOEKHOUDEN_USERNAME,
     hasSecurityCode1: !!EBOEKHOUDEN_SECURITY_CODE1,
     hasSecurityCode2: !!EBOEKHOUDEN_SECURITY_CODE2
   })
+} else {
+  console.log('E-Boekhouden credentials loaded successfully')
 }
 
 interface AddRelatieParams {
