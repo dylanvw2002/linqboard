@@ -67,10 +67,23 @@ Deno.serve(async (req) => {
       console.log('Mollie subscription cancelled')
     }
 
-    // Update database - mark as cancelled but keep active until period ends
+    // Update database - downgrade to free plan
     const { error: updateError } = await supabase
       .from('user_subscriptions')
-      .update({ status: 'cancelled' })
+      .update({ 
+        plan: 'free',
+        status: 'active',
+        max_organizations: 1,
+        max_members_per_org: 2,
+        mollie_subscription_id: null,
+        current_period_start: null,
+        current_period_end: null,
+        billing_interval: null,
+        price_excl_vat: null,
+        price_incl_vat: null,
+        vat_amount: null,
+        vat_rate: null
+      })
       .eq('user_id', user.id)
 
     if (updateError) {
@@ -78,7 +91,7 @@ Deno.serve(async (req) => {
       throw updateError
     }
 
-    console.log('Subscription marked as canceled in database')
+    console.log('Subscription downgraded to free plan')
 
     return new Response(
       JSON.stringify({ success: true, message: 'Subscription cancelled successfully' }),
