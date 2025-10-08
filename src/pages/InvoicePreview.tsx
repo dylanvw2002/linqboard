@@ -269,7 +269,7 @@ const InvoicePreview = () => {
           <iframe
             srcDoc={htmlContent}
             className="w-full"
-            style={{ height: '100vh', border: 'none' }}
+            style={{ height: '1400px', border: 'none' }}
             title="Invoice Preview"
           />
         </div>
