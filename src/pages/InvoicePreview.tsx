@@ -2,20 +2,14 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import logoImage from "@/assets/logo-transparent.png";
-
 const InvoicePreview = () => {
   const navigate = useNavigate();
   const today = new Date().toLocaleDateString('nl-NL');
   const dueDate = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('nl-NL');
-
-  return (
-    <div className="min-h-screen bg-muted/30 p-8">
+  return <div className="min-h-screen bg-muted/30 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6 flex items-center gap-4">
-          <Button
-            variant="outline"
-            onClick={() => navigate('/dashboard')}
-          >
+          <Button variant="outline" onClick={() => navigate('/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Terug naar Dashboard
           </Button>
@@ -24,7 +18,8 @@ const InvoicePreview = () => {
         
         {/* Invoice Preview */}
         <div className="invoice-preview-container">
-          <style dangerouslySetInnerHTML={{ __html: `
+          <style dangerouslySetInnerHTML={{
+          __html: `
             .invoice-preview-container {
               font-family: Arial, sans-serif;
               background: #F7F8FA;
@@ -167,10 +162,11 @@ const InvoicePreview = () => {
               text-align: center;
               line-height: 1.6;
             }
-          `}} />
+          `
+        }} />
           
           <div className="invoice-container">
-            <div className="invoice-header">
+            <div className="invoice-header py-0">
               <div>
                 <h1>
                   <img src={logoImage} alt="LinqBoard" className="invoice-logo" />
@@ -209,23 +205,43 @@ const InvoicePreview = () => {
               <thead>
                 <tr>
                   <th>Omschrijving</th>
-                  <th style={{ textAlign: 'center' }}>Aantal</th>
-                  <th style={{ textAlign: 'right' }}>Prijs</th>
-                  <th style={{ textAlign: 'right' }}>BTW</th>
-                  <th style={{ textAlign: 'right' }}>Totaal</th>
+                  <th style={{
+                  textAlign: 'center'
+                }}>Aantal</th>
+                  <th style={{
+                  textAlign: 'right'
+                }}>Prijs</th>
+                  <th style={{
+                  textAlign: 'right'
+                }}>BTW</th>
+                  <th style={{
+                  textAlign: 'right'
+                }}>Totaal</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>Pro Abonnement - Januari 2025</td>
-                  <td style={{ textAlign: 'center' }}>1</td>
-                  <td style={{ textAlign: 'right' }}>€15,00</td>
-                  <td style={{ textAlign: 'right' }}>€3,15</td>
-                  <td style={{ textAlign: 'right' }}>€18,15</td>
+                  <td style={{
+                  textAlign: 'center'
+                }}>1</td>
+                  <td style={{
+                  textAlign: 'right'
+                }}>€15,00</td>
+                  <td style={{
+                  textAlign: 'right'
+                }}>€3,15</td>
+                  <td style={{
+                  textAlign: 'right'
+                }}>€18,15</td>
                 </tr>
                 <tr className="total-row">
-                  <td colSpan={4} style={{ textAlign: 'right' }}><strong>Totaal te betalen</strong></td>
-                  <td style={{ textAlign: 'right' }}><strong>€18,15</strong></td>
+                  <td colSpan={4} style={{
+                  textAlign: 'right'
+                }}><strong>Totaal te betalen</strong></td>
+                  <td style={{
+                  textAlign: 'right'
+                }}><strong>€18,15</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -237,7 +253,10 @@ const InvoicePreview = () => {
                   <p><strong>IBAN:</strong> NL49 KNAB 0776 5216 59</p>
                   <p><strong>Ten name van:</strong> LinqBoard</p>
                   <p><strong>Betaaltermijn:</strong> 14 dagen</p>
-                  <p style={{ marginTop: '10px', color: '#8B7BE8' }}>
+                  <p style={{
+                  marginTop: '10px',
+                  color: '#8B7BE8'
+                }}>
                     <strong>Gelieve bij betaling het factuurnummer te vermelden</strong>
                   </p>
                 </div>
@@ -248,7 +267,9 @@ const InvoicePreview = () => {
                   <p>Sikkelvoorde 4</p>
                   <p>3204 EJ Spijkenisse</p>
                   <p>Nederland</p>
-                  <p style={{ marginTop: '10px' }}>
+                  <p style={{
+                  marginTop: '10px'
+                }}>
                     <strong>KVK:</strong> 97289388<br />
                     <strong>BTW:</strong> NL005260317B10
                   </p>
@@ -258,7 +279,10 @@ const InvoicePreview = () => {
                   <h4>Contact</h4>
                   <p><strong>Email:</strong> info@linqboard.io</p>
                   <p><strong>Website:</strong> www.linqboard.io</p>
-                  <p style={{ marginTop: '15px', color: '#8B7BE8' }}>
+                  <p style={{
+                  marginTop: '15px',
+                  color: '#8B7BE8'
+                }}>
                     <strong>Vragen?</strong><br />
                     Neem gerust contact met ons op
                   </p>
@@ -273,8 +297,6 @@ const InvoicePreview = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default InvoicePreview;
