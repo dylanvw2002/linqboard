@@ -135,8 +135,10 @@ Deno.serve(async (req) => {
   let paymentId: string;
   
   try {
-    const body = await req.json();
-    paymentId = body.id;
+    // Mollie sends webhooks as form-encoded data
+    const body = await req.text();
+    const params = new URLSearchParams(body);
+    paymentId = params.get('id') || '';
     
     if (!paymentId) {
       throw new Error('No payment ID provided');
