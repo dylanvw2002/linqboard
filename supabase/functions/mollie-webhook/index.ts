@@ -2,7 +2,6 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 
 const MOLLIE_API_KEY = Deno.env.get('MOLLIE_API_KEY')
 
-// E-boekhouden.nl sync function
 async function syncToEboekhouden(
   supabase: any,
   invoice: any,
@@ -18,6 +17,8 @@ async function syncToEboekhouden(
   existingRelationCode?: string
 ) {
   try {
+    console.log('E-boekhouden sync starting...', { userId, invoiceId: invoice.id })
+    
     const relationCode = existingRelationCode || `LINQ-${userId.substring(0, 8)}`
     
     // Log sync attempt
@@ -30,15 +31,25 @@ async function syncToEboekhouden(
 
     // Check if customer exists, if not create
     if (!existingRelationCode) {
-      const { data: checkResult } = await supabase.functions.invoke('eboekhouden-client', {
+      console.log('Checking if relation exists:', relationCode)
+      
+      const checkResult = await supabase.functions.invoke('eboekhouden-client', {
         body: {
           action: 'getRelatie',
           params: { relatiecode: relationCode }
         }
       })
+      
+      console.log('Check relation result:', checkResult)
 
-      if (!checkResult?.exists) {
-        const { data: addRelResult, error: relError } = await supabase.functions.invoke('eboekhouden-client', {
+      if (checkResult.error) {
+        throw new Error(`Failed to check relation: ${JSON.stringify(checkResult.error)}`)
+      }
+
+      if (!checkResult.data?.exists) {
+        console.log('Creating new relation:', relationCode)
+        
+        const addRelResult = await supabase.functions.invoke('eboekhouden-client', {
           body: {
             action: 'addRelatie',
             params: {
@@ -51,7 +62,11 @@ async function syncToEboekhouden(
           }
         })
 
-        if (relError) throw relError
+        console.log('Add relation result:', addRelResult)
+
+        if (addRelResult.error) {
+          throw new Error(`Failed to create relation: ${JSON.stringify(addRelResult.error)}`)
+        }
 
         // Save relation code
         await supabase
@@ -67,7 +82,7 @@ async function syncToEboekhouden(
           user_id: userId,
           sync_type: 'customer',
           status: 'success',
-          eboekhouden_response: addRelResult
+          eboekhouden_response: addRelResult.data
         })
       }
     }
@@ -88,8 +103,10 @@ async function syncToEboekhouden(
       }
     }
 
+    console.log('Creating invoice in e-Boekhouden...', { relationCode, invoiceNumber: invoice.invoice_number })
+
     // Create invoice in E-boekhouden.nl
-    const { data: factuurResult, error: factuurError } = await supabase.functions.invoke('eboekhouden-client', {
+    const factuurResult = await supabase.functions.invoke('eboekhouden-client', {
       body: {
         action: 'addFactuur',
         params: {
@@ -105,7 +122,11 @@ async function syncToEboekhouden(
       }
     })
 
-    if (factuurError) throw factuurError
+    console.log('Create invoice result:', factuurResult)
+
+    if (factuurResult.error) {
+      throw new Error(`Failed to create invoice: ${JSON.stringify(factuurResult.error)}`)
+    }
 
     // Log success
     await supabase.from('eboekhouden_sync_log').insert({
@@ -113,7 +134,7 @@ async function syncToEboekhouden(
       user_id: userId,
       sync_type: 'invoice',
       status: 'success',
-      eboekhouden_response: factuurResult
+      eboekhouden_response: factuurResult.data
     })
 
     console.log('E-boekhouden sync successful for invoice:', invoice.invoice_number)
@@ -128,6 +149,8 @@ async function syncToEboekhouden(
       status: 'failed',
       error_message: error.message || error.toString()
     })
+    
+    throw error
   }
 }
 
@@ -341,7 +364,7 @@ Deno.serve(async (req) => {
         
         // Send invoice email first (most important)
         try {
-          console.log('Sending invoice email...')
+          console.log('Sending invoice email to:', user_email)
           const emailResult = await supabase.functions.invoke('send-invoice-email', {
             body: { 
               invoiceId: newInvoice.id,
@@ -350,18 +373,29 @@ Deno.serve(async (req) => {
             }
           })
           
+          console.log('Email invoke result:', emailResult)
+          
           if (emailResult.error) {
             console.error('Email send error:', emailResult.error)
+            throw new Error(`Email error: ${JSON.stringify(emailResult.error)}`)
           } else {
-            console.log('Invoice email sent successfully')
+            console.log('Invoice email sent successfully:', emailResult.data)
           }
         } catch (emailError) {
           console.error('Failed to send invoice email:', emailError)
+          // Log the error but don't fail the webhook
+          await supabase.from('eboekhouden_sync_log').insert({
+            invoice_id: newInvoice.id,
+            user_id: user_id,
+            sync_type: 'email',
+            status: 'failed',
+            error_message: emailError instanceof Error ? emailError.message : String(emailError)
+          })
         }
         
         // Sync to E-boekhouden.nl (non-critical, can fail)
         try {
-          console.log('Starting E-boekhouden sync...')
+          console.log('Starting E-boekhouden sync for user:', user_id)
           await syncToEboekhouden(
             supabase,
             newInvoice,
@@ -376,9 +410,10 @@ Deno.serve(async (req) => {
             intervalText,
             userSub?.eboekhouden_relation_code
           )
-          console.log('E-boekhouden sync completed')
+          console.log('E-boekhouden sync completed successfully')
         } catch (ebError) {
           console.error('E-boekhouden sync failed (non-critical):', ebError)
+          // Error is already logged in syncToEboekhouden function
         }
       }
 
