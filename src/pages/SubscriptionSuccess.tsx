@@ -24,6 +24,14 @@ const SubscriptionSuccess = () => {
         }
 
         const { data } = await supabase.functions.invoke('get-subscription-status');
+        
+        // Check if subscription is active
+        if (data?.subscription?.status !== 'active') {
+          console.log('Payment failed or pending, redirecting to failed page');
+          navigate('/subscription-failed');
+          return;
+        }
+        
         if (data?.limits) {
           setPlan(data.limits.plan);
         }
