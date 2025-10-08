@@ -80,11 +80,16 @@ Deno.serve(async (req) => {
     // Check if user already has an active subscription
     const { data: existingSub } = await supabase
       .from('user_subscriptions')
-      .select('mollie_customer_id, mollie_subscription_id, plan')
+      .select('mollie_customer_id, mollie_subscription_id, plan, max_organizations, max_members_per_org')
       .eq('user_id', user.id)
       .maybeSingle()
 
     let customerId: string
+    
+    // Store original plan to restore on payment failure
+    const originalPlan = existingSub?.plan || 'free'
+    const originalMaxOrgs = existingSub?.max_organizations || 1
+    const originalMaxMembers = existingSub?.max_members_per_org || 2
 
     // If there's an active Mollie subscription, cancel it first
     if (existingSub?.mollie_subscription_id && existingSub?.mollie_customer_id) {
@@ -162,7 +167,10 @@ Deno.serve(async (req) => {
           amount_excl_vat: amount_excl_vat.toFixed(2),
           vat_rate: vat_rate.toFixed(2),
           vat_amount: vat_amount.toFixed(2),
-          amount_incl_vat: amount_incl_vat.toFixed(2)
+          amount_incl_vat: amount_incl_vat.toFixed(2),
+          original_plan: originalPlan,
+          original_max_organizations: originalMaxOrgs.toString(),
+          original_max_members_per_org: originalMaxMembers.toString()
         }
       })
     })

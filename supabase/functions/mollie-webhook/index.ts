@@ -412,16 +412,21 @@ Deno.serve(async (req) => {
         }
       }
     } else if (payment.status === 'failed') {
-      const { user_id } = payment.metadata
+      const { 
+        user_id, 
+        original_plan, 
+        original_max_organizations, 
+        original_max_members_per_org 
+      } = payment.metadata
       
-      // Reset to free plan on failed payment
+      // Reset to original plan on failed payment
       await supabase
         .from('user_subscriptions')
         .update({ 
           status: 'active',
-          plan: 'free',
-          max_organizations: 1,
-          max_members_per_org: 2,
+          plan: original_plan || 'free',
+          max_organizations: parseInt(original_max_organizations) || 1,
+          max_members_per_org: parseInt(original_max_members_per_org) || 2,
           mollie_subscription_id: null,
           current_period_start: null,
           current_period_end: null,
@@ -435,7 +440,7 @@ Deno.serve(async (req) => {
         })
         .eq('user_id', user_id)
       
-      console.log('Payment failed, subscription reset to free plan')
+      console.log('Payment failed, subscription reset to original plan:', original_plan)
     }
 
     return new Response(null, { status: 200 })
