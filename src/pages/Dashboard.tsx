@@ -290,7 +290,7 @@ const Dashboard = () => {
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-6 py-0">
-          <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center justify-between gap-1 -my-4">
             <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
             <div className="flex items-center gap-4">
               <AdminVatReportLink />
