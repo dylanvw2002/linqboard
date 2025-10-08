@@ -190,6 +190,50 @@ export type Database = {
           },
         ]
       }
+      eboekhouden_sync_log: {
+        Row: {
+          created_at: string | null
+          eboekhouden_response: Json | null
+          error_message: string | null
+          id: string
+          invoice_id: string | null
+          status: string
+          sync_type: string
+          synced_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          eboekhouden_response?: Json | null
+          error_message?: string | null
+          id?: string
+          invoice_id?: string | null
+          status: string
+          sync_type: string
+          synced_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          eboekhouden_response?: Json | null
+          error_message?: string | null
+          id?: string
+          invoice_id?: string | null
+          status?: string
+          sync_type?: string
+          synced_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eboekhouden_sync_log_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       eu_sales_summary: {
         Row: {
           country: string
@@ -590,11 +634,14 @@ export type Database = {
           billing_interval:
             | Database["public"]["Enums"]["billing_interval"]
             | null
+          company_name: string | null
           country: string | null
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
           customer_type: string | null
+          eboekhouden_last_sync: string | null
+          eboekhouden_relation_code: string | null
           id: string
           max_members_per_org: number
           max_organizations: number
@@ -619,11 +666,14 @@ export type Database = {
           billing_interval?:
             | Database["public"]["Enums"]["billing_interval"]
             | null
+          company_name?: string | null
           country?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           customer_type?: string | null
+          eboekhouden_last_sync?: string | null
+          eboekhouden_relation_code?: string | null
           id?: string
           max_members_per_org: number
           max_organizations: number
@@ -648,11 +698,14 @@ export type Database = {
           billing_interval?:
             | Database["public"]["Enums"]["billing_interval"]
             | null
+          company_name?: string | null
           country?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           customer_type?: string | null
+          eboekhouden_last_sync?: string | null
+          eboekhouden_relation_code?: string | null
           id?: string
           max_members_per_org?: number
           max_organizations?: number
