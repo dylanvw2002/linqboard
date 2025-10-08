@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import Board from "./pages/Board";
 import BoardDemo from "./pages/BoardDemo";
 import Pricing from "./pages/Pricing";
+import Checkout from "./pages/Checkout";
+import VatReports from "./pages/VatReports";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import SubscriptionFailed from "./pages/SubscriptionFailed";
 import NotFound from "./pages/NotFound";
@@ -41,6 +43,8 @@ const App = () => (
           <Route path="/board/:organizationId" element={<Board />} />
           <Route path="/board-demo" element={<BoardDemo />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/vat-reports" element={<VatReports />} />
           <Route path="/subscription-success" element={<SubscriptionSuccess />} />
           <Route path="/subscription-failed" element={<SubscriptionFailed />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

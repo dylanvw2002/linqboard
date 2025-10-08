@@ -45,7 +45,18 @@ Deno.serve(async (req) => {
       throw new Error('Authentication failed')
     }
 
-    const { plan, billing_interval } = await req.json()
+    const { 
+      plan, 
+      billing_interval,
+      country,
+      customer_type,
+      vat_number,
+      vat_number_valid,
+      amount_excl_vat,
+      vat_rate,
+      vat_amount,
+      amount_incl_vat
+    } = await req.json()
     
     console.log('Creating subscription:', { plan, billing_interval, userId: user.id })
 
@@ -82,8 +93,8 @@ Deno.serve(async (req) => {
     const customer = await customerResponse.json()
     console.log('Mollie customer created:', customer.id)
 
-    // Create first payment (which will create the subscription after payment)
-    const price = PRICING[plan][billing_interval as 'monthly' | 'yearly']
+    // Use calculated VAT amount
+    const totalAmount = amount_incl_vat
     const interval = billing_interval === 'monthly' ? '1 month' : '1 year'
     
     const paymentResponse = await fetch(`https://api.mollie.com/v2/customers/${customer.id}/payments`, {
@@ -93,7 +104,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        amount: { currency: 'EUR', value: price.toFixed(2) },
+        amount: { currency: 'EUR', value: totalAmount.toFixed(2) },
         description: `LinqBoard ${planName} (${intervalText})`,
         redirectUrl: `${req.headers.get('origin')}/subscription-success`,
         webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`,
@@ -103,7 +114,15 @@ Deno.serve(async (req) => {
           billing_interval: billing_interval,
           user_id: user.id,
           user_name: userName,
-          user_email: user.email
+          user_email: user.email,
+          country: country,
+          customer_type: customer_type,
+          vat_number: vat_number || '',
+          vat_number_valid: vat_number_valid || false,
+          amount_excl_vat: amount_excl_vat.toFixed(2),
+          vat_rate: vat_rate.toFixed(2),
+          vat_amount: vat_amount.toFixed(2),
+          amount_incl_vat: amount_incl_vat.toFixed(2)
         }
       })
     })
@@ -134,7 +153,15 @@ Deno.serve(async (req) => {
       max_organizations: PRICING[plan].orgs,
       max_members_per_org: PRICING[plan].members,
       current_period_start: null,
-      current_period_end: null
+      current_period_end: null,
+      country: country,
+      customer_type: customer_type,
+      vat_number: vat_number || null,
+      vat_number_valid: vat_number_valid || false,
+      price_excl_vat: amount_excl_vat,
+      vat_rate: vat_rate,
+      vat_amount: vat_amount,
+      price_incl_vat: amount_incl_vat
     }
 
     let updateError

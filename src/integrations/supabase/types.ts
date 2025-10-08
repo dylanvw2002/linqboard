@@ -190,6 +190,119 @@ export type Database = {
           },
         ]
       }
+      eu_sales_summary: {
+        Row: {
+          country: string
+          created_at: string | null
+          id: string
+          quarter: number
+          total_sales_excl_vat: number | null
+          total_vat_collected: number | null
+          transaction_count: number | null
+          updated_at: string | null
+          vat_rate: number | null
+          year: number
+        }
+        Insert: {
+          country: string
+          created_at?: string | null
+          id?: string
+          quarter: number
+          total_sales_excl_vat?: number | null
+          total_vat_collected?: number | null
+          transaction_count?: number | null
+          updated_at?: string | null
+          vat_rate?: number | null
+          year: number
+        }
+        Update: {
+          country?: string
+          created_at?: string | null
+          id?: string
+          quarter?: number
+          total_sales_excl_vat?: number | null
+          total_vat_collected?: number | null
+          transaction_count?: number | null
+          updated_at?: string | null
+          vat_rate?: number | null
+          year?: number
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount_excl_vat: number
+          amount_incl_vat: number
+          created_at: string | null
+          customer_country: string
+          customer_email: string
+          customer_name: string
+          customer_type: string
+          id: string
+          invoice_date: string | null
+          invoice_number: string
+          payment_id: string | null
+          pdf_url: string | null
+          status: string | null
+          subscription_id: string | null
+          updated_at: string | null
+          user_id: string
+          vat_amount: number
+          vat_number: string | null
+          vat_rate: number
+        }
+        Insert: {
+          amount_excl_vat: number
+          amount_incl_vat: number
+          created_at?: string | null
+          customer_country: string
+          customer_email: string
+          customer_name: string
+          customer_type: string
+          id?: string
+          invoice_date?: string | null
+          invoice_number: string
+          payment_id?: string | null
+          pdf_url?: string | null
+          status?: string | null
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id: string
+          vat_amount: number
+          vat_number?: string | null
+          vat_rate: number
+        }
+        Update: {
+          amount_excl_vat?: number
+          amount_incl_vat?: number
+          created_at?: string | null
+          customer_country?: string
+          customer_email?: string
+          customer_name?: string
+          customer_type?: string
+          id?: string
+          invoice_date?: string | null
+          invoice_number?: string
+          payment_id?: string | null
+          pdf_url?: string | null
+          status?: string | null
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+          vat_amount?: number
+          vat_number?: string | null
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "user_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memberships: {
         Row: {
           created_at: string
@@ -218,6 +331,68 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mollie_transactions: {
+        Row: {
+          amount: number
+          country: string | null
+          created_at: string | null
+          currency: string | null
+          customer_type: string | null
+          id: string
+          mollie_response: Json | null
+          payment_id: string
+          status: string
+          subscription_id: string | null
+          updated_at: string | null
+          user_id: string
+          vat_amount: number | null
+          vat_number: string | null
+          vat_rate: number | null
+        }
+        Insert: {
+          amount: number
+          country?: string | null
+          created_at?: string | null
+          currency?: string | null
+          customer_type?: string | null
+          id?: string
+          mollie_response?: Json | null
+          payment_id: string
+          status: string
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id: string
+          vat_amount?: number | null
+          vat_number?: string | null
+          vat_rate?: number | null
+        }
+        Update: {
+          amount?: number
+          country?: string | null
+          created_at?: string | null
+          currency?: string | null
+          customer_type?: string | null
+          id?: string
+          mollie_response?: Json | null
+          payment_id?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+          vat_amount?: number | null
+          vat_number?: string | null
+          vat_rate?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mollie_transactions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "user_subscriptions"
             referencedColumns: ["id"]
           },
         ]
@@ -415,9 +590,11 @@ export type Database = {
           billing_interval:
             | Database["public"]["Enums"]["billing_interval"]
             | null
+          country: string | null
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
+          customer_type: string | null
           id: string
           max_members_per_org: number
           max_organizations: number
@@ -428,17 +605,25 @@ export type Database = {
             | null
           pending_plan: Database["public"]["Enums"]["subscription_plan"] | null
           plan: Database["public"]["Enums"]["subscription_plan"]
+          price_excl_vat: number | null
+          price_incl_vat: number | null
           status: Database["public"]["Enums"]["subscription_status"]
           updated_at: string
           user_id: string
+          vat_amount: number | null
+          vat_number: string | null
+          vat_number_valid: boolean | null
+          vat_rate: number | null
         }
         Insert: {
           billing_interval?:
             | Database["public"]["Enums"]["billing_interval"]
             | null
+          country?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
+          customer_type?: string | null
           id?: string
           max_members_per_org: number
           max_organizations: number
@@ -449,17 +634,25 @@ export type Database = {
             | null
           pending_plan?: Database["public"]["Enums"]["subscription_plan"] | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
+          price_excl_vat?: number | null
+          price_incl_vat?: number | null
           status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
           user_id: string
+          vat_amount?: number | null
+          vat_number?: string | null
+          vat_number_valid?: boolean | null
+          vat_rate?: number | null
         }
         Update: {
           billing_interval?:
             | Database["public"]["Enums"]["billing_interval"]
             | null
+          country?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
+          customer_type?: string | null
           id?: string
           max_members_per_org?: number
           max_organizations?: number
@@ -470,9 +663,15 @@ export type Database = {
             | null
           pending_plan?: Database["public"]["Enums"]["subscription_plan"] | null
           plan?: Database["public"]["Enums"]["subscription_plan"]
+          price_excl_vat?: number | null
+          price_incl_vat?: number | null
           status?: Database["public"]["Enums"]["subscription_status"]
           updated_at?: string
           user_id?: string
+          vat_amount?: number | null
+          vat_number?: string | null
+          vat_number_valid?: boolean | null
+          vat_rate?: number | null
         }
         Relationships: [
           {
@@ -498,6 +697,10 @@ export type Database = {
         Returns: boolean
       }
       generate_invite_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_invoice_number: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

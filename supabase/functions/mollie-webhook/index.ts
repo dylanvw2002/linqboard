@@ -20,10 +20,45 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
+    // Log transaction
+    const { error: transactionError } = await supabase
+      .from('mollie_transactions')
+      .insert({
+        payment_id: payment.id,
+        user_id: payment.metadata.user_id,
+        status: payment.status,
+        amount: parseFloat(payment.amount.value),
+        currency: payment.amount.currency,
+        country: payment.metadata.country,
+        customer_type: payment.metadata.customer_type,
+        vat_number: payment.metadata.vat_number || null,
+        vat_rate: parseFloat(payment.metadata.vat_rate || '0'),
+        vat_amount: parseFloat(payment.metadata.vat_amount || '0'),
+        mollie_response: payment
+      })
+
+    if (transactionError) {
+      console.error('Error logging transaction:', transactionError)
+    }
+
     // Update subscription status based on payment status
     if (payment.status === 'paid') {
       // This was the first payment, now create the actual subscription
-      const { plan, billing_interval, user_id, user_name } = payment.metadata
+      const { 
+        plan, 
+        billing_interval, 
+        user_id, 
+        user_name,
+        user_email,
+        country,
+        customer_type,
+        vat_number,
+        vat_number_valid,
+        amount_excl_vat,
+        vat_rate,
+        vat_amount,
+        amount_incl_vat
+      } = payment.metadata
       
       if (!plan || !billing_interval || !user_id) {
         console.error('Missing metadata in payment:', payment.metadata)
@@ -89,7 +124,7 @@ Deno.serve(async (req) => {
       // Check if there's a pending plan change
       const { data: currentSub } = await supabase
         .from('user_subscriptions')
-        .select('pending_plan, pending_billing_interval')
+        .select('id, pending_plan, pending_billing_interval')
         .eq('user_id', user_id)
         .single()
 
@@ -117,6 +152,70 @@ Deno.serve(async (req) => {
         .eq('user_id', user_id)
       
       console.log('Subscription activated')
+
+      // Generate invoice
+      const invoiceNumber = await supabase
+        .rpc('generate_invoice_number')
+        .single()
+
+      if (invoiceNumber.data) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('user_id', user_id)
+          .single()
+
+        const { data: newInvoice, error: invoiceError } = await supabase
+          .from('invoices')
+          .insert({
+            subscription_id: currentSub?.id,
+            user_id: user_id,
+            invoice_number: invoiceNumber.data,
+            customer_name: profile?.full_name || user_name,
+            customer_email: user_email,
+            customer_country: country,
+            customer_type: customer_type,
+            vat_number: vat_number || null,
+            amount_excl_vat: parseFloat(amount_excl_vat),
+            vat_rate: parseFloat(vat_rate),
+            vat_amount: parseFloat(vat_amount),
+            amount_incl_vat: parseFloat(amount_incl_vat),
+            status: 'paid',
+            payment_id: payment.id
+          })
+          .select()
+          .single()
+
+        if (invoiceError) {
+          console.error('Error creating invoice:', invoiceError)
+        } else {
+          console.log('Invoice created:', newInvoice.invoice_number)
+        }
+
+        // Update EU sales summary for EU B2C customers
+        if (country !== 'NL' && customer_type === 'private' && parseFloat(vat_amount) > 0) {
+          const now = new Date()
+          const year = now.getFullYear()
+          const quarter = Math.floor(now.getMonth() / 3) + 1
+
+          await supabase
+            .from('eu_sales_summary')
+            .upsert({
+              country: country,
+              year: year,
+              quarter: quarter,
+              total_sales_excl_vat: parseFloat(amount_excl_vat),
+              total_vat_collected: parseFloat(vat_amount),
+              vat_rate: parseFloat(vat_rate),
+              transaction_count: 1
+            }, {
+              onConflict: 'country,year,quarter',
+              ignoreDuplicates: false
+            })
+
+          console.log('EU sales summary updated')
+        }
+      }
     } else if (payment.status === 'failed') {
       const { user_id } = payment.metadata
       
