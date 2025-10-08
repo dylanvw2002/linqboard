@@ -19,21 +19,18 @@ import SupportButton from "@/components/SupportButton";
 import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
-
 interface Organization {
   id: string;
   name: string;
   invite_code: string;
   role: string;
 }
-
 interface SubscriptionLimits {
   plan: string;
   max_organizations: number;
   max_members_per_org: number;
   current_org_count: number;
 }
-
 interface Subscription {
   plan: string;
   status: string;
@@ -42,10 +39,11 @@ interface Subscription {
   mollie_customer_id?: string;
   mollie_subscription_id?: string;
 }
-
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [deleteOrgId, setDeleteOrgId] = useState<string | null>(null);
@@ -60,19 +58,22 @@ const Dashboard = () => {
   const [userName, setUserName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [userId, setUserId] = useState("");
-  
   useEffect(() => {
     const checkAccess = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
         navigate("/auth");
         return;
       }
-      
+
       // Fetch user profile and subscription
       await fetchUserData(session.user.id);
       await fetchOrganizations();
-      
+
       // Check for subscription success message
       const searchParams = new URLSearchParams(window.location.search);
       if (searchParams.get('subscription') === 'success') {
@@ -81,29 +82,26 @@ const Dashboard = () => {
         window.history.replaceState({}, '', '/dashboard');
       }
     };
-    
     checkAccess();
   }, [navigate]);
-  
   const fetchUserData = async (userId: string) => {
     try {
       setUserId(userId);
-      
+
       // Fetch profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, avatar_url')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
+      const {
+        data: profile
+      } = await supabase.from('profiles').select('full_name, avatar_url').eq('user_id', userId).maybeSingle();
       if (profile) {
         setUserName(profile.full_name || "");
         setEditName(profile.full_name || "");
         setAvatarUrl(profile.avatar_url || null);
       }
-      
+
       // Fetch subscription limits
-      const { data: limits } = await supabase.functions.invoke('get-subscription-status');
+      const {
+        data: limits
+      } = await supabase.functions.invoke('get-subscription-status');
       if (limits) {
         setSubscriptionLimits(limits.limits);
         setSubscription(limits.subscription);
@@ -112,7 +110,6 @@ const Dashboard = () => {
       console.error('Error fetching user data:', error);
     }
   };
-
   const handleAvatarUpload = async (blob: Blob) => {
     try {
       // Delete old avatar if exists
@@ -126,26 +123,25 @@ const Dashboard = () => {
       // Upload new avatar
       const fileName = `${Math.random()}.jpg`;
       const filePath = `${userId}/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, blob);
-
+      const {
+        error: uploadError
+      } = await supabase.storage.from('avatars').upload(filePath, blob);
       if (uploadError) throw uploadError;
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath);
+      const {
+        data: {
+          publicUrl
+        }
+      } = supabase.storage.from('avatars').getPublicUrl(filePath);
 
       // Update profile
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('user_id', userId);
-
+      const {
+        error: updateError
+      } = await supabase.from('profiles').update({
+        avatar_url: publicUrl
+      }).eq('user_id', userId);
       if (updateError) throw updateError;
-
       toast.success(t('dashboard.avatarUpdated'));
       // Profile hook will auto-refetch
     } catch (error: any) {
@@ -153,22 +149,18 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-
-
   const handleUpdateProfile = async () => {
     if (!editName.trim()) {
       toast.error(t('dashboard.nameRequired'));
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ full_name: editName })
-        .eq('user_id', userId);
-
+      const {
+        error
+      } = await supabase.from('profiles').update({
+        full_name: editName
+      }).eq('user_id', userId);
       if (error) throw error;
-
       setProfileDialogOpen(false);
       toast.success(t('dashboard.profileUpdated'));
       // Profile hook will auto-refetch
@@ -177,26 +169,29 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-
   const handleCancelSubscription = async () => {
     setCancelling(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
         throw new Error('Not authenticated');
       }
-
-      const { data, error } = await supabase.functions.invoke('cancel-mollie-subscription', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('cancel-mollie-subscription', {
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
       });
-
       if (error) throw error;
-
       toast.success(t('subscription.cancelled'));
       setCancelDialogOpen(false);
-      
+
       // Refresh subscription data
       await fetchUserData(userId);
     } catch (error: any) {
@@ -283,36 +278,23 @@ const Dashboard = () => {
     }
   };
   const isPageLoading = loading;
-
   if (isPageLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20">
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">{t('dashboard.title')}</p>
         </div>
       </div>;
   }
-  return <div className="relative min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20">
+  return <div className="relative min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-6 py-0">
           <div className="flex items-center justify-between gap-4">
-            {/* Welcome Section */}
-            <div className="flex-1">
-              <h1 className="text-4xl md:text-5xl font-bold flex items-center gap-2">
-                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  {t('dashboard.hello')} {userName || t('dashboard.hello')}
-                </span>
-                <PartyPopper className="text-accent" size={40} />
-              </h1>
-              <p className="text-lg text-muted-foreground mt-2">
-                {t('dashboard.welcomeBack')}
-              </p>
-            </div>
-            
+            <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
             <div className="flex items-center gap-4">
               <AdminVatReportLink />
-              <LanguageSwitcher />
+              <LanguageSwitcher className="my-0 py-[10px]" />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
@@ -329,12 +311,6 @@ const Dashboard = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
-                  {subscriptionLimits && subscriptionLimits.plan !== 'free' && (
-                    <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
-                      <FileText className="mr-2 h-4 w-4" />
-                      <span>Bekijk facturen</span>
-                    </DropdownMenuItem>
-                  )}
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>{t('auth.logout')}</span>
@@ -346,15 +322,22 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Logo at bottom left */}
-      <div className="fixed -bottom-14 left-2 z-10">
-        <img src={logo} alt="LinqBoard Logo" className="h-40 w-auto cursor-pointer" onClick={() => navigate("/")} />
-      </div>
-
       <div className="container mx-auto px-6 py-12">
+        {/* Welcome Section */}
+        <div className="mb-12">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 flex items-center gap-3">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline-block pb-3 leading-tight">
+              {t('dashboard.hello')} {userName || t('dashboard.hello')}
+            </span>
+            <PartyPopper className="text-accent" size={56} />
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            {t('dashboard.welcomeBack')}
+          </p>
+        </div>
+
         {/* Subscription Status Card */}
-        {subscriptionLimits && (
-          <Card className="mb-8 p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
+        {subscriptionLimits && <Card className="mb-8 p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
@@ -363,33 +346,23 @@ const Dashboard = () => {
                     {t('subscription.yourPlan')}: <span className="text-primary capitalize">{subscriptionLimits.plan}</span>
                   </h3>
                 </div>
-                {subscription && subscription.status && (
-                  <div className="mb-3">
+                {subscription && subscription.status && <div className="mb-3">
                     <span className="text-sm text-muted-foreground">
                       {t('subscription.status')}:{" "}
-                      <span className={`font-semibold ${
-                        subscription.status === 'active' ? 'text-green-600' : 
-                        subscription.status === 'canceled' ? 'text-orange-600' : 
-                        'text-red-600'
-                      }`}>
+                      <span className={`font-semibold ${subscription.status === 'active' ? 'text-green-600' : subscription.status === 'canceled' ? 'text-orange-600' : 'text-red-600'}`}>
                         {subscription.status === 'active' && 'Actief'}
                         {subscription.status === 'canceled' && 'Geannuleerd'}
                         {subscription.status === 'past_due' && 'Betaling achterstallig'}
                         {subscription.status === 'pending' && 'In behandeling'}
                       </span>
                     </span>
-                    {subscription.billing_interval && (
-                      <span className="text-sm text-muted-foreground ml-4">
+                    {subscription.billing_interval && <span className="text-sm text-muted-foreground ml-4">
                         • {subscription.billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'}
-                      </span>
-                    )}
-                    {subscription.current_period_end && (
-                      <span className="text-sm text-muted-foreground ml-4">
+                      </span>}
+                    {subscription.current_period_end && <span className="text-sm text-muted-foreground ml-4">
                         • Verlengt op {new Date(subscription.current_period_end).toLocaleDateString('nl-NL')}
-                      </span>
-                    )}
-                  </div>
-                )}
+                      </span>}
+                  </div>}
                 <div className="space-y-3 mt-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
@@ -398,10 +371,7 @@ const Dashboard = () => {
                         {subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations}
                       </span>
                     </div>
-                    <Progress 
-                      value={subscriptionLimits.max_organizations === -1 ? 0 : (subscriptionLimits.current_org_count / subscriptionLimits.max_organizations) * 100} 
-                      className="h-2"
-                    />
+                    <Progress value={subscriptionLimits.max_organizations === -1 ? 0 : subscriptionLimits.current_org_count / subscriptionLimits.max_organizations * 100} className="h-2" />
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {t('subscription.membersPerOrg')}: {subscriptionLimits.max_members_per_org === -1 ? '∞' : subscriptionLimits.max_members_per_org}
@@ -409,58 +379,30 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 shrink-0">
-                {subscriptionLimits.plan !== 'business' && (
-                  <Button onClick={() => navigate('/pricing')} size="lg">
+                {subscriptionLimits.plan !== 'free' && <Button onClick={() => navigate('/invoices')} size="lg" variant="outline">
+                    <FileText className="mr-2 h-4 w-4" />
+                    Bekijk facturen
+                  </Button>}
+                {subscriptionLimits.plan !== 'business' && <Button onClick={() => navigate('/pricing')} size="lg">
                     {t('subscription.upgrade')}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
-                {subscription && subscription.mollie_subscription_id && subscription.status === 'active' && (
-                  <Button 
-                    onClick={() => setCancelDialogOpen(true)} 
-                    size="lg" 
-                    variant="outline"
-                    className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                  >
+                  </Button>}
+                {subscription && subscription.mollie_subscription_id && subscription.status === 'active' && <Button onClick={() => setCancelDialogOpen(true)} size="lg" variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
                     {t('subscription.cancel')}
-                  </Button>
-                )}
+                  </Button>}
               </div>
             </div>
-          </Card>
-        )}
+          </Card>}
 
         {/* Organizations */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold">
               {t('dashboard.yourOrganizations')}
-              {subscriptionLimits && (
-                <span className="text-muted-foreground text-xl ml-3">
+              {subscriptionLimits && <span className="text-muted-foreground text-xl ml-3">
                   ({subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations})
-                </span>
-              )}
+                </span>}
             </h2>
-            {organizations.length > 0 && (
-              <div className="flex gap-3">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  onClick={() => navigate("/create-organization")} 
-                  className="border-2"
-                  disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}
-                >
-                  <Plus className="mr-2 h-5 w-5" />
-                  {t('dashboard.newOrganization')}
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
-                  {t('dashboard.joinTeam')}
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2">
-                  {t('subscription.viewPlans')}
-                </Button>
-              </div>
-            )}
           </div>
           
           {organizations.length === 0 ? <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
@@ -490,8 +432,8 @@ const Dashboard = () => {
                       <Trash2 className="h-5 w-5" />
                     </Button> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
               e.stopPropagation();
-               setLeaveOrgId(org.id);
-             }}>
+              setLeaveOrgId(org.id);
+            }}>
                       {t('dashboard.leave')}
                     </Button>}
                   <div className="cursor-pointer" onClick={() => handleOpenBoard(org.id)}>
@@ -513,6 +455,22 @@ const Dashboard = () => {
             </div>}
         </div>
 
+        {/* Quick actions */}
+        {organizations.length > 0 && <div className="border-t border-border/50 pt-8">
+            <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
+                <Plus className="mr-2 h-5 w-5" />
+                {t('dashboard.newOrganization')}
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
+                {t('dashboard.joinTeam')}
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2">
+                {t('subscription.viewPlans')}
+              </Button>
+            </div>
+          </div>}
       </div>
 
       {/* Delete confirmation dialog */}
@@ -566,11 +524,7 @@ const Dashboard = () => {
                   {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAvatarUploadOpen(true)}
-              >
+              <Button variant="outline" size="sm" onClick={() => setAvatarUploadOpen(true)}>
                 {t('dashboard.changePhoto')}
               </Button>
             </div>
@@ -578,12 +532,7 @@ const Dashboard = () => {
             {/* Name input */}
             <div className="space-y-2">
               <Label htmlFor="name">{t('dashboard.nameLabel')}</Label>
-              <Input
-                id="name"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                placeholder={t('dashboard.namePlaceholder')}
-              />
+              <Input id="name" value={editName} onChange={e => setEditName(e.target.value)} placeholder={t('dashboard.namePlaceholder')} />
             </div>
 
             {/* Actions */}
@@ -600,11 +549,7 @@ const Dashboard = () => {
       </Dialog>
 
       {/* Avatar Upload Dialog */}
-      <AvatarUploadDialog
-        open={avatarUploadOpen}
-        onOpenChange={setAvatarUploadOpen}
-        onUpload={handleAvatarUpload}
-      />
+      <AvatarUploadDialog open={avatarUploadOpen} onOpenChange={setAvatarUploadOpen} onUpload={handleAvatarUpload} />
 
       {/* Cancel Subscription Dialog */}
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
@@ -617,19 +562,11 @@ const Dashboard = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={cancelling}>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleCancelSubscription} 
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              disabled={cancelling}
-            >
-              {cancelling ? (
-                <>
+            <AlertDialogAction onClick={handleCancelSubscription} className="bg-destructive text-destructive-foreground hover:bg-destructive/90" disabled={cancelling}>
+              {cancelling ? <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {t('common.loading')}
-                </>
-              ) : (
-                t('subscription.cancel')
-              )}
+                </> : t('subscription.cancel')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
