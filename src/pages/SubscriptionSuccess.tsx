@@ -23,17 +23,26 @@ const SubscriptionSuccess = () => {
           return;
         }
 
+        // Give webhook time to process (wait 2 seconds before checking)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
         const { data } = await supabase.functions.invoke('get-subscription-status');
         
-        // Check if subscription is active AND not free plan
-        // If it's free, it means the payment failed and was reset
-        if (data?.subscription?.status !== 'active' || data?.limits?.plan === 'free') {
-          console.log('Payment failed or pending, redirecting to failed page');
+        console.log('Subscription data:', data);
+        
+        // Only redirect to failed if:
+        // 1. Status is explicitly 'inactive' or 'canceled' (not just not active yet)
+        // 2. OR the plan is still free AND status is not 'active'
+        if (data?.subscription?.status === 'inactive' || 
+            data?.subscription?.status === 'canceled' ||
+            (data?.limits?.plan === 'free' && data?.subscription?.status !== 'active')) {
+          console.log('Payment failed, redirecting to failed page');
           navigate('/subscription-failed');
           return;
         }
         
-        if (data?.limits) {
+        // If we have a paid plan, show success even if status is still processing
+        if (data?.limits && data.limits.plan !== 'free') {
           setPlan(data.limits.plan);
         }
       } catch (error) {
