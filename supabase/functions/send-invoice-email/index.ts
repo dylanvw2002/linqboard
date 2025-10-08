@@ -26,17 +26,17 @@ interface InvoiceData {
 function generateInvoicePDF(data: InvoiceData): string {
   const doc = new jsPDF();
   
-  // Header with gradient effect (simulated with rectangle)
-  doc.setFillColor(139, 123, 232);
+  // White header background
+  doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, 210, 40, 'F');
   
   // Logo image
   const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
   try {
-    doc.addImage(logoUrl, 'PNG', 15, 10, 40, 20);
+    doc.addImage(logoUrl, 'PNG', 15, 8, 50, 25);
   } catch (error) {
     // Fallback to text if image fails
-    doc.setTextColor(255, 255, 255);
+    doc.setTextColor(139, 123, 232);
     doc.setFontSize(32);
     doc.setFont('helvetica', 'bold');
     doc.text('LinqBoard', 20, 28);
@@ -178,8 +178,8 @@ serve(async (req) => {
     // Create email template
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #8B7BE8, #6E59D9); padding: 30px; text-align: center;">
-          <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="height: 60px; width: auto;" />
+        <div style="background: #ffffff; padding: 30px; text-align: center; border-bottom: 3px solid #8B7BE8;">
+          <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="height: 80px; width: auto;" />
         </div>
         
         <div style="padding: 30px; background: white;">
