@@ -120,7 +120,7 @@ const Auth = () => {
       </div>
 
       {/* Logo linksonder */}
-      <div className="absolute bottom-0 left-6 z-10">
+      <div className="absolute -bottom-8 left-6 z-10">
         <img src={logo} alt="LinqBoard" className="h-[150px] w-auto opacity-80" />
       </div>
 
