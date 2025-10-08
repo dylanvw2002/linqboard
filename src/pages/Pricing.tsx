@@ -272,6 +272,30 @@ const Pricing = () => {
     return null;
   };
   return <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 pb-4 relative">
+      {/* Animated confetti elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${3 + Math.random() * 4}s`
+            }}
+          >
+            <div 
+              className="w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: ['#8B5CF6', '#F59E0B', '#EC4899', '#3B82F6'][Math.floor(Math.random() * 4)],
+                opacity: 0.4
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
       {/* Header with back button and language switcher */}
       <header className="container mx-auto px-6 py-2">
         <div className="flex items-center justify-between">
@@ -388,6 +412,22 @@ const Pricing = () => {
       <div className="fixed -bottom-16 left-2 z-10">
         <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto" />
       </div>
+
+      <style>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0.3;
+          }
+          50% {
+            transform: translateY(-20px) rotate(180deg);
+            opacity: 0.8;
+          }
+        }
+        .animate-float {
+          animation: float 4s ease-in-out infinite;
+        }
+      `}</style>
     </div>;
 };
 export default Pricing;
