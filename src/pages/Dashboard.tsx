@@ -317,6 +317,12 @@ const Dashboard = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
+                  {subscriptionLimits && subscriptionLimits.plan !== 'free' && (
+                    <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Bekijk facturen</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>{t('auth.logout')}</span>
@@ -399,16 +405,6 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2 shrink-0">
-                {subscriptionLimits.plan !== 'free' && (
-                  <Button 
-                    onClick={() => navigate('/invoices')} 
-                    size="lg"
-                    variant="outline"
-                  >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Bekijk facturen
-                  </Button>
-                )}
                 {subscriptionLimits.plan !== 'business' && (
                   <Button onClick={() => navigate('/pricing')} size="lg">
                     {t('subscription.upgrade')}
