@@ -414,12 +414,28 @@ Deno.serve(async (req) => {
     } else if (payment.status === 'failed') {
       const { user_id } = payment.metadata
       
+      // Reset to free plan on failed payment
       await supabase
         .from('user_subscriptions')
-        .update({ status: 'past_due' })
+        .update({ 
+          status: 'active',
+          plan: 'free',
+          max_organizations: 1,
+          max_members_per_org: 2,
+          mollie_subscription_id: null,
+          current_period_start: null,
+          current_period_end: null,
+          billing_interval: null,
+          price_excl_vat: null,
+          price_incl_vat: null,
+          vat_amount: null,
+          vat_rate: null,
+          pending_plan: null,
+          pending_billing_interval: null
+        })
         .eq('user_id', user_id)
       
-      console.log('Payment failed, subscription marked as past_due')
+      console.log('Payment failed, subscription reset to free plan')
     }
 
     return new Response(null, { status: 200 })

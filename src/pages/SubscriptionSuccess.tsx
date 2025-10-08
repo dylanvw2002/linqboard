@@ -25,8 +25,9 @@ const SubscriptionSuccess = () => {
 
         const { data } = await supabase.functions.invoke('get-subscription-status');
         
-        // Check if subscription is active
-        if (data?.subscription?.status !== 'active') {
+        // Check if subscription is active AND not free plan
+        // If it's free, it means the payment failed and was reset
+        if (data?.subscription?.status !== 'active' || data?.limits?.plan === 'free') {
           console.log('Payment failed or pending, redirecting to failed page');
           navigate('/subscription-failed');
           return;
