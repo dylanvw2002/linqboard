@@ -20,6 +20,8 @@ interface Invoice {
   amount_incl_vat: number;
   status: string;
   pdf_url: string | null;
+  email_sent: boolean;
+  email_sent_at: string | null;
 }
 
 export default function Invoices() {
@@ -127,11 +129,10 @@ export default function Invoices() {
                     <TableHead>Factuurnummer</TableHead>
                     <TableHead>Datum</TableHead>
                     <TableHead>Land</TableHead>
-                    <TableHead className="text-right">Excl. BTW</TableHead>
-                    <TableHead className="text-right">BTW ({" "}%)</TableHead>
                     <TableHead className="text-right">Totaal</TableHead>
+                    <TableHead className="text-center">Email</TableHead>
                     <TableHead className="text-center">E-boekhouden</TableHead>
-                    <TableHead className="text-center">Actie</TableHead>
+                    <TableHead className="text-center">Download</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -145,14 +146,17 @@ export default function Invoices() {
                           {new Date(invoice.invoice_date).toLocaleDateString('nl-NL')}
                         </TableCell>
                         <TableCell>{invoice.customer_country}</TableCell>
-                        <TableCell className="text-right">
-                          € {Number(invoice.amount_excl_vat).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          € {Number(invoice.vat_amount).toFixed(2)} ({Number(invoice.vat_rate).toFixed(0)}%)
-                        </TableCell>
                         <TableCell className="text-right font-semibold">
                           € {Number(invoice.amount_incl_vat).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {invoice.email_sent ? (
+                            <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                              ✓ Verzonden
+                            </span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Wachten</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-center">
                           {syncLog ? (

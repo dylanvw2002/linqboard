@@ -35,3 +35,6 @@ verify_jwt = true
 
 [functions.eboekhouden-client]
 verify_jwt = false
+
+[functions.send-invoice-email]
+verify_jwt = false

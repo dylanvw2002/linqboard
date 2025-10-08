@@ -282,6 +282,8 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_type: string
+          email_sent: boolean | null
+          email_sent_at: string | null
           id: string
           invoice_date: string | null
           invoice_number: string
@@ -303,6 +305,8 @@ export type Database = {
           customer_email: string
           customer_name: string
           customer_type: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
           id?: string
           invoice_date?: string | null
           invoice_number: string
@@ -324,6 +328,8 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           customer_type?: string
+          email_sent?: boolean | null
+          email_sent_at?: string | null
           id?: string
           invoice_date?: string | null
           invoice_number?: string

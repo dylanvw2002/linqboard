@@ -132,12 +132,20 @@ async function syncToEboekhouden(
 }
 
 Deno.serve(async (req) => {
+  let paymentId: string;
+  
   try {
-    const { id } = await req.json()
-    console.log('Webhook received for payment:', id)
+    const body = await req.json();
+    paymentId = body.id;
+    
+    if (!paymentId) {
+      throw new Error('No payment ID provided');
+    }
+    
+    console.log('Webhook received for payment:', paymentId)
     
     // Fetch payment details from Mollie
-    const response = await fetch(`https://api.mollie.com/v2/payments/${id}`, {
+    const response = await fetch(`https://api.mollie.com/v2/payments/${paymentId}`, {
       headers: { 'Authorization': `Bearer ${MOLLIE_API_KEY}` }
     })
     const payment = await response.json()
@@ -342,6 +350,21 @@ Deno.serve(async (req) => {
           intervalText,
           userSub?.eboekhouden_relation_code
         ).catch(err => console.error('E-boekhouden sync error:', err))
+        
+        // Send invoice email (non-blocking)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('user_id', user_id)
+          .maybeSingle();
+
+        supabase.functions.invoke('send-invoice-email', {
+          body: { 
+            invoiceId: newInvoice.id,
+            userEmail: user_email,
+            userName: profile?.full_name || user_name || 'Klant'
+          }
+        }).catch(err => console.error('Email send error:', err));
       }
 
         // Update EU sales summary for EU B2C customers
