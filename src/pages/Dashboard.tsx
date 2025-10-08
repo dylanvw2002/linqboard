@@ -17,6 +17,7 @@ import { AvatarUploadDialog } from "@/components/AvatarUploadDialog";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import SupportButton from "@/components/SupportButton";
 import AdminVatReportLink from "@/components/AdminVatReportLink";
+import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
 interface Organization {
@@ -58,6 +59,7 @@ const Dashboard = () => {
   const [userName, setUserName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [userId, setUserId] = useState("");
+  const [showOnboarding, setShowOnboarding] = useState(false);
   useEffect(() => {
     const checkAccess = async () => {
       const {
@@ -73,6 +75,12 @@ const Dashboard = () => {
       // Fetch user profile and subscription
       await fetchUserData(session.user.id);
       await fetchOrganizations();
+
+      // Check if user should see onboarding
+      const hasSeenOnboarding = localStorage.getItem('onboarding_completed_v1');
+      if (!hasSeenOnboarding) {
+        setShowOnboarding(true);
+      }
 
       // Check for subscription success message
       const searchParams = new URLSearchParams(window.location.search);
@@ -287,6 +295,12 @@ const Dashboard = () => {
       </div>;
   }
   return <div className="relative min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+      {/* Onboarding Guide */}
+      <OnboardingGuide 
+        open={showOnboarding} 
+        onOpenChange={setShowOnboarding}
+      />
+
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-6 py-0">
