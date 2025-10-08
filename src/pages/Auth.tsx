@@ -10,6 +10,7 @@ import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import authIllustration from "@/assets/auth-illustration.png";
+import logo from "@/assets/logo-transparent.png";
 
 const Auth = () => {
   const { t } = useTranslation();
@@ -116,6 +117,11 @@ const Auth = () => {
             />
           </div>
         ))}
+      </div>
+
+      {/* Logo linksonder */}
+      <div className="absolute bottom-6 left-6 z-10">
+        <img src={logo} alt="LinqBoard" className="h-16 w-auto opacity-80" />
       </div>
 
       <div className="absolute top-4 right-4 z-10">
