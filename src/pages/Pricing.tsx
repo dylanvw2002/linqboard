@@ -271,7 +271,7 @@ const Pricing = () => {
     
     return null;
   };
-  return <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 pb-4 relative">
+  return <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 pb-4 relative">
       {/* Header with back button and language switcher */}
       <header className="container mx-auto px-6 py-2">
         <div className="flex items-center justify-between">
