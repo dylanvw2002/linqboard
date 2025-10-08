@@ -273,6 +273,44 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_access_log: {
+        Row: {
+          accessed_at: string
+          action: string
+          id: string
+          invoice_id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          accessed_at?: string
+          action?: string
+          id?: string
+          invoice_id: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          accessed_at?: string
+          action?: string
+          id?: string
+          invoice_id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_access_log_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount_excl_vat: number
@@ -488,6 +526,27 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rate_limit_log: {
+        Row: {
+          created_at: string
+          id: string
+          operation: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          operation: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          operation?: string
           user_id?: string
         }
         Relationships: []
@@ -755,6 +814,15 @@ export type Database = {
         Args: { _user_id: string }
         Returns: boolean
       }
+      check_rate_limit: {
+        Args: {
+          _max_requests: number
+          _operation: string
+          _time_window_seconds: number
+          _user_id: string
+        }
+        Returns: boolean
+      }
       generate_invite_code: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -779,6 +847,14 @@ export type Database = {
       is_org_member: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
+      }
+      log_invoice_access: {
+        Args: { _action?: string; _invoice_id: string }
+        Returns: undefined
+      }
+      log_rate_limit_request: {
+        Args: { _operation: string }
+        Returns: undefined
       }
       user_can_view_membership: {
         Args: { _membership_id: string; _user_id: string }

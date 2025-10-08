@@ -97,6 +97,31 @@ serve(async (req) => {
       throw new Error('Not authenticated');
     }
 
+    // Check rate limit (10 requests per minute for VAT calculations)
+    const { data: rateLimitCheck } = await supabaseClient.rpc('check_rate_limit', {
+      _user_id: user.id,
+      _operation: 'calculate_vat',
+      _max_requests: 10,
+      _time_window_seconds: 60
+    });
+
+    if (rateLimitCheck === false) {
+      return new Response(
+        JSON.stringify({ 
+          error: 'Rate limit exceeded. Please try again in a minute.'
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 429
+        }
+      );
+    }
+
+    // Log the request
+    await supabaseClient.rpc('log_rate_limit_request', {
+      _operation: 'calculate_vat'
+    });
+
     const calculationParams: VatCalculationRequest = await req.json();
 
     console.log('Calculating VAT:', calculationParams);

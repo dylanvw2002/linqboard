@@ -46,6 +46,28 @@ export default function Invoices() {
 
   const loadInvoices = async () => {
     try {
+      // Check rate limit (10 requests per minute)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: rateLimitCheck } = await supabase.rpc('check_rate_limit', {
+        _user_id: user.id,
+        _operation: 'load_invoices',
+        _max_requests: 10,
+        _time_window_seconds: 60
+      });
+
+      if (rateLimitCheck === false) {
+        toast.error('Te veel verzoeken. Probeer het over een minuut opnieuw.');
+        setLoading(false);
+        return;
+      }
+
+      // Log the request
+      await supabase.rpc('log_rate_limit_request', {
+        _operation: 'load_invoices'
+      });
+
       const { data, error } = await supabase
         .from('invoices')
         .select('*')
@@ -72,6 +94,12 @@ export default function Invoices() {
 
   const downloadInvoice = async (invoice: Invoice) => {
     try {
+      // Log invoice access for audit trail
+      await supabase.rpc('log_invoice_access', {
+        _invoice_id: invoice.id,
+        _action: 'download'
+      });
+
       const { data, error } = await supabase.functions.invoke('generate-invoice', {
         body: { invoiceId: invoice.id }
       });
