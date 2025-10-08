@@ -26,6 +26,7 @@ export default function Invoices() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [syncLogs, setSyncLogs] = useState<any[]>([]);
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -50,6 +51,15 @@ export default function Invoices() {
       
       if (error) throw error;
       setInvoices(data || []);
+
+      // Load E-boekhouden sync logs
+      const { data: syncData } = await supabase
+        .from('eboekhouden_sync_log')
+        .select('*')
+        .eq('sync_type', 'invoice')
+        .order('synced_at', { ascending: false });
+      
+      setSyncLogs(syncData || []);
     } catch (error) {
       console.error('Error loading invoices:', error);
       toast.error('Fout bij laden facturen');
@@ -120,38 +130,59 @@ export default function Invoices() {
                     <TableHead className="text-right">Excl. BTW</TableHead>
                     <TableHead className="text-right">BTW ({" "}%)</TableHead>
                     <TableHead className="text-right">Totaal</TableHead>
+                    <TableHead className="text-center">E-boekhouden</TableHead>
                     <TableHead className="text-center">Actie</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoices.map((invoice) => (
-                    <TableRow key={invoice.id}>
-                      <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
-                      <TableCell>
-                        {new Date(invoice.invoice_date).toLocaleDateString('nl-NL')}
-                      </TableCell>
-                      <TableCell>{invoice.customer_country}</TableCell>
-                      <TableCell className="text-right">
-                        € {Number(invoice.amount_excl_vat).toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        € {Number(invoice.vat_amount).toFixed(2)} ({Number(invoice.vat_rate).toFixed(0)}%)
-                      </TableCell>
-                      <TableCell className="text-right font-semibold">
-                        € {Number(invoice.amount_incl_vat).toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadInvoice(invoice)}
-                        >
-                          <Download className="h-4 w-4 mr-1" />
-                          Download
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {invoices.map((invoice) => {
+                    const syncLog = syncLogs.find(log => log.invoice_id === invoice.id);
+                    
+                    return (
+                      <TableRow key={invoice.id}>
+                        <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
+                        <TableCell>
+                          {new Date(invoice.invoice_date).toLocaleDateString('nl-NL')}
+                        </TableCell>
+                        <TableCell>{invoice.customer_country}</TableCell>
+                        <TableCell className="text-right">
+                          € {Number(invoice.amount_excl_vat).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          € {Number(invoice.vat_amount).toFixed(2)} ({Number(invoice.vat_rate).toFixed(0)}%)
+                        </TableCell>
+                        <TableCell className="text-right font-semibold">
+                          € {Number(invoice.amount_incl_vat).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {syncLog ? (
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              syncLog.status === 'success' 
+                                ? 'bg-blue-100 text-blue-800' 
+                                : syncLog.status === 'failed'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {syncLog.status === 'success' ? '✓ Sync' : 
+                               syncLog.status === 'failed' ? '✗ Fout' : '⏳ Bezig'}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Wachten</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadInvoice(invoice)}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            Download
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             )}

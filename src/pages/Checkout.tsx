@@ -75,6 +75,7 @@ export default function Checkout() {
   
   const [country, setCountry] = useState('NL');
   const [customerType, setCustomerType] = useState<'private' | 'business'>('private');
+  const [companyName, setCompanyName] = useState('');
   const [vatNumber, setVatNumber] = useState('');
   const [vatNumberValid, setVatNumberValid] = useState<boolean | null>(null);
   const [validatingVat, setValidatingVat] = useState(false);
@@ -160,12 +161,21 @@ export default function Checkout() {
         return;
       }
 
+      // Save company name to user_subscriptions if provided
+      if (companyName && customerType === 'business') {
+        await supabase
+          .from('user_subscriptions')
+          .update({ company_name: companyName })
+          .eq('user_id', session.user.id)
+      }
+
       const { data, error } = await supabase.functions.invoke('create-mollie-subscription', {
         body: {
           plan,
           billing_interval: billingInterval,
           country,
           customer_type: customerType,
+          company_name: companyName || null,
           vat_number: vatNumber || null,
           vat_number_valid: vatNumberValid || false,
           amount_excl_vat: vatCalculation.amountExclVat,
@@ -242,6 +252,20 @@ export default function Checkout() {
                   </div>
                 </RadioGroup>
               </div>
+
+              {customerType === 'business' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="company">Bedrijfsnaam</Label>
+                    <Input
+                      id="company"
+                      placeholder="Jouw Bedrijf B.V."
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
 
               {customerType === 'business' && (
                 <div className="space-y-2">

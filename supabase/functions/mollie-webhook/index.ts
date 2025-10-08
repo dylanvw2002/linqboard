@@ -2,6 +2,135 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3'
 
 const MOLLIE_API_KEY = Deno.env.get('MOLLIE_API_KEY')
 
+// E-boekhouden.nl sync function
+async function syncToEboekhouden(
+  supabase: any,
+  invoice: any,
+  userId: string,
+  userName: string,
+  userEmail: string,
+  country: string,
+  customerType: string,
+  vatNumber: string | null,
+  vatNumberValid: boolean,
+  planName: string,
+  intervalText: string,
+  existingRelationCode?: string
+) {
+  try {
+    const relationCode = existingRelationCode || `LINQ-${userId.substring(0, 8)}`
+    
+    // Log sync attempt
+    await supabase.from('eboekhouden_sync_log').insert({
+      invoice_id: invoice.id,
+      user_id: userId,
+      sync_type: 'customer',
+      status: 'pending'
+    })
+
+    // Check if customer exists, if not create
+    if (!existingRelationCode) {
+      const { data: checkResult } = await supabase.functions.invoke('eboekhouden-client', {
+        body: {
+          action: 'getRelatie',
+          params: { relatiecode: relationCode }
+        }
+      })
+
+      if (!checkResult?.exists) {
+        const { data: addRelResult, error: relError } = await supabase.functions.invoke('eboekhouden-client', {
+          body: {
+            action: 'addRelatie',
+            params: {
+              relatiecode: relationCode,
+              bedrijf: invoice.customer_name,
+              email: userEmail,
+              land: country,
+              btwNummer: vatNumber || undefined
+            }
+          }
+        })
+
+        if (relError) throw relError
+
+        // Save relation code
+        await supabase
+          .from('user_subscriptions')
+          .update({ 
+            eboekhouden_relation_code: relationCode,
+            eboekhouden_last_sync: new Date().toISOString()
+          })
+          .eq('user_id', userId)
+
+        await supabase.from('eboekhouden_sync_log').insert({
+          invoice_id: invoice.id,
+          user_id: userId,
+          sync_type: 'customer',
+          status: 'success',
+          eboekhouden_response: addRelResult
+        })
+      }
+    }
+
+    // Determine BTW code
+    let btwCode = 'HOOG_VERK_21' // Default NL 21%
+    if (country !== 'NL') {
+      const euCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']
+      
+      if (euCountries.includes(country)) {
+        if (customerType === 'business' && vatNumberValid) {
+          btwCode = 'VERLEGD' // Reverse charge
+        } else {
+          btwCode = 'HOOG_VERK_21' // EU B2C
+        }
+      } else {
+        btwCode = 'GEEN' // Outside EU
+      }
+    }
+
+    // Create invoice in E-boekhouden.nl
+    const { data: factuurResult, error: factuurError } = await supabase.functions.invoke('eboekhouden-client', {
+      body: {
+        action: 'addFactuur',
+        params: {
+          relatiecode: relationCode,
+          factuurnummer: invoice.invoice_number,
+          factuurdatum: new Date().toISOString().split('T')[0],
+          bedragExclBtw: invoice.amount_excl_vat,
+          btwCode: btwCode,
+          omschrijving: `LinqBoard ${planName} Abonnement`,
+          intervalText: intervalText,
+          planName: planName
+        }
+      }
+    })
+
+    if (factuurError) throw factuurError
+
+    // Log success
+    await supabase.from('eboekhouden_sync_log').insert({
+      invoice_id: invoice.id,
+      user_id: userId,
+      sync_type: 'invoice',
+      status: 'success',
+      eboekhouden_response: factuurResult
+    })
+
+    console.log('E-boekhouden sync successful for invoice:', invoice.invoice_number)
+  } catch (error: any) {
+    console.error('E-boekhouden sync failed:', error)
+    
+    // Log error
+    await supabase.from('eboekhouden_sync_log').insert({
+      invoice_id: invoice.id,
+      user_id: userId,
+      sync_type: 'invoice',
+      status: 'failed',
+      error_message: error.message || error.toString()
+    })
+  }
+}
+
 Deno.serve(async (req) => {
   try {
     const { id } = await req.json()
@@ -165,13 +294,20 @@ Deno.serve(async (req) => {
           .eq('user_id', user_id)
           .single()
 
+        // Get or fetch company name from subscription
+        const { data: userSub } = await supabase
+          .from('user_subscriptions')
+          .select('company_name, eboekhouden_relation_code')
+          .eq('user_id', user_id)
+          .single()
+
       const { data: newInvoice, error: invoiceError } = await supabase
         .from('invoices')
         .insert({
           subscription_id: currentSub?.id,
           user_id: user_id,
           invoice_number: invoiceNumber.data,
-          customer_name: profile?.full_name || user_name,
+          customer_name: userSub?.company_name || profile?.full_name || user_name,
           customer_email: user_email,
           customer_country: country,
           customer_type: customer_type,
@@ -191,10 +327,21 @@ Deno.serve(async (req) => {
       } else {
         console.log('Invoice created:', newInvoice.invoice_number)
         
-        // Generate invoice HTML (in background, doesn't block)
-        supabase.functions.invoke('generate-invoice', {
-          body: { invoiceId: newInvoice.id }
-        }).catch(err => console.error('Invoice generation error:', err))
+        // Sync to E-boekhouden.nl in background
+        syncToEboekhouden(
+          supabase,
+          newInvoice,
+          user_id,
+          user_name,
+          user_email,
+          country,
+          customer_type,
+          vat_number,
+          vat_number_valid === 'true',
+          planName,
+          intervalText,
+          userSub?.eboekhouden_relation_code
+        ).catch(err => console.error('E-boekhouden sync error:', err))
       }
 
         // Update EU sales summary for EU B2C customers

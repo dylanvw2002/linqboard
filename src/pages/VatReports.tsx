@@ -16,6 +16,7 @@ export default function VatReports() {
   const [quarter, setQuarter] = useState('all');
   const [euSales, setEuSales] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
+  const [syncLogs, setSyncLogs] = useState<any[]>([]);
   const [totalEuSales, setTotalEuSales] = useState(0);
   const [ossThreshold] = useState(10000);
 
@@ -86,6 +87,15 @@ export default function VatReports() {
       
       if (transError) throw transError;
       setTransactions(transData || []);
+
+      // Load E-boekhouden sync logs
+      const { data: syncData } = await supabase
+        .from('eboekhouden_sync_log')
+        .select('invoice_id, status, sync_type, error_message, synced_at')
+        .eq('sync_type', 'invoice')
+        .order('synced_at', { ascending: false });
+      
+      setSyncLogs(syncData || []);
       
     } catch (error) {
       console.error('Error loading data:', error);
@@ -253,34 +263,58 @@ export default function VatReports() {
                   <TableHead className="text-right">Bedrag</TableHead>
                   <TableHead className="text-right">BTW</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>E-boekhouden</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {transactions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center text-muted-foreground">
                       Geen transacties
                     </TableCell>
                   </TableRow>
                 ) : (
-                  transactions.map((tx) => (
-                    <TableRow key={tx.id}>
-                      <TableCell>{new Date(tx.created_at).toLocaleDateString('nl-NL')}</TableCell>
-                      <TableCell>{tx.country || '-'}</TableCell>
-                      <TableCell className="capitalize">{tx.customer_type || '-'}</TableCell>
-                      <TableCell className="text-right">€ {parseFloat(tx.amount).toFixed(2)}</TableCell>
-                      <TableCell className="text-right">
-                        {tx.vat_amount ? `€ ${parseFloat(tx.vat_amount).toFixed(2)}` : '-'}
-                      </TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          tx.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {tx.status}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  transactions.map((tx) => {
+                    // Find invoice for this transaction
+                    const syncLog = syncLogs.find(log => 
+                      transactions.some(t => t.payment_id === tx.payment_id)
+                    );
+                    
+                    return (
+                      <TableRow key={tx.id}>
+                        <TableCell>{new Date(tx.created_at).toLocaleDateString('nl-NL')}</TableCell>
+                        <TableCell>{tx.country || '-'}</TableCell>
+                        <TableCell className="capitalize">{tx.customer_type || '-'}</TableCell>
+                        <TableCell className="text-right">€ {parseFloat(tx.amount).toFixed(2)}</TableCell>
+                        <TableCell className="text-right">
+                          {tx.vat_amount ? `€ ${parseFloat(tx.vat_amount).toFixed(2)}` : '-'}
+                        </TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            tx.status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {tx.status}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          {syncLog ? (
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              syncLog.status === 'success' 
+                                ? 'bg-blue-100 text-blue-800' 
+                                : syncLog.status === 'failed'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {syncLog.status === 'success' ? '✓ Gesynchroniseerd' : 
+                               syncLog.status === 'failed' ? '✗ Mislukt' : '⏳ Bezig'}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">-</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
