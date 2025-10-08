@@ -441,6 +441,26 @@ const Dashboard = () => {
                 </span>
               )}
             </h2>
+            {organizations.length > 0 && (
+              <div className="flex gap-3">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  onClick={() => navigate("/create-organization")} 
+                  className="border-2"
+                  disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}
+                >
+                  <Plus className="mr-2 h-5 w-5" />
+                  {t('dashboard.newOrganization')}
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
+                  {t('dashboard.joinTeam')}
+                </Button>
+                <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2">
+                  {t('subscription.viewPlans')}
+                </Button>
+              </div>
+            )}
           </div>
           
           {organizations.length === 0 ? <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
@@ -493,28 +513,6 @@ const Dashboard = () => {
             </div>}
         </div>
 
-        {/* Quick actions */}
-        {organizations.length > 0 && <div className="border-t border-border/50 pt-8">
-            <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                variant="outline" 
-                onClick={() => navigate("/create-organization")} 
-                className="border-2"
-                disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}
-              >
-                <Plus className="mr-2 h-5 w-5" />
-                {t('dashboard.newOrganization')}
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
-                {t('dashboard.joinTeam')}
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2">
-                {t('subscription.viewPlans')}
-              </Button>
-            </div>
-          </div>}
       </div>
 
       {/* Delete confirmation dialog */}
