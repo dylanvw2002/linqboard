@@ -61,7 +61,7 @@ const InvoicePreview = () => {
               background-clip: text;
             }
             .invoice-logo {
-              height: 120px;
+              height: 150px;
               width: auto;
             }
             .company-info {
