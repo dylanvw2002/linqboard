@@ -121,7 +121,7 @@ const Auth = () => {
 
       {/* Logo linksonder */}
       <div className="absolute bottom-6 left-6 z-10">
-        <img src={logo} alt="LinqBoard" className="h-16 w-auto opacity-80" />
+        <img src={logo} alt="LinqBoard" className="h-[150px] w-auto opacity-80" />
       </div>
 
       <div className="absolute top-4 right-4 z-10">
