@@ -1127,7 +1127,18 @@ const Board = () => {
         </div>
       </div>;
   }
-  return <div className="h-screen overflow-hidden relative bg-background">
+  return <div 
+    className={cn("h-screen overflow-hidden relative", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)}
+    style={{
+      ...(backgroundImageUrl && {
+        backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
+        backgroundSize: `${backgroundScale}%`,
+        backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed'
+      })
+    }}
+  >
       <div 
         className="origin-top-left overflow-hidden bg-blue-50"
         style={{
@@ -1284,16 +1295,10 @@ const Board = () => {
           </div>
         </div>}
       <main 
-        className={cn("relative flex-1 min-h-0 overflow-auto bg-gradient-to-br", backgroundImageUrl ? "" : selectedBackground)} 
+        className="relative flex-1 min-h-0 overflow-auto" 
         style={{
           minWidth: '3000px',
-          minHeight: '2000px',
-          ...(backgroundImageUrl && {
-            backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
-            backgroundSize: `${backgroundScale}%`,
-            backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
-            backgroundRepeat: 'no-repeat'
-          })
+          minHeight: '2000px'
         }}
         onClick={(e) => {
           if (editMode && selectedColumn && e.target === e.currentTarget) {
