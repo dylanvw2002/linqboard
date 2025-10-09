@@ -277,7 +277,7 @@ const Board = () => {
       setBackgroundPositionY(50);
       setBackgroundScale(100);
       setBackgroundFitMode('cover');
-      toast.success('Afbeelding verwijderd, standaard achtergrond hersteld');
+      toast.success(t('board.backgroundRemoved'));
     } catch (error: any) {
       toast.error("Fout bij verwijderen: " + error.message);
     }
@@ -305,10 +305,10 @@ const Board = () => {
       setBackgroundPositionY(50);
       setBackgroundScale(100);
       setSelectedBackground('');
-      toast.success("Standaard achtergrond ingesteld");
+      toast.success(t('board.backgroundSetDefault'));
     } catch (error: any) {
       console.error("Error setting default background:", error);
-      toast.error("Fout bij instellen standaard achtergrond");
+      toast.error(t('board.backgroundSetDefaultError'));
     }
   };
 
@@ -1302,18 +1302,18 @@ const Board = () => {
                   disabled={!canCustomizeBackground}
                 >
                   <SelectTrigger className="w-[200px]">
-                    <span>🎨 Standaard achtergronden</span>
+                    <span>🎨 {t('board.backgroundsLabel')}</span>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="default">Standaard achtergrond</SelectItem>
-                    <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
-                    <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
-                    <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
-                    <SelectItem value="from-orange-50 to-yellow-100">Oranje-Geel</SelectItem>
-                    <SelectItem value="from-gray-50 to-gray-100">Grijs</SelectItem>
-                    <SelectItem value="from-rose-50 to-pink-100">Roze</SelectItem>
-                    <SelectItem value="from-cyan-50 to-blue-100">Cyaan</SelectItem>
-                    <SelectItem value="from-indigo-50 to-purple-100">Indigo</SelectItem>
+                    <SelectItem value="default">{t('board.backgroundDefault')}</SelectItem>
+                    <SelectItem value="from-blue-50 to-blue-100">{t('board.backgroundBlue')}</SelectItem>
+                    <SelectItem value="from-purple-50 to-pink-100">{t('board.backgroundPurplePink')}</SelectItem>
+                    <SelectItem value="from-green-50 to-emerald-100">{t('board.backgroundGreen')}</SelectItem>
+                    <SelectItem value="from-orange-50 to-yellow-100">{t('board.backgroundOrangeYellow')}</SelectItem>
+                    <SelectItem value="from-gray-50 to-gray-100">{t('board.backgroundGray')}</SelectItem>
+                    <SelectItem value="from-rose-50 to-pink-100">{t('board.backgroundRose')}</SelectItem>
+                    <SelectItem value="from-cyan-50 to-blue-100">{t('board.backgroundCyan')}</SelectItem>
+                    <SelectItem value="from-indigo-50 to-purple-100">{t('board.backgroundIndigo')}</SelectItem>
                   </SelectContent>
                 </Select>
                 
@@ -1326,7 +1326,7 @@ const Board = () => {
                     className="flex items-center gap-1"
                   >
                     <X className="h-4 w-4" />
-                    Verwijder afbeelding
+                    {t('board.removeImage')}
                   </Button>
                 ) : (
                   <Button 
@@ -1343,7 +1343,7 @@ const Board = () => {
                       disabled={uploadingBackground || !canCustomizeBackground}
                     />
                     <Image className="h-4 w-4" />
-                    {uploadingBackground ? 'Uploaden...' : 'Afbeelding toevoegen'}
+                    {uploadingBackground ? t('board.uploading') : t('board.addImage')}
                   </Button>
                 )}
               </div>
