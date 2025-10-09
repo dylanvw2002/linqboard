@@ -18,6 +18,7 @@ import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import SubscriptionFailed from "./pages/SubscriptionFailed";
 import InvoicePreview from "./pages/InvoicePreview";
 import NotFound from "./pages/NotFound";
+import OneCent from "./pages/OneCent";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +52,7 @@ const App = () => (
           <Route path="/subscription-success" element={<SubscriptionSuccess />} />
           <Route path="/subscription-failed" element={<SubscriptionFailed />} />
           <Route path="/invoice-preview" element={<InvoicePreview />} />
+          <Route path="/1cent" element={<OneCent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
