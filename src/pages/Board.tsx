@@ -107,6 +107,8 @@ const Board = () => {
   const [backgroundPositionY, setBackgroundPositionY] = useState<number>(50);
   const [backgroundScale, setBackgroundScale] = useState<number>(100);
   const [cropEditorOpen, setCropEditorOpen] = useState(false);
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
+  const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
   const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
   const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
   const [editingColumn, setEditingColumn] = useState<Column | null>(null);
@@ -214,61 +216,35 @@ const Board = () => {
     }
   };
 
-  const handleBackgroundImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!canCustomizeBackground) {
       toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
       return;
     }
     
-    try {
-      const file = event.target.files?.[0];
-      if (!file) return;
-      
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast.error('Selecteer een afbeelding');
-        return;
-      }
-      
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Afbeelding te groot (max 5MB)');
-        return;
-      }
-      
-      setUploadingBackground(true);
-      
-      // Upload to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${board?.id}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('board-backgrounds')
-        .upload(filePath, file, { upsert: true });
-      
-      if (uploadError) throw uploadError;
-      
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('board-backgrounds')
-        .getPublicUrl(filePath);
-      
-      // Update board with image URL
-      const { error: updateError } = await supabase
-        .from("boards")
-        .update({ background_image_url: publicUrl })
-        .eq("id", board?.id);
-      
-      if (updateError) throw updateError;
-      
-      setBackgroundImageUrl(publicUrl);
-      toast.success('Achtergrondafbeelding geüpload');
-    } catch (error: any) {
-      toast.error("Fout bij uploaden: " + error.message);
-    } finally {
-      setUploadingBackground(false);
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Selecteer een afbeelding');
+      return;
     }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Afbeelding te groot (max 5MB)');
+      return;
+    }
+    
+    // Create preview URL and open crop editor
+    const previewUrl = URL.createObjectURL(file);
+    setPendingImageFile(file);
+    setPendingImagePreview(previewUrl);
+    setCropEditorOpen(true);
+    
+    // Reset the input so the same file can be selected again
+    event.target.value = '';
   };
 
   const handleRemoveBackgroundImage = async () => {
@@ -297,24 +273,69 @@ const Board = () => {
 
   const handleApplyBackgroundCrop = async (positionX: number, positionY: number, scale: number) => {
     try {
-      const { error } = await supabase
-        .from("boards")
-        .update({ 
-          background_position_x: positionX,
-          background_position_y: positionY,
-          background_scale: scale
-        })
-        .eq("id", board?.id);
+      setUploadingBackground(true);
       
-      if (error) throw error;
+      // If we have a pending file, upload it first
+      if (pendingImageFile) {
+        const fileExt = pendingImageFile.name.split('.').pop();
+        const fileName = `${board?.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('board-backgrounds')
+          .upload(filePath, pendingImageFile, { upsert: true });
+        
+        if (uploadError) throw uploadError;
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('board-backgrounds')
+          .getPublicUrl(filePath);
+        
+        // Update board with image URL and crop settings
+        const { error: updateError } = await supabase
+          .from("boards")
+          .update({ 
+            background_image_url: publicUrl,
+            background_position_x: positionX,
+            background_position_y: positionY,
+            background_scale: scale
+          })
+          .eq("id", board?.id);
+        
+        if (updateError) throw updateError;
+        
+        setBackgroundImageUrl(publicUrl);
+        
+        // Clean up
+        if (pendingImagePreview) {
+          URL.revokeObjectURL(pendingImagePreview);
+        }
+        setPendingImageFile(null);
+        setPendingImagePreview(null);
+      } else {
+        // Just update crop settings for existing image
+        const { error } = await supabase
+          .from("boards")
+          .update({ 
+            background_position_x: positionX,
+            background_position_y: positionY,
+            background_scale: scale
+          })
+          .eq("id", board?.id);
+        
+        if (error) throw error;
+      }
       
       setBackgroundPositionX(positionX);
       setBackgroundPositionY(positionY);
       setBackgroundScale(scale);
       setCropEditorOpen(false);
-      toast.success('Achtergrond bijgewerkt');
+      toast.success('Achtergrond opgeslagen');
     } catch (error: any) {
       toast.error("Fout bij opslaan: " + error.message);
+    } finally {
+      setUploadingBackground(false);
     }
   };
 
@@ -1669,13 +1690,21 @@ const Board = () => {
       {editingColumn && <ColumnEditSidebar column={editingColumn} onClose={() => setEditingColumn(null)} onSave={fetchBoardData} />}
 
       {/* Background Crop Editor */}
-      {cropEditorOpen && backgroundImageUrl && (
+      {cropEditorOpen && (pendingImagePreview || backgroundImageUrl) && (
         <BackgroundCropEditor
-          imageUrl={backgroundImageUrl}
+          imageUrl={pendingImagePreview || backgroundImageUrl!}
           initialPositionX={backgroundPositionX}
           initialPositionY={backgroundPositionY}
           initialScale={backgroundScale}
-          onClose={() => setCropEditorOpen(false)}
+          onClose={() => {
+            setCropEditorOpen(false);
+            // Clean up preview URL if exists
+            if (pendingImagePreview) {
+              URL.revokeObjectURL(pendingImagePreview);
+              setPendingImagePreview(null);
+              setPendingImageFile(null);
+            }
+          }}
           onApply={handleApplyBackgroundCrop}
         />
       )}
