@@ -8,48 +8,57 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Loader2, Copy, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
 const CreateOrganization = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [organizationName, setOrganizationName] = useState("");
   const [inviteCode, setInviteCode] = useState("");
   const [copied, setCopied] = useState(false);
-
   useEffect(() => {
     // Check if user is logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       if (!session) {
         navigate("/auth?mode=create");
       }
     });
   }, [navigate]);
-
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       // Refresh session to ensure we have a valid token
-      const { data: { session }, error: sessionError } = await supabase.auth.refreshSession();
-      
+      const {
+        data: {
+          session
+        },
+        error: sessionError
+      } = await supabase.auth.refreshSession();
       if (sessionError || !session?.access_token) {
         toast.error(t('auth.loginError'));
         navigate("/auth?mode=create");
         return;
       }
-
-      const { data, error } = await supabase.functions.invoke("create_org", {
-        body: { organizationName },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke("create_org", {
+        body: {
+          organizationName
         },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
-
       if (error) {
         console.error("Edge function error:", error);
-        
+
         // Check if it's a limit error
         if (error.message?.includes('limit') || error.message?.includes('403')) {
           toast.error(t('subscription.orgLimitReached'), {
@@ -61,10 +70,8 @@ const CreateOrganization = () => {
           setLoading(false);
           return;
         }
-        
         throw new Error(error.message || t('organization.createError'));
       }
-
       if (data?.error) {
         // Check if it's a limit error from the response
         if (data.error.includes('limit')) {
@@ -79,7 +86,6 @@ const CreateOrganization = () => {
         }
         throw new Error(data.error);
       }
-
       if (data?.organization?.invite_code) {
         setInviteCode(data.organization.invite_code);
         toast.success(t('organization.created'));
@@ -92,21 +98,17 @@ const CreateOrganization = () => {
       setLoading(false);
     }
   };
-
   const handleCopyCode = () => {
     navigator.clipboard.writeText(inviteCode);
     setCopied(true);
     toast.success(t('common.download'));
     setTimeout(() => setCopied(false), 2000);
   };
-
   const handleContinue = () => {
     navigate("/dashboard");
   };
-
   if (inviteCode) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader className="space-y-2">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-success to-primary/50 flex items-center justify-center mx-auto mb-2">
@@ -127,22 +129,14 @@ const CreateOrganization = () => {
               <div className="text-4xl font-bold text-center tracking-wider text-primary mb-4">
                 {inviteCode}
               </div>
-              <Button
-                onClick={handleCopyCode}
-                variant="outline"
-                className="w-full"
-              >
-                {copied ? (
-                  <>
+              <Button onClick={handleCopyCode} variant="outline" className="w-full">
+                {copied ? <>
                     <CheckCircle className="mr-2 h-4 w-4" />
                     {t('common.download')}
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     <Copy className="mr-2 h-4 w-4" />
                     {t('common.code')}
-                  </>
-                )}
+                  </>}
               </Button>
             </div>
 
@@ -155,12 +149,9 @@ const CreateOrganization = () => {
             </Button>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="space-y-2">
           <CardTitle className="text-3xl font-bold text-center">
@@ -174,43 +165,22 @@ const CreateOrganization = () => {
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="orgName">{t('organization.orgName')}</Label>
-              <Input
-                id="orgName"
-                type="text"
-                placeholder={t('organization.createPlaceholder')}
-                value={organizationName}
-                onChange={(e) => setOrganizationName(e.target.value)}
-                required
-                disabled={loading}
-              />
+              <Input id="orgName" type="text" placeholder={t('organization.createPlaceholder')} value={organizationName} onChange={e => setOrganizationName(e.target.value)} required disabled={loading} />
             </div>
 
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
-              {loading ? (
-                <>
+              {loading ? <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {t('common.loading')}
-                </>
-              ) : (
-                t('organization.createButton')
-              )}
+                </> : t('organization.createButton')}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => navigate("/join-organization")}
-              className="text-sm text-primary hover:underline"
-              disabled={loading}
-            >
-              {t('organization.orCreateNew')}
-            </button>
+            
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default CreateOrganization;
