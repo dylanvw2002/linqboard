@@ -132,7 +132,7 @@ async function getRelatie(relatiecode: string) {
     `${EBOEKHOUDEN_API_URL}/v1/relation?code=${encodeURIComponent(relatiecode)}`,
     {
       headers: {
-        'Authorization': token,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       }
     }
@@ -168,7 +168,7 @@ async function addRelatie(params: AddRelatieParams) {
   const response = await fetch(`${EBOEKHOUDEN_API_URL}/v1/relation`, {
     method: 'POST',
     headers: {
-      'Authorization': token,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(relationData)
@@ -200,7 +200,7 @@ async function addFactuur(params: AddFactuurParams) {
     `${EBOEKHOUDEN_API_URL}/v1/relation?code=${encodeURIComponent(params.relatiecode)}`,
     {
       headers: {
-        'Authorization': token,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       }
     }
@@ -240,7 +240,7 @@ async function addFactuur(params: AddFactuurParams) {
   const response = await fetch(`${EBOEKHOUDEN_API_URL}/v1/invoice`, {
     method: 'POST',
     headers: {
-      'Authorization': token,
+      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(invoiceData)
