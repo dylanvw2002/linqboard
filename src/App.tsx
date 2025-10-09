@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CreateOrganization from "./pages/CreateOrganization";
@@ -32,30 +33,32 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/create-organization" element={<CreateOrganization />} />
-          <Route path="/join-organization" element={<JoinOrganization />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/board/:organizationId" element={<Board />} />
-          <Route path="/board-demo" element={<BoardDemo />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/invoices" element={<Invoices />} />
-          <Route path="/vat-reports" element={<VatReports />} />
-          <Route path="/subscription-success" element={<SubscriptionSuccess />} />
-          <Route path="/subscription-failed" element={<SubscriptionFailed />} />
-          <Route path="/invoice-preview" element={<InvoicePreview />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <HelmetProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/create-organization" element={<CreateOrganization />} />
+            <Route path="/join-organization" element={<JoinOrganization />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/board/:organizationId" element={<Board />} />
+            <Route path="/board-demo" element={<BoardDemo />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/invoices" element={<Invoices />} />
+            <Route path="/vat-reports" element={<VatReports />} />
+            <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+            <Route path="/subscription-failed" element={<SubscriptionFailed />} />
+            <Route path="/invoice-preview" element={<InvoicePreview />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

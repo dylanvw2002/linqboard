@@ -442,5 +442,19 @@
   },
   "support": {
     "contact": "Contactar Soporte"
+  },
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Trabajo en equipo, organizado sin esfuerzo",
+      "description": "Gestiona tareas, colabora en tiempo real y mantén a tu equipo sincronizado con LinqBoard. Potente, seguro y fácil de usar.",
+      "keywords": "gestión de tareas, colaboración en equipo, gestión de proyectos, colaboración en tiempo real, tablero kanban, organización de equipos",
+      "logoAlt": "Logo de LinqBoard - Plataforma de trabajo en equipo",
+      "heroImageAlt": "Ilustración de la interfaz de gestión de tareas de LinqBoard"
+    },
+    "pricing": {
+      "title": "Precios de LinqBoard - Planes desde €7,99",
+      "description": "Elige el plan de LinqBoard que se adapte a tu equipo. Desde gratis hasta business. Precios transparentes, sin costos ocultos.",
+      "keywords": "precios linqboard, suscripción de gestión de tareas, precios de equipo, costos de gestión de proyectos"
+    }
   }
 }

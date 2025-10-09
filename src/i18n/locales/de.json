@@ -442,5 +442,19 @@
   },
   "support": {
     "contact": "Support Kontaktieren"
+  },
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Teamarbeit, mühelos organisiert",
+      "description": "Verwalten Sie Aufgaben, arbeiten Sie in Echtzeit zusammen und halten Sie Ihr Team mit LinqBoard synchron. Leistungsstark, sicher und einfach zu bedienen.",
+      "keywords": "Aufgabenverwaltung, Teamzusammenarbeit, Projektmanagement, Echtzeit-Zusammenarbeit, Kanban-Board, Team-Organisation",
+      "logoAlt": "LinqBoard Logo - Teamwork-Plattform",
+      "heroImageAlt": "LinqBoard Aufgabenverwaltungs-Interface-Illustration"
+    },
+    "pricing": {
+      "title": "LinqBoard Preise - Pläne ab €7,99",
+      "description": "Wählen Sie den LinqBoard-Plan, der zu Ihrem Team passt. Von kostenlos bis Business. Transparente Preise, keine versteckten Kosten.",
+      "keywords": "linqboard preise, aufgabenverwaltung abonnement, team-preise, projektmanagement kosten"
+    }
   }
 }

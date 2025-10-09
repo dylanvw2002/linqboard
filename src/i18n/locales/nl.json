@@ -460,5 +460,19 @@
     "previous": "Vorige",
     "getStarted": "Aan de slag!",
     "dontShowAgain": "Laat dit niet meer zien"
+  },
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Teamwerk, moeiteloos georganiseerd",
+      "description": "Beheer taken, werk realtime samen en houd je team op één lijn met LinqBoard. Krachtig, veilig en eenvoudig te gebruiken.",
+      "keywords": "taakbeheer, teamsamenwerking, projectmanagement, real-time samenwerking, kanban board, team organizatie",
+      "logoAlt": "LinqBoard Logo - Teamwerk Platform",
+      "heroImageAlt": "LinqBoard taakbeheer interface illustratie"
+    },
+    "pricing": {
+      "title": "LinqBoard Prijzen - Abonnementen vanaf €7,99",
+      "description": "Kies het LinqBoard abonnement dat bij jouw team past. Van gratis tot business. Transparante prijzen, geen verborgen kosten.",
+      "keywords": "linqboard prijzen, taakbeheer abonnement, team pricing, project management kosten"
+    }
   }
 }

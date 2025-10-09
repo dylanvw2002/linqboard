@@ -442,5 +442,19 @@
   },
   "support": {
     "contact": "Contact Support"
+  },
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Teamwork, effortlessly organized",
+      "description": "Manage tasks, collaborate in real-time and keep your team in sync with LinqBoard. Powerful, secure and easy to use.",
+      "keywords": "task management, team collaboration, project management, real-time collaboration, kanban board, team organization",
+      "logoAlt": "LinqBoard Logo - Teamwork Platform",
+      "heroImageAlt": "LinqBoard task management interface illustration"
+    },
+    "pricing": {
+      "title": "LinqBoard Pricing - Plans from €7.99",
+      "description": "Choose the LinqBoard plan that fits your team. From free to business. Transparent pricing, no hidden costs.",
+      "keywords": "linqboard pricing, task management subscription, team pricing, project management costs"
+    }
   }
 }

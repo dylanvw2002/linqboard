@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 interface Plan {
@@ -243,7 +244,22 @@ const Pricing = () => {
     
     return null;
   };
-  return <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 pb-4 relative">
+  return (
+    <>
+      <SEO 
+        title={t('seo.pricing.title')}
+        description={t('seo.pricing.description')}
+        keywords={t('seo.pricing.keywords')}
+        canonical="https://linqboard.nl/pricing"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": t('seo.pricing.title'),
+          "description": t('seo.pricing.description'),
+          "url": "https://linqboard.nl/pricing"
+        }}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 pb-4 relative">
       {/* Animated confetti elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 30 }).map((_, i) => (
@@ -400,6 +416,8 @@ const Pricing = () => {
           animation: float 4s ease-in-out infinite;
         }
       `}</style>
-    </div>;
+    </div>
+    </>
+  );
 };
 export default Pricing;

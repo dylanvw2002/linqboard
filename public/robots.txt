@@ -12,3 +12,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /board/
+Disallow: /checkout
+Disallow: /invoices
+
+Sitemap: https://linqboard.nl/sitemap.xml
