@@ -28,6 +28,7 @@ import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
+import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
 interface Column {
   id: string;
   name: string;
@@ -102,6 +103,10 @@ const Board = () => {
   const [selectedBackground, setSelectedBackground] = useState<string>("from-blue-50 to-blue-100");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null);
   const [uploadingBackground, setUploadingBackground] = useState(false);
+  const [backgroundPositionX, setBackgroundPositionX] = useState<number>(50);
+  const [backgroundPositionY, setBackgroundPositionY] = useState<number>(50);
+  const [backgroundScale, setBackgroundScale] = useState<number>(100);
+  const [cropEditorOpen, setCropEditorOpen] = useState(false);
   const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
   const [draggedOverColumnId, setDraggedOverColumnId] = useState<string | null>(null);
   const [editingColumn, setEditingColumn] = useState<Column | null>(null);
@@ -270,15 +275,46 @@ const Board = () => {
     try {
       const { error } = await supabase
         .from("boards")
-        .update({ background_image_url: null })
+        .update({ 
+          background_image_url: null,
+          background_position_x: 50,
+          background_position_y: 50,
+          background_scale: 100
+        })
         .eq("id", board?.id);
       
       if (error) throw error;
       
       setBackgroundImageUrl(null);
+      setBackgroundPositionX(50);
+      setBackgroundPositionY(50);
+      setBackgroundScale(100);
       toast.success('Achtergrondafbeelding verwijderd');
     } catch (error: any) {
       toast.error("Fout bij verwijderen: " + error.message);
+    }
+  };
+
+  const handleApplyBackgroundCrop = async (positionX: number, positionY: number, scale: number) => {
+    try {
+      const { error } = await supabase
+        .from("boards")
+        .update({ 
+          background_position_x: positionX,
+          background_position_y: positionY,
+          background_scale: scale
+        })
+        .eq("id", board?.id);
+      
+      if (error) throw error;
+      
+      setBackgroundPositionX(positionX);
+      setBackgroundPositionY(positionY);
+      setBackgroundScale(scale);
+      setCropEditorOpen(false);
+      toast.success('Achtergrond bijgewerkt');
+    } catch (error: any) {
+      toast.error("Fout bij opslaan: " + error.message);
     }
   };
 
@@ -465,6 +501,9 @@ const Board = () => {
       // Set background image from board data
       if (boardResult.data.background_image_url) {
         setBackgroundImageUrl(boardResult.data.background_image_url);
+        setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
+        setBackgroundPositionY(boardResult.data.background_position_y ?? 50);
+        setBackgroundScale(boardResult.data.background_scale ?? 100);
       }
       
       // Fetch columns
@@ -1230,8 +1269,8 @@ const Board = () => {
           minHeight: '2000px',
           ...(backgroundImageUrl && {
             backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundSize: `${backgroundScale}%`,
+            backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
             backgroundRepeat: 'no-repeat'
           })
         }}
@@ -1628,6 +1667,18 @@ const Board = () => {
 
       {/* Column Edit Sidebar */}
       {editingColumn && <ColumnEditSidebar column={editingColumn} onClose={() => setEditingColumn(null)} onSave={fetchBoardData} />}
+
+      {/* Background Crop Editor */}
+      {cropEditorOpen && backgroundImageUrl && (
+        <BackgroundCropEditor
+          imageUrl={backgroundImageUrl}
+          initialPositionX={backgroundPositionX}
+          initialPositionY={backgroundPositionY}
+          initialScale={backgroundScale}
+          onClose={() => setCropEditorOpen(false)}
+          onApply={handleApplyBackgroundCrop}
+        />
+      )}
 
       {/* Delete Column Confirmation */}
       <AlertDialog open={!!deleteColumnId} onOpenChange={open => !open && setDeleteColumnId(null)}>
