@@ -121,6 +121,11 @@ Deno.serve(async (req) => {
       .insert({
         organization_id: org.id,
         name: 'Hoofd Board',
+        background_image_url: 'default',
+        background_fit_mode: 'cover',
+        background_scale: 100,
+        background_position_x: 50,
+        background_position_y: 50,
       })
       .select()
       .single()

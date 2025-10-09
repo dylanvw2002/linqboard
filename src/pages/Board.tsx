@@ -20,6 +20,7 @@ import { useTranslation } from "react-i18next";
 import type { Locale } from "date-fns";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-transparent.png";
+import defaultBackground from "@/assets/default-board-background.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { ActiveUsers } from "@/components/ActiveUsers";
 import { ColumnManagement } from "@/components/ColumnManagement";
@@ -199,8 +200,16 @@ const Board = () => {
     }
     
     try {
+      await supabase
+        .from("boards")
+        .update({
+          background_gradient: gradient,
+          background_image_url: null,
+        })
+        .eq("id", board?.id);
+
       setSelectedBackground(gradient);
-      setBackgroundImageUrl(null); // Clear image when selecting gradient
+      setBackgroundImageUrl("");
       
       const { error } = await supabase
         .from("boards")
@@ -252,25 +261,54 @@ const Board = () => {
     try {
       const { error } = await supabase
         .from("boards")
-        .update({ 
-          background_image_url: null,
+        .update({
+          background_image_url: 'default',
+          background_fit_mode: 'cover',
           background_position_x: 50,
           background_position_y: 50,
-          background_scale: 100,
-          background_fit_mode: 'scale'
+          background_scale: 100
         })
         .eq("id", board?.id);
       
       if (error) throw error;
       
-      setBackgroundImageUrl(null);
+      setBackgroundImageUrl(defaultBackground);
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
       setBackgroundScale(100);
-      setBackgroundFitMode('scale');
-      toast.success('Achtergrondafbeelding verwijderd');
+      setBackgroundFitMode('cover');
+      toast.success('Afbeelding verwijderd, standaard achtergrond hersteld');
     } catch (error: any) {
       toast.error("Fout bij verwijderen: " + error.message);
+    }
+  };
+
+  const handleSetDefaultBackground = async () => {
+    try {
+      const { error } = await supabase
+        .from("boards")
+        .update({
+          background_image_url: 'default',
+          background_gradient: null,
+          background_fit_mode: 'cover',
+          background_position_x: 50,
+          background_position_y: 50,
+          background_scale: 100,
+        })
+        .eq("id", board?.id);
+
+      if (error) throw error;
+
+      setBackgroundImageUrl(defaultBackground);
+      setBackgroundFitMode('cover');
+      setBackgroundPositionX(50);
+      setBackgroundPositionY(50);
+      setBackgroundScale(100);
+      setSelectedBackground('');
+      toast.success("Standaard achtergrond ingesteld");
+    } catch (error: any) {
+      console.error("Error setting default background:", error);
+      toast.error("Fout bij instellen standaard achtergrond");
     }
   };
 
@@ -527,12 +565,16 @@ const Board = () => {
       
       // Set background image from board data
       if (boardResult.data.background_image_url) {
-        setBackgroundImageUrl(boardResult.data.background_image_url);
+        // Convert 'default' marker to actual asset URL
+        const bgUrl = boardResult.data.background_image_url === 'default' 
+          ? defaultBackground 
+          : boardResult.data.background_image_url;
+        setBackgroundImageUrl(bgUrl);
         setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
         setBackgroundPositionY(boardResult.data.background_position_y ?? 50);
         setBackgroundScale(boardResult.data.background_scale ?? 100);
         const fitModeValue = boardResult.data.background_fit_mode;
-        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'scale');
+        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'cover');
       }
       
       // Fetch columns
@@ -1248,11 +1290,22 @@ const Board = () => {
           <div className="flex items-center gap-2">
             {(userPlan === 'team' || userPlan === 'business') && (
               <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
-                <Select value={selectedBackground} onValueChange={handleBackgroundChange} disabled={!!backgroundImageUrl || !canCustomizeBackground}>
-                  <SelectTrigger className="w-[180px]">
-                    <span>🎨 Kleur</span>
+                <Select 
+                  value={backgroundImageUrl === defaultBackground ? 'default' : selectedBackground} 
+                  onValueChange={(value) => {
+                    if (value === 'default') {
+                      handleSetDefaultBackground();
+                    } else {
+                      handleBackgroundChange(value);
+                    }
+                  }} 
+                  disabled={!canCustomizeBackground}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <span>🎨 Standaard achtergronden</span>
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="default">Standaard achtergrond</SelectItem>
                     <SelectItem value="from-blue-50 to-blue-100">Blauw</SelectItem>
                     <SelectItem value="from-purple-50 to-pink-100">Paars-Roze</SelectItem>
                     <SelectItem value="from-green-50 to-emerald-100">Groen</SelectItem>
@@ -1264,7 +1317,7 @@ const Board = () => {
                   </SelectContent>
                 </Select>
                 
-                {backgroundImageUrl ? (
+                {backgroundImageUrl && backgroundImageUrl !== defaultBackground ? (
                   <Button 
                     size="sm" 
                     variant="destructive"
@@ -1290,7 +1343,7 @@ const Board = () => {
                       disabled={uploadingBackground || !canCustomizeBackground}
                     />
                     <Image className="h-4 w-4" />
-                    {uploadingBackground ? 'Uploaden...' : 'Upload afbeelding'}
+                    {uploadingBackground ? 'Uploaden...' : 'Afbeelding toevoegen'}
                   </Button>
                 )}
               </div>
