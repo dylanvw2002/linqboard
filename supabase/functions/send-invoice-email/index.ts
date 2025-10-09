@@ -30,17 +30,11 @@ function generateInvoicePDF(data: InvoiceData): string {
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, 210, 40, 'F');
   
-  // Logo image
-  const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
-  try {
-    doc.addImage(logoUrl, 'PNG', 15, 8, 50, 25);
-  } catch (error) {
-    // Fallback to text if image fails
-    doc.setTextColor(139, 123, 232);
-    doc.setFontSize(32);
-    doc.setFont('helvetica', 'bold');
-    doc.text('LinqBoard', 20, 28);
-  }
+  // Logo - using text styled as logo since jsPDF has issues with external images
+  doc.setTextColor(139, 123, 232);
+  doc.setFontSize(32);
+  doc.setFont('helvetica', 'bold');
+  doc.text('LinqBoard', 20, 28);
   
   // Reset text color
   doc.setTextColor(0, 0, 0);
@@ -67,15 +61,17 @@ function generateInvoicePDF(data: InvoiceData): string {
   doc.setTextColor(0, 0, 0);
   doc.setFont('helvetica', 'normal');
   yPos += 6;
-  doc.text('LinqBoard B.V.', 20, yPos);
+  doc.text('LinqBoard', 20, yPos);
   yPos += 5;
-  doc.text('Voorbeeldstraat 123', 20, yPos);
+  doc.text('Sikkelvoorde 4', 20, yPos);
   yPos += 5;
-  doc.text('1234 AB Amsterdam', 20, yPos);
+  doc.text('3204 EJ Spijkenisse', 20, yPos);
   yPos += 5;
   doc.text('Nederland', 20, yPos);
   yPos += 5;
-  doc.text('BTW: NL123456789B01', 20, yPos);
+  doc.text('KvK: 97289388', 20, yPos);
+  yPos += 5;
+  doc.text('BTW: NL005260317B10', 20, yPos);
   
   // To section
   yPos += 15;
@@ -141,7 +137,9 @@ function generateInvoicePDF(data: InvoiceData): string {
   doc.setTextColor(102, 102, 102);
   doc.text('Bedankt voor uw betaling!', 105, yPos, { align: 'center' });
   yPos += 5;
-  doc.text('LinqBoard B.V. | KvK: 12345678 | IBAN: NL99BANK0123456789', 105, yPos, { align: 'center' });
+  doc.text('LinqBoard | Sikkelvoorde 4, 3204 EJ Spijkenisse', 105, yPos, { align: 'center' });
+  yPos += 4;
+  doc.text('KvK: 97289388 | BTW: NL005260317B10', 105, yPos, { align: 'center' });
   
   // Return base64 PDF
   return doc.output('datauristring').split(',')[1];
@@ -209,7 +207,8 @@ serve(async (req) => {
         </div>
         
         <div style="background: #f9f9f9; padding: 20px; text-align: center; color: #666; font-size: 12px;">
-          <p>LinqBoard B.V. | KvK: 12345678 | BTW: NL123456789B01</p>
+          <p>LinqBoard | Sikkelvoorde 4, 3204 EJ Spijkenisse</p>
+          <p>KvK: 97289388 | BTW: NL005260317B10</p>
           <p>Voor vragen kun je contact opnemen via info@linqboard.io</p>
         </div>
       </div>
