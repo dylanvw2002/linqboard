@@ -1128,23 +1128,20 @@ const Board = () => {
       </div>;
   }
   return <div 
-    className={cn("h-screen overflow-hidden relative", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)}
-    style={{
-      ...(backgroundImageUrl && {
-        backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
-        backgroundSize: `${backgroundScale}%`,
-        backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed'
-      })
-    }}
+    className="h-screen overflow-hidden relative"
   >
       <div 
-        className="origin-top-left overflow-hidden bg-blue-50"
+        className={cn("origin-top-left overflow-hidden", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)}
         style={{
           transform: `scale(${zoomLevel})`,
           width: `${100 / zoomLevel}vw`,
           height: `${100 / zoomLevel}vh`,
+          ...(backgroundImageUrl && {
+            backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
+            backgroundSize: `${backgroundScale / zoomLevel}%`,
+            backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
+            backgroundRepeat: 'no-repeat'
+          })
         }}
       >
         <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
