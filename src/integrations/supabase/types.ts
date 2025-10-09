@@ -54,6 +54,7 @@ export type Database = {
       }
       boards: {
         Row: {
+          background_fit_mode: string | null
           background_gradient: string | null
           background_image_url: string | null
           background_position_x: number | null
@@ -65,6 +66,7 @@ export type Database = {
           organization_id: string
         }
         Insert: {
+          background_fit_mode?: string | null
           background_gradient?: string | null
           background_image_url?: string | null
           background_position_x?: number | null
@@ -76,6 +78,7 @@ export type Database = {
           organization_id: string
         }
         Update: {
+          background_fit_mode?: string | null
           background_gradient?: string | null
           background_image_url?: string | null
           background_position_x?: number | null

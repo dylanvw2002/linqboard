@@ -8,8 +8,9 @@ interface BackgroundCropEditorProps {
   initialPositionX?: number;
   initialPositionY?: number;
   initialScale?: number;
+  initialFitMode?: 'scale' | 'cover';
   onClose: () => void;
-  onApply: (positionX: number, positionY: number, scale: number) => void;
+  onApply: (positionX: number, positionY: number, scale: number, fitMode: 'scale' | 'cover') => void;
 }
 
 export const BackgroundCropEditor = ({ 
@@ -17,12 +18,14 @@ export const BackgroundCropEditor = ({
   initialPositionX = 50,
   initialPositionY = 50,
   initialScale = 100,
+  initialFitMode = 'scale',
   onClose, 
   onApply 
 }: BackgroundCropEditorProps) => {
   const [positionX, setPositionX] = useState(initialPositionX);
   const [positionY, setPositionY] = useState(initialPositionY);
   const [scale, setScale] = useState(initialScale);
+  const [fitMode, setFitMode] = useState<'scale' | 'cover'>(initialFitMode);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,10 +69,11 @@ export const BackgroundCropEditor = ({
     setPositionX(50);
     setPositionY(50);
     setScale(100);
+    setFitMode('scale');
   };
 
   const handleApply = () => {
-    onApply(positionX, positionY, scale);
+    onApply(positionX, positionY, scale, fitMode);
   };
 
   return (
@@ -141,28 +145,58 @@ export const BackgroundCropEditor = ({
 
           {/* Controls panel */}
           <div className="lg:w-80 w-full space-y-4">
-            {/* Scale control */}
+            {/* Fit mode control */}
             <div className="p-4 rounded-lg bg-muted">
-              <h4 className="font-semibold mb-3 text-sm">🔍 Zoom</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Schaal:</span>
-                  <span className="font-mono">{scale}%</span>
-                </div>
-                <Slider
-                  value={[scale]}
-                  onValueChange={([value]) => setScale(value)}
-                  min={50}
-                  max={200}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>50%</span>
-                  <span>200%</span>
+              <h4 className="font-semibold mb-3 text-sm">📐 Weergave Modus</h4>
+              <div className="flex gap-2">
+                <Button
+                  variant={fitMode === 'scale' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setFitMode('scale')}
+                  className="flex-1"
+                >
+                  Aangepast
+                </Button>
+                <Button
+                  variant={fitMode === 'cover' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setFitMode('cover')}
+                  className="flex-1"
+                >
+                  Volledig scherm
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                {fitMode === 'cover' 
+                  ? 'Afbeelding vult het hele scherm' 
+                  : 'Handmatig instellen met zoom'}
+              </p>
+            </div>
+
+            {/* Scale control - only show in scale mode */}
+            {fitMode === 'scale' && (
+              <div className="p-4 rounded-lg bg-muted">
+                <h4 className="font-semibold mb-3 text-sm">🔍 Zoom</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Schaal:</span>
+                    <span className="font-mono">{scale}%</span>
+                  </div>
+                  <Slider
+                    value={[scale]}
+                    onValueChange={([value]) => setScale(value)}
+                    min={50}
+                    max={200}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>50%</span>
+                    <span>200%</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Position info */}
             <div className="p-4 rounded-lg bg-muted">

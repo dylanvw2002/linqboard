@@ -106,6 +106,7 @@ const Board = () => {
   const [backgroundPositionX, setBackgroundPositionX] = useState<number>(50);
   const [backgroundPositionY, setBackgroundPositionY] = useState<number>(50);
   const [backgroundScale, setBackgroundScale] = useState<number>(100);
+  const [backgroundFitMode, setBackgroundFitMode] = useState<'scale' | 'cover'>('scale');
   const [cropEditorOpen, setCropEditorOpen] = useState(false);
   const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [pendingImagePreview, setPendingImagePreview] = useState<string | null>(null);
@@ -255,7 +256,8 @@ const Board = () => {
           background_image_url: null,
           background_position_x: 50,
           background_position_y: 50,
-          background_scale: 100
+          background_scale: 100,
+          background_fit_mode: 'scale'
         })
         .eq("id", board?.id);
       
@@ -265,13 +267,14 @@ const Board = () => {
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
       setBackgroundScale(100);
+      setBackgroundFitMode('scale');
       toast.success('Achtergrondafbeelding verwijderd');
     } catch (error: any) {
       toast.error("Fout bij verwijderen: " + error.message);
     }
   };
 
-  const handleApplyBackgroundCrop = async (positionX: number, positionY: number, scale: number) => {
+  const handleApplyBackgroundCrop = async (positionX: number, positionY: number, scale: number, fitMode: 'scale' | 'cover') => {
     try {
       setUploadingBackground(true);
       
@@ -299,7 +302,8 @@ const Board = () => {
             background_image_url: publicUrl,
             background_position_x: positionX,
             background_position_y: positionY,
-            background_scale: scale
+            background_scale: scale,
+            background_fit_mode: fitMode
           })
           .eq("id", board?.id);
         
@@ -320,7 +324,8 @@ const Board = () => {
           .update({ 
             background_position_x: positionX,
             background_position_y: positionY,
-            background_scale: scale
+            background_scale: scale,
+            background_fit_mode: fitMode
           })
           .eq("id", board?.id);
         
@@ -330,6 +335,7 @@ const Board = () => {
       setBackgroundPositionX(positionX);
       setBackgroundPositionY(positionY);
       setBackgroundScale(scale);
+      setBackgroundFitMode(fitMode);
       setCropEditorOpen(false);
       toast.success('Achtergrond opgeslagen');
     } catch (error: any) {
@@ -525,6 +531,8 @@ const Board = () => {
         setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
         setBackgroundPositionY(boardResult.data.background_position_y ?? 50);
         setBackgroundScale(boardResult.data.background_scale ?? 100);
+        const fitModeValue = boardResult.data.background_fit_mode;
+        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'scale');
       }
       
       // Fetch columns
@@ -1136,7 +1144,7 @@ const Board = () => {
         style={{
           ...(backgroundImageUrl && {
             backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
-            backgroundSize: `${backgroundScale}%`,
+            backgroundSize: backgroundFitMode === 'cover' ? 'cover' : `${backgroundScale}%`,
             backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
             backgroundRepeat: 'no-repeat'
           })
@@ -1706,6 +1714,7 @@ const Board = () => {
           initialPositionX={backgroundPositionX}
           initialPositionY={backgroundPositionY}
           initialScale={backgroundScale}
+          initialFitMode={backgroundFitMode}
           onClose={() => {
             setCropEditorOpen(false);
             // Clean up preview URL if exists
