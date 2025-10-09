@@ -10,7 +10,7 @@ const Index = () => {
   const { t } = useTranslation();
   
   return (
-    <div className="bg-gradient-to-br from-background via-primary/5 to-accent/5">
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Header */}
       <header className="container mx-auto px-6 py-1 mt-4">
         <div className="flex items-center justify-between -my-[50px]">
