@@ -1130,18 +1130,26 @@ const Board = () => {
   return <div 
     className="h-screen overflow-hidden relative"
   >
+      {/* Fixed background layer - doesn't scale with zoom */}
       <div 
-        className={cn("origin-top-left overflow-hidden", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)}
+        className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)}
         style={{
-          transform: `scale(${zoomLevel})`,
-          width: `${100 / zoomLevel}vw`,
-          height: `${100 / zoomLevel}vh`,
           ...(backgroundImageUrl && {
             backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
-            backgroundSize: `${backgroundScale / zoomLevel}%`,
+            backgroundSize: `${backgroundScale}%`,
             backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
             backgroundRepeat: 'no-repeat'
           })
+        }}
+      />
+      
+      {/* Zoomed content layer */}
+      <div 
+        className="origin-top-left overflow-hidden"
+        style={{
+          transform: `scale(${zoomLevel})`,
+          width: `${100 / zoomLevel}vw`,
+          height: `${100 / zoomLevel}vh`
         }}
       >
         <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
