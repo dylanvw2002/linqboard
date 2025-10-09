@@ -1224,17 +1224,17 @@ const Board = () => {
           </div>
         </div>}
       <main 
-        className={cn("relative flex-1 min-h-0 overflow-auto", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} 
+        className={cn("relative flex-1 min-h-0 overflow-auto bg-gradient-to-br", backgroundImageUrl ? "" : selectedBackground)} 
         style={{
           minWidth: '3000px',
           minHeight: '2000px',
           ...(backgroundImageUrl && {
-            backgroundImage: `url(${backgroundImageUrl})`,
+            backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
           })
-        }} 
+        }}
         onClick={(e) => {
           if (editMode && selectedColumn && e.target === e.currentTarget) {
             setSelectedColumn(null);
