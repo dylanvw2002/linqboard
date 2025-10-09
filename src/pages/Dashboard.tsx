@@ -296,10 +296,7 @@ const Dashboard = () => {
   }
   return <div className="relative min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Onboarding Guide */}
-      <OnboardingGuide 
-        open={showOnboarding} 
-        onOpenChange={setShowOnboarding}
-      />
+      <OnboardingGuide open={showOnboarding} onOpenChange={setShowOnboarding} />
 
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
@@ -325,12 +322,10 @@ const Dashboard = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
-                  {subscriptionLimits?.plan !== 'free' && (
-                    <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
+                  {subscriptionLimits?.plan !== 'free' && <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
                       <FileText className="mr-2 h-4 w-4" />
                       <span>Bekijk facturen</span>
-                    </DropdownMenuItem>
-                  )}
+                    </DropdownMenuItem>}
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>{t('auth.logout')}</span>
@@ -472,7 +467,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick actions */}
-        <div className="border-t border-border/50 pt-8">
+        <div className="border-t border-border/50 pt-8 my-[10px]">
             <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
