@@ -99,7 +99,7 @@ const Board = () => {
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [selectedBackground, setSelectedBackground] = useState<string>("from-blue-50 to-blue-100");
+  const [selectedBackground, setSelectedBackground] = useState<string>("from-primary/20 via-primary/10 to-background");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null);
   const [uploadingBackground, setUploadingBackground] = useState(false);
   const [draggedColumn, setDraggedColumn] = useState<Column | null>(null);
@@ -1224,12 +1224,12 @@ const Board = () => {
           </div>
         </div>}
       <main 
-        className={cn("relative flex-1 min-h-0 overflow-auto bg-gradient-to-br", backgroundImageUrl ? "" : selectedBackground)} 
+        className={cn("relative flex-1 min-h-0 overflow-auto", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} 
         style={{
           minWidth: '3000px',
           minHeight: '2000px',
           ...(backgroundImageUrl && {
-            backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
+            backgroundImage: `url(${backgroundImageUrl})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
