@@ -24,29 +24,30 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
-    // Create Supabase client
-    const supabaseClient = createClient(
+    // Create Supabase admin client
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // Get the user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    // Extract JWT token from header
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify the JWT token
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (userError || !user) {
+      console.error('Auth error:', userError);
       throw new Error('User not authenticated');
     }
 
+    console.log('Authenticated user:', user.id);
+
     // Get user profile for email
-    const { data: profile } = await supabaseClient
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     // Get request body
     const { amount, description } = await req.json();
@@ -90,7 +91,7 @@ serve(async (req) => {
     console.log('Payment created:', payment.id);
 
     // Store transaction in database
-    const { error: transactionError } = await supabaseClient
+    const { error: transactionError } = await supabaseAdmin
       .from('mollie_transactions')
       .insert({
         user_id: user.id,
