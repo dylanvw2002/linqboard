@@ -150,7 +150,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         amount: { currency: 'EUR', value: totalAmount.toFixed(2) },
-        description: `LinqBoard ${planName} (${intervalText})`,
+        description: `${user.email} - LinqBoard ${planName} ${intervalText}`,
         redirectUrl: `${req.headers.get('origin')}/subscription-success`,
         webhookUrl: `${Deno.env.get('SUPABASE_URL')}/functions/v1/mollie-webhook`,
         sequenceType: 'first',
