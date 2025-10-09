@@ -467,7 +467,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick actions */}
-        <div className="border-t border-border/50 pt-8 my-[10px]">
+        <div className="border-t border-border/50 py-10 my-[10px]">
             <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
