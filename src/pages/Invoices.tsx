@@ -28,7 +28,6 @@ export default function Invoices() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [syncLogs, setSyncLogs] = useState<any[]>([]);
 
   useEffect(() => {
     checkAuthAndLoad();
@@ -75,15 +74,6 @@ export default function Invoices() {
       
       if (error) throw error;
       setInvoices(data || []);
-
-      // Load E-boekhouden sync logs
-      const { data: syncData } = await supabase
-        .from('eboekhouden_sync_log')
-        .select('*')
-        .eq('sync_type', 'invoice')
-        .order('synced_at', { ascending: false });
-      
-      setSyncLogs(syncData || []);
     } catch (error) {
       console.error('Error loading invoices:', error);
       toast.error('Fout bij laden facturen');
@@ -159,15 +149,11 @@ export default function Invoices() {
                     <TableHead>Land</TableHead>
                     <TableHead className="text-right">Totaal</TableHead>
                     <TableHead className="text-center">Email</TableHead>
-                    <TableHead className="text-center">E-boekhouden</TableHead>
                     <TableHead className="text-center">Download</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoices.map((invoice) => {
-                    const syncLog = syncLogs.find(log => log.invoice_id === invoice.id);
-                    
-                    return (
+                  {invoices.map((invoice) => (
                       <TableRow key={invoice.id}>
                         <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
                         <TableCell>
@@ -187,22 +173,6 @@ export default function Invoices() {
                           )}
                         </TableCell>
                         <TableCell className="text-center">
-                          {syncLog ? (
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              syncLog.status === 'success' 
-                                ? 'bg-blue-100 text-blue-800' 
-                                : syncLog.status === 'failed'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {syncLog.status === 'success' ? '✓ Sync' : 
-                               syncLog.status === 'failed' ? '✗ Fout' : '⏳ Bezig'}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Wachten</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-center">
                           <Button
                             variant="outline"
                             size="sm"
@@ -213,8 +183,7 @@ export default function Invoices() {
                           </Button>
                         </TableCell>
                       </TableRow>
-                    );
-                  })}
+                  ))}
                 </TableBody>
               </Table>
             )}
