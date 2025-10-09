@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Copy, CheckCircle } from "lucide-react";
+import { Loader2, Copy, CheckCircle, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 const CreateOrganization = () => {
   const navigate = useNavigate();
@@ -177,7 +177,15 @@ const CreateOrganization = () => {
           </form>
 
           <div className="mt-6 text-center">
-            
+            <Button 
+              type="button" 
+              variant="ghost" 
+              className="w-full" 
+              onClick={() => navigate('/dashboard')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t('common.back')}
+            </Button>
           </div>
         </CardContent>
       </Card>
