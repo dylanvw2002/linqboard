@@ -29,7 +29,7 @@ const Index = () => {
       />
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
-        <header className="container mx-auto px-6 py-1 mt-4">
+        <header className="container mx-auto px-6 py-1 pt-4">
           <nav className="flex items-center justify-between -my-[50px]">
             <img src={logo} alt={t('seo.home.logoAlt')} className="h-48 w-auto" />
             <div className="flex items-center gap-2">
