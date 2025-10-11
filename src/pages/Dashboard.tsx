@@ -20,6 +20,7 @@ import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/logo-transparent.png";
+
 interface Organization {
   id: string;
   name: string;
@@ -49,6 +50,7 @@ interface Subscription {
   mollie_customer_id?: string;
   mollie_subscription_id?: string;
 }
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const {
@@ -78,6 +80,7 @@ const Dashboard = () => {
   const [orgMembers, setOrgMembers] = useState<OrganizationMember[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
+
   useEffect(() => {
     const checkAccess = async () => {
       const {
@@ -110,6 +113,7 @@ const Dashboard = () => {
     };
     checkAccess();
   }, [navigate]);
+
   const fetchUserData = async (userId: string) => {
     try {
       setUserId(userId);
@@ -136,6 +140,7 @@ const Dashboard = () => {
       console.error('Error fetching user data:', error);
     }
   };
+
   const handleAvatarUpload = async (blob: Blob) => {
     try {
       // Delete old avatar if exists
@@ -175,6 +180,7 @@ const Dashboard = () => {
       console.error(error);
     }
   };
+
   const handleUpdateProfile = async () => {
     if (!editName.trim()) {
       toast.error(t('dashboard.nameRequired'));
@@ -195,6 +201,7 @@ const Dashboard = () => {
       console.error(error);
     }
   };
+
   const handleUpdateBoardName = async () => {
     if (!editBoardId) return;
     
@@ -226,6 +233,7 @@ const Dashboard = () => {
       console.error(error);
     }
   };
+
   const handleShareInviteLink = async (inviteCode: string) => {
     const inviteLink = `${window.location.origin}/join-organization?code=${inviteCode}`;
     
@@ -588,13 +596,19 @@ const Dashboard = () => {
             </Card> : <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {organizations.map(org => <Card key={org.id} className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
-                    <Button variant="ghost" size="icon" className="absolute top-4 right-16 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-28 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10" onClick={e => {
                       e.stopPropagation();
                       setEditBoardId(org.id);
                       setEditBoardName(org.name);
                       setEditBoardDialogOpen(true);
                     }}>
                       <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-16 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10" onClick={e => {
+                      e.stopPropagation();
+                      handleViewMembers(org.id, org.name);
+                    }}>
+                      <Users className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
               e.stopPropagation();
@@ -637,22 +651,6 @@ const Dashboard = () => {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
-                  {org.role === 'owner' && (
-                    <div className="mt-4 pt-4 border-t border-border/50">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleViewMembers(org.id, org.name);
-                        }}
-                      >
-                        <Users className="mr-2 h-4 w-4" />
-                        {t('dashboard.viewMembers')}
-                      </Button>
-                    </div>
-                  )}
                 </Card>)}
             </div>}
         </div>
