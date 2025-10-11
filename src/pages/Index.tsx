@@ -99,7 +99,7 @@ const Index = () => {
               {t('landing.trustedBy')}
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 max-w-7xl mx-auto">
               {/* NRG Totaal - met logo */}
               <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
                 <img 
@@ -127,12 +127,19 @@ const Index = () => {
                 />
               </div>
               
+              {/* ODÉA Vastgoed Service - tekst placeholder */}
+              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
+                <span className="text-base md:text-lg font-semibold text-foreground/70 text-center leading-tight">
+                  ODÉA Vastgoed Service
+                </span>
+              </div>
+              
               {/* NutriBuddi - met logo */}
               <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
                 <img 
                   src={nutribuddiLogo} 
                   alt="NutriBuddi" 
-                  className="h-12 w-auto transition-all"
+                  className="h-16 w-auto transition-all"
                 />
               </div>
             </div>
