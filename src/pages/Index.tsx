@@ -149,7 +149,7 @@ const Index = () => {
                 <img 
                   src={onderhoudscontractenLogo} 
                   alt="Onderhoudscontracten.com" 
-                  className="h-12 w-auto transition-all"
+                  className="h-20 w-auto transition-all"
                 />
               </div>
               
