@@ -6,6 +6,8 @@ import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import todoBoardIllustration from "@/assets/todo-board-illustration.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
+import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -87,6 +89,49 @@ const Index = () => {
             </div>
           </section>
         </main>
+
+        {/* Partners Section */}
+        <section className="container mx-auto px-6 py-12">
+          <div className="bg-muted/20 rounded-3xl p-8 md:p-12">
+            <p className="text-center text-sm uppercase tracking-wider text-muted-foreground mb-8">
+              {t('landing.trustedBy')}
+            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
+              {/* NRG Totaal - met logo */}
+              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
+                <img 
+                  src={nrgTotaalLogo} 
+                  alt="NRG Totaal" 
+                  className="h-12 w-auto grayscale hover:grayscale-0 transition-all"
+                />
+              </div>
+              
+              {/* Onderhoudscontracten.com - tekst placeholder */}
+              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
+                <span className="text-base md:text-lg font-semibold text-foreground/70 text-center leading-tight">
+                  Onderhoudscontracten.com
+                </span>
+              </div>
+              
+              {/* Zorgeloos Vastgoed - met logo */}
+              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
+                <img 
+                  src={zorgeloosVastgoedLogo} 
+                  alt="Zorgeloos Vastgoed" 
+                  className="h-12 w-auto grayscale hover:grayscale-0 transition-all"
+                />
+              </div>
+              
+              {/* ODÉA Vastgoed Service - tekst placeholder */}
+              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
+                <span className="text-base md:text-lg font-semibold text-foreground/70 text-center leading-tight">
+                  ODÉA Vastgoed Service
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Features Section */}
         <section className="container mx-auto px-6 pt-24 pb-4">
