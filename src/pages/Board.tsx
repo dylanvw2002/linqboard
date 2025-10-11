@@ -19,6 +19,7 @@ import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import type { Locale } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import logo from "@/assets/logo-transparent.png";
 import defaultBackground from "@/assets/default-board-background.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
@@ -67,6 +68,7 @@ interface Task {
 }
 const Board = () => {
   const { t, i18n } = useTranslation();
+  const isMobile = useIsMobile();
   
   const taskSchema = z.object({
     title: z.string().trim().min(1, t('board.titleRequired')).max(200, t('board.titleMaxLength')),
@@ -1193,13 +1195,22 @@ const Board = () => {
         }}
       />
       
-      {/* Zoomed content layer */}
+      {/* Zoomed content layer (desktop) or scrollable layer (mobile/tablet) */}
       <div 
-        className="origin-top-left overflow-hidden"
+        className={cn(
+          "origin-top-left",
+          isMobile ? "overflow-auto" : "overflow-hidden"
+        )}
         style={{
-          transform: `scale(${zoomLevel})`,
-          width: `${100 / zoomLevel}vw`,
-          height: `${100 / zoomLevel}vh`
+          ...(isMobile ? {
+            width: '100vw',
+            height: '100vh',
+            WebkitOverflowScrolling: 'touch'
+          } : {
+            transform: `scale(${zoomLevel})`,
+            width: `${100 / zoomLevel}vw`,
+            height: `${100 / zoomLevel}vh`
+          })
         }}
       >
         <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
@@ -1248,33 +1259,37 @@ const Board = () => {
             <ArrowLeft className="w-4 h-4" />
             {t('dashboard.title')}
           </button>
-          <div className="flex items-center gap-2 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-3 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]">
-            <button 
-              onClick={handleZoomOut} 
-              disabled={zoomLevel <= 0.5}
-              className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
-              title="Zoom uit (Ctrl/Cmd + -)"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-            <span className="text-foreground font-bold text-sm min-w-[3.5rem] text-center">
-              {Math.round(zoomLevel * 100)}%
-            </span>
-            <button 
-              onClick={handleZoomIn} 
-              disabled={zoomLevel >= 1.0}
-              className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
-              title="Zoom in (Ctrl/Cmd + +)"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-          </div>
+          {!isMobile && (
+            <div className="flex items-center gap-2 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-3 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]">
+              <button 
+                onClick={handleZoomOut} 
+                disabled={zoomLevel <= 0.5}
+                className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
+                title="Zoom uit (Ctrl/Cmd + -)"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <span className="text-foreground font-bold text-sm min-w-[3.5rem] text-center">
+                {Math.round(zoomLevel * 100)}%
+              </span>
+              <button 
+                onClick={handleZoomIn} 
+                disabled={zoomLevel >= 1.0}
+                className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
+                title="Zoom in (Ctrl/Cmd + +)"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <button onClick={handleFullscreen} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
             ⛶ {t('board.fullscreen')}
           </button>
-          <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
-            <Pencil size={20} />
-          </button>
+          {!isMobile && (
+            <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
+              <Pencil size={20} />
+            </button>
+          )}
           <button onClick={handleClearCompleted} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
             <Trash2 size={20} />
           </button>
@@ -1283,7 +1298,7 @@ const Board = () => {
       </header>
 
       {/* Canvas Board */}
-      {editMode && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg mx-[22px]">
+      {editMode && !isMobile && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg mx-[22px]">
           <span className="text-sm font-semibold text-primary">
             🔧 {t('board.editModeActive')}
           </span>
