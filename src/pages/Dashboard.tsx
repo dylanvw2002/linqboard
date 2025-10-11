@@ -268,25 +268,34 @@ const Dashboard = () => {
     setLoadingMembers(true);
 
     try {
-      const { data, error } = await supabase
+      // First get memberships
+      const { data: memberships, error: membershipsError } = await supabase
         .from('memberships')
-        .select(`
-          id,
-          user_id,
-          role,
-          profiles!inner(full_name, avatar_url)
-        `)
+        .select('id, user_id, role')
         .eq('organization_id', orgId);
 
-      if (error) throw error;
+      if (membershipsError) throw membershipsError;
 
-      const members: OrganizationMember[] = (data || []).map((m: any) => ({
-        id: m.id,
-        user_id: m.user_id,
-        role: m.role,
-        full_name: m.profiles.full_name,
-        avatar_url: m.profiles.avatar_url
-      }));
+      // Then get profiles for those users
+      const userIds = memberships?.map(m => m.user_id) || [];
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('user_id, full_name, avatar_url')
+        .in('user_id', userIds);
+
+      if (profilesError) throw profilesError;
+
+      // Combine the data
+      const members: OrganizationMember[] = (memberships || []).map((m) => {
+        const profile = profiles?.find(p => p.user_id === m.user_id);
+        return {
+          id: m.id,
+          user_id: m.user_id,
+          role: m.role,
+          full_name: profile?.full_name || 'Unknown',
+          avatar_url: profile?.avatar_url || null
+        };
+      });
 
       setOrgMembers(members);
     } catch (error: any) {
@@ -296,6 +305,7 @@ const Dashboard = () => {
       setLoadingMembers(false);
     }
   };
+
 
   const handleRemoveMember = async () => {
     if (!removeMemberId) return;
