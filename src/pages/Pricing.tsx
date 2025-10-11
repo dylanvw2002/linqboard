@@ -285,43 +285,43 @@ const Pricing = () => {
       </div>
 
       {/* Header with back button and language switcher */}
-      <header className="container mx-auto px-6 py-2">
+      <header className="container mx-auto px-4 sm:px-6 py-2">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')} size="sm">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+          <Button variant="ghost" onClick={() => navigate('/dashboard')} size="sm" className="text-xs sm:text-sm">
+            <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
             {t('common.back')}
           </Button>
           <LanguageSwitcher />
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-4">
+      <div className="container mx-auto px-4 sm:px-6 py-4">
 
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
+        <div className="text-center mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
             {t('pricing.title')}
           </h1>
-          <p className="text-base text-muted-foreground mb-4">
+          <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 px-4">
             {t('pricing.subtitle')}
           </p>
 
-          <div className="flex flex-col items-center justify-center gap-2 mb-4">
-            <div className="flex items-center gap-4">
-              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold text-sm' : 'text-sm'}>
+          <div className="flex flex-col items-center justify-center gap-2 mb-3 sm:mb-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold text-xs sm:text-sm' : 'text-xs sm:text-sm'}>
                 {t('pricing.monthly')}
               </Label>
               <Switch id="billing-toggle" checked={isYearly} onCheckedChange={setIsYearly} />
-              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold text-sm' : 'text-sm'}>
+              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold text-xs sm:text-sm' : 'text-xs sm:text-sm'}>
                 {t('pricing.yearly')}
               </Label>
             </div>
-            <span className={`text-xs text-primary font-semibold bg-primary/10 px-3 py-1 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
+            <span className={`text-xs text-primary font-semibold bg-primary/10 px-2 sm:px-3 py-1 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
               {t('pricing.yearlyBonus')}
             </span>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4 md:gap-6 max-w-7xl mx-auto">
           {isLoading ?
         // Loading skeletons
         Array.from({
@@ -389,16 +389,16 @@ const Pricing = () => {
             </Card>)}
         </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-4 sm:mt-6 text-center px-4">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             {t('pricing.footer')}
           </p>
         </div>
       </div>
 
       {/* Logo at bottom left */}
-      <div className="fixed -bottom-14 left-2 z-10">
-        <img src={logo} alt="LinqBoard Logo" className="h-40 w-auto" />
+      <div className="fixed -bottom-10 sm:-bottom-14 left-1 sm:left-2 z-10">
+        <img src={logo} alt="LinqBoard Logo" className="h-28 sm:h-40 w-auto opacity-60 sm:opacity-100" />
       </div>
 
       <style>{`

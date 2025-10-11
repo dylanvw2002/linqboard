@@ -155,27 +155,27 @@ const Auth = () => {
       </div>
 
       {/* Logo linksonder */}
-      <div className="absolute -bottom-8 left-6 z-10">
-        <img src={logo} alt="LinqBoard" className="h-[150px] w-auto opacity-80" />
+      <div className="absolute -bottom-8 left-2 sm:left-6 z-10">
+        <img src={logo} alt="LinqBoard" className="h-[100px] sm:h-[150px] w-auto opacity-80" />
       </div>
 
       <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher />
       </div>
-      <Card className="w-full max-w-md shadow-xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
-        <div className="flex justify-center pt-8 pb-4">
-          <img src={authIllustration} alt="LinqBoard Authentication" className="h-56 w-auto" />
+      <Card className="w-full max-w-md mx-4 sm:mx-0 shadow-xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
+        <div className="flex justify-center pt-6 sm:pt-8 pb-3 sm:pb-4">
+          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-56 w-auto" />
         </div>
-        <CardHeader className="space-y-2 pt-2">
-          <CardTitle className="text-3xl font-bold text-center">
+        <CardHeader className="space-y-2 pt-2 px-4 sm:px-6">
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-center">
             {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcome') : t('auth.createAccount')}
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-sm sm:text-base">
             {isForgotPassword ? t('auth.resetPasswordDescription') : isLogin ? t('auth.loginDescription') : t('auth.signupDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
+        <CardContent className="px-4 sm:px-6">
+          <form onSubmit={handleAuth} className="space-y-3 sm:space-y-4">
             {!isLogin && !isForgotPassword && <div className="space-y-2">
                 <Label htmlFor="fullName">{t('auth.fullName')}</Label>
                 <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} />

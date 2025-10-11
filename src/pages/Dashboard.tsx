@@ -300,18 +300,18 @@ const Dashboard = () => {
 
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
-        <div className="container mx-auto px-6 py-0">
-          <div className="flex items-center justify-between gap-1 -my-[60px]">
-            <img src={logo} alt="LinqBoard Logo" className="h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
-            <div className="flex items-center gap-4">
+        <div className="container mx-auto px-4 sm:px-6 py-0">
+          <div className="flex items-center justify-between gap-1 -my-[40px] sm:-my-[60px]">
+            <img src={logo} alt="LinqBoard Logo" className="h-32 sm:h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
+            <div className="flex items-center gap-2 sm:gap-4">
               <AdminVatReportLink />
               <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-12 w-12 rounded-full">
-                    <Avatar className="h-12 w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                  <Button variant="ghost" size="icon" className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-full">
+                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
                       <AvatarImage src={avatarUrl || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-base sm:text-lg">
                         {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -337,27 +337,27 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Welcome Section */}
-        <div className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 flex items-center gap-3">
-            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline-block pb-3 leading-tight">
+        <div className="mb-8 sm:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline-block pb-2 sm:pb-3 leading-tight">
               {t('dashboard.hello')} {userName || t('dashboard.hello')}
             </span>
-            <PartyPopper className="text-accent" size={56} />
+            <PartyPopper className="text-accent" size={40} />
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
             {t('dashboard.welcomeBack')}
           </p>
         </div>
 
         {/* Subscription Status Card */}
-        {subscriptionLimits && <Card className="mb-8 p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        {subscriptionLimits && <Card className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <Crown className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-bold">
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                  <h3 className="text-lg sm:text-xl font-bold">
                     {t('subscription.yourPlan')}: <span className="text-primary capitalize">{subscriptionLimits.plan}</span>
                   </h3>
                 </div>
@@ -393,12 +393,12 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col gap-2 shrink-0">
-                {subscriptionLimits.plan !== 'business' && <Button onClick={() => navigate('/pricing')} size="lg">
+              <div className="flex flex-col sm:flex-row lg:flex-col gap-2 shrink-0 w-full lg:w-auto">
+                {subscriptionLimits.plan !== 'business' && <Button onClick={() => navigate('/pricing')} size="lg" className="w-full sm:w-auto">
                     {t('subscription.upgrade')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>}
-                {subscription && subscription.mollie_subscription_id && subscription.status === 'active' && <Button onClick={() => setCancelDialogOpen(true)} size="lg" variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground">
+                {subscription && subscription.mollie_subscription_id && subscription.status === 'active' && <Button onClick={() => setCancelDialogOpen(true)} size="lg" variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground w-full sm:w-auto">
                     {t('subscription.cancel')}
                   </Button>}
               </div>
@@ -406,11 +406,11 @@ const Dashboard = () => {
           </Card>}
 
         {/* Organizations */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2">
+            <h2 className="text-2xl sm:text-3xl font-bold">
               {t('dashboard.yourOrganizations')}
-              {subscriptionLimits && <span className="text-muted-foreground text-xl ml-3">
+              {subscriptionLimits && <span className="text-muted-foreground text-base sm:text-xl ml-2 sm:ml-3">
                   ({subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations})
                 </span>}
             </h2>
