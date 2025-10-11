@@ -97,7 +97,19 @@
     "boardUpdated": "Board-Name erfolgreich aktualisiert",
     "updateBoardError": "Fehler beim Aktualisieren des Board-Namens",
     "shareInviteLink": "Einladungslink teilen",
-    "inviteLinkCopied": "Einladungslink kopiert!"
+    "inviteLinkCopied": "Einladungslink kopiert!",
+    "viewMembers": "Mitglieder ansehen",
+    "members": "Mitglieder",
+    "membersCount": "{{count}} Mitglied",
+    "membersCount_plural": "{{count}} Mitglieder",
+    "owner": "Eigentümer",
+    "member": "Mitglied",
+    "removeMember": "Mitglied entfernen",
+    "removeMemberTitle": "Mitglied entfernen?",
+    "removeMemberDescription": "Dieses Mitglied verliert den Zugriff auf diese Organisation. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "memberRemoved": "Mitglied erfolgreich entfernt",
+    "removeMemberError": "Fehler beim Entfernen des Mitglieds",
+    "loadMembersError": "Fehler beim Laden der Mitglieder"
   },
   "organization": {
     "create": "Organisation erstellen",

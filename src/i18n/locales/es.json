@@ -97,7 +97,19 @@
     "boardUpdated": "Nombre del tablero actualizado con éxito",
     "updateBoardError": "Error al actualizar nombre del tablero",
     "shareInviteLink": "Compartir enlace de invitación",
-    "inviteLinkCopied": "¡Enlace de invitación copiado!"
+    "inviteLinkCopied": "¡Enlace de invitación copiado!",
+    "viewMembers": "Ver miembros",
+    "members": "Miembros",
+    "membersCount": "{{count}} miembro",
+    "membersCount_plural": "{{count}} miembros",
+    "owner": "Propietario",
+    "member": "Miembro",
+    "removeMember": "Eliminar miembro",
+    "removeMemberTitle": "¿Eliminar miembro?",
+    "removeMemberDescription": "Este miembro perderá acceso a esta organización. Esta acción no se puede deshacer.",
+    "memberRemoved": "Miembro eliminado con éxito",
+    "removeMemberError": "Error al eliminar miembro",
+    "loadMembersError": "Error al cargar miembros"
   },
   "organization": {
     "create": "Crear organización",

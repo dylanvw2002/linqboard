@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil, Share2 } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil, Share2, Users } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -26,6 +26,15 @@ interface Organization {
   invite_code: string;
   role: string;
 }
+
+interface OrganizationMember {
+  id: string;
+  user_id: string;
+  role: string;
+  full_name: string;
+  avatar_url: string | null;
+}
+
 interface SubscriptionLimits {
   plan: string;
   max_organizations: number;
@@ -63,6 +72,12 @@ const Dashboard = () => {
   const [editBoardId, setEditBoardId] = useState<string | null>(null);
   const [editBoardName, setEditBoardName] = useState("");
   const [editBoardDialogOpen, setEditBoardDialogOpen] = useState(false);
+  const [membersDialogOpen, setMembersDialogOpen] = useState(false);
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+  const [selectedOrgName, setSelectedOrgName] = useState("");
+  const [orgMembers, setOrgMembers] = useState<OrganizationMember[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
   useEffect(() => {
     const checkAccess = async () => {
       const {
@@ -245,6 +260,64 @@ const Dashboard = () => {
       toast.error('Failed to copy link');
     }
   };
+
+  const handleViewMembers = async (orgId: string, orgName: string) => {
+    setSelectedOrgId(orgId);
+    setSelectedOrgName(orgName);
+    setMembersDialogOpen(true);
+    setLoadingMembers(true);
+
+    try {
+      const { data, error } = await supabase
+        .from('memberships')
+        .select(`
+          id,
+          user_id,
+          role,
+          profiles!inner(full_name, avatar_url)
+        `)
+        .eq('organization_id', orgId);
+
+      if (error) throw error;
+
+      const members: OrganizationMember[] = (data || []).map((m: any) => ({
+        id: m.id,
+        user_id: m.user_id,
+        role: m.role,
+        full_name: m.profiles.full_name,
+        avatar_url: m.profiles.avatar_url
+      }));
+
+      setOrgMembers(members);
+    } catch (error: any) {
+      console.error(error);
+      toast.error(t('dashboard.loadMembersError'));
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
+
+  const handleRemoveMember = async () => {
+    if (!removeMemberId) return;
+
+    try {
+      const { error } = await supabase
+        .from('memberships')
+        .delete()
+        .eq('id', removeMemberId);
+
+      if (error) throw error;
+
+      // Update local state
+      setOrgMembers(orgMembers.filter(m => m.id !== removeMemberId));
+      setRemoveMemberId(null);
+      toast.success(t('dashboard.memberRemoved'));
+    } catch (error: any) {
+      console.error(error);
+      toast.error(t('dashboard.removeMemberError'));
+    }
+  };
+
   const handleCancelSubscription = async () => {
     setCancelling(true);
     try {
@@ -554,6 +627,22 @@ const Dashboard = () => {
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
+                  {org.role === 'owner' && (
+                    <div className="mt-4 pt-4 border-t border-border/50">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewMembers(org.id, org.name);
+                        }}
+                      >
+                        <Users className="mr-2 h-4 w-4" />
+                        {t('dashboard.viewMembers')}
+                      </Button>
+                    </div>
+                  )}
                 </Card>)}
             </div>}
         </div>
@@ -706,6 +795,78 @@ const Dashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Members Dialog */}
+      <Dialog open={membersDialogOpen} onOpenChange={setMembersDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.members')} - {selectedOrgName}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {loadingMembers ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : orgMembers.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                {t('dashboard.noOrganizations')}
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {orgMembers.map((member) => (
+                  <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={member.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {member.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{member.full_name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {member.role === 'owner' ? t('dashboard.owner') : t('dashboard.member')}
+                        </p>
+                      </div>
+                    </div>
+                    {member.role !== 'owner' && member.user_id !== userId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setRemoveMemberId(member.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Remove Member Confirmation Dialog */}
+      <AlertDialog open={!!removeMemberId} onOpenChange={(open) => !open && setRemoveMemberId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('dashboard.removeMemberTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('dashboard.removeMemberDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleRemoveMember}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('dashboard.removeMember')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <SupportButton />
     </div>;

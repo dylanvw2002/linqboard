@@ -97,7 +97,19 @@
     "boardUpdated": "Board naam succesvol bijgewerkt",
     "updateBoardError": "Fout bij bijwerken board naam",
     "shareInviteLink": "Deel uitnodigingslink",
-    "inviteLinkCopied": "Uitnodigingslink gekopieerd!"
+    "inviteLinkCopied": "Uitnodigingslink gekopieerd!",
+    "viewMembers": "Bekijk leden",
+    "members": "Leden",
+    "membersCount": "{{count}} lid",
+    "membersCount_plural": "{{count}} leden",
+    "owner": "Eigenaar",
+    "member": "Lid",
+    "removeMember": "Lid verwijderen",
+    "removeMemberTitle": "Lid verwijderen?",
+    "removeMemberDescription": "Dit lid verliest toegang tot deze organisatie. Deze actie kan niet ongedaan worden gemaakt.",
+    "memberRemoved": "Lid succesvol verwijderd",
+    "removeMemberError": "Fout bij verwijderen lid",
+    "loadMembersError": "Fout bij laden leden"
   },
   "organization": {
     "create": "Organisatie maken",

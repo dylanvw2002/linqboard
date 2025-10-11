@@ -97,7 +97,19 @@
     "boardUpdated": "Board name successfully updated",
     "updateBoardError": "Error updating board name",
     "shareInviteLink": "Share invite link",
-    "inviteLinkCopied": "Invite link copied!"
+    "inviteLinkCopied": "Invite link copied!",
+    "viewMembers": "View members",
+    "members": "Members",
+    "membersCount": "{{count}} member",
+    "membersCount_plural": "{{count}} members",
+    "owner": "Owner",
+    "member": "Member",
+    "removeMember": "Remove member",
+    "removeMemberTitle": "Remove member?",
+    "removeMemberDescription": "This member will lose access to this organization. This action cannot be undone.",
+    "memberRemoved": "Member successfully removed",
+    "removeMemberError": "Error removing member",
+    "loadMembersError": "Error loading members"
   },
   "organization": {
     "create": "Create organization",
