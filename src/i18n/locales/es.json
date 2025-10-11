@@ -95,7 +95,9 @@
     "boardNameLabel": "Nombre del tablero",
     "boardNamePlaceholder": "Introduce el nombre del tablero",
     "boardUpdated": "Nombre del tablero actualizado con éxito",
-    "updateBoardError": "Error al actualizar nombre del tablero"
+    "updateBoardError": "Error al actualizar nombre del tablero",
+    "shareInviteLink": "Compartir enlace de invitación",
+    "inviteLinkCopied": "¡Enlace de invitación copiado!"
   },
   "organization": {
     "create": "Crear organización",

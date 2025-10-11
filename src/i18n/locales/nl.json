@@ -95,7 +95,9 @@
     "boardNameLabel": "Board naam",
     "boardNamePlaceholder": "Voer board naam in",
     "boardUpdated": "Board naam succesvol bijgewerkt",
-    "updateBoardError": "Fout bij bijwerken board naam"
+    "updateBoardError": "Fout bij bijwerken board naam",
+    "shareInviteLink": "Deel uitnodigingslink",
+    "inviteLinkCopied": "Uitnodigingslink gekopieerd!"
   },
   "organization": {
     "create": "Organisatie maken",

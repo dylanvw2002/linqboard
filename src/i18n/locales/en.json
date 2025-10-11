@@ -95,7 +95,9 @@
     "boardNameLabel": "Board name",
     "boardNamePlaceholder": "Enter board name",
     "boardUpdated": "Board name successfully updated",
-    "updateBoardError": "Error updating board name"
+    "updateBoardError": "Error updating board name",
+    "shareInviteLink": "Share invite link",
+    "inviteLinkCopied": "Invite link copied!"
   },
   "organization": {
     "create": "Create organization",

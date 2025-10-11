@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil, Share2 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -209,6 +209,17 @@ const Dashboard = () => {
     } catch (error: any) {
       toast.error(t('dashboard.updateBoardError'));
       console.error(error);
+    }
+  };
+  const handleShareInviteLink = async (inviteCode: string) => {
+    const inviteLink = `${window.location.origin}/join-organization?code=${inviteCode}`;
+    
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      toast.success(t('dashboard.inviteLinkCopied'));
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+      toast.error('Failed to copy link');
     }
   };
   const handleCancelSubscription = async () => {
@@ -499,6 +510,20 @@ const Dashboard = () => {
                         <span className="font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
                           {org.invite_code}
                         </span>
+                        {org.role === 'owner' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShareInviteLink(org.invite_code);
+                            }}
+                            title={t('dashboard.shareInviteLink')}
+                          >
+                            <Share2 className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </div>
                     <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105">
