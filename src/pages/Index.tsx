@@ -139,7 +139,7 @@ const Index = () => {
                 <img 
                   src={nutribuddiLogo} 
                   alt="NutriBuddi" 
-                  className="h-16 w-auto transition-all"
+                  className="h-20 w-auto transition-all"
                 />
               </div>
             </div>
