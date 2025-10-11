@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -60,6 +60,9 @@ const Dashboard = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [userId, setUserId] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [editBoardId, setEditBoardId] = useState<string | null>(null);
+  const [editBoardName, setEditBoardName] = useState("");
+  const [editBoardDialogOpen, setEditBoardDialogOpen] = useState(false);
   useEffect(() => {
     const checkAccess = async () => {
       const {
@@ -174,6 +177,37 @@ const Dashboard = () => {
       // Profile hook will auto-refetch
     } catch (error: any) {
       toast.error(t('dashboard.updateProfileError'));
+      console.error(error);
+    }
+  };
+  const handleUpdateBoardName = async () => {
+    if (!editBoardId) return;
+    
+    const trimmedName = editBoardName.trim();
+    if (!trimmedName) {
+      toast.error(t('dashboard.nameRequired'));
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('organizations')
+        .update({ name: trimmedName })
+        .eq('id', editBoardId);
+
+      if (error) throw error;
+
+      // Update local state
+      setOrganizations(organizations.map(org => 
+        org.id === editBoardId ? { ...org, name: trimmedName } : org
+      ));
+
+      setEditBoardDialogOpen(false);
+      setEditBoardId(null);
+      setEditBoardName("");
+      toast.success(t('dashboard.boardUpdated'));
+    } catch (error: any) {
+      toast.error(t('dashboard.updateBoardError'));
       console.error(error);
     }
   };
@@ -436,12 +470,22 @@ const Dashboard = () => {
               </div>
             </Card> : <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {organizations.map(org => <Card key={org.id} className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
-                  {org.role === 'owner' ? <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
+                  {org.role === 'owner' ? <>
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-16 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10" onClick={e => {
+                      e.stopPropagation();
+                      setEditBoardId(org.id);
+                      setEditBoardName(org.name);
+                      setEditBoardDialogOpen(true);
+                    }}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
               e.stopPropagation();
               setDeleteOrgId(org.id);
             }}>
                       <Trash2 className="h-5 w-5" />
-                    </Button> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
+                    </Button>
+                  </> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
               e.stopPropagation();
               setLeaveOrgId(org.id);
             }}>
@@ -582,6 +626,38 @@ const Dashboard = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Board Name Dialog */}
+      <Dialog open={editBoardDialogOpen} onOpenChange={setEditBoardDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.editBoardTitle')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="boardName">{t('dashboard.boardNameLabel')}</Label>
+              <Input 
+                id="boardName" 
+                value={editBoardName} 
+                onChange={e => setEditBoardName(e.target.value)} 
+                placeholder={t('dashboard.boardNamePlaceholder')} 
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => {
+                setEditBoardDialogOpen(false);
+                setEditBoardId(null);
+                setEditBoardName("");
+              }}>
+                {t('common.cancel')}
+              </Button>
+              <Button onClick={handleUpdateBoardName}>
+                {t('common.save')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <SupportButton />
     </div>;

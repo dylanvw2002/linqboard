@@ -89,7 +89,13 @@
     "nameRequired": "El nombre no puede estar vacío",
     "uploadError": "Error al subir foto",
     "updateProfileError": "Error al actualizar perfil",
-    "loadOrgsError": "Error al cargar organizaciones"
+    "loadOrgsError": "Error al cargar organizaciones",
+    "editBoard": "Editar tablero",
+    "editBoardTitle": "Editar nombre del tablero",
+    "boardNameLabel": "Nombre del tablero",
+    "boardNamePlaceholder": "Introduce el nombre del tablero",
+    "boardUpdated": "Nombre del tablero actualizado con éxito",
+    "updateBoardError": "Error al actualizar nombre del tablero"
   },
   "organization": {
     "create": "Crear organización",

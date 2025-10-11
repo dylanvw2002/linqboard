@@ -89,7 +89,13 @@
     "nameRequired": "Name cannot be empty",
     "uploadError": "Error uploading photo",
     "updateProfileError": "Error updating profile",
-    "loadOrgsError": "Error loading organizations"
+    "loadOrgsError": "Error loading organizations",
+    "editBoard": "Edit board",
+    "editBoardTitle": "Edit board name",
+    "boardNameLabel": "Board name",
+    "boardNamePlaceholder": "Enter board name",
+    "boardUpdated": "Board name successfully updated",
+    "updateBoardError": "Error updating board name"
   },
   "organization": {
     "create": "Create organization",

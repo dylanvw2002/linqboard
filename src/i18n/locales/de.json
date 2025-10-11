@@ -89,7 +89,13 @@
     "nameRequired": "Name darf nicht leer sein",
     "uploadError": "Fehler beim Hochladen des Fotos",
     "updateProfileError": "Fehler beim Aktualisieren des Profils",
-    "loadOrgsError": "Fehler beim Laden der Organisationen"
+    "loadOrgsError": "Fehler beim Laden der Organisationen",
+    "editBoard": "Board bearbeiten",
+    "editBoardTitle": "Board-Namen bearbeiten",
+    "boardNameLabel": "Board-Name",
+    "boardNamePlaceholder": "Board-Namen eingeben",
+    "boardUpdated": "Board-Name erfolgreich aktualisiert",
+    "updateBoardError": "Fehler beim Aktualisieren des Board-Namens"
   },
   "organization": {
     "create": "Organisation erstellen",

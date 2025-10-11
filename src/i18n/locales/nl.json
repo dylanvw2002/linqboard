@@ -89,7 +89,13 @@
     "nameRequired": "Naam mag niet leeg zijn",
     "uploadError": "Fout bij uploaden van foto",
     "updateProfileError": "Fout bij bijwerken van profiel",
-    "loadOrgsError": "Fout bij laden van organisaties"
+    "loadOrgsError": "Fout bij laden van organisaties",
+    "editBoard": "Bewerk board",
+    "editBoardTitle": "Board naam bewerken",
+    "boardNameLabel": "Board naam",
+    "boardNamePlaceholder": "Voer board naam in",
+    "boardUpdated": "Board naam succesvol bijgewerkt",
+    "updateBoardError": "Fout bij bijwerken board naam"
   },
   "organization": {
     "create": "Organisatie maken",
