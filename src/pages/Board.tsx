@@ -79,8 +79,9 @@ const Board = () => {
   const [touchState, setTouchState] = useState({
     initialDistance: 0,
     initialZoom: 1,
-    lastMidpoint: { x: 0, y: 0 },
-    isGesturing: false
+    lastTouch: { x: 0, y: 0 },
+    isPinching: false,
+    isPanning: false
   });
   const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
   
@@ -525,34 +526,37 @@ const Board = () => {
     y: (touch1.clientY + touch2.clientY) / 2
   });
 
-  // Touch event handlers for pinch-to-zoom and pan
+  // Touch event handlers for pan (1 finger) and pinch-to-zoom (2 fingers)
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
+    if (e.touches.length === 1) {
+      // 1 finger - start pan
+      setTouchState({
+        ...touchState,
+        lastTouch: { x: e.touches[0].clientX, y: e.touches[0].clientY },
+        isPanning: true,
+        isPinching: false
+      });
+    } else if (e.touches.length === 2) {
+      // 2 fingers - start pinch
       const distance = getDistance(e.touches[0], e.touches[1]);
-      const midpoint = getMidpoint(e.touches[0], e.touches[1]);
-      
       setTouchState({
         initialDistance: distance,
         initialZoom: zoomLevel,
-        lastMidpoint: midpoint,
-        isGesturing: true
+        lastTouch: { x: 0, y: 0 },
+        isPinching: true,
+        isPanning: false
       });
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length === 2 && touchState.isGesturing) {
+    if (e.touches.length === 1 && touchState.isPanning) {
+      // 1 finger - pan
       e.preventDefault();
       
-      const currentDistance = getDistance(e.touches[0], e.touches[1]);
-      const scale = currentDistance / touchState.initialDistance;
-      const newZoom = Math.min(Math.max(touchState.initialZoom * scale, 0.5), 2);
+      const deltaX = e.touches[0].clientX - touchState.lastTouch.x;
+      const deltaY = e.touches[0].clientY - touchState.lastTouch.y;
       
-      const currentMidpoint = getMidpoint(e.touches[0], e.touches[1]);
-      const deltaX = currentMidpoint.x - touchState.lastMidpoint.x;
-      const deltaY = currentMidpoint.y - touchState.lastMidpoint.y;
-      
-      setZoomLevel(newZoom);
       setPanPosition(prev => ({
         x: prev.x + deltaX,
         y: prev.y + deltaY
@@ -560,17 +564,35 @@ const Board = () => {
       
       setTouchState(prev => ({
         ...prev,
-        lastMidpoint: currentMidpoint
+        lastTouch: { x: e.touches[0].clientX, y: e.touches[0].clientY }
       }));
+    } else if (e.touches.length === 2 && touchState.isPinching) {
+      // 2 fingers - pinch to zoom
+      e.preventDefault();
+      
+      const currentDistance = getDistance(e.touches[0], e.touches[1]);
+      const scale = currentDistance / touchState.initialDistance;
+      const newZoom = Math.min(Math.max(touchState.initialZoom * scale, 0.5), 2);
+      
+      setZoomLevel(newZoom);
     }
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (e.touches.length < 2) {
+    if (e.touches.length === 0) {
       setTouchState(prev => ({
         ...prev,
-        isGesturing: false
+        isPanning: false,
+        isPinching: false
       }));
+    } else if (e.touches.length === 1 && touchState.isPinching) {
+      // Switched from 2 to 1 finger - start panning
+      setTouchState({
+        ...touchState,
+        lastTouch: { x: e.touches[0].clientX, y: e.touches[0].clientY },
+        isPanning: true,
+        isPinching: false
+      });
     }
   };
   
