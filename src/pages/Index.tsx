@@ -8,6 +8,7 @@ import todoBoardIllustration from "@/assets/todo-board-illustration.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
 import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
+import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png";
 
 const Index = () => {
   const { t } = useTranslation();
@@ -103,15 +104,17 @@ const Index = () => {
                 <img 
                   src={nrgTotaalLogo} 
                   alt="NRG Totaal" 
-                  className="h-12 w-auto grayscale hover:grayscale-0 transition-all"
+                  className="h-12 w-auto transition-all"
                 />
               </div>
               
-              {/* Onderhoudscontracten.com - tekst placeholder */}
+              {/* Onderhoudscontracten.com - met logo */}
               <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
-                <span className="text-base md:text-lg font-semibold text-foreground/70 text-center leading-tight">
-                  Onderhoudscontracten.com
-                </span>
+                <img 
+                  src={onderhoudscontractenLogo} 
+                  alt="Onderhoudscontracten.com" 
+                  className="h-12 w-auto transition-all"
+                />
               </div>
               
               {/* Zorgeloos Vastgoed - met logo */}
@@ -119,7 +122,7 @@ const Index = () => {
                 <img 
                   src={zorgeloosVastgoedLogo} 
                   alt="Zorgeloos Vastgoed" 
-                  className="h-12 w-auto grayscale hover:grayscale-0 transition-all"
+                  className="h-12 w-auto transition-all"
                 />
               </div>
               
