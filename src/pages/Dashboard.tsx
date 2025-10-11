@@ -214,8 +214,31 @@ const Dashboard = () => {
   const handleShareInviteLink = async (inviteCode: string) => {
     const inviteLink = `${window.location.origin}/join-organization?code=${inviteCode}`;
     
+    // Check if Web Share API is available
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'LinqBoard Uitnodiging',
+          text: `Word lid van mijn team op LinqBoard! Gebruik code: ${inviteCode}`,
+          url: inviteLink
+        });
+      } catch (error) {
+        // User cancelled or error occurred
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Share failed:', error);
+          // Fallback to clipboard
+          await copyToClipboard(inviteLink);
+        }
+      }
+    } else {
+      // Fallback to clipboard
+      await copyToClipboard(inviteLink);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(inviteLink);
+      await navigator.clipboard.writeText(text);
       toast.success(t('dashboard.inviteLinkCopied'));
     } catch (error) {
       console.error('Failed to copy link:', error);
