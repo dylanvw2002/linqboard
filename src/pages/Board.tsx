@@ -1905,14 +1905,8 @@ const Board = () => {
         </div>
       </div>
       
-      {/* Logo links onderaan - blijft altijd op dezelfde plek */}
-      <img 
-        src={logo} 
-        alt="LinqBoard Logo" 
-        style={{ position: 'fixed', bottom: '-2rem', left: '0.5rem', zIndex: 9999 }}
-        className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform pointer-events-auto" 
-        onClick={() => navigate("/dashboard")} 
-      />
+      {/* Logo links onderaan */}
+      <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/dashboard")} />
     </div>;
 };
 export default Board;
