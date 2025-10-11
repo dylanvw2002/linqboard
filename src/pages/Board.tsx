@@ -567,12 +567,12 @@ const Board = () => {
         lastTouch: { x: e.touches[0].clientX, y: e.touches[0].clientY }
       }));
     } else if (e.touches.length === 2 && touchState.isPinching) {
-      // 2 fingers - pinch to zoom
+      // 2 fingers - pinch to zoom (no minimum limit on mobile)
       e.preventDefault();
       
       const currentDistance = getDistance(e.touches[0], e.touches[1]);
       const scale = currentDistance / touchState.initialDistance;
-      const newZoom = Math.min(Math.max(touchState.initialZoom * scale, 0.5), 2);
+      const newZoom = Math.min(Math.max(touchState.initialZoom * scale, 0.01), 3);
       
       setZoomLevel(newZoom);
     }
@@ -1352,7 +1352,7 @@ const Board = () => {
           <div className="flex items-center gap-2 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-3 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]">
             <button 
               onClick={handleZoomOut} 
-              disabled={zoomLevel <= 0.5}
+              disabled={isMobile ? zoomLevel <= 0.01 : zoomLevel <= 0.5}
               className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
               title="Zoom uit (Ctrl/Cmd + -)"
             >
@@ -1363,7 +1363,7 @@ const Board = () => {
             </span>
             <button 
               onClick={handleZoomIn} 
-              disabled={zoomLevel >= 2.0}
+              disabled={isMobile ? zoomLevel >= 3.0 : zoomLevel >= 1.0}
               className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
               title="Zoom in (Ctrl/Cmd + +)"
             >
