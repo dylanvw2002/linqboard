@@ -92,6 +92,41 @@ const Index = () => {
           </section>
         </main>
 
+        {/* Features Section */}
+        <section className="container mx-auto px-6 pt-24 pb-4">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <article className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
+              <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                <Zap className="h-7 w-7 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h2>
+              <p className="text-muted-foreground">
+                {t('landing.realtimeDescription')}
+              </p>
+            </article>
+
+            <article className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
+              <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                <Users className="h-7 w-7 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h2>
+              <p className="text-muted-foreground">
+                {t('landing.teamManagementDescription')}
+              </p>
+            </article>
+
+            <article className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
+              <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                <Shield className="h-7 w-7 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-xl font-semibold mb-3">{t('landing.secureTitle')}</h2>
+              <p className="text-muted-foreground">
+                {t('landing.secureDescription')}
+              </p>
+            </article>
+          </div>
+        </section>
+
         {/* Partners Section */}
         <section className="container mx-auto px-6 py-12">
           <div className="bg-muted/20 rounded-3xl p-8 md:p-12">
@@ -143,41 +178,6 @@ const Index = () => {
                 />
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="container mx-auto px-6 pt-24 pb-4">
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <article className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
-              <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Zap className="h-7 w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h2>
-              <p className="text-muted-foreground">
-                {t('landing.realtimeDescription')}
-              </p>
-            </article>
-
-            <article className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
-              <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Users className="h-7 w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h2>
-              <p className="text-muted-foreground">
-                {t('landing.teamManagementDescription')}
-              </p>
-            </article>
-
-            <article className="p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
-              <div className="w-14 h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Shield className="h-7 w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-xl font-semibold mb-3">{t('landing.secureTitle')}</h2>
-              <p className="text-muted-foreground">
-                {t('landing.secureDescription')}
-              </p>
-            </article>
           </div>
         </section>
 
