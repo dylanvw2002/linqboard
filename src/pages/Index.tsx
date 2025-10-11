@@ -144,21 +144,21 @@ const Index = () => {
                 />
               </div>
               
-              {/* Onderhoudscontracten.com - met logo */}
-              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
-                <img 
-                  src={onderhoudscontractenLogo} 
-                  alt="Onderhoudscontracten.com" 
-                  className="h-20 w-auto transition-all"
-                />
-              </div>
-              
               {/* Zorgeloos Vastgoed - met logo */}
               <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
                 <img 
                   src={zorgeloosVastgoedLogo} 
                   alt="Zorgeloos Vastgoed" 
                   className="h-12 w-auto transition-all"
+                />
+              </div>
+              
+              {/* Onderhoudscontracten.com - met logo */}
+              <div className="flex items-center justify-center p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[120px]">
+                <img 
+                  src={onderhoudscontractenLogo} 
+                  alt="Onderhoudscontracten.com" 
+                  className="h-20 w-auto transition-all"
                 />
               </div>
               
