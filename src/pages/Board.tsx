@@ -66,77 +66,84 @@ interface Task {
   position: number;
   due_date?: string | null;
 }
-// Demo data
-const DEMO_ORG = { id: 'demo-org', name: 'LinqBoard Demo' };
-const DEMO_BOARD = { 
-  id: 'demo-board', 
-  name: 'LinqBoard - Demo Board',
-  background_gradient: null,
-  background_image_url: 'default',
-  background_fit_mode: 'cover',
-  background_position_x: 50,
-  background_position_y: 50,
-  background_scale: 100
+// Demo data - will be populated with translations
+const DEMO_ORG_ID = '00000000-0000-0000-0000-000000000000';
+
+// Function to get demo data with translations
+const getDemoData = (t: any) => {
+  const DEMO_ORG = { id: DEMO_ORG_ID, name: t('demo.orgName') };
+  const DEMO_BOARD = { 
+    id: 'demo-board', 
+    name: t('demo.boardName'),
+    background_gradient: null,
+    background_image_url: 'default',
+    background_fit_mode: 'cover',
+    background_position_x: 50,
+    background_position_y: 50,
+    background_scale: 100
+  };
+
+  const DEMO_COLUMNS: Column[] = [
+    { id: 'col-0', name: t('demo.columns.announcements'), position: 0, width_ratio: 1, board_id: 'demo-board', x_position: 40, y_position: 50, width: 350, height: 400, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'orange', column_type: 'announcement' },
+    { id: 'col-1', name: t('demo.columns.todo'), position: 1, width_ratio: 1, board_id: 'demo-board', x_position: 430, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'regular' },
+    { id: 'col-2', name: t('demo.columns.inProgress'), position: 2, width_ratio: 1, board_id: 'demo-board', x_position: 770, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'yellow', column_type: 'regular' },
+    { id: 'col-3', name: t('demo.columns.review'), position: 3, width_ratio: 1, board_id: 'demo-board', x_position: 1110, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'purple', column_type: 'regular' },
+    { id: 'col-4', name: t('demo.columns.sick'), position: 4, width_ratio: 1, board_id: 'demo-board', x_position: 1450, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'red', column_type: 'sick_leave' },
+    { id: 'col-5', name: t('demo.columns.vacation'), position: 5, width_ratio: 1, board_id: 'demo-board', x_position: 1790, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'vacation' },
+    { id: 'col-6', name: t('demo.columns.completed'), position: 6, width_ratio: 1, board_id: 'demo-board', x_position: 2130, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'green', column_type: 'regular' }
+  ];
+
+  const DEMO_MEMBERS: Assignee[] = [
+    { user_id: 'user-1', full_name: 'Jan de Vries', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jan' },
+    { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie' },
+    { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom' },
+    { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa' },
+    { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mark' },
+    { user_id: 'user-6', full_name: 'Emma van Dam', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma' },
+    { user_id: 'user-7', full_name: 'Bas Peters', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bas' },
+    { user_id: 'user-8', full_name: 'Anna de Groot', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anna' },
+    { user_id: 'user-9', full_name: 'Pieter Smit', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pieter' },
+    { user_id: 'user-10', full_name: 'Maria van Dijk', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria' }
+  ];
+
+  const DEMO_TASKS: Task[] = [
+    // Belangrijke mededelingen
+    { id: 'task-0-1', column_id: 'col-0', title: t('demo.tasks.announcement1'), description: t('demo.tasks.announcement1Desc'), priority: 'high', position: 0, due_date: null, assignees: [] },
+    { id: 'task-0-2', column_id: 'col-0', title: t('demo.tasks.announcement2'), description: t('demo.tasks.announcement2Desc'), priority: 'medium', position: 1, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+    { id: 'task-0-3', column_id: 'col-0', title: t('demo.tasks.announcement3'), description: t('demo.tasks.announcement3Desc'), priority: 'medium', position: 2, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+    
+    { id: 'task-1', column_id: 'col-1', title: t('demo.tasks.task1'), description: t('demo.tasks.task1Desc'), priority: 'high', position: 0, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[0]] },
+    { id: 'task-2', column_id: 'col-1', title: t('demo.tasks.task2'), description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[1]] },
+    { id: 'task-3', column_id: 'col-1', title: t('demo.tasks.task3'), description: t('demo.tasks.task3Desc'), priority: 'low', position: 2, due_date: null, assignees: [] },
+    { id: 'task-4', column_id: 'col-1', title: t('demo.tasks.task4'), description: null, priority: 'high', position: 3, due_date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[2]] },
+    { id: 'task-5', column_id: 'col-1', title: t('demo.tasks.task5'), description: null, priority: 'medium', position: 4, due_date: null, assignees: [] },
+    
+    { id: 'task-6', column_id: 'col-2', title: t('demo.tasks.task6'), description: t('demo.tasks.task6Desc'), priority: 'high', position: 0, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[1], DEMO_MEMBERS[2]] },
+    { id: 'task-7', column_id: 'col-2', title: t('demo.tasks.task7'), description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
+    { id: 'task-8', column_id: 'col-2', title: t('demo.tasks.task8'), description: t('demo.tasks.task8Desc'), priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+    { id: 'task-9', column_id: 'col-2', title: t('demo.tasks.task9'), description: null, priority: 'low', position: 3, due_date: null, assignees: [] },
+    { id: 'task-10', column_id: 'col-2', title: t('demo.tasks.task10'), description: null, priority: 'high', position: 4, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[4]] },
+    
+    { id: 'task-11', column_id: 'col-3', title: t('demo.tasks.task11'), description: t('demo.tasks.task11Desc'), priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[2]] },
+    { id: 'task-12', column_id: 'col-3', title: t('demo.tasks.task12'), description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
+    { id: 'task-13', column_id: 'col-3', title: t('demo.tasks.task13'), description: null, priority: 'low', position: 2, due_date: null, assignees: [] },
+    { id: 'task-14', column_id: 'col-3', title: t('demo.tasks.task14'), description: null, priority: 'medium', position: 3, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+    
+    { id: 'task-15', column_id: 'col-4', title: t('demo.tasks.sick1'), description: t('demo.tasks.sick1Desc'), priority: null, position: 0, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+    { id: 'task-16', column_id: 'col-4', title: t('demo.tasks.sick2'), description: t('demo.tasks.sick2Desc'), priority: null, position: 1, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+    
+    { id: 'task-17', column_id: 'col-5', title: t('demo.tasks.vacation1'), description: t('demo.tasks.vacation1Desc'), priority: null, position: 0, due_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+    { id: 'task-18', column_id: 'col-5', title: t('demo.tasks.vacation2'), description: t('demo.tasks.vacation2Desc'), priority: null, position: 1, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+    
+    { id: 'task-19', column_id: 'col-6', title: t('demo.tasks.completed1'), description: null, priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[1]] },
+    { id: 'task-20', column_id: 'col-6', title: t('demo.tasks.completed2'), description: null, priority: 'high', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0], DEMO_MEMBERS[2]] },
+    { id: 'task-21', column_id: 'col-6', title: t('demo.tasks.completed3'), description: null, priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+    { id: 'task-22', column_id: 'col-6', title: t('demo.tasks.completed4'), description: null, priority: 'medium', position: 3, due_date: null, assignees: [] },
+    { id: 'task-23', column_id: 'col-6', title: t('demo.tasks.completed5'), description: null, priority: 'low', position: 4, due_date: null, assignees: [DEMO_MEMBERS[4]] }
+  ];
+
+  return { DEMO_ORG, DEMO_BOARD, DEMO_COLUMNS, DEMO_MEMBERS, DEMO_TASKS };
 };
-
-const DEMO_COLUMNS: Column[] = [
-  { id: 'col-0', name: 'Belangrijke Mededelingen', position: 0, width_ratio: 1, board_id: 'demo-board', x_position: 40, y_position: 50, width: 350, height: 400, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'orange', column_type: 'announcement' },
-  { id: 'col-1', name: 'Te Doen', position: 1, width_ratio: 1, board_id: 'demo-board', x_position: 430, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'regular' },
-  { id: 'col-2', name: 'In Uitvoering', position: 2, width_ratio: 1, board_id: 'demo-board', x_position: 770, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'yellow', column_type: 'regular' },
-  { id: 'col-3', name: 'Review', position: 3, width_ratio: 1, board_id: 'demo-board', x_position: 1110, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'purple', column_type: 'regular' },
-  { id: 'col-4', name: 'Ziek', position: 4, width_ratio: 1, board_id: 'demo-board', x_position: 1450, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'red', column_type: 'sick_leave' },
-  { id: 'col-5', name: 'Verlof', position: 5, width_ratio: 1, board_id: 'demo-board', x_position: 1790, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'vacation' },
-  { id: 'col-6', name: 'Afgerond', position: 6, width_ratio: 1, board_id: 'demo-board', x_position: 2130, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'green', column_type: 'regular' }
-];
-
-const DEMO_MEMBERS: Assignee[] = [
-  { user_id: 'user-1', full_name: 'Jan de Vries', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jan' },
-  { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie' },
-  { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom' },
-  { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa' },
-  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mark' },
-  { user_id: 'user-6', full_name: 'Emma van Dam', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma' },
-  { user_id: 'user-7', full_name: 'Bas Peters', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bas' },
-  { user_id: 'user-8', full_name: 'Anna de Groot', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anna' },
-  { user_id: 'user-9', full_name: 'Pieter Smit', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pieter' },
-  { user_id: 'user-10', full_name: 'Maria van Dijk', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria' }
-];
-
-const DEMO_TASKS: Task[] = [
-  // Belangrijke mededelingen
-  { id: 'task-0-1', column_id: 'col-0', title: '🎉 Nieuwe versie live!', description: 'LinqBoard v2.0 is nu beschikbaar met extra features en verbeteringen', priority: 'high', position: 0, due_date: null, assignees: [] },
-  { id: 'task-0-2', column_id: 'col-0', title: '📅 Team meeting vrijdag 14:00', description: 'Maandelijkse review en planning voor Q2', priority: 'medium', position: 1, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
-  { id: 'task-0-3', column_id: 'col-0', title: '🔧 Geplande onderhoud zondag', description: 'Server maintenance van 02:00 - 06:00 uur', priority: 'medium', position: 2, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
-  
-  { id: 'task-1', column_id: 'col-1', title: 'Website homepage ontwerp', description: 'Nieuwe homepage design maken', priority: 'high', position: 0, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[0]] },
-  { id: 'task-2', column_id: 'col-1', title: 'Database migratie plannen', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[1]] },
-  { id: 'task-3', column_id: 'col-1', title: 'API documentatie updaten', description: 'Alle endpoints documenteren', priority: 'low', position: 2, due_date: null, assignees: [] },
-  { id: 'task-4', column_id: 'col-1', title: 'Security audit uitvoeren', description: null, priority: 'high', position: 3, due_date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[2]] },
-  { id: 'task-5', column_id: 'col-1', title: 'Klant meeting voorbereiden', description: null, priority: 'medium', position: 4, due_date: null, assignees: [] },
-  
-  { id: 'task-6', column_id: 'col-2', title: 'Mobile app responsive maken', description: 'iOS en Android optimaliseren', priority: 'high', position: 0, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[1], DEMO_MEMBERS[2]] },
-  { id: 'task-7', column_id: 'col-2', title: 'Gebruikers feedback verwerken', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
-  { id: 'task-8', column_id: 'col-2', title: 'Unit tests schrijven', description: 'Coverage naar 80% brengen', priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
-  { id: 'task-9', column_id: 'col-2', title: 'Newsletter template design', description: null, priority: 'low', position: 3, due_date: null, assignees: [] },
-  { id: 'task-10', column_id: 'col-2', title: 'Performance optimalisatie', description: null, priority: 'high', position: 4, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[4]] },
-  
-  { id: 'task-11', column_id: 'col-3', title: 'Code review API endpoints', description: 'Security en performance checken', priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[2]] },
-  { id: 'task-12', column_id: 'col-3', title: 'Design systeem valideren', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
-  { id: 'task-13', column_id: 'col-3', title: 'Marketing content proofreading', description: null, priority: 'low', position: 2, due_date: null, assignees: [] },
-  { id: 'task-14', column_id: 'col-3', title: 'Integration tests draaien', description: null, priority: 'medium', position: 3, due_date: null, assignees: [DEMO_MEMBERS[3]] },
-  
-  { id: 'task-15', column_id: 'col-4', title: 'Jan de Vries', description: 'Ziek thuis met griep', priority: null, position: 0, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
-  { id: 'task-16', column_id: 'col-4', title: 'Lisa Vermeer', description: 'Doktersafspraak vanmiddag', priority: null, position: 1, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
-  
-  { id: 'task-17', column_id: 'col-5', title: 'Tom Jansen', description: '2 weken vakantie naar Spanje', priority: null, position: 0, due_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
-  { id: 'task-18', column_id: 'col-5', title: 'Sophie Bakker', description: 'Weekend trip', priority: null, position: 1, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
-  
-  { id: 'task-19', column_id: 'col-6', title: 'Q1 rapportage afgerond', description: null, priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[1]] },
-  { id: 'task-20', column_id: 'col-6', title: 'Website live gezet', description: null, priority: 'high', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0], DEMO_MEMBERS[2]] },
-  { id: 'task-21', column_id: 'col-6', title: 'Onboarding process opgezet', description: null, priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
-  { id: 'task-22', column_id: 'col-6', title: 'Customer support systeem', description: null, priority: 'medium', position: 3, due_date: null, assignees: [] },
-  { id: 'task-23', column_id: 'col-6', title: 'Email templates ontworpen', description: null, priority: 'low', position: 4, due_date: null, assignees: [DEMO_MEMBERS[4]] }
-];
 
 const Board = () => {
   const { t, i18n } = useTranslation();
@@ -572,22 +579,18 @@ const Board = () => {
   };
   useEffect(() => {
     if (isDemo) {
-      // In demo mode, load demo data with default background
-      setOrganization({ id: DEMO_ORG_ID, name: 'Demo Organisatie' });
+      // In demo mode, load demo data with translations
+      const demoData = getDemoData(t);
+      
+      setOrganization(demoData.DEMO_ORG);
       setBoard({ 
-        id: 'demo-board', 
-        name: 'Demo Board', 
+        ...demoData.DEMO_BOARD, 
         organization_id: DEMO_ORG_ID,
-        background_gradient: 'from-blue-50 to-blue-100',
-        background_image_url: 'default',
-        background_fit_mode: 'scale',
-        background_scale: 100,
-        background_position_x: 50,
-        background_position_y: 50
+        background_gradient: 'from-blue-50 to-blue-100'
       });
-      setColumns(DEMO_COLUMNS);
-      setTasks(DEMO_TASKS);
-      setOrgMembers(DEMO_MEMBERS);
+      setColumns(demoData.DEMO_COLUMNS);
+      setTasks(demoData.DEMO_TASKS);
+      setOrgMembers(demoData.DEMO_MEMBERS);
       setSelectedBackground('from-blue-50 to-blue-100');
       
       // Load default background image
@@ -607,7 +610,7 @@ const Board = () => {
     fetchOrgMembers();
     fetchUserPlan();
     checkBackgroundPermission();
-  }, [organizationId, isDemo]);
+  }, [organizationId, isDemo, t]);
   
   const fetchUserPlan = async () => {
     try {
@@ -1644,18 +1647,18 @@ const Board = () => {
         <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground py-3 px-4 shadow-lg">
           <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
             <span className="text-sm font-semibold">
-              🎨 Demo Modus - Probeer alle features! Wijzigingen worden niet opgeslagen.
+              {t('demo.bannerText')}
             </span>
             <div className="flex gap-2">
               <Button size="sm" variant="secondary" onClick={() => navigate('/auth')}>
-                Maak je eigen board
+                {t('demo.createOwnBoard')}
               </Button>
               <Button 
                 size="sm" 
                 className="bg-white/10 hover:bg-white/20 text-white border border-white/20" 
                 onClick={() => navigate('/pricing')}
               >
-                Prijzen
+                {t('demo.viewPricing')}
               </Button>
             </div>
           </div>
