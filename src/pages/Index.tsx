@@ -11,10 +11,13 @@ import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
 import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
 import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png";
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 const Index = () => {
-  const {
-    t
-  } = useTranslation();
+  const { t } = useTranslation();
+  const demoSection = useScrollAnimation(0.2);
+  const featuresSection = useScrollAnimation(0.2);
+  const partnersSection = useScrollAnimation(0.2);
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -46,8 +49,8 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 pt-8 sm:pt-12 pb-1">
-          <section className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+        <main className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-8 min-h-[85vh] flex items-center">
+          <section className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center animate-fade-in w-full">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
@@ -87,18 +90,18 @@ const Index = () => {
         </main>
 
         {/* Demo Section */}
-        <section className="py-16 sm:py-20 px-4 sm:px-6 md:py-[96px]">
+        <section ref={demoSection.ref} className="py-32 sm:py-40 px-4 sm:px-6 min-h-screen flex items-center">
           <div className="container mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-2xl hover:shadow-xl transition-all animate-fade-in">
+            <div className={`relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-2xl hover:shadow-xl transition-all ${demoSection.isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
               <div className="bg-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16">
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                   {/* Left: Image */}
-                  <div className="rounded-xl overflow-hidden shadow-2xl border border-border/50">
+                  <div className={`rounded-xl overflow-hidden shadow-2xl border border-border/50 ${demoSection.isVisible ? 'animate-fade-in-left' : 'opacity-0'}`}>
                     <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" />
                   </div>
 
                   {/* Right: Content */}
-                  <div className="space-y-6">
+                  <div className={`space-y-6 ${demoSection.isVisible ? 'animate-fade-in-right' : 'opacity-0'}`}>
                     <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                       {t('landing.demoTitle')}
                     </h2>
@@ -141,9 +144,9 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-20 md:pt-24 pb-4 py-[9px]">
+        <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-32 sm:py-40">
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
-            <article className="p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.1s' }}>
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                 <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
               </div>
@@ -153,7 +156,7 @@ const Index = () => {
               </p>
             </article>
 
-            <article className="p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.2s' }}>
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
               </div>
@@ -163,7 +166,7 @@ const Index = () => {
               </p>
             </article>
 
-            <article className="p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all sm:col-span-2 md:col-span-1">
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all sm:col-span-2 md:col-span-1 ${featuresSection.isVisible ? 'animate-fade-in-up' : 'opacity-0'}`} style={{ animationDelay: '0.3s' }}>
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
               </div>
@@ -176,8 +179,8 @@ const Index = () => {
         </section>
 
         {/* Partners Section */}
-        <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
-          <div className="bg-muted/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12">
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 py-32 sm:py-40">
+          <div className={`bg-muted/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 ${partnersSection.isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
             <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">
               {t('landing.trustedBy')}
             </p>
