@@ -95,30 +95,28 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 pt-32 sm:pt-36 pb-8 min-h-[85vh] flex items-center">
-          <section className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center animate-fade-in w-full">
+        <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 lg:pt-36 pb-6 sm:pb-8 min-h-[90vh] sm:min-h-[85vh] flex items-center">
+          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center animate-fade-in w-full">
             {/* Left Content */}
-            <article className="space-y-6 sm:space-y-8">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <article className="space-y-4 sm:space-y-6 lg:space-y-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                 {t('landing.hero')}
               </h1>
               
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-xl">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-xl">
                 {t('landing.tagline')}
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                
-
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
-                  <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all w-full">
+                  <Button size="lg" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 shadow-lg hover:shadow-xl transition-all w-full h-14 sm:h-auto">
                     {t('landing.getStarted')}
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth?mode=join" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 w-full">
+                  <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 py-6 sm:px-8 sm:py-6 border-2 w-full h-14 sm:h-auto">
                     {t('landing.haveCode')}
                   </Button>
                 </Link>
@@ -126,58 +124,58 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup */}
-            <div className="relative scale-105 sm:scale-110">
-              <img src={todoBoardIllustration} alt={t('seo.home.heroImageAlt')} className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl" loading="eager" fetchPriority="high" width="800" height="600" />
+            <div className="relative scale-100 sm:scale-105 lg:scale-110 mt-6 lg:mt-0">
+              <img src={todoBoardIllustration} alt={t('seo.home.heroImageAlt')} className="w-full h-auto rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-xl sm:shadow-2xl" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
-              <div className="absolute -top-4 sm:-top-6 -right-4 sm:-right-6 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
+              <div className="absolute -top-3 sm:-top-4 lg:-top-6 -right-3 sm:-right-4 lg:-right-6 w-12 h-12 sm:w-16 sm:h-16 lg:w-24 lg:h-24 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
             </div>
           </section>
         </main>
 
         {/* Demo Section */}
-        <section ref={demoSection.ref} className="py-12 sm:py-16 px-4 sm:px-6 min-h-screen flex items-center">
+        <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 min-h-screen flex items-center">
           <div className="container mx-auto max-w-6xl">
-            <div className={`relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-2xl hover:shadow-xl transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="bg-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16">
-                <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className={`relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-xl sm:shadow-2xl hover:shadow-xl transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="bg-card rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16">
+                <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
                   {/* Left: Image */}
                   <div className={`rounded-xl overflow-hidden shadow-2xl border border-border/50 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
                     <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" loading="lazy" width="600" height="400" />
                   </div>
 
                   {/* Right: Content */}
-                  <div className={`space-y-6 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  <div className={`space-y-4 sm:space-y-6 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                       {t('landing.demoTitle')}
                     </h2>
-                    <p className="text-lg sm:text-xl text-muted-foreground">
+                    <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
                       {t('landing.demoSubtitle')}
                     </p>
                     
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-4 h-4 text-primary" />
+                        <div className="w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-5 h-5 sm:w-4 sm:h-4 text-primary" />
                         </div>
-                        <span className="text-sm font-medium">{t('landing.demoFeature1')}</span>
+                        <span className="text-sm sm:text-sm font-medium">{t('landing.demoFeature1')}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Edit className="w-4 h-4 text-primary" />
+                        <div className="w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Edit className="w-5 h-5 sm:w-4 sm:h-4 text-primary" />
                         </div>
-                        <span className="text-sm font-medium">{t('landing.demoFeature2')}</span>
+                        <span className="text-sm sm:text-sm font-medium">{t('landing.demoFeature2')}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Eye className="w-4 h-4 text-primary" />
+                        <div className="w-9 h-9 sm:w-8 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Eye className="w-5 h-5 sm:w-4 sm:h-4 text-primary" />
                         </div>
-                        <span className="text-sm font-medium">{t('landing.demoFeature3')}</span>
+                        <span className="text-sm sm:text-sm font-medium">{t('landing.demoFeature3')}</span>
                       </div>
                     </div>
 
-                    <Link to="/board/demo">
-                      <Button size="lg" className="text-lg px-8 h-auto shadow-lg hover:shadow-xl transition-all py-[22px] my-[10px]">
+                    <Link to="/board/demo" className="block pt-2">
+                      <Button size="lg" className="text-base sm:text-lg px-8 shadow-lg hover:shadow-xl transition-all h-14 sm:h-auto sm:py-6 w-full sm:w-auto">
                         {t('landing.demoButton')}
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
@@ -190,19 +188,19 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-12 w-full overflow-hidden relative sm:py-px">
-          <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">FEATURES</p>
+        <section ref={featuresSection.ref} className="py-8 sm:py-12 w-full overflow-hidden relative">
+          <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8 px-4">FEATURES</p>
           
           {/* Gradient Overlays */}
-          <div className="absolute left-0 top-[60px] bottom-0 w-20 sm:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-[60px] bottom-0 w-20 sm:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-[50px] bottom-0 w-16 sm:w-20 lg:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-[50px] bottom-0 w-16 sm:w-20 lg:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
           
           {/* Navigation Arrows */}
-          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110" aria-label="Previous">
+          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-1 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95" aria-label="Previous">
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
           
-          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110" aria-label="Next">
+          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-1 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95" aria-label="Next">
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
 
@@ -210,19 +208,19 @@ const Index = () => {
             <div className="flex touch-pan-y transition-transform duration-500 ease-out">
               {[...features, ...features, ...features].map((feature, index) => {
               const Icon = feature.icon;
-              return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4 py-4">
-                    <article className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{
+              return <div key={index} className="flex-[0_0_90%] sm:flex-[0_0_340px] min-w-0 pl-3 pr-3 sm:pl-4 sm:pr-4 py-4">
+                    <article className={`h-full p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-card border border-border shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] active:shadow-[0_6px_16px_rgb(0,0,0,0.08)] transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{
                   transitionDelay: `${index * 100}ms`
                 }}>
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
                       
                       <div className="relative z-10">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4 shadow-md">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-3 sm:mb-4 shadow-md">
                           <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                         </div>
-                        <h3 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h3>
-                        <p className="text-sm sm:text-base text-muted-foreground">
+                        <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3">{feature.title}</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                           {feature.description}
                         </p>
                       </div>
@@ -234,44 +232,44 @@ const Index = () => {
         </section>
 
         {/* Partners Section */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className={`bg-muted/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
+          <div className={`bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-3xl p-5 sm:p-6 md:p-8 lg:p-12 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-5 sm:mb-6 md:mb-8">
               {t('landing.trustedBy')}
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto">
               {/* NRG Totaal - met logo */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-10 sm:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px]">
+                <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-9 sm:h-10 md:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
               
               {/* Zorgeloos Vastgoed - met logo */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-10 sm:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px]">
+                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-9 sm:h-10 md:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
               
               {/* Onderhoudscontracten.com - met logo */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-16 sm:h-20 w-auto transition-all" loading="lazy" width="160" height="80" />
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px]">
+                <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-14 sm:h-16 md:h-20 w-auto transition-all" loading="lazy" width="160" height="80" />
               </div>
               
               {/* ODÉA Vastgoed Service - met logo */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="112" />
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px]">
+                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 md:h-28 w-auto transition-all" loading="lazy" width="120" height="112" />
               </div>
               
               {/* NutriBuddi - met logo */}
-              <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px] col-span-2 md:col-span-1">
-                <img src={nutribuddiLogo} alt="NutriBuddi" className="h-20 sm:h-24 md:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] col-span-2 md:col-span-1">
+                <img src={nutribuddiLogo} alt="NutriBuddi" className="h-18 sm:h-20 md:h-24 lg:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
               </div>
             </div>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="py-4 mt-4 sm:mt-[15px]">
-          <div className="container mx-auto px-4 sm:px-6 text-center text-sm sm:text-base text-muted-foreground">
+        <footer className="py-6 sm:py-4 mt-4 sm:mt-[15px]">
+          <div className="container mx-auto px-4 sm:px-6 text-center text-xs sm:text-sm md:text-base text-muted-foreground">
             <p>{t('landing.footerText')}</p>
           </div>
         </footer>
