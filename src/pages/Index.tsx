@@ -110,11 +110,11 @@ const Index = () => {
 
             {/* Right: Content */}
             <article className="space-y-6 sm:space-y-8">
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                 {t('landing.demoTitle')}
               </h2>
               
-              <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-xl">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-xl">
                 {t('landing.demoSubtitle')}
               </p>
               
@@ -123,24 +123,24 @@ const Index = () => {
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <Zap className="w-5 h-5 text-primary" />
                   </div>
-                  <span className="text-base sm:text-lg font-medium">{t('landing.demoFeature1')}</span>
+                  <span className="text-sm sm:text-base font-medium">{t('landing.demoFeature1')}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <Edit className="w-5 h-5 text-primary" />
                   </div>
-                  <span className="text-base sm:text-lg font-medium">{t('landing.demoFeature2')}</span>
+                  <span className="text-sm sm:text-base font-medium">{t('landing.demoFeature2')}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <Eye className="w-5 h-5 text-primary" />
                   </div>
-                  <span className="text-base sm:text-lg font-medium">{t('landing.demoFeature3')}</span>
+                  <span className="text-sm sm:text-base font-medium">{t('landing.demoFeature3')}</span>
                 </div>
               </div>
 
               <Link to="/board/demo">
-                <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all">
+                <Button size="lg" className="text-sm sm:text-base px-6 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all">
                   {t('landing.demoButton')}
                   <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
