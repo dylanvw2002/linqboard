@@ -4,6 +4,7 @@ export const useScrollAnimation = (threshold = 0.1) => {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
+  const hasBeenVisible = useRef(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -11,12 +12,16 @@ export const useScrollAnimation = (threshold = 0.1) => {
         const currentScrollY = window.scrollY;
         const isScrollingDown = currentScrollY > lastScrollY.current;
         
-        // Only show when scrolling down and intersecting
-        // Hide when scrolling up or not intersecting
+        // Show when scrolling down and intersecting
         if (entry.isIntersecting && isScrollingDown) {
           setIsVisible(true);
-        } else if (!entry.isIntersecting || !isScrollingDown) {
+          hasBeenVisible.current = true;
+        }
+        
+        // Only hide when scrolling up AND not intersecting anymore (past it)
+        if (!entry.isIntersecting && !isScrollingDown && hasBeenVisible.current) {
           setIsVisible(false);
+          hasBeenVisible.current = false;
         }
         
         lastScrollY.current = currentScrollY;
