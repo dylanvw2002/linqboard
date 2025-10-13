@@ -1650,7 +1650,11 @@ const Board = () => {
               <Button size="sm" variant="secondary" onClick={() => navigate('/auth')}>
                 Maak je eigen board
               </Button>
-              <Button size="sm" variant="outline" onClick={() => navigate('/pricing')}>
+              <Button 
+                size="sm" 
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20" 
+                onClick={() => navigate('/pricing')}
+              >
                 Prijzen
               </Button>
             </div>
