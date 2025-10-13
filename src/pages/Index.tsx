@@ -163,10 +163,10 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full">
-          <div className="overflow-hidden w-full" ref={emblaRef}>
-            <div className="flex gap-6">
-              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+        <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden">
+          <div ref={emblaRef}>
+            <div className="flex gap-4 sm:gap-6">
+              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                 </div>
@@ -176,7 +176,7 @@ const Index = () => {
                 </p>
               </article>
 
-              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                 </div>
@@ -186,7 +186,7 @@ const Index = () => {
                 </p>
               </article>
 
-              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                   <Layout className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                 </div>
@@ -196,7 +196,7 @@ const Index = () => {
                 </p>
               </article>
 
-              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                   <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                 </div>
@@ -206,7 +206,7 @@ const Index = () => {
                 </p>
               </article>
 
-              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                   <Paperclip className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                 </div>
@@ -216,7 +216,7 @@ const Index = () => {
                 </p>
               </article>
 
-              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                   <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
                 </div>
