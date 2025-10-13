@@ -68,13 +68,18 @@ const Index = () => {
   };
   return <>
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
+      
+      {/* Preload critical images */}
+      <link rel="preload" as="image" href={logo} />
+      <link rel="preload" as="image" href={todoBoardIllustration} />
+      
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 z-50 bg-white">
           <div className="container mx-auto px-4 sm:px-6">
             <nav className="flex items-center justify-between h-16 sm:h-20">
               <div className="flex items-center gap-8">
-                <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 w-auto hover:scale-105 transition-transform duration-300" />
+                <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
                 <LanguageSwitcher />
@@ -122,7 +127,7 @@ const Index = () => {
 
             {/* Right Visual Mockup */}
             <div className="relative scale-105 sm:scale-110">
-              <img src={todoBoardIllustration} alt={t('seo.home.heroImageAlt')} className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl" loading="eager" />
+              <img src={todoBoardIllustration} alt={t('seo.home.heroImageAlt')} className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               <div className="absolute -top-4 sm:-top-6 -right-4 sm:-right-6 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
@@ -138,7 +143,7 @@ const Index = () => {
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                   {/* Left: Image */}
                   <div className={`rounded-xl overflow-hidden shadow-2xl border border-border/50 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
-                    <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" />
+                    <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" loading="lazy" width="600" height="400" />
                   </div>
 
                   {/* Right: Content */}
@@ -238,27 +243,27 @@ const Index = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto">
               {/* NRG Totaal - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-10 sm:h-12 w-auto transition-all" />
+                <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-10 sm:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
               
               {/* Zorgeloos Vastgoed - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-10 sm:h-12 w-auto transition-all" />
+                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-10 sm:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
               
               {/* Onderhoudscontracten.com - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-16 sm:h-20 w-auto transition-all" />
+                <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-16 sm:h-20 w-auto transition-all" loading="lazy" width="160" height="80" />
               </div>
               
               {/* ODÉA Vastgoed Service - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-24 sm:h-28 w-auto transition-all" />
+                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="112" />
               </div>
               
               {/* NutriBuddi - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px] col-span-2 md:col-span-1">
-                <img src={nutribuddiLogo} alt="NutriBuddi" className="h-20 sm:h-24 md:h-28 w-auto transition-all" />
+                <img src={nutribuddiLogo} alt="NutriBuddi" className="h-20 sm:h-24 md:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
               </div>
             </div>
           </div>
