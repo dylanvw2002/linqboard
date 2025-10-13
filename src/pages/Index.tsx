@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn, Eye } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
@@ -102,6 +102,60 @@ const Index = () => {
             </div>
           </section>
         </main>
+
+        {/* Demo Section */}
+        <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
+          <div className="container mx-auto max-w-5xl">
+            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-2xl hover:shadow-xl transition-all animate-fade-in">
+              <div className="bg-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16">
+                <div className="text-center space-y-6">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    {t('landing.demoTitle')}
+                  </h2>
+                  <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                    {t('landing.demoSubtitle')}
+                  </p>
+                  
+                  <div className="my-8 rounded-xl overflow-hidden shadow-xl border border-border/50">
+                    <img 
+                      src={todoBoardIllustration} 
+                      alt="Linqboard Demo Preview" 
+                      className="w-full h-auto"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
+                    <div className="flex items-center gap-3 justify-center sm:justify-start">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Zap className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-sm font-medium">{t('landing.demoFeature1')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 justify-center sm:justify-start">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Edit className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-sm font-medium">{t('landing.demoFeature2')}</span>
+                    </div>
+                    <div className="flex items-center gap-3 justify-center sm:justify-start">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Eye className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-sm font-medium">{t('landing.demoFeature3')}</span>
+                    </div>
+                  </div>
+
+                  <Link to="/board/demo">
+                    <Button size="lg" className="text-lg px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all">
+                      {t('landing.demoButton')}
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Features Section */}
         <section className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-20 md:pt-24 pb-4">
