@@ -10,10 +10,10 @@ import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
 import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
 import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png";
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
-
 const Index = () => {
-  const { t } = useTranslation();
-  
+  const {
+    t
+  } = useTranslation();
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -21,16 +21,8 @@ const Index = () => {
     "description": t('seo.home.description'),
     "url": "https://linqboard.nl"
   };
-
-  return (
-    <>
-      <SEO 
-        title={t('seo.home.title')}
-        description={t('seo.home.description')}
-        keywords={t('seo.home.keywords')}
-        canonical="https://linqboard.nl/"
-        structuredData={structuredData}
-      />
+  return <>
+      <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
         <header className="container mx-auto px-4 sm:px-6 py-1 pt-4">
@@ -62,16 +54,7 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link to="/board/demo" className="w-full sm:w-auto">
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 w-full group"
-                  >
-                    <Eye className="mr-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
-                    Probeer Live Demo
-                  </Button>
-                </Link>
+                
 
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
                   <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all w-full">
@@ -90,12 +73,7 @@ const Index = () => {
 
             {/* Right Visual Mockup */}
             <div className="relative scale-105 sm:scale-110">
-              <img 
-                src={todoBoardIllustration} 
-                alt={t('seo.home.heroImageAlt')} 
-                className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl"
-                loading="eager"
-              />
+              <img src={todoBoardIllustration} alt={t('seo.home.heroImageAlt')} className="w-full h-auto rounded-2xl sm:rounded-3xl shadow-2xl" loading="eager" />
               
               {/* Decorative elements */}
               <div className="absolute -top-4 sm:-top-6 -right-4 sm:-right-6 w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
@@ -117,11 +95,7 @@ const Index = () => {
                   </p>
                   
                   <div className="my-8 rounded-xl overflow-hidden shadow-xl border border-border/50">
-                    <img 
-                      src={todoBoardIllustration} 
-                      alt="Linqboard Demo Preview" 
-                      className="w-full h-auto"
-                    />
+                    <img src={todoBoardIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
@@ -202,29 +176,17 @@ const Index = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 md:gap-8 max-w-7xl mx-auto">
               {/* NRG Totaal - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img 
-                  src={nrgTotaalLogo} 
-                  alt="NRG Totaal" 
-                  className="h-10 sm:h-12 w-auto transition-all"
-                />
+                <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-10 sm:h-12 w-auto transition-all" />
               </div>
               
               {/* Zorgeloos Vastgoed - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img 
-                  src={zorgeloosVastgoedLogo} 
-                  alt="Zorgeloos Vastgoed" 
-                  className="h-10 sm:h-12 w-auto transition-all"
-                />
+                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-10 sm:h-12 w-auto transition-all" />
               </div>
               
               {/* Onderhoudscontracten.com - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img 
-                  src={onderhoudscontractenLogo} 
-                  alt="Onderhoudscontracten.com" 
-                  className="h-16 sm:h-20 w-auto transition-all"
-                />
+                <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-16 sm:h-20 w-auto transition-all" />
               </div>
               
               {/* ODÉA Vastgoed Service - tekst placeholder */}
@@ -236,11 +198,7 @@ const Index = () => {
               
               {/* NutriBuddi - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px] col-span-2 md:col-span-1">
-                <img 
-                  src={nutribuddiLogo} 
-                  alt="NutriBuddi" 
-                  className="h-20 sm:h-24 md:h-28 w-auto transition-all"
-                />
+                <img src={nutribuddiLogo} alt="NutriBuddi" className="h-20 sm:h-24 md:h-28 w-auto transition-all" />
               </div>
             </div>
           </div>
@@ -253,7 +211,6 @@ const Index = () => {
           </div>
         </footer>
       </div>
-    </>
-  );
+    </>;
 };
 export default Index;
