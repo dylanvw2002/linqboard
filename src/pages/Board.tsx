@@ -1649,7 +1649,7 @@ const Board = () => {
             <span className="text-sm font-semibold text-center sm:text-left">
               {t('demo.bannerText')}
             </span>
-            <div className="flex gap-2">
+            <div className="flex gap-2 justify-end">
               <Button size="sm" variant="secondary" onClick={() => navigate('/auth')}>
                 {t('demo.createOwnBoard')}
               </Button>
