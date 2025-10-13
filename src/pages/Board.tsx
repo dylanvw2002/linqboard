@@ -594,7 +594,8 @@ const Board = () => {
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState<number>(0.75);
+  const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.3 : 0.75);
+  const [isLandscape, setIsLandscape] = useState<boolean>(window.innerWidth > window.innerHeight);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -983,16 +984,37 @@ const Board = () => {
     }
   }, [editMode]);
 
-  // Load zoom level from localStorage
+  // Load zoom level from localStorage, but force 0.3 on mobile
   useEffect(() => {
-    const savedZoom = localStorage.getItem('boardZoomLevel');
-    if (savedZoom) {
-      const parsedZoom = parseFloat(savedZoom);
-      if (parsedZoom >= 0.5 && parsedZoom <= 1.0) {
-        setZoomLevel(parsedZoom);
+    if (isMobile) {
+      setZoomLevel(0.3);
+    } else {
+      const savedZoom = localStorage.getItem('boardZoomLevel');
+      if (savedZoom) {
+        const parsedZoom = parseFloat(savedZoom);
+        if (parsedZoom >= 0.5 && parsedZoom <= 1.0) {
+          setZoomLevel(parsedZoom);
+        }
       }
     }
-  }, []);
+  }, [isMobile]);
+
+  // Monitor orientation changes on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const handleOrientationChange = () => {
+      setIsLandscape(window.innerWidth > window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+
+    return () => {
+      window.removeEventListener('resize', handleOrientationChange);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, [isMobile]);
 
   // Save zoom level to localStorage
   useEffect(() => {
@@ -1892,6 +1914,27 @@ const Board = () => {
       </div>;
   }
   return <div className="h-screen overflow-hidden relative">
+      {/* Mobile Portrait Mode Overlay */}
+      {isMobile && !isLandscape && (
+        <div className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="text-center max-w-sm">
+            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+              <svg className="w-10 h-10 text-primary animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8M8 11h8" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-3">{t('board.rotateDevice')}</h2>
+            <p className="text-muted-foreground mb-2">
+              {t('board.rotateDeviceDescription')}
+            </p>
+            <p className="text-sm text-muted-foreground/70">
+              {t('board.landscapeRequired')}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Fixed background layer - doesn't scale with zoom */}
       <div className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} style={{
       ...(backgroundImageUrl && {
