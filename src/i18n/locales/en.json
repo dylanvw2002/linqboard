@@ -337,6 +337,7 @@
     "bannerText": "🎨 Demo Mode - Try all features! Changes won't be saved.",
     "createOwnBoard": "Create your own board",
     "viewPricing": "Pricing",
+    "backToHome": "Back to home",
     "columns": {
       "announcements": "Important Announcements",
       "todo": "To Do",

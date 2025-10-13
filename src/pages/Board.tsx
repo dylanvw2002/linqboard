@@ -1707,7 +1707,7 @@ const Board = () => {
         <div className="flex gap-2.5 relative z-10">
           <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] flex items-center gap-2 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
             <ArrowLeft className="w-4 h-4" />
-            {t('dashboard.title')}
+            {isDemo ? t('demo.backToHome') : t('dashboard.title')}
           </button>
           <div className="flex items-center gap-2 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-3 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]">
             <button 

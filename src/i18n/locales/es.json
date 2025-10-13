@@ -337,6 +337,7 @@
     "bannerText": "🎨 Modo Demo - ¡Prueba todas las funciones! Los cambios no se guardarán.",
     "createOwnBoard": "Crea tu propio tablero",
     "viewPricing": "Precios",
+    "backToHome": "Volver al inicio",
     "columns": {
       "announcements": "Anuncios Importantes",
       "todo": "Por Hacer",

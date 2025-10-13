@@ -337,6 +337,7 @@
     "bannerText": "🎨 Demo-Modus - Probieren Sie alle Funktionen aus! Änderungen werden nicht gespeichert.",
     "createOwnBoard": "Erstellen Sie Ihr eigenes Board",
     "viewPricing": "Preise",
+    "backToHome": "Zurück zur Startseite",
     "columns": {
       "announcements": "Wichtige Ankündigungen",
       "todo": "Zu Erledigen",
