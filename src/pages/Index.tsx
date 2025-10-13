@@ -24,18 +24,52 @@ const Index = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true, 
     align: 'start',
-    dragFree: true
+    dragFree: false,
+    containScroll: false
   });
 
   useEffect(() => {
     if (!emblaApi) return;
 
     const intervalId = setInterval(() => {
-      emblaApi.scrollNext(); // van links naar rechts beweging door de loop
-    }, 3000);
+      emblaApi.scrollNext();
+    }, 2500);
 
     return () => clearInterval(intervalId);
   }, [emblaApi]);
+
+  const features = [
+    {
+      icon: Zap,
+      title: t('landing.realtimeTitle'),
+      description: t('landing.realtimeDescription')
+    },
+    {
+      icon: Users,
+      title: t('landing.teamManagementTitle'),
+      description: t('landing.teamManagementDescription')
+    },
+    {
+      icon: Layout,
+      title: 'Aanpasbare Kolommen',
+      description: 'Creëer en personaliseer je eigen kolommen met kleuren en achtergronden'
+    },
+    {
+      icon: Calendar,
+      title: 'Deadlines & Prioriteiten',
+      description: 'Stel vervaldatums in en beheer taakprioriteiten met kleurcodes'
+    },
+    {
+      icon: Paperclip,
+      title: 'Bestanden Bijvoegen',
+      description: 'Upload documenten, afbeeldingen en bestanden direct aan je taken'
+    },
+    {
+      icon: Shield,
+      title: t('landing.secureTitle'),
+      description: t('landing.secureDescription')
+    }
+  ];
   
   const structuredData = {
     "@context": "https://schema.org",
@@ -165,66 +199,24 @@ const Index = () => {
         {/* Features Section */}
         <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden">
           <div ref={emblaRef}>
-            <div className="flex gap-8 sm:gap-10">
-              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                  <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  {t('landing.realtimeDescription')}
-                </p>
-              </article>
-
-              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  {t('landing.teamManagementDescription')}
-                </p>
-              </article>
-
-              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                  <Layout className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3">Aanpasbare Kolommen</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Creëer en personaliseer je eigen kolommen met kleuren en achtergronden
-                </p>
-              </article>
-
-              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                  <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3">Deadlines & Prioriteiten</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Stel vervaldatums in en beheer taakprioriteiten met kleurcodes
-                </p>
-              </article>
-
-              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                  <Paperclip className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3">Bestanden Bijvoegen</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Upload documenten, afbeeldingen en bestanden direct aan je taken
-                </p>
-              </article>
-
-              <article className={`flex-[0_0_280px] sm:flex-[0_0_320px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                </div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.secureTitle')}</h2>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  {t('landing.secureDescription')}
-                </p>
-              </article>
+            <div className="flex">
+              {[...features, ...features].map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <article 
+                    key={index}
+                    className={`flex-[0_0_300px] sm:flex-[0_0_340px] mx-4 sm:mx-5 p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}
+                  >
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                    </div>
+                    <h2 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h2>
+                    <p className="text-sm sm:text-base text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
