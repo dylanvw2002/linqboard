@@ -198,7 +198,7 @@ const Index = () => {
 
         {/* Features Section */}
         <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden">
-          <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 sm:mb-12">FEATURES</h2>
+          <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">FEATURES</p>
           <div ref={emblaRef}>
             <div className="flex">
               {[...features, ...features].map((feature, index) => {
