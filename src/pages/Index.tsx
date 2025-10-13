@@ -33,7 +33,7 @@ const Index = () => {
           <div className="container mx-auto px-4 sm:px-6">
             <nav className="flex items-center justify-between h-20">
               <div className="flex items-center gap-8">
-                <img src={logo} alt={t('seo.home.logoAlt')} className="h-16 sm:h-20 w-auto hover:scale-105 transition-transform duration-300" />
+                <img src={logo} alt={t('seo.home.logoAlt')} className="h-24 sm:h-28 w-auto hover:scale-105 transition-transform duration-300" />
               </div>
               <div className="flex items-center gap-3">
                 <LanguageSwitcher />
