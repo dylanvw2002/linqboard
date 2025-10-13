@@ -1646,7 +1646,7 @@ const Board = () => {
       {isDemo && (
         <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground py-3 px-4 shadow-lg">
           <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2">
-            <span className="text-sm font-semibold text-center sm:text-left">
+            <span className="text-sm font-semibold text-left">
               {t('demo.bannerText')}
             </span>
             <div className="flex gap-2 justify-end">
