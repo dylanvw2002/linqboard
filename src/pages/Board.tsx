@@ -1451,6 +1451,25 @@ const Board = () => {
       >
         <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
       
+      {/* Demo Banner */}
+      {isDemo && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm text-primary-foreground py-3 px-4 shadow-lg">
+          <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span className="text-sm font-semibold">
+              🎨 Demo Modus - Probeer alle features! Wijzigingen worden niet opgeslagen.
+            </span>
+            <div className="flex gap-2">
+              <Button size="sm" variant="secondary" onClick={() => navigate('/auth')}>
+                Maak je eigen board
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => navigate('/pricing')}>
+                Prijzen
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <style>{`
         @keyframes pop {
           from {

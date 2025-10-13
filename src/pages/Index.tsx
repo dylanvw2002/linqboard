@@ -62,7 +62,7 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link to="/demo-board" className="w-full sm:w-auto">
+                <Link to="/board/demo" className="w-full sm:w-auto">
                   <Button 
                     size="lg" 
                     variant="outline" 
