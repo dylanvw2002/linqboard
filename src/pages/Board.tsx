@@ -2266,7 +2266,7 @@ const Board = () => {
       </div>
       
       {/* Logo links onderaan */}
-      <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/dashboard")} />
+      <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate(isDemo ? "/" : "/dashboard")} />
     </div>;
 };
 export default Board;
