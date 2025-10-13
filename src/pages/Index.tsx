@@ -30,7 +30,7 @@ const Index = () => {
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-50 bg-white border-b border-gray-300">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b-2 border-gray-300">
           <div className="container mx-auto px-4 sm:px-6">
             <nav className="flex items-center justify-between h-16 sm:h-20">
               <div className="flex items-center gap-8">
