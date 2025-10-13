@@ -43,12 +43,6 @@ const Index = () => {
     { icon: Zap, title: t('landing.realtimeTitle'), description: t('landing.realtimeDescription') },
     { icon: Users, title: t('landing.teamManagementTitle'), description: t('landing.teamManagementDescription') },
     { icon: Shield, title: t('landing.secureTitle'), description: t('landing.secureDescription') },
-    { icon: Clock, title: 'Tijdregistratie', description: 'Houd bij hoeveel tijd er aan taken wordt besteed' },
-    { icon: Bell, title: 'Notificaties', description: 'Blijf op de hoogte van updates en wijzigingen' },
-    { icon: BarChart, title: 'Analytics', description: 'Inzicht in teamproductiviteit en voortgang' },
-    { icon: Lock, title: 'Privacy', description: 'Jouw data blijft altijd privé en veilig' },
-    { icon: Smartphone, title: 'Mobile-first', description: 'Werkt perfect op alle apparaten' },
-    { icon: Cloud, title: 'Cloud Sync', description: 'Automatische synchronisatie tussen devices' },
   ];
   
   const structuredData = {
