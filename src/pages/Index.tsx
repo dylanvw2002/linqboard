@@ -261,7 +261,7 @@ const Index = () => {
         {/* Footer */}
         <footer className="py-4 mt-4 sm:mt-[15px]">
           <div className="container mx-auto px-4 sm:px-6 text-center text-sm sm:text-base text-muted-foreground">
-            <p>© 2025 LinqBoard. Samen van to-do naar done</p>
+            <p>© 2025 LinqBoard. Samen, van to-do naar done.</p>
           </div>
         </footer>
       </div>
