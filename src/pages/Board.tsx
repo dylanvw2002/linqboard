@@ -66,6 +66,67 @@ interface Task {
   position: number;
   due_date?: string | null;
 }
+// Demo data
+const DEMO_ORG = { id: 'demo-org', name: 'LinqBoard Demo' };
+const DEMO_BOARD = { 
+  id: 'demo-board', 
+  name: 'LinqBoard - Demo Board',
+  background_gradient: null,
+  background_image_url: 'default',
+  background_fit_mode: 'cover',
+  background_position_x: 50,
+  background_position_y: 50,
+  background_scale: 100
+};
+
+const DEMO_COLUMNS: Column[] = [
+  { id: 'col-1', name: 'Te Doen', position: 0, width_ratio: 1, board_id: 'demo-board', x_position: 40, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'regular' },
+  { id: 'col-2', name: 'In Uitvoering', position: 1, width_ratio: 1, board_id: 'demo-board', x_position: 380, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'yellow', column_type: 'regular' },
+  { id: 'col-3', name: 'Review', position: 2, width_ratio: 1, board_id: 'demo-board', x_position: 720, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'purple', column_type: 'regular' },
+  { id: 'col-4', name: 'Ziek', position: 3, width_ratio: 1, board_id: 'demo-board', x_position: 1060, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'red', column_type: 'sick_leave' },
+  { id: 'col-5', name: 'Verlof', position: 4, width_ratio: 1, board_id: 'demo-board', x_position: 1400, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'vacation' },
+  { id: 'col-6', name: 'Afgerond', position: 5, width_ratio: 1, board_id: 'demo-board', x_position: 1740, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'green', column_type: 'regular' }
+];
+
+const DEMO_MEMBERS: Assignee[] = [
+  { user_id: 'user-1', full_name: 'Jan de Vries', avatar_url: null },
+  { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: null },
+  { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: null },
+  { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: null },
+  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: null }
+];
+
+const DEMO_TASKS: Task[] = [
+  { id: 'task-1', column_id: 'col-1', title: 'Website homepage ontwerp', description: 'Nieuwe homepage design maken', priority: 'high', position: 0, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[0]] },
+  { id: 'task-2', column_id: 'col-1', title: 'Database migratie plannen', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[1]] },
+  { id: 'task-3', column_id: 'col-1', title: 'API documentatie updaten', description: 'Alle endpoints documenteren', priority: 'low', position: 2, due_date: null, assignees: [] },
+  { id: 'task-4', column_id: 'col-1', title: 'Security audit uitvoeren', description: null, priority: 'high', position: 3, due_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[2]] },
+  { id: 'task-5', column_id: 'col-1', title: 'Klant meeting voorbereiden', description: null, priority: 'medium', position: 4, due_date: null, assignees: [] },
+  
+  { id: 'task-6', column_id: 'col-2', title: 'Mobile app responsive maken', description: 'iOS en Android optimaliseren', priority: 'high', position: 0, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[1], DEMO_MEMBERS[2]] },
+  { id: 'task-7', column_id: 'col-2', title: 'Gebruikers feedback verwerken', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
+  { id: 'task-8', column_id: 'col-2', title: 'Unit tests schrijven', description: 'Coverage naar 80% brengen', priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+  { id: 'task-9', column_id: 'col-2', title: 'Newsletter template design', description: null, priority: 'low', position: 3, due_date: null, assignees: [] },
+  { id: 'task-10', column_id: 'col-2', title: 'Performance optimalisatie', description: null, priority: 'high', position: 4, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[4]] },
+  
+  { id: 'task-11', column_id: 'col-3', title: 'Code review API endpoints', description: 'Security en performance checken', priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[2]] },
+  { id: 'task-12', column_id: 'col-3', title: 'Design systeem valideren', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
+  { id: 'task-13', column_id: 'col-3', title: 'Marketing content proofreading', description: null, priority: 'low', position: 2, due_date: null, assignees: [] },
+  { id: 'task-14', column_id: 'col-3', title: 'Integration tests draaien', description: null, priority: 'medium', position: 3, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+  
+  { id: 'task-15', column_id: 'col-4', title: 'Jan de Vries', description: 'Ziek thuis met griep', priority: null, position: 0, due_date: null, assignees: [] },
+  { id: 'task-16', column_id: 'col-4', title: 'Lisa Vermeer', description: 'Doktersafspraak vanmiddag', priority: null, position: 1, due_date: null, assignees: [] },
+  
+  { id: 'task-17', column_id: 'col-5', title: 'Tom Jansen', description: '2 weken vakantie naar Spanje', priority: null, position: 0, due_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  { id: 'task-18', column_id: 'col-5', title: 'Sophie Bakker', description: 'Weekend trip', priority: null, position: 1, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  
+  { id: 'task-19', column_id: 'col-6', title: 'Q1 rapportage afgerond', description: null, priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[1]] },
+  { id: 'task-20', column_id: 'col-6', title: 'Website live gezet', description: null, priority: 'high', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0], DEMO_MEMBERS[2]] },
+  { id: 'task-21', column_id: 'col-6', title: 'Onboarding process opgezet', description: null, priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+  { id: 'task-22', column_id: 'col-6', title: 'Customer support systeem', description: null, priority: 'medium', position: 3, due_date: null, assignees: [] },
+  { id: 'task-23', column_id: 'col-6', title: 'Email templates ontworpen', description: null, priority: 'low', position: 4, due_date: null, assignees: [DEMO_MEMBERS[4]] }
+];
+
 const Board = () => {
   const { t, i18n } = useTranslation();
   const isMobile = useIsMobile();
@@ -89,6 +150,9 @@ const Board = () => {
     organizationId
   } = useParams();
   const navigate = useNavigate();
+  
+  // Detect demo mode
+  const isDemo = organizationId === 'demo';
   const [loading, setLoading] = useState(true);
   const [organization, setOrganization] = useState<any>(null);
   const [board, setBoard] = useState<any>(null);
@@ -166,6 +230,11 @@ const Board = () => {
   };
 
   const handleAddColumn = async () => {
+    if (isDemo) {
+      toast.info('✨ Demo mode - kolom toevoegen niet beschikbaar');
+      return;
+    }
+    
     try {
       // Place new column in a visible area (not too far right)
       // Find the rightmost column within reasonable bounds
@@ -206,6 +275,11 @@ const Board = () => {
   };
 
   const handleBackgroundChange = async (gradient: string) => {
+    if (isDemo) {
+      toast.info('✨ Demo mode - achtergrond wijzigen niet beschikbaar');
+      return;
+    }
+    
     if (!canCustomizeBackground) {
       toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
       return;
@@ -397,6 +471,13 @@ const Board = () => {
 
   const handleDeleteColumn = async () => {
     if (!deleteColumnId) return;
+    
+    if (isDemo) {
+      toast.info('✨ Demo mode - kolom verwijderen niet beschikbaar');
+      setDeleteColumnId(null);
+      return;
+    }
+    
     try {
       // First, check if there are tasks in this column
       const columnTasks = tasks.filter(t => t.column_id === deleteColumnId);
@@ -597,6 +678,8 @@ const Board = () => {
   };
   
   const checkAccess = async () => {
+    if (isDemo) return; // Skip auth in demo mode
+    
     const {
       data: {
         session
@@ -616,6 +699,8 @@ const Board = () => {
   };
 
   const fetchOrgMembers = async () => {
+    if (isDemo) return; // Skip in demo mode
+    
     try {
       const { data: memberships } = await supabase
         .from("memberships")
@@ -639,6 +724,27 @@ const Board = () => {
   };
   const fetchBoardData = async () => {
     try {
+      if (!organizationId) {
+        navigate("/dashboard");
+        return;
+      }
+      
+      // Load demo data in demo mode
+      if (isDemo) {
+        setOrganization(DEMO_ORG);
+        setBoard(DEMO_BOARD);
+        setColumns(DEMO_COLUMNS);
+        setTasks(DEMO_TASKS);
+        setOrgMembers(DEMO_MEMBERS);
+        setBackgroundImageUrl(defaultBackground);
+        setBackgroundFitMode('cover');
+        setBackgroundPositionX(50);
+        setBackgroundPositionY(50);
+        setBackgroundScale(100);
+        setLoading(false);
+        return;
+      }
+      
       // Parallel fetch: organization and board
       const [orgResult, boardResult] = await Promise.all([
         supabase.from("organizations").select("*").eq("id", organizationId).single(),
@@ -886,6 +992,18 @@ const Board = () => {
         toast.error(validation.error.errors[0].message);
         return;
       }
+      
+      if (isDemo) {
+        setTasks(tasks.map(t => 
+          t.id === editingTask.id 
+            ? { ...t, title: validation.data.title, description: validation.data.description || null, priority: editTaskPriority, due_date: editTaskDueDate?.toISOString() || null }
+            : t
+        ));
+        setEditingTask(null);
+        toast.success('✨ Demo mode - taak bijgewerkt (niet opgeslagen)');
+        return;
+      }
+      
       const {
         error
       } = await supabase.from("tasks").update({
@@ -962,6 +1080,28 @@ const Board = () => {
         toast.error(validation.error.errors[0].message);
         return;
       }
+      
+      if (isDemo) {
+        const newTask: Task = {
+          id: `demo-task-${Date.now()}`,
+          column_id: columnId,
+          title: validation.data.title,
+          description: validation.data.description || null,
+          priority: newTaskPriority,
+          position: tasks.filter(t => t.column_id === columnId).length,
+          due_date: newTaskDueDate?.toISOString() || null,
+          assignees: []
+        };
+        setTasks([...tasks, newTask]);
+        setNewTaskTitle('');
+        setNewTaskDescription('');
+        setNewTaskPriority('medium');
+        setNewTaskDueDate(undefined);
+        setOpenDialog(null);
+        toast.success('✨ Demo mode - taak toegevoegd (niet opgeslagen)');
+        return;
+      }
+      
       const column = columns.find(col => col.id === columnId);
       if (!column) {
         toast.error(t('board.columnNotFound'));
@@ -991,6 +1131,12 @@ const Board = () => {
     }
   };
   const handleDeleteTask = async (taskId: string) => {
+    if (isDemo) {
+      setTasks(tasks.filter(t => t.id !== taskId));
+      toast.success('✨ Demo mode - taak verwijderd (niet opgeslagen)');
+      return;
+    }
+    
     try {
       const {
         error
