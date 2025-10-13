@@ -25,19 +25,30 @@ const Index = () => {
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
-        <header className="container mx-auto px-4 sm:px-6 py-1 pt-4">
-          <nav className="flex items-center justify-between -my-[50px]">
-            <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 md:h-48 w-auto" />
-            <div className="flex items-center gap-2">
-              <LanguageSwitcher />
-              <Link to="/auth">
-                <Button variant="outline" size="lg" className="border-2 text-sm sm:text-base">
-                  <LogIn className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  {t('auth.login')}
-                </Button>
-              </Link>
-            </div>
-          </nav>
+        <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b border-border/50 shadow-sm">
+          <div className="container mx-auto px-4 sm:px-6">
+            <nav className="flex items-center justify-between h-20">
+              <div className="flex items-center gap-8">
+                <img 
+                  src={logo} 
+                  alt={t('seo.home.logoAlt')} 
+                  className="h-16 sm:h-20 w-auto hover:scale-105 transition-transform duration-300" 
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <LanguageSwitcher />
+                <Link to="/auth">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
+                  >
+                    <LogIn className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                    {t('auth.login')}
+                  </Button>
+                </Link>
+              </div>
+            </nav>
+          </div>
         </header>
 
         {/* Hero Section */}
