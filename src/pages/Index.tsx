@@ -24,18 +24,20 @@ const Index = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true, 
     align: 'start',
-    dragFree: false,
-    containScroll: false
+    skipSnaps: false,
+    dragFree: false
   });
 
   useEffect(() => {
     if (!emblaApi) return;
 
-    const intervalId = setInterval(() => {
-      emblaApi.scrollNext();
-    }, 2500);
+    const autoplay = setInterval(() => {
+      if (emblaApi.canScrollNext()) {
+        emblaApi.scrollNext();
+      }
+    }, 3000);
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(autoplay);
   }, [emblaApi]);
 
   const features = [
@@ -199,23 +201,27 @@ const Index = () => {
         {/* Features Section */}
         <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden">
           <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">FEATURES</p>
-          <div ref={emblaRef}>
-            <div className="flex">
-              {[...features, ...features].map((feature, index) => {
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex touch-pan-y">
+              {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
-                  <article 
+                  <div 
                     key={index}
-                    className={`flex-[0_0_300px] sm:flex-[0_0_340px] mx-4 sm:mx-5 p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}
+                    className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4"
                   >
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-                    </div>
-                    <h2 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h2>
-                    <p className="text-sm sm:text-base text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </article>
+                    <article 
+                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                        <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h3>
+                      <p className="text-sm sm:text-base text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </article>
+                  </div>
                 );
               })}
             </div>
