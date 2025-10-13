@@ -329,6 +329,12 @@
     "teamManagementDescription": "Laden Sie Teammitglieder mit einem einfachen Code ein. Jeder erhält sofortigen Zugriff.",
     "secureTitle": "Sicher & privat",
     "secureDescription": "Ihre Daten sind sicher. Nur Teammitglieder haben Zugriff auf Ihre Boards.",
+    "customColumnsTitle": "Anpassbare Spalten",
+    "customColumnsDescription": "Erstellen und personalisieren Sie Ihre eigenen Spalten mit Farben und Hintergründen",
+    "deadlinesTitle": "Fristen & Prioritäten",
+    "deadlinesDescription": "Setzen Sie Fälligkeitsdaten und verwalten Sie Aufgabenprioritäten mit Farbcodes",
+    "attachmentsTitle": "Dateien Anhängen",
+    "attachmentsDescription": "Laden Sie Dokumente, Bilder und Dateien direkt zu Ihren Aufgaben hoch",
     "footerText": "© 2025 LinqBoard. Zusammenarbeit ohne Umstände."
   },
   "demo": {

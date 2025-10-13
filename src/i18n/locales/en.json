@@ -329,6 +329,12 @@
     "teamManagementDescription": "Invite team members with a simple code. Everyone gets instant access.",
     "secureTitle": "Safe & private",
     "secureDescription": "Your data is secure. Only team members have access to your boards.",
+    "customColumnsTitle": "Customizable Columns",
+    "customColumnsDescription": "Create and personalize your own columns with colors and backgrounds",
+    "deadlinesTitle": "Deadlines & Priorities",
+    "deadlinesDescription": "Set due dates and manage task priorities with color codes",
+    "attachmentsTitle": "Attach Files",
+    "attachmentsDescription": "Upload documents, images and files directly to your tasks",
     "footerText": "© 2025 LinqBoard. Collaboration without hassle."
   },
   "demo": {

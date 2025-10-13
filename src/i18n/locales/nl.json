@@ -329,6 +329,12 @@
     "teamManagementDescription": "Nodig teamleden uit met een simpele code. Iedereen krijgt direct toegang.",
     "secureTitle": "Veilig & privé",
     "secureDescription": "Jouw data is beveiligd. Alleen teamleden hebben toegang tot jullie boards.",
+    "customColumnsTitle": "Aanpasbare Kolommen",
+    "customColumnsDescription": "Creëer en personaliseer je eigen kolommen met kleuren en achtergronden",
+    "deadlinesTitle": "Deadlines & Prioriteiten",
+    "deadlinesDescription": "Stel vervaldatums in en beheer taakprioriteiten met kleurcodes",
+    "attachmentsTitle": "Bestanden Bijvoegen",
+    "attachmentsDescription": "Upload documenten, afbeeldingen en bestanden direct aan je taken",
     "footerText": "© 2025 LinqBoard. Samenwerken zonder gedoe."
   },
   "demo": {

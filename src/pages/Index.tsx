@@ -44,16 +44,16 @@ const Index = () => {
     description: t('landing.teamManagementDescription')
   }, {
     icon: Layout,
-    title: 'Aanpasbare Kolommen',
-    description: 'Creëer en personaliseer je eigen kolommen met kleuren en achtergronden'
+    title: t('landing.customColumnsTitle'),
+    description: t('landing.customColumnsDescription')
   }, {
     icon: Calendar,
-    title: 'Deadlines & Prioriteiten',
-    description: 'Stel vervaldatums in en beheer taakprioriteiten met kleurcodes'
+    title: t('landing.deadlinesTitle'),
+    description: t('landing.deadlinesDescription')
   }, {
     icon: Paperclip,
-    title: 'Bestanden Bijvoegen',
-    description: 'Upload documenten, afbeeldingen en bestanden direct aan je taken'
+    title: t('landing.attachmentsTitle'),
+    description: t('landing.attachmentsDescription')
   }, {
     icon: Shield,
     title: t('landing.secureTitle'),
