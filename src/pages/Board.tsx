@@ -66,6 +66,66 @@ interface Task {
   position: number;
   due_date?: string | null;
 }
+// Demo data
+const DEMO_ORG = { id: 'demo-org', name: 'LinqBoard Demo' };
+const DEMO_BOARD = { 
+  id: 'demo-board', 
+  name: 'LinqBoard - Demo Board',
+  background_gradient: null,
+  background_image_url: 'default',
+  background_fit_mode: 'cover',
+  background_position_x: 50,
+  background_position_y: 50,
+  background_scale: 100
+};
+
+const DEMO_COLUMNS: Column[] = [
+  { id: 'col-1', name: 'Te Doen', position: 0, width_ratio: 1, board_id: 'demo-board', x_position: 40, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'regular' },
+  { id: 'col-2', name: 'In Uitvoering', position: 1, width_ratio: 1, board_id: 'demo-board', x_position: 380, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'yellow', column_type: 'regular' },
+  { id: 'col-3', name: 'Review', position: 2, width_ratio: 1, board_id: 'demo-board', x_position: 720, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'purple', column_type: 'regular' },
+  { id: 'col-4', name: 'Ziek', position: 3, width_ratio: 1, board_id: 'demo-board', x_position: 1060, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'red', column_type: 'sick_leave' },
+  { id: 'col-5', name: 'Verlof', position: 4, width_ratio: 1, board_id: 'demo-board', x_position: 1400, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'vacation' },
+  { id: 'col-6', name: 'Afgerond', position: 5, width_ratio: 1, board_id: 'demo-board', x_position: 1740, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'green', column_type: 'regular' }
+];
+
+const DEMO_MEMBERS: Assignee[] = [
+  { user_id: 'user-1', full_name: 'Jan de Vries', avatar_url: null },
+  { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: null },
+  { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: null },
+  { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: null },
+  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: null }
+];
+
+const DEMO_TASKS: Task[] = [
+  { id: 'task-1', column_id: 'col-1', title: 'Website homepage ontwerp', description: 'Nieuwe homepage design maken', priority: 'high', position: 0, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[0]] },
+  { id: 'task-2', column_id: 'col-1', title: 'Database migratie plannen', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[1]] },
+  { id: 'task-3', column_id: 'col-1', title: 'API documentatie updaten', description: 'Alle endpoints documenteren', priority: 'low', position: 2, due_date: null, assignees: [] },
+  { id: 'task-4', column_id: 'col-1', title: 'Security audit uitvoeren', description: null, priority: 'high', position: 3, due_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[2]] },
+  { id: 'task-5', column_id: 'col-1', title: 'Klant meeting voorbereiden', description: null, priority: 'medium', position: 4, due_date: null, assignees: [] },
+  
+  { id: 'task-6', column_id: 'col-2', title: 'Mobile app responsive maken', description: 'iOS en Android optimaliseren', priority: 'high', position: 0, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[1], DEMO_MEMBERS[2]] },
+  { id: 'task-7', column_id: 'col-2', title: 'Gebruikers feedback verwerken', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
+  { id: 'task-8', column_id: 'col-2', title: 'Unit tests schrijven', description: 'Coverage naar 80% brengen', priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+  { id: 'task-9', column_id: 'col-2', title: 'Newsletter template design', description: null, priority: 'low', position: 3, due_date: null, assignees: [] },
+  { id: 'task-10', column_id: 'col-2', title: 'Performance optimalisatie', description: null, priority: 'high', position: 4, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[4]] },
+  
+  { id: 'task-11', column_id: 'col-3', title: 'Code review API endpoints', description: 'Security en performance checken', priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[2]] },
+  { id: 'task-12', column_id: 'col-3', title: 'Design systeem valideren', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0]] },
+  { id: 'task-13', column_id: 'col-3', title: 'Marketing content proofreading', description: null, priority: 'low', position: 2, due_date: null, assignees: [] },
+  { id: 'task-14', column_id: 'col-3', title: 'Integration tests draaien', description: null, priority: 'medium', position: 3, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+  
+  { id: 'task-15', column_id: 'col-4', title: 'Jan de Vries', description: 'Ziek thuis met griep', priority: null, position: 0, due_date: null, assignees: [] },
+  { id: 'task-16', column_id: 'col-4', title: 'Lisa Vermeer', description: 'Doktersafspraak vanmiddag', priority: null, position: 1, due_date: null, assignees: [] },
+  
+  { id: 'task-17', column_id: 'col-5', title: 'Tom Jansen', description: '2 weken vakantie naar Spanje', priority: null, position: 0, due_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  { id: 'task-18', column_id: 'col-5', title: 'Sophie Bakker', description: 'Weekend trip', priority: null, position: 1, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  
+  { id: 'task-19', column_id: 'col-6', title: 'Q1 rapportage afgerond', description: null, priority: 'high', position: 0, due_date: null, assignees: [DEMO_MEMBERS[1]] },
+  { id: 'task-20', column_id: 'col-6', title: 'Website live gezet', description: null, priority: 'high', position: 1, due_date: null, assignees: [DEMO_MEMBERS[0], DEMO_MEMBERS[2]] },
+  { id: 'task-21', column_id: 'col-6', title: 'Onboarding process opgezet', description: null, priority: 'medium', position: 2, due_date: null, assignees: [DEMO_MEMBERS[3]] },
+  { id: 'task-22', column_id: 'col-6', title: 'Customer support systeem', description: null, priority: 'medium', position: 3, due_date: null, assignees: [] },
+  { id: 'task-23', column_id: 'col-6', title: 'Email templates ontworpen', description: null, priority: 'low', position: 4, due_date: null, assignees: [DEMO_MEMBERS[4]] }
+];
 
 const Board = () => {
   const { t, i18n } = useTranslation();
@@ -91,16 +151,8 @@ const Board = () => {
   } = useParams();
   const navigate = useNavigate();
   
-  // Redirect 'demo' to real demo UUID
-  useEffect(() => {
-    if (organizationId === 'demo') {
-      navigate('/board/00000000-0000-0000-0000-000000000000', { replace: true });
-    }
-  }, [organizationId, navigate]);
-  
-  // Detect demo mode by UUID
-  const isDemo = organizationId === '00000000-0000-0000-0000-000000000000';
-  
+  // Detect demo mode
+  const isDemo = organizationId === 'demo';
   const [loading, setLoading] = useState(true);
   const [organization, setOrganization] = useState<any>(null);
   const [board, setBoard] = useState<any>(null);
@@ -177,6 +229,373 @@ const Board = () => {
     }
   };
 
+  const handleAddColumn = async () => {
+    if (isDemo) {
+      toast.info('✨ Demo mode - kolom toevoegen niet beschikbaar');
+      return;
+    }
+    
+    try {
+      // Place new column in a visible area (not too far right)
+      // Find the rightmost column within reasonable bounds
+      const visibleColumns = columns.filter(c => c.x_position < 1500);
+      const maxX = visibleColumns.length > 0 ? Math.max(...visibleColumns.map(c => c.x_position + (c.width || 300))) : 40;
+      const newX = maxX + 40; // Add some spacing
+
+      const {
+        data,
+        error
+      } = await supabase.from('columns').insert({
+        board_id: board?.id,
+        name: `${t('board.newColumn')} ${columns.length + 1}`,
+        position: columns.length,
+        width_ratio: 1,
+        x_position: newX,
+        y_position: 50,
+        width: 300,
+        height: 600
+      }).select().single();
+      if (error) throw error;
+      toast.success(t('board.columnAdded'));
+      await fetchBoardData();
+
+      // Scroll to the new column
+      setTimeout(() => {
+        const mainElement = document.querySelector('main');
+        if (mainElement && data) {
+          mainElement.scrollTo({
+            left: (newX - 100) * SCALE_FACTOR,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } catch (error: any) {
+      toast.error("Fout bij toevoegen: " + error.message);
+    }
+  };
+
+  const handleBackgroundChange = async (gradient: string) => {
+    if (isDemo) {
+      toast.info('✨ Demo mode - achtergrond wijzigen niet beschikbaar');
+      return;
+    }
+    
+    if (!canCustomizeBackground) {
+      toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
+      return;
+    }
+    
+    try {
+      await supabase
+        .from("boards")
+        .update({
+          background_gradient: gradient,
+          background_image_url: null,
+        })
+        .eq("id", board?.id);
+
+      setSelectedBackground(gradient);
+      setBackgroundImageUrl("");
+      
+      const { error } = await supabase
+        .from("boards")
+        .update({ 
+          background_gradient: gradient,
+          background_image_url: null 
+        })
+        .eq("id", board?.id);
+      
+      if (error) throw error;
+      toast.success(t('board.backgroundUpdated') || 'Achtergrond bijgewerkt');
+    } catch (error: any) {
+      toast.error("Fout bij bijwerken achtergrond: " + error.message);
+    }
+  };
+
+  const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canCustomizeBackground) {
+      toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
+      return;
+    }
+    
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Selecteer een afbeelding');
+      return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Afbeelding te groot (max 5MB)');
+      return;
+    }
+    
+    // Create preview URL and open crop editor
+    const previewUrl = URL.createObjectURL(file);
+    setPendingImageFile(file);
+    setPendingImagePreview(previewUrl);
+    setCropEditorOpen(true);
+    
+    // Reset the input so the same file can be selected again
+    event.target.value = '';
+  };
+
+  const handleRemoveBackgroundImage = async () => {
+    try {
+      const { error } = await supabase
+        .from("boards")
+        .update({
+          background_image_url: 'default',
+          background_fit_mode: 'cover',
+          background_position_x: 50,
+          background_position_y: 50,
+          background_scale: 100
+        })
+        .eq("id", board?.id);
+      
+      if (error) throw error;
+      
+      setBackgroundImageUrl(defaultBackground);
+      setBackgroundPositionX(50);
+      setBackgroundPositionY(50);
+      setBackgroundScale(100);
+      setBackgroundFitMode('cover');
+      toast.success(t('board.backgroundRemoved'));
+    } catch (error: any) {
+      toast.error("Fout bij verwijderen: " + error.message);
+    }
+  };
+
+  const handleSetDefaultBackground = async () => {
+    try {
+      const { error } = await supabase
+        .from("boards")
+        .update({
+          background_image_url: 'default',
+          background_gradient: null,
+          background_fit_mode: 'cover',
+          background_position_x: 50,
+          background_position_y: 50,
+          background_scale: 100,
+        })
+        .eq("id", board?.id);
+
+      if (error) throw error;
+
+      setBackgroundImageUrl(defaultBackground);
+      setBackgroundFitMode('cover');
+      setBackgroundPositionX(50);
+      setBackgroundPositionY(50);
+      setBackgroundScale(100);
+      setSelectedBackground('');
+      toast.success(t('board.backgroundSetDefault'));
+    } catch (error: any) {
+      console.error("Error setting default background:", error);
+      toast.error(t('board.backgroundSetDefaultError'));
+    }
+  };
+
+  const handleApplyBackgroundCrop = async (positionX: number, positionY: number, scale: number, fitMode: 'scale' | 'cover') => {
+    try {
+      setUploadingBackground(true);
+      
+      // If we have a pending file, upload it first
+      if (pendingImageFile) {
+        const fileExt = pendingImageFile.name.split('.').pop();
+        const fileName = `${board?.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('board-backgrounds')
+          .upload(filePath, pendingImageFile, { upsert: true });
+        
+        if (uploadError) throw uploadError;
+        
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('board-backgrounds')
+          .getPublicUrl(filePath);
+        
+        // Update board with image URL and crop settings
+        const { error: updateError } = await supabase
+          .from("boards")
+          .update({ 
+            background_image_url: publicUrl,
+            background_position_x: positionX,
+            background_position_y: positionY,
+            background_scale: scale,
+            background_fit_mode: fitMode
+          })
+          .eq("id", board?.id);
+        
+        if (updateError) throw updateError;
+        
+        setBackgroundImageUrl(publicUrl);
+        
+        // Clean up
+        if (pendingImagePreview) {
+          URL.revokeObjectURL(pendingImagePreview);
+        }
+        setPendingImageFile(null);
+        setPendingImagePreview(null);
+      } else {
+        // Just update crop settings for existing image
+        const { error } = await supabase
+          .from("boards")
+          .update({ 
+            background_position_x: positionX,
+            background_position_y: positionY,
+            background_scale: scale,
+            background_fit_mode: fitMode
+          })
+          .eq("id", board?.id);
+        
+        if (error) throw error;
+      }
+      
+      setBackgroundPositionX(positionX);
+      setBackgroundPositionY(positionY);
+      setBackgroundScale(scale);
+      setBackgroundFitMode(fitMode);
+      setCropEditorOpen(false);
+      toast.success('Achtergrond opgeslagen');
+    } catch (error: any) {
+      toast.error("Fout bij opslaan: " + error.message);
+    } finally {
+      setUploadingBackground(false);
+    }
+  };
+
+  const handleDeleteColumn = async () => {
+    if (!deleteColumnId) return;
+    
+    if (isDemo) {
+      toast.info('✨ Demo mode - kolom verwijderen niet beschikbaar');
+      setDeleteColumnId(null);
+      return;
+    }
+    
+    try {
+      // First, check if there are tasks in this column
+      const columnTasks = tasks.filter(t => t.column_id === deleteColumnId);
+      if (columnTasks.length > 0) {
+        // Move all tasks to the first column
+        const firstColumn = columns.find(c => c.id !== deleteColumnId);
+        if (firstColumn) {
+          await Promise.all(columnTasks.map(task => supabase.from('tasks').update({
+            column_id: firstColumn.id
+          }).eq('id', task.id)));
+        }
+      }
+
+      // Delete the column
+      const {
+        error
+      } = await supabase.from('columns').delete().eq('id', deleteColumnId);
+      if (error) throw error;
+      toast.success(t('board.columnDeleted'));
+      await fetchBoardData();
+      setDeleteColumnId(null);
+    } catch (error: any) {
+      toast.error(t('board.deleteError') + error.message);
+    }
+  };
+  useEffect(() => {
+    checkAccess();
+    fetchBoardData();
+    fetchOrgMembers();
+    fetchUserPlan();
+    checkBackgroundPermission();
+  }, [organizationId]);
+  
+  const fetchUserPlan = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-subscription-status');
+      if (error) throw error;
+      if (data?.limits?.plan) {
+        setUserPlan(data.limits.plan);
+      }
+    } catch (error) {
+      console.error('Error fetching user plan:', error);
+    }
+  };
+  
+  const checkBackgroundPermission = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const { data, error } = await supabase.functions.invoke('check-background-permission');
+      if (error) throw error;
+      
+      if (data) {
+        setCanCustomizeBackground(data.canCustomize);
+      }
+    } catch (error) {
+      console.error('Error checking background permission:', error);
+    }
+  };
+  
+  useEffect(() => {
+    if (!board?.id) return;
+    const cleanup = setupRealtimeSubscriptions();
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [board?.id]);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  useEffect(() => {
+    if (!editMode) {
+      setSelectedColumn(null);
+    }
+  }, [editMode]);
+  
+  // Load zoom level from localStorage
+  useEffect(() => {
+    const savedZoom = localStorage.getItem('boardZoomLevel');
+    if (savedZoom) {
+      const parsedZoom = parseFloat(savedZoom);
+      if (parsedZoom >= 0.5 && parsedZoom <= 1.0) {
+        setZoomLevel(parsedZoom);
+      }
+    }
+  }, []);
+  
+  // Save zoom level to localStorage
+  useEffect(() => {
+    localStorage.setItem('boardZoomLevel', zoomLevel.toString());
+  }, [zoomLevel]);
+  
+  // Keyboard shortcuts for zoom
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey)) {
+        if (e.key === '=' || e.key === '+') {
+          e.preventDefault();
+          handleZoomIn();
+        } else if (e.key === '-') {
+          e.preventDefault();
+          handleZoomOut();
+        } else if (e.key === '0') {
+          e.preventDefault();
+          handleZoomReset();
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [zoomLevel]);
+
+  // Touch gesture helpers
   const getDistance = (touch1: React.Touch, touch2: React.Touch) => {
     const dx = touch1.clientX - touch2.clientX;
     const dy = touch1.clientY - touch2.clientY;
@@ -259,46 +678,29 @@ const Board = () => {
   };
   
   const checkAccess = async () => {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (isDemo) return; // Skip auth in demo mode
     
-    if (userError || !user) {
+    const {
+      data: {
+        session
+      }
+    } = await supabase.auth.getSession();
+    if (!session) {
       navigate("/auth");
       return;
     }
-    
-    // Check if user has membership
-    const { data: membership } = await supabase
-      .from("memberships")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("organization_id", organizationId)
-      .single();
-    
-    // If no membership and this is the demo board, create one automatically
-    if (!membership && isDemo) {
-      const { error: membershipError } = await supabase
-        .from('memberships')
-        .insert({
-          user_id: user.id,
-          organization_id: organizationId,
-          role: 'member'
-        });
-      
-      if (membershipError) {
-        console.error('Error creating demo membership:', membershipError);
-        toast.error("Kon geen toegang krijgen tot de demo. Log eerst in.");
-        navigate('/auth');
-        return;
-      }
-    } else if (!membership) {
-      // Not demo and no membership - redirect to dashboard
+    const {
+      data: membership
+    } = await supabase.from("memberships").select("*").eq("user_id", session.user.id).eq("organization_id", organizationId).single();
+    if (!membership) {
       toast.error(t('board.noAccess'));
       navigate("/dashboard");
-      return;
     }
   };
 
   const fetchOrgMembers = async () => {
+    if (isDemo) return; // Skip in demo mode
+    
     try {
       const { data: memberships } = await supabase
         .from("memberships")
@@ -320,1348 +722,1356 @@ const Board = () => {
       console.error(t('board.errorLoadingMembers'), error);
     }
   };
-
   const fetchBoardData = async () => {
     try {
-      const { data: orgData } = await supabase
-        .from("organizations")
-        .select("*")
-        .eq("id", organizationId)
-        .single();
-
-      if (orgData) {
-        setOrganization(orgData);
+      if (!organizationId) {
+        navigate("/dashboard");
+        return;
       }
-
-      const { data: boardData } = await supabase
-        .from("boards")
-        .select("*")
-        .eq("organization_id", organizationId)
-        .single();
-
-      if (boardData) {
-        setBoard(boardData);
-        setSelectedBackground(boardData.background_gradient || "from-blue-50 to-blue-100");
-        setBackgroundImageUrl(boardData.background_image_url);
-        setBackgroundPositionX(boardData.background_position_x ?? 50);
-        setBackgroundPositionY(boardData.background_position_y ?? 50);
-        setBackgroundScale(boardData.background_scale ?? 100);
-        const fitModeValue = boardData.background_fit_mode;
-        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'scale');
+      
+      // Load demo data in demo mode
+      if (isDemo) {
+        setOrganization(DEMO_ORG);
+        setBoard(DEMO_BOARD);
+        setColumns(DEMO_COLUMNS);
+        setTasks(DEMO_TASKS);
+        setOrgMembers(DEMO_MEMBERS);
+        setBackgroundImageUrl(defaultBackground);
+        setBackgroundFitMode('cover');
+        setBackgroundPositionX(50);
+        setBackgroundPositionY(50);
+        setBackgroundScale(100);
+        setLoading(false);
+        return;
       }
-
+      
+      // Parallel fetch: organization and board
+      const [orgResult, boardResult] = await Promise.all([
+        supabase.from("organizations").select("*").eq("id", organizationId).single(),
+        supabase.from("boards").select("*").eq("organization_id", organizationId).single()
+      ]);
+      
+      setOrganization(orgResult.data);
+      setBoard(boardResult.data);
+      
+      if (!boardResult.data) {
+        setLoading(false);
+        return;
+      }
+      
+      // Set background gradient from board data
+      if (boardResult.data.background_gradient) {
+        setSelectedBackground(boardResult.data.background_gradient);
+      }
+      
+      // Set background image from board data
+      if (boardResult.data.background_image_url) {
+        // Convert 'default' marker to actual asset URL
+        const bgUrl = boardResult.data.background_image_url === 'default' 
+          ? defaultBackground 
+          : boardResult.data.background_image_url;
+        setBackgroundImageUrl(bgUrl);
+        setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
+        setBackgroundPositionY(boardResult.data.background_position_y ?? 50);
+        setBackgroundScale(boardResult.data.background_scale ?? 100);
+        const fitModeValue = boardResult.data.background_fit_mode;
+        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'cover');
+      }
+      
+      // Fetch columns
       const { data: columnsData } = await supabase
         .from("columns")
         .select("*")
-        .eq("board_id", boardData?.id)
+        .eq("board_id", boardResult.data.id)
         .order("position");
-
-      if (columnsData) {
-        setColumns(columnsData);
+      
+      setColumns(columnsData || []);
+      
+      if (columnsData && columnsData.length > 0) {
+        const columnIds = columnsData.map(c => c.id);
+        
+        // Fetch tasks
+        const { data: tasksData } = await supabase
+          .from("tasks")
+          .select("*")
+          .in("column_id", columnIds)
+          .order("position");
+        
+        if (tasksData && tasksData.length > 0) {
+          const taskIds = tasksData.map(t => t.id);
+          
+          // Parallel fetch: assignees and profiles
+          const [assigneesResult, allProfilesResult] = await Promise.all([
+            supabase
+              .from("task_assignees")
+              .select("task_id, user_id")
+              .in("task_id", taskIds),
+            // Fetch all org member profiles at once
+            supabase
+              .from("memberships")
+              .select("user_id")
+              .eq("organization_id", organizationId)
+              .then(async ({ data: memberships }) => {
+                if (!memberships || memberships.length === 0) return { data: [] };
+                const userIds = memberships.map(m => m.user_id);
+                return supabase
+                  .from("profiles")
+                  .select("user_id, full_name, avatar_url")
+                  .in("user_id", userIds);
+              })
+          ]);
+          
+          // Map assignees to tasks
+          const tasksWithAssignees = tasksData.map(task => ({
+            ...task,
+            assignees: assigneesResult.data
+              ?.filter(a => a.task_id === task.id)
+              .map(a => {
+                const profile = allProfilesResult.data?.find(p => p.user_id === a.user_id);
+                return {
+                  user_id: a.user_id,
+                  full_name: profile?.full_name || t('board.unknown'),
+                  avatar_url: profile?.avatar_url || null
+                };
+              }) || []
+          }));
+          
+          setTasks(tasksWithAssignees);
+        } else {
+          setTasks([]);
+        }
       }
-
-      const { data: tasksData } = await supabase
-        .from("tasks")
-        .select(`
-          *,
-          task_assignees (
-            user_id,
-            profiles (
-              user_id,
-              full_name,
-              avatar_url
-            )
-          )
-        `)
-        .in("column_id", columnsData?.map(c => c.id) || [])
-        .order("position");
-
-      if (tasksData) {
-        const tasksWithAssignees = tasksData.map(task => ({
-          ...task,
-          assignees: task.task_assignees?.map((ta: any) => ({
-            user_id: ta.profiles.user_id,
-            full_name: ta.profiles.full_name,
-            avatar_url: ta.profiles.avatar_url
-          })) || []
-        }));
-        setTasks(tasksWithAssignees);
-      }
-    } catch (error) {
-      console.error("Error fetching board data:", error);
+    } catch (error: any) {
+      console.error('Board fetch error:', error);
       toast.error(t('board.errorLoadingBoard'));
     } finally {
       setLoading(false);
     }
   };
-
   const setupRealtimeSubscriptions = () => {
-    const columnsSubscription = supabase
-      .channel('columns-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'columns',
-          filter: `board_id=eq.${board?.id}`
-        },
-        () => {
-          fetchBoardData();
-        }
-      )
-      .subscribe();
-
-    const tasksSubscription = supabase
-      .channel('tasks-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'tasks'
-        },
-        () => {
-          fetchBoardData();
-        }
-      )
-      .subscribe();
-
-    const taskAssigneesSubscription = supabase
-      .channel('task-assignees-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'task_assignees'
-        },
-        () => {
-          fetchBoardData();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      columnsSubscription.unsubscribe();
-      tasksSubscription.unsubscribe();
-      taskAssigneesSubscription.unsubscribe();
-    };
-  };
-
-  useEffect(() => {
-    if (organizationId) {
-      checkAccess();
+    const channel = supabase.channel(`board-changes-${organizationId}`).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "tasks"
+    }, () => {
       fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "columns"
+    }, () => {
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "profiles"
+    }, () => {
+      // Refresh both org members and tasks to update all avatars
       fetchOrgMembers();
+      fetchBoardData();
+    }).subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+  const getLocaleString = () => {
+    const langMap: { [key: string]: string } = {
+      'nl': 'nl-NL',
+      'en': 'en-US',
+      'es': 'es-ES',
+      'de': 'de-DE'
+    };
+    return langMap[i18n.language] || 'nl-NL';
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString(getLocaleString(), {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString(getLocaleString(), {
+      weekday: "short",
+      day: "numeric",
+      month: "short"
+    });
+  };
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return t('board.priorityHigh');
+      case "medium":
+        return t('board.priorityMedium');
+      case "low":
+        return t('board.priorityLow');
+      default:
+        return priority;
     }
-  }, [organizationId]);
-
-  useEffect(() => {
-    if (board?.id) {
-      return setupRealtimeSubscriptions();
+  };
+  const getDeadlineBadgeColor = (dueDate: string) => {
+    const now = new Date();
+    const due = new Date(dueDate);
+    const twoDaysFromNow = addDays(now, 2);
+    if (isBefore(due, now)) {
+      return "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]";
+    } else if (isBefore(due, twoDaysFromNow)) {
+      return "bg-[#fef3c7] text-[#7c2d12] border-[#fde68a]";
+    } else {
+      return "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]";
     }
-  }, [board?.id]);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    const fetchUserPlan = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('subscription_tier')
-          .eq('user_id', user.id)
-          .single();
-        
-        const { data: subscription } = await supabase
-          .from('user_subscriptions')
-          .select('plan')
-          .eq('user_id', user.id)
-          .single();
-        
-        if (subscription) {
-          setUserPlan(subscription.plan || 'free');
-          setCanCustomizeBackground(subscription.plan === 'team' || subscription.plan === 'business');
-        }
+  };
+  const getPriorityBadge = (priority: "low" | "medium" | "high" | null) => {
+    if (!priority) return null;
+    
+    const config = {
+      high: {
+        label: t('board.priorityHigh'),
+        color: "bg-[#fee2e2] text-[#991b1b] border-[#fecaca]"
+      },
+      medium: {
+        label: t('board.priorityMedium'),
+        color: "bg-[#fef3c7] text-[#92400e] border-[#fde68a]"
+      },
+      low: {
+        label: t('board.priorityLow'),
+        color: "bg-[#dcfce7] text-[#065f46] border-[#bbf7d0]"
       }
     };
-    
-    fetchUserPlan();
-  }, []);
-
-  const formatDueDate = (dueDate: string | null | undefined) => {
-    if (!dueDate) return null;
-    
-    const date = new Date(dueDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = addDays(today, 1);
-    
-    if (isBefore(date, today)) {
-      return { text: format(date, 'dd MMM', { locale: getDateLocale() }), color: 'text-red-600', bgColor: 'bg-red-50' };
-    } else if (date.toDateString() === today.toDateString()) {
-      return { text: t('board.today'), color: 'text-orange-600', bgColor: 'bg-orange-50' };
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return { text: t('board.tomorrow'), color: 'text-yellow-600', bgColor: 'bg-yellow-50' };
-    } else {
-      return { text: format(date, 'dd MMM', { locale: getDateLocale() }), color: 'text-gray-600', bgColor: 'bg-gray-50' };
-    }
+    return config[priority];
+  };
+  const openEditDialog = (task: Task) => {
+    const column = columns.find(col => col.id === task.column_id);
+    setEditingTaskColumn(column?.name || null);
+    setEditingTask(task);
+    setEditTaskTitle(task.title);
+    setEditTaskDescription(task.description || "");
+    setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
+    setEditTaskPriority(task.priority);
+    setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
   };
 
-  const getPriorityColor = (priority: string | null) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityLabel = (priority: string | null) => {
-    switch (priority) {
-      case 'high': return t('board.priorityHigh');
-      case 'medium': return t('board.priorityMedium');
-      case 'low': return t('board.priorityLow');
-      default: return t('board.priorityNone');
-    }
-  };
-
-  const handleCreateTask = async (columnId: string) => {
-    try {
-      const validation = taskSchema.safeParse({
-        title: newTaskTitle,
-        description: newTaskDescription
-      });
-
-      if (!validation.success) {
-        toast.error(validation.error.errors[0].message);
-        return;
-      }
-
-      const maxPosition = Math.max(
-        ...tasks.filter(t => t.column_id === columnId).map(t => t.position),
-        -1
-      );
-
-      const { error } = await supabase.from("tasks").insert({
-        column_id: columnId,
-        title: newTaskTitle.trim(),
-        description: newTaskDescription.trim() || null,
-        priority: newTaskPriority,
-        position: maxPosition + 1,
-        due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null
-      });
-
-      if (error) throw error;
-
-      setNewTaskTitle("");
-      setNewTaskDescription("");
-      setNewTaskPriority("medium");
-      setNewTaskDueDate(undefined);
-      setOpenDialog(null);
-      toast.success(t('board.taskCreated'));
-    } catch (error) {
-      console.error("Error creating task:", error);
-      toast.error(t('board.errorCreatingTask'));
-    }
-  };
-
-  const handleUpdateTask = async () => {
+  const handleAddAssignee = async (userId: string) => {
     if (!editingTask) return;
+    try {
+      const { error } = await supabase.from("task_assignees").insert({
+        task_id: editingTask.id,
+        user_id: userId
+      });
+      if (error) throw error;
+      setEditTaskAssignees([...editTaskAssignees, userId]);
+      await fetchBoardData();
+    } catch (error) {
+      toast.error(t('board.errorAddingAssignee'));
+    }
+  };
 
+  const handleRemoveAssignee = async (userId: string) => {
+    if (!editingTask) return;
+    try {
+      const { error } = await supabase
+        .from("task_assignees")
+        .delete()
+        .eq("task_id", editingTask.id)
+        .eq("user_id", userId);
+      if (error) throw error;
+      setEditTaskAssignees(editTaskAssignees.filter(id => id !== userId));
+      await fetchBoardData();
+    } catch (error) {
+      toast.error(t('board.errorRemovingAssignee'));
+    }
+  };
+  const handleEditTask = async () => {
+    if (!editingTask) return;
     try {
       const validation = taskSchema.safeParse({
         title: editTaskTitle,
         description: editTaskDescription
       });
-
       if (!validation.success) {
         toast.error(validation.error.errors[0].message);
         return;
       }
-
-      const { error: taskError } = await supabase
-        .from("tasks")
-        .update({
-          title: editTaskTitle.trim(),
-          description: editTaskDescription.trim() || null,
-          priority: editTaskPriority,
-          due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null
-        })
-        .eq("id", editingTask.id);
-
-      if (taskError) throw taskError;
-
-      const { error: deleteError } = await supabase
-        .from("task_assignees")
-        .delete()
-        .eq("task_id", editingTask.id);
-
-      if (deleteError) throw deleteError;
-
-      if (editTaskAssignees.length > 0) {
-        const { error: assignError } = await supabase
-          .from("task_assignees")
-          .insert(
-            editTaskAssignees.map(userId => ({
-              task_id: editingTask.id,
-              user_id: userId
-            }))
-          );
-
-        if (assignError) throw assignError;
+      
+      if (isDemo) {
+        setTasks(tasks.map(t => 
+          t.id === editingTask.id 
+            ? { ...t, title: validation.data.title, description: validation.data.description || null, priority: editTaskPriority, due_date: editTaskDueDate?.toISOString() || null }
+            : t
+        ));
+        setEditingTask(null);
+        toast.success('✨ Demo mode - taak bijgewerkt (niet opgeslagen)');
+        return;
       }
-
-      setEditingTask(null);
-      setEditingTaskColumn(null);
+      
+      const {
+        error
+      } = await supabase.from("tasks").update({
+        title: validation.data.title,
+        description: validation.data.description || null,
+        due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
+        priority: editTaskPriority
+      }).eq("id", editingTask.id);
+      if (error) throw error;
       toast.success(t('board.taskUpdated'));
-    } catch (error) {
-      console.error("Error updating task:", error);
+      setEditingTask(null);
+      await fetchBoardData();
+    } catch (error: any) {
       toast.error(t('board.errorUpdatingTask'));
     }
   };
-
-  const handleDeleteTask = async (taskId: string) => {
+  const handleCompleteFromDialog = async () => {
+    if (!editingTask) return;
+    setEditingTask(null);
+    await handleMarkDone(editingTask);
+  };
+  const handleDeleteFromDialog = async () => {
+    if (!editingTask) return;
+    const taskId = editingTask.id;
+    setEditingTask(null);
+    await handleDeleteTask(taskId);
+  };
+  const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
+  const handleClearCompleted = async () => {
+    const completedColumn = columns.find(col => col.name === t('board.completedColumn'));
+    if (!completedColumn) return;
+    const completedTasks = tasks.filter(task => task.column_id === completedColumn.id);
+    if (completedTasks.length === 0) {
+      toast.error(t('board.noCompletedTasks'));
+      return;
+    }
     try {
-      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
-
+      const {
+        error
+      } = await supabase.from("tasks").delete().eq("column_id", completedColumn.id);
       if (error) throw error;
-
+      toast.success(t('board.completedTasksDeleted', { count: completedTasks.length }));
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error(t('board.errorDeletingTasks'));
+    }
+  };
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+  
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(1.0, prev + 0.05));
+  };
+  
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(0.5, prev - 0.05));
+  };
+  
+  const handleZoomReset = () => {
+    setZoomLevel(0.75);
+  };
+  const handleAddTask = async (columnId: string) => {
+    try {
+      const validation = taskSchema.safeParse({
+        title: newTaskTitle,
+        description: newTaskDescription
+      });
+      if (!validation.success) {
+        toast.error(validation.error.errors[0].message);
+        return;
+      }
+      
+      if (isDemo) {
+        const newTask: Task = {
+          id: `demo-task-${Date.now()}`,
+          column_id: columnId,
+          title: validation.data.title,
+          description: validation.data.description || null,
+          priority: newTaskPriority,
+          position: tasks.filter(t => t.column_id === columnId).length,
+          due_date: newTaskDueDate?.toISOString() || null,
+          assignees: []
+        };
+        setTasks([...tasks, newTask]);
+        setNewTaskTitle('');
+        setNewTaskDescription('');
+        setNewTaskPriority('medium');
+        setNewTaskDueDate(undefined);
+        setOpenDialog(null);
+        toast.success('✨ Demo mode - taak toegevoegd (niet opgeslagen)');
+        return;
+      }
+      
+      const column = columns.find(col => col.id === columnId);
+      if (!column) {
+        toast.error(t('board.columnNotFound'));
+        return;
+      }
+      const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const {
+        error
+      } = await supabase.from("tasks").insert({
+        column_id: column.id,
+        title: validation.data.title,
+        description: validation.data.description || null,
+        priority: newTaskPriority,
+        due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
+        position: maxPosition + 1
+      });
+      if (error) throw error;
+      toast.success(t('board.taskAdded'));
+      setOpenDialog(null);
+      setNewTaskTitle("");
+      setNewTaskDescription("");
+      setNewTaskPriority("medium");
+      setNewTaskDueDate(undefined);
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error(t('board.errorAddingTask'));
+    }
+  };
+  const handleDeleteTask = async (taskId: string) => {
+    if (isDemo) {
+      setTasks(tasks.filter(t => t.id !== taskId));
+      toast.success('✨ Demo mode - taak verwijderd (niet opgeslagen)');
+      return;
+    }
+    
+    try {
+      const {
+        error
+      } = await supabase.from("tasks").delete().eq("id", taskId);
+      if (error) throw error;
       toast.success(t('board.taskDeleted'));
-    } catch (error) {
-      console.error("Error deleting task:", error);
+      await fetchBoardData();
+    } catch (error: any) {
       toast.error(t('board.errorDeletingTask'));
     }
   };
+  const handleMarkDone = async (task: Task) => {
+    const completedColumn = columns.find(col => col.name === t('board.completedColumn'));
+    if (!completedColumn) {
+      toast.error(t('board.completedColumnNotFound'));
+      return;
+    }
+    try {
+      const maxPosition = tasks.filter(t => t.column_id === completedColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const {
+        error
+      } = await supabase.from("tasks").update({
+        column_id: completedColumn.id,
+        position: maxPosition + 1
+      }).eq("id", task.id);
+      if (error) throw error;
+      toast.success(t('board.taskCompleted'));
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error(t('board.errorCompletingTask'));
+    }
+  };
+  const handleChangePriority = async (taskId: string, newPriority: "low" | "medium" | "high") => {
+    try {
+      const {
+        error
+      } = await supabase.from("tasks").update({
+        priority: newPriority
+      }).eq("id", taskId);
+      if (error) throw error;
+      toast.success(t('board.priorityChanged', { priority: getPriorityLabel(newPriority) }));
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error(t('board.errorChangingPriority'));
+    }
+  };
+  const calculateSnap = (x: number, y: number) => {
+    // 1. Snap to grid
+    let snappedX = Math.round(x / GRID_SIZE) * GRID_SIZE;
+    let snappedY = Math.round(y / GRID_SIZE) * GRID_SIZE;
 
-  const handleDragStart = (task: Task) => {
+    // 2. Check alignment with other columns
+    const guides: {
+      x?: number;
+      y?: number;
+    } = {};
+    for (const col of columns) {
+      if (col.id === draggedColumn?.id) continue;
+
+      // X alignment check
+      if (Math.abs(snappedX - col.x_position) < SNAP_THRESHOLD) {
+        snappedX = col.x_position;
+        guides.x = col.x_position;
+      }
+
+      // Y alignment check
+      if (Math.abs(snappedY - col.y_position) < SNAP_THRESHOLD) {
+        snappedY = col.y_position;
+        guides.y = col.y_position;
+      }
+    }
+    return {
+      snappedX,
+      snappedY,
+      guides
+    };
+  };
+  const handleDragStart = (e: React.DragEvent, task: Task) => {
     setDraggedTask(task);
     setIsDragging(true);
+    e.dataTransfer.effectAllowed = "move";
   };
-
+  const handleDragEnd = () => {
+    setDraggedTask(null);
+    setDraggedOverColumn(null);
+    setIsDragging(false);
+  };
   const handleDragOver = (e: React.DragEvent, columnId: string) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
     setDraggedOverColumn(columnId);
   };
-
-  const handleDrop = async (columnId: string) => {
+  const handleDrop = async (e: React.DragEvent, columnId: string) => {
+    e.preventDefault();
     if (!draggedTask) return;
-
-    try {
-      const tasksInColumn = tasks.filter(t => t.column_id === columnId);
-      const maxPosition = Math.max(...tasksInColumn.map(t => t.position), -1);
-
-      const { error } = await supabase
-        .from("tasks")
-        .update({
-          column_id: columnId,
-          position: maxPosition + 1
-        })
-        .eq("id", draggedTask.id);
-
-      if (error) throw error;
-
-      toast.success(t('board.taskMoved'));
-    } catch (error) {
-      console.error("Error moving task:", error);
-      toast.error(t('board.errorMovingTask'));
-    } finally {
+    const targetColumn = columns.find(col => col.id === columnId);
+    if (!targetColumn) return;
+    const currentColumn = columns.find(col => col.id === draggedTask.column_id);
+    if (currentColumn?.id === columnId) {
       setDraggedTask(null);
       setDraggedOverColumn(null);
       setIsDragging(false);
-    }
-  };
-
-  const openEditDialog = (task: Task, columnId: string) => {
-    setEditingTask(task);
-    setEditingTaskColumn(columnId);
-    setEditTaskTitle(task.title);
-    setEditTaskDescription(task.description || "");
-    setEditTaskPriority(task.priority);
-    setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
-    setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
-  };
-
-  const toggleAssignee = (userId: string) => {
-    setEditTaskAssignees(prev =>
-      prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
-  };
-
-  const handleBackgroundChange = async (gradient: string) => {
-    if (!canCustomizeBackground) {
-      toast.error(t('board.premiumFeature'));
       return;
     }
-
-    setSelectedBackground(gradient);
-    
     try {
-      const { error } = await supabase
-        .from('boards')
-        .update({ 
-          background_gradient: gradient,
-          background_image_url: null,
-          background_position_x: 50,
-          background_position_y: 50,
-          background_scale: 100
-        })
-        .eq('id', board.id);
-
+      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const {
+        error
+      } = await supabase.from("tasks").update({
+        column_id: targetColumn.id,
+        position: maxPosition + 1
+      }).eq("id", draggedTask.id);
       if (error) throw error;
-      
-      setBackgroundImageUrl(null);
-      setBackgroundPositionX(50);
-      setBackgroundPositionY(50);
-      setBackgroundScale(100);
-      toast.success(t('board.backgroundUpdated'));
-    } catch (error) {
-      console.error('Error updating background:', error);
-      toast.error(t('board.errorUpdatingBackground'));
+      toast.success(t('board.taskMoved', { column: targetColumn.name }));
+      await fetchBoardData();
+    } catch (error: any) {
+      toast.error(t('board.errorMovingTask'));
     }
+    setDraggedTask(null);
+    setDraggedOverColumn(null);
+    setIsDragging(false);
   };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!canCustomizeBackground) {
-      toast.error(t('board.premiumFeature'));
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('board.imageTooLarge'));
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setPendingImageFile(file);
-      setPendingImagePreview(event.target?.result as string);
-      setCropEditorOpen(true);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleCropComplete = async (croppedBlob: Blob, cropData: { x: number; y: number; scale: number }) => {
-    setUploadingBackground(true);
-    setCropEditorOpen(false);
-
-    try {
-      const fileName = `${board.id}-${Date.now()}.jpg`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('board-backgrounds')
-        .upload(fileName, croppedBlob, {
-          contentType: 'image/jpeg',
-          upsert: true
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('board-backgrounds')
-        .getPublicUrl(fileName);
-
-      const { error: updateError } = await supabase
-        .from('boards')
-        .update({ 
-          background_image_url: publicUrl,
-          background_gradient: null,
-          background_position_x: cropData.x,
-          background_position_y: cropData.y,
-          background_scale: cropData.scale,
-          background_fit_mode: 'scale'
-        })
-        .eq('id', board.id);
-
-      if (updateError) throw updateError;
-
-      setBackgroundImageUrl(publicUrl);
-      setBackgroundPositionX(cropData.x);
-      setBackgroundPositionY(cropData.y);
-      setBackgroundScale(cropData.scale);
-      setBackgroundFitMode('scale');
-      setSelectedBackground('');
-      toast.success(t('board.backgroundUpdated'));
-    } catch (error) {
-      console.error('Error uploading background:', error);
-      toast.error(t('board.errorUploadingBackground'));
-    } finally {
-      setUploadingBackground(false);
-      setPendingImageFile(null);
-      setPendingImagePreview(null);
-    }
-  };
-
-  const handleRemoveBackground = async () => {
-    if (!canCustomizeBackground) {
-      toast.error(t('board.premiumFeature'));
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('boards')
-        .update({ 
-          background_image_url: null,
-          background_gradient: 'from-blue-50 to-blue-100',
-          background_position_x: 50,
-          background_position_y: 50,
-          background_scale: 100
-        })
-        .eq('id', board.id);
-
-      if (error) throw error;
-
-      setBackgroundImageUrl(null);
-      setSelectedBackground('from-blue-50 to-blue-100');
-      setBackgroundPositionX(50);
-      setBackgroundPositionY(50);
-      setBackgroundScale(100);
-      toast.success(t('board.backgroundRemoved'));
-    } catch (error) {
-      console.error('Error removing background:', error);
-      toast.error(t('board.errorRemovingBackground'));
-    }
-  };
-
-  const snapToGrid = (value: number) => {
-    return Math.round(value / GRID_SIZE) * GRID_SIZE;
-  };
-
-  const findSnapGuides = (col: Column, allColumns: Column[]) => {
-    const guides: { x?: number; y?: number } = {};
-    const threshold = SNAP_THRESHOLD;
-
-    allColumns.forEach(other => {
-      if (other.id === col.id) return;
-
-      if (Math.abs(col.x_position - other.x_position) < threshold) {
-        guides.x = other.x_position;
-      }
-      if (Math.abs(col.x_position + col.width - (other.x_position + other.width)) < threshold) {
-        guides.x = other.x_position + other.width - col.width;
-      }
-      if (Math.abs(col.y_position - other.y_position) < threshold) {
-        guides.y = other.y_position;
-      }
-      if (Math.abs(col.y_position + col.height - (other.y_position + other.height)) < threshold) {
-        guides.y = other.y_position + other.height - col.height;
-      }
-    });
-
-    return guides;
-  };
-
-  const handleColumnDragStart = (e: React.MouseEvent, column: Column) => {
-    if (!editMode) return;
-    
+  const startResize = (e: React.MouseEvent, column: Column, handle: string) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    const rect = (e.target as HTMLElement).getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-    
-    setDraggedColumn(column);
-    setDragOffset({ x: offsetX, y: offsetY });
-    setDragPreview({ x: e.clientX - offsetX, y: e.clientY - offsetY });
-  };
-
-  const handleColumnDragMove = (e: MouseEvent) => {
-    if (!draggedColumn || !editMode) return;
-
-    const containerRect = document.getElementById('board-container')?.getBoundingClientRect();
-    if (!containerRect) return;
-
-    let newX = (e.clientX - containerRect.left - dragOffset.x - panPosition.x) / SCALE_FACTOR;
-    let newY = (e.clientY - containerRect.top - dragOffset.y - panPosition.y) / SCALE_FACTOR;
-
-    newX = Math.max(0, newX);
-    newY = Math.max(0, newY);
-
-    newX = snapToGrid(newX);
-    newY = snapToGrid(newY);
-
-    const updatedColumn = { ...draggedColumn, x_position: newX, y_position: newY };
-    const guides = findSnapGuides(updatedColumn, columns);
-
-    if (guides.x !== undefined) newX = guides.x;
-    if (guides.y !== undefined) newY = guides.y;
-
-    setSnapGuides(guides);
-    setDragPreview({ 
-      x: e.clientX - dragOffset.x, 
-      y: e.clientY - dragOffset.y 
-    });
-
-    setColumns(prev =>
-      prev.map(col =>
-        col.id === draggedColumn.id
-          ? { ...col, x_position: newX, y_position: newY }
-          : col
-      )
-    );
-  };
-
-  const handleColumnDragEnd = async () => {
-    if (!draggedColumn || !editMode) return;
-
-    try {
-      const updatedColumn = columns.find(c => c.id === draggedColumn.id);
-      if (!updatedColumn) return;
-
-      const { error } = await supabase
-        .from('columns')
-        .update({
-          x_position: updatedColumn.x_position,
-          y_position: updatedColumn.y_position
-        })
-        .eq('id', draggedColumn.id);
-
-      if (error) throw error;
-
-      toast.success(t('board.columnMoved'));
-    } catch (error) {
-      console.error('Error updating column position:', error);
-      toast.error(t('board.errorMovingColumn'));
-    } finally {
-      setDraggedColumn(null);
-      setDragOffset({ x: 0, y: 0 });
-      setDragPreview(null);
-      setSnapGuides(null);
-    }
-  };
-
-  useEffect(() => {
-    if (draggedColumn && editMode) {
-      const handleMouseMove = (e: MouseEvent) => handleColumnDragMove(e);
-      const handleMouseUp = () => handleColumnDragEnd();
-
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [draggedColumn, dragOffset, columns, editMode, panPosition, SCALE_FACTOR]);
-
-  const handleResizeStart = (e: React.MouseEvent, column: Column, handle: string) => {
-    if (!editMode) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
     setResizing(true);
     setResizeHandle(handle);
-    setResizeStart({
-      x: e.clientX,
-      y: e.clientY,
-      col: column
-    });
-    setSelectedColumn(column);
-  };
+    const startX = e.clientX / SCALE_FACTOR;
+    const startY = e.clientY / SCALE_FACTOR;
+    let currentColumn = {
+      ...column
+    };
+    setSelectedColumn(currentColumn);
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaX = moveEvent.clientX / SCALE_FACTOR - startX;
+      const deltaY = moveEvent.clientY / SCALE_FACTOR - startY;
+      const updated = {
+        ...column
+      };
 
-  const handleResizeMove = (e: MouseEvent) => {
-    if (!resizing || !resizeStart || !resizeHandle || !editMode) return;
+      // Calculate snap guides
+      const guides: { x?: number; y?: number } = {};
 
-    const deltaX = (e.clientX - resizeStart.x) / SCALE_FACTOR;
-    const deltaY = (e.clientY - resizeStart.y) / SCALE_FACTOR;
+      // Unified resize: width and header_width scale together, height adjusts independently
+      if (handle === 'nw') {
+        // Top-left: shrink from top-left
+        const newWidth = Math.max(100, (column.width || 300) - deltaX);
+        const newHeight = Math.max(100, (column.height || 600) - deltaY);
+        
+        // Check alignment with other columns
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+      }
+      if (handle === 'ne') {
+        // Top-right: expand right, shrink top
+        const newWidth = Math.max(100, (column.width || 300) + deltaX);
+        const newHeight = Math.max(100, (column.height || 600) - deltaY);
+        
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.content_padding_top = Math.max(0, (column.content_padding_top || 0) + deltaY);
+      }
+      if (handle === 'sw') {
+        // Bottom-left: shrink left, expand bottom
+        const newWidth = Math.max(100, (column.width || 300) - deltaX);
+        const newHeight = Math.max(100, (column.height || 600) + deltaY);
+        
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+      }
+      if (handle === 'se') {
+        // Bottom-right: expand both
+        const newWidth = Math.max(100, (column.width || 300) + deltaX);
+        const newHeight = Math.max(100, (column.height || 600) + deltaY);
+        
+        for (const col of columns) {
+          if (col.id === column.id) continue;
+          if (Math.abs(newWidth - (col.width || 300)) < SNAP_THRESHOLD) {
+            guides.x = col.x_position + (col.width || 300);
+          }
+          if (Math.abs(newHeight - (col.height || 600)) < SNAP_THRESHOLD) {
+            guides.y = col.y_position + (col.height || 600);
+          }
+        }
+        
+        updated.width = newWidth;
+        updated.header_width = newWidth;
+        updated.height = newHeight;
+        updated.content_padding_bottom = Math.max(0, (column.content_padding_bottom || 0) - deltaY);
+      }
+      if (handle === 'header-bottom') {
+        // Header bottom: only adjust header height
+        const newHeaderHeight = Math.max(40, (column.header_height || 60) + deltaY);
+        updated.header_height = newHeaderHeight;
+      }
+      
+      setSnapGuides(Object.keys(guides).length > 0 ? guides : null);
+      currentColumn = updated;
+      setSelectedColumn(updated);
+    };
+    const handleMouseUp = async () => {
+      try {
+        const updateData: any = {
+          header_height: Math.round(currentColumn.header_height || 60),
+          header_width: currentColumn.header_width ? Math.round(currentColumn.header_width) : null,
+          content_padding_top: Math.round(currentColumn.content_padding_top || 0),
+          content_padding_right: Math.round(currentColumn.content_padding_right || 0),
+          content_padding_bottom: Math.round(currentColumn.content_padding_bottom || 0),
+          content_padding_left: Math.round(currentColumn.content_padding_left || 0)
+        };
 
-    let newWidth = resizeStart.col.width;
-    let newHeight = resizeStart.col.height;
-    let newX = resizeStart.col.x_position;
-    let newY = resizeStart.col.y_position;
-
-    if (resizeHandle.includes('e')) {
-      newWidth = Math.max(200, resizeStart.col.width + deltaX);
-    }
-    if (resizeHandle.includes('w')) {
-      const maxDelta = resizeStart.col.width - 200;
-      const constrainedDelta = Math.min(deltaX, maxDelta);
-      newWidth = resizeStart.col.width - constrainedDelta;
-      newX = resizeStart.col.x_position + constrainedDelta;
-    }
-    if (resizeHandle.includes('s')) {
-      newHeight = Math.max(300, resizeStart.col.height + deltaY);
-    }
-    if (resizeHandle.includes('n')) {
-      const maxDelta = resizeStart.col.height - 300;
-      const constrainedDelta = Math.min(deltaY, maxDelta);
-      newHeight = resizeStart.col.height - constrainedDelta;
-      newY = resizeStart.col.y_position + constrainedDelta;
-    }
-
-    newWidth = snapToGrid(newWidth);
-    newHeight = snapToGrid(newHeight);
-    newX = snapToGrid(newX);
-    newY = snapToGrid(newY);
-
-    setColumns(prev =>
-      prev.map(col =>
-        col.id === resizeStart.col.id
-          ? { ...col, width: newWidth, height: newHeight, x_position: newX, y_position: newY }
-          : col
-      )
-    );
-  };
-
-  const handleResizeEnd = async () => {
-    if (!resizing || !resizeStart || !editMode) return;
-
-    try {
-      const updatedColumn = columns.find(c => c.id === resizeStart.col.id);
-      if (!updatedColumn) return;
-
-      const { error } = await supabase
-        .from('columns')
-        .update({
-          width: updatedColumn.width,
-          height: updatedColumn.height,
-          x_position: updatedColumn.x_position,
-          y_position: updatedColumn.y_position
-        })
-        .eq('id', resizeStart.col.id);
-
-      if (error) throw error;
-
-      toast.success(t('board.columnResized'));
-    } catch (error) {
-      console.error('Error resizing column:', error);
-      toast.error(t('board.errorResizingColumn'));
-    } finally {
+        // Only add width and height if they're valid numbers
+        if (currentColumn.width && !isNaN(currentColumn.width)) {
+          updateData.width = Math.round(currentColumn.width);
+        }
+        if (currentColumn.height && !isNaN(currentColumn.height)) {
+          updateData.height = Math.round(currentColumn.height);
+        }
+        const {
+          error
+        } = await supabase.from('columns').update(updateData).eq('id', currentColumn.id);
+        if (error) throw error;
+        toast.success(t('board.columnUpdated'));
+        await fetchBoardData();
+      } catch (error: any) {
+        console.error('Update error:', error);
+        toast.error(t('board.updateError') + error.message);
+      }
       setResizing(false);
       setResizeHandle(null);
       setResizeStart(null);
-    }
+      setSnapGuides(null);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
-
-  useEffect(() => {
-    if (resizing && editMode) {
-      const handleMouseMove = (e: MouseEvent) => handleResizeMove(e);
-      const handleMouseUp = () => handleResizeEnd();
-
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [resizing, resizeStart, resizeHandle, columns, editMode, SCALE_FACTOR]);
-
-  const handleDeleteColumn = async (columnId: string) => {
-    try {
-      const { error } = await supabase
-        .from('columns')
-        .delete()
-        .eq('id', columnId);
-
-      if (error) throw error;
-
-      toast.success(t('board.columnDeleted'));
-      setDeleteColumnId(null);
-    } catch (error) {
-      console.error('Error deleting column:', error);
-      toast.error(t('board.errorDeletingColumn'));
-    }
-  };
-
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.1, 3));
-  };
-
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.1, 0.5));
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      const delta = -e.deltaY * 0.001;
-      setZoomLevel(prev => Math.min(Math.max(prev + delta, 0.5), 3));
-    }
-  };
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  const backgroundStyle = backgroundImageUrl
-    ? {
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: backgroundFitMode === 'cover' ? 'cover' : `${backgroundScale}%`,
-        backgroundPosition: backgroundFitMode === 'cover' 
-          ? 'center' 
-          : `${backgroundPositionX}% ${backgroundPositionY}%`,
-        backgroundRepeat: 'no-repeat'
-      }
-    : {};
-
-  return (
-    <div 
-      className={cn(
-        "min-h-screen relative overflow-hidden",
-        !backgroundImageUrl && `bg-gradient-to-br ${selectedBackground}`
-      )}
-      style={backgroundStyle}
-      onWheel={handleWheel}
-    >
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/dashboard")}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                {t('board.backToDashboard')}
-              </Button>
-              <div className="flex items-center gap-3">
-                <img src={logo} alt="Logo" className="h-8 w-8" />
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">
-                    {organization?.name}
-                  </h1>
-                  <p className="text-sm text-gray-500">{board?.name}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {/* Zoom controls */}
-              <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 px-2 py-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleZoomOut}
-                  className="h-7 w-7 p-0"
-                >
-                  <ZoomOut className="h-4 w-4" />
-                </Button>
-                <span className="text-sm font-medium min-w-[3rem] text-center">
-                  {Math.round(zoomLevel * 100)}%
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleZoomIn}
-                  className="h-7 w-7 p-0"
-                >
-                  <ZoomIn className="h-4 w-4" />
-                </Button>
-              </div>
-
-              <ActiveUsers organizationId={organizationId!} />
-              
-              <Button
-                variant={editMode ? "default" : "outline"}
-                size="sm"
-                onClick={() => setEditMode(!editMode)}
-              >
-                {editMode ? t('board.doneEditing') : t('board.editLayout')}
-              </Button>
-
-              <ColumnManagement
-                boardId={board?.id}
-                columns={columns}
-                onColumnsChange={() => fetchBoardData()}
-                open={columnManagementOpen}
-                onOpenChange={setColumnManagementOpen}
-              />
-            </div>
-          </div>
+    return <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">{t('board.loadingBoard')}</p>
         </div>
-      </div>
-
-      {/* Board Canvas */}
+      </div>;
+  }
+  return <div 
+    className="h-screen overflow-hidden relative"
+  >
+      {/* Fixed background layer - doesn't scale with zoom */}
       <div 
-        id="board-container"
-        className="absolute inset-0 pt-[73px]"
+        className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)}
         style={{
-          cursor: editMode ? 'move' : 'default',
-          touchAction: 'none'
+          ...(backgroundImageUrl && {
+            backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
+            backgroundSize: backgroundFitMode === 'cover' ? 'cover' : `${backgroundScale}%`,
+            backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
+            backgroundRepeat: 'no-repeat'
+          })
         }}
+      />
+      
+      {/* Canvas layer with touch gestures */}
+      <div 
+        className="origin-top-left overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        style={{
+          transform: isMobile 
+            ? `translate(${panPosition.x}px, ${panPosition.y}px) scale(${zoomLevel})`
+            : `scale(${zoomLevel})`,
+          width: `${100 / zoomLevel}vw`,
+          height: `${100 / zoomLevel}vh`,
+          touchAction: 'none'
+        }}
       >
-        <div
-          style={{
-            transform: `translate(${panPosition.x}px, ${panPosition.y}px) scale(${SCALE_FACTOR})`,
-            transformOrigin: '0 0',
-            width: '100%',
-            height: '100%',
-            position: 'relative'
-          }}
-        >
-          {/* Snap guides */}
-          {snapGuides?.x !== undefined && (
-            <div
-              className="absolute top-0 bottom-0 w-0.5 bg-blue-500 pointer-events-none z-50"
-              style={{ left: `${snapGuides.x}px` }}
-            />
+        <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
+      
+      {/* Demo Banner */}
+      {isDemo && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm text-primary-foreground py-3 px-4 shadow-lg">
+          <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span className="text-sm font-semibold">
+              🎨 Demo Modus - Probeer alle features! Wijzigingen worden niet opgeslagen.
+            </span>
+            <div className="flex gap-2">
+              <Button size="sm" variant="secondary" onClick={() => navigate('/auth')}>
+                Maak je eigen board
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => navigate('/pricing')}>
+                Prijzen
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <style>{`
+        @keyframes pop {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        @keyframes slide-up {
+          from {
+            transform: translateY(8px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+
+      {/* Header */}
+      <header className="flex items-center justify-between gap-4 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-5 py-[18px] mx-[22px] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] relative overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none">
+        <div className="flex items-center gap-4 relative z-10 min-w-0">
+          <div className="min-w-0">
+            <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm">
+              {organization?.name || "NRG TOTAAL"} – To-Do Board
+            </h1>
+            <p className="text-muted-foreground font-semibold text-[clamp(12px,1.4vw,16px)]">
+              {t('board.liveOverview')}
+            </p>
+          </div>
+          <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.08)] shrink-0 relative">
+            <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
+            <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold whitespace-nowrap relative z-10">{formatDate(currentTime)}</div>
+          </div>
+        </div>
+        <div className="flex gap-2.5 relative z-10">
+          <button onClick={() => navigate("/dashboard")} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] flex items-center gap-2 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+            <ArrowLeft className="w-4 h-4" />
+            {t('dashboard.title')}
+          </button>
+          <div className="flex items-center gap-2 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-3 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]">
+            <button 
+              onClick={handleZoomOut} 
+              disabled={isMobile ? zoomLevel <= 0.01 : zoomLevel <= 0.5}
+              className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
+              title="Zoom uit (Ctrl/Cmd + -)"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <span className="text-foreground font-bold text-sm min-w-[3.5rem] text-center">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+            <button 
+              onClick={handleZoomIn} 
+              disabled={isMobile ? zoomLevel >= 3.0 : zoomLevel >= 1.0}
+              className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg"
+              title="Zoom in (Ctrl/Cmd + +)"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </div>
+          <button onClick={handleFullscreen} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+            ⛶ {t('board.fullscreen')}
+          </button>
+          {!isMobile && (
+            <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
+              <Pencil size={20} />
+            </button>
           )}
-          {snapGuides?.y !== undefined && (
-            <div
-              className="absolute left-0 right-0 h-0.5 bg-blue-500 pointer-events-none z-50"
-              style={{ top: `${snapGuides.y}px` }}
-            />
-          )}
+          <button onClick={handleClearCompleted} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+            <Trash2 size={20} />
+          </button>
+          <ActiveUsers organizationId={organizationId!} />
+        </div>
+      </header>
 
-          {/* Columns */}
-          {columns.map((column) => {
-            const columnTasks = tasks.filter(t => t.column_id === column.id);
-            const isDraggedOver = draggedOverColumn === column.id;
-            const isBeingDragged = draggedColumn?.id === column.id;
-            const isSelected = selectedColumn?.id === column.id;
-
-            return (
-              <div
-                key={column.id}
-                className={cn(
-                  "absolute bg-white/90 backdrop-blur-sm rounded-lg shadow-lg transition-all",
-                  isDraggedOver && "ring-2 ring-primary",
-                  isBeingDragged && "opacity-50",
-                  isSelected && editMode && "ring-2 ring-blue-500",
-                  editMode && "cursor-move hover:shadow-xl"
-                )}
-                style={{
-                  left: `${column.x_position}px`,
-                  top: `${column.y_position}px`,
-                  width: `${column.width}px`,
-                  height: `${column.height}px`,
-                  ...getGlowStyles(column.glow_type)
-                }}
-                onDragOver={(e) => handleDragOver(e, column.id)}
-                onDrop={() => handleDrop(column.id)}
-                onMouseDown={(e) => handleColumnDragStart(e, column)}
-                onClick={() => editMode && setSelectedColumn(column)}
-              >
-                {/* Column Header */}
-                <div 
-                  className="px-4 flex items-center justify-between border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
-                  style={{
-                    height: `${column.header_height}px`,
-                    width: column.header_width ? `${column.header_width}px` : '100%'
-                  }}
+      {/* Canvas Board */}
+      {editMode && !isMobile && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg mx-[22px]">
+          <span className="text-sm font-semibold text-primary">
+            🔧 {t('board.editModeActive')}
+          </span>
+          <div className="flex items-center gap-2">
+            {(userPlan === 'team' || userPlan === 'business') && (
+              <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
+                <Select 
+                  value={backgroundImageUrl === defaultBackground ? 'default' : selectedBackground} 
+                  onValueChange={(value) => {
+                    if (value === 'default') {
+                      handleSetDefaultBackground();
+                    } else {
+                      handleBackgroundChange(value);
+                    }
+                  }} 
+                  disabled={!canCustomizeBackground}
                 >
-                  <h3 className="font-semibold text-gray-900 truncate flex-1">
-                    {column.name}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">
-                      {columnTasks.length}
-                    </span>
-                    {editMode && (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingColumn(column);
-                          }}
-                          className="h-7 w-7 p-0"
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteColumnId(column.id);
-                          }}
-                          className="h-7 w-7 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </>
-                    )}
-                    {!editMode && (
-                      <Dialog open={openDialog === column.id} onOpenChange={(open) => setOpenDialog(open ? column.id : null)}>
-                        <DialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[500px]">
-                          <DialogHeader>
-                            <DialogTitle>{t('board.createTask')}</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="title">{t('board.taskTitle')}</Label>
-                              <Input
-                                id="title"
-                                value={newTaskTitle}
-                                onChange={(e) => setNewTaskTitle(e.target.value)}
-                                placeholder={t('board.taskTitlePlaceholder')}
-                                maxLength={200}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="description">{t('board.taskDescription')}</Label>
-                              <Textarea
-                                id="description"
-                                value={newTaskDescription}
-                                onChange={(e) => setNewTaskDescription(e.target.value)}
-                                placeholder={t('board.taskDescriptionPlaceholder')}
-                                rows={3}
-                                maxLength={1000}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>{t('board.priority')}</Label>
-                              <Select value={newTaskPriority || undefined} onValueChange={(value) => setNewTaskPriority(value as any)}>
-                                <SelectTrigger>
-                                  <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor(newTaskPriority))}>
-                                    {getPriorityLabel(newTaskPriority)}
-                                  </span>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="low">
-                                    <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor("low"))}>
-                                      {t('board.priorityLow')}
-                                    </span>
-                                  </SelectItem>
-                                  <SelectItem value="medium">
-                                    <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor("medium"))}>
-                                      {t('board.priorityMedium')}
-                                    </span>
-                                  </SelectItem>
-                                  <SelectItem value="high">
-                                    <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor("high"))}>
-                                      {t('board.priorityHigh')}
-                                    </span>
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="space-y-2">
-                              <Label>{t('board.dueDate')}</Label>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {newTaskDueDate ? format(newTaskDueDate, 'PPP', { locale: getDateLocale() }) : t('board.pickDate')}
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar
-                                    mode="single"
-                                    selected={newTaskDueDate}
-                                    onSelect={setNewTaskDueDate}
-                                    locale={getDateLocale()}
-                                  />
-                                </PopoverContent>
-                              </Popover>
-                            </div>
-                          </div>
-                          <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={() => setOpenDialog(null)}>
-                              {t('board.cancel')}
-                            </Button>
-                            <Button onClick={() => handleCreateTask(column.id)}>
-                              {t('board.create')}
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                  </div>
-                </div>
-
-                {/* Column Content */}
-                <div 
-                  className="overflow-y-auto"
-                  style={{
-                    height: `calc(100% - ${column.header_height}px)`,
-                    padding: `${column.content_padding_top}px ${column.content_padding_right}px ${column.content_padding_bottom}px ${column.content_padding_left}px`
-                  }}
-                >
-                  <div className="space-y-3">
-                    {columnTasks
-                      .sort((a, b) => a.position - b.position)
-                      .map((task) => (
-                        <SimpleTaskCard
-                          key={task.id}
-                          title={task.title}
-                          description={task.description}
-                          dueDate={task.due_date || null}
-                          onClick={() => openEditDialog(task, column.id)}
-                          assignees={task.assignees}
-                        />
-                      ))}
-                  </div>
-                </div>
-
-                {/* Resize Handles */}
-                {editMode && isSelected && (
-                  <ResizeHandles
-                    mode="column"
-                    onMouseDown={(e, handle) => handleResizeStart(e, column, handle)}
-                    activeHandle={resizeHandle}
-                  />
+                  <SelectTrigger className="w-[200px]">
+                    <span>🎨 {t('board.backgroundsLabel')}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">{t('board.backgroundDefault')}</SelectItem>
+                    <SelectItem value="from-blue-50 to-blue-100">{t('board.backgroundBlue')}</SelectItem>
+                    <SelectItem value="from-purple-50 to-pink-100">{t('board.backgroundPurplePink')}</SelectItem>
+                    <SelectItem value="from-green-50 to-emerald-100">{t('board.backgroundGreen')}</SelectItem>
+                    <SelectItem value="from-orange-50 to-yellow-100">{t('board.backgroundOrangeYellow')}</SelectItem>
+                    <SelectItem value="from-gray-50 to-gray-100">{t('board.backgroundGray')}</SelectItem>
+                    <SelectItem value="from-rose-50 to-pink-100">{t('board.backgroundRose')}</SelectItem>
+                    <SelectItem value="from-cyan-50 to-blue-100">{t('board.backgroundCyan')}</SelectItem>
+                    <SelectItem value="from-indigo-50 to-purple-100">{t('board.backgroundIndigo')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {backgroundImageUrl && backgroundImageUrl !== defaultBackground ? (
+                  <Button 
+                    size="sm" 
+                    variant="destructive"
+                    onClick={handleRemoveBackgroundImage}
+                    disabled={!canCustomizeBackground}
+                    className="flex items-center gap-1"
+                  >
+                    <X className="h-4 w-4" />
+                    {t('board.removeImage')}
+                  </Button>
+                ) : (
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    disabled={uploadingBackground || !canCustomizeBackground}
+                    className="relative flex items-center gap-1"
+                  >
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBackgroundImageUpload}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      disabled={uploadingBackground || !canCustomizeBackground}
+                    />
+                    <Image className="h-4 w-4" />
+                    {uploadingBackground ? t('board.uploading') : t('board.addImage')}
+                  </Button>
                 )}
               </div>
-            );
+            )}
+            {(userPlan === 'free' || userPlan === 'pro') && (
+              <div className="text-xs text-muted-foreground border-r border-primary/20 pr-2">
+                🎨 {t('board.backgroundUpgradeRequired')}
+              </div>
+            )}
+            
+            <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              {t('board.addColumn')}
+            </Button>
+          </div>
+        </div>}
+      <main 
+        className="relative flex-1 min-h-0 overflow-auto" 
+        style={{
+          minWidth: '3000px',
+          minHeight: '2000px'
+        }}
+        onClick={(e) => {
+          if (editMode && selectedColumn && e.target === e.currentTarget) {
+            setSelectedColumn(null);
+          }
+        }}
+        onDragOver={editMode ? e => {
+          e.preventDefault();
+          if (!draggedColumn) return;
+          const canvas = e.currentTarget.getBoundingClientRect();
+          // Account for UI scale factor
+          const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - dragOffset.x);
+          const rawY = Math.max(0, (e.clientY - canvas.top) / SCALE_FACTOR - dragOffset.y);
+          const {
+            snappedX,
+            snappedY,
+            guides
+          } = calculateSnap(rawX, rawY);
+          setDragPreview({
+            x: snappedX,
+            y: snappedY
+          });
+          setSnapGuides(guides);
+        } : undefined} onDrop={editMode ? async e => {
+          e.preventDefault();
+          if (!draggedColumn || !dragPreview) return;
+          try {
+            await supabase.from('columns').update({
+              x_position: dragPreview.x,
+              y_position: dragPreview.y
+            }).eq('id', draggedColumn.id);
+            toast.success(t('board.columnMoved'));
+            await fetchBoardData();
+          } catch (error: any) {
+            toast.error(t('board.moveError') + error.message);
+          }
+          setDraggedColumn(null);
+          setDragPreview(null);
+          setSnapGuides(null);
+        } : undefined}>
+        {/* Grid overlay in edit mode */}
+        {editMode && <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: `
+                linear-gradient(to right, hsl(var(--border) / 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, hsl(var(--border) / 0.1) 1px, transparent 1px)
+              `,
+            backgroundSize: `${GRID_SIZE}px ${GRID_SIZE}px`
+          }} />}
+
+        {/* Snap guide lines */}
+        {snapGuides?.x !== undefined && <div className="absolute top-0 h-full w-[2px] bg-destructive/70 pointer-events-none z-50" style={{
+            left: `${snapGuides.x}px`
+          }} />}
+        {snapGuides?.y !== undefined && <div className="absolute left-0 w-full h-[2px] bg-destructive/70 pointer-events-none z-50" style={{
+            top: `${snapGuides.y}px`
+          }} />}
+
+        {/* Preview overlay during drag */}
+        {dragPreview && draggedColumn && <>
+            <div className="absolute border-4 border-dashed border-primary/50 bg-primary/10 rounded-[24px] pointer-events-none z-40" style={{
+              left: `${dragPreview.x}px`,
+              top: `${dragPreview.y}px`,
+              width: `${draggedColumn.width}px`,
+              height: `${draggedColumn.height}px`
+            }} />
+            {/* Position tooltip */}
+            <div className="absolute bg-popover text-popover-foreground border px-3 py-1.5 rounded-md text-xs font-medium pointer-events-none z-50 shadow-lg" style={{
+              left: `${dragPreview.x + 10}px`,
+              top: `${dragPreview.y - 35}px`
+            }}>
+              x: {dragPreview.x}px, y: {dragPreview.y}px
+            </div>
+          </>}
+
+        {columns.map(column => {
+            const isSelected = selectedColumn?.id === column.id;
+            const displayColumn = isSelected && resizing ? selectedColumn : column;
+            return <section key={column.id} className={cn("absolute flex flex-col transition-all", editMode && !isSelected && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl", draggedColumn?.id === column.id && "opacity-50", isSelected && "ring-4 ring-primary shadow-2xl")} style={{
+              left: `${displayColumn.x_position}px`,
+              top: `${displayColumn.y_position}px`,
+              width: `${displayColumn.width}px`,
+              height: `${displayColumn.height}px`
+            }} draggable={editMode && !isSelected} onDragStart={editMode && !isSelected ? e => {
+              setDraggedColumn(column);
+              const rect = e.currentTarget.getBoundingClientRect();
+              const canvas = (e.currentTarget.parentElement as HTMLElement).getBoundingClientRect();
+              setDragOffset({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+              });
+            } : undefined} onDragEnd={editMode && !isSelected ? () => {
+              setDraggedColumn(null);
+              setDragPreview(null);
+              setSnapGuides(null);
+            } : undefined}>
+            {/* Unified resize handles at column level */}
+            {isSelected && editMode && <>
+                <ResizeHandles mode="column" onMouseDown={(e, handle) => startResize(e, displayColumn, handle)} activeHandle={resizeHandle} headerHeight={displayColumn.header_height || 60} />
+                <div className="absolute -top-10 left-0 bg-purple-600 text-white px-3 py-1.5 rounded-md text-xs font-medium shadow-lg z-50 whitespace-nowrap">
+                  Kolom: {displayColumn.width}px × {displayColumn.height}px | Header: {displayColumn.header_height || 60}px × {displayColumn.header_width || displayColumn.width}px | Padding: T:{displayColumn.content_padding_top || 0} R:{displayColumn.content_padding_right || 0} B:{displayColumn.content_padding_bottom || 0} L:{displayColumn.content_padding_left || 0}
+                </div>
+              </>}
+            
+            <div className={cn("flex items-center justify-between px-3.5 py-3 rounded-[24px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, draggedColumn?.id === column.id && "opacity-40 scale-95", isSelected && editMode && "ring-2 ring-purple-500")} style={{
+                height: `${displayColumn.header_height || 60}px`,
+                minHeight: `${displayColumn.header_height || 60}px`
+              }} onClick={e => {
+                if (editMode) {
+                  e.stopPropagation();
+                  setSelectedColumn(column);
+                }
+              }}>
+              <div className={cn("text-[clamp(16px,2vw,22px)] font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2", editMode && "cursor-pointer hover:text-primary transition-colors")} onClick={e => {
+                  if (editMode) {
+                    e.stopPropagation();
+                    setEditingColumn(displayColumn);
+                  }
+                }}>
+                {editMode && <span className="text-muted-foreground cursor-grab active:cursor-grabbing">⋮⋮</span>}
+                {displayColumn.name}
+              </div>
+              <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
+                <DialogTrigger asChild>
+                  {editMode ? <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" onClick={e => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setDeleteColumnId(column.id);
+                    }}>
+                      <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
+                    </button> : <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                      +
+                    </button>}
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
+                      <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                    </div>
+                    <div>
+                      <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
+                      <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                    </div>
+                    <div>
+                      <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {newTaskDueDate ? format(newTaskDueDate, "PPP", {
+                                locale: getDateLocale()
+                              }) : t('board.selectDate')}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
+                          {newTaskDueDate && <div className="p-3 border-t">
+                              <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
+                                {t('board.removeDate')}
+                              </Button>
+                            </div>}
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                      <Label>{t('board.priority')}</Label>
+                      <div className="flex gap-2">
+                        <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
+                          {t('board.priorityNone')}
+                        </Button>
+                        <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
+                          {t('board.priorityLow')}
+                        </Button>
+                        <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
+                          {t('board.priorityMedium')}
+                        </Button>
+                        <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
+                          {t('board.priorityHigh')}
+                        </Button>
+                      </div>
+                    </div>}
+                    <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
+                      {t('common.add')}
+                    </button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-visible")} style={{
+                paddingTop: `${displayColumn.content_padding_top || 0}px`,
+                paddingRight: `${displayColumn.content_padding_right || 0}px`,
+                paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
+                paddingLeft: `${displayColumn.content_padding_left || 0}px`
+              }} onClick={e => {
+                if (editMode) {
+                  e.stopPropagation();
+                  setSelectedColumn(column);
+                }
+              }}>
+              {/* Task rendering */}
+              <div className="space-y-2.5">
+                {getColumnTasks(column.id).map(task => {
+                    const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
+                    const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
+                    
+                    if (isSimpleColumn) {
+                      return <SimpleTaskCard key={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} />;
+                    }
+                    return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[22px] p-3 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[22px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[21px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95", isOverdue && "animate-overdue-glow")}>
+                    <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                    <div className="flex gap-2 items-start">
+                      <div className="flex-1 min-w-0 pl-4">
+                        <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
+                          <AttachmentCount taskId={task.id} />
+                          {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                              📅 {format(new Date(task.due_date), "d MMM", {
+                                locale: getDateLocale()
+                              })}
+                            </span>}
+                          {task.priority && getPriorityBadge(task.priority) && (
+                            <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                              {getPriorityBadge(task.priority)!.label}
+                            </span>
+                          )}
+                        </div>
+                        <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
+                          {task.title}
+                        </h4>
+                        {task.description && <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2">
+                            {task.description}
+                          </p>}
+                      </div>
+                      {task.assignees && task.assignees.length > 0 && (
+                        <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
+                          {task.assignees.slice(0, 3).map((assignee, idx) => (
+                            <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{ marginLeft: idx > 0 ? '-6px' : '0' }}>
+                              <AvatarImage src={assignee.avatar_url || undefined} />
+                              <AvatarFallback className="text-xs bg-primary/10">
+                                {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                          ))}
+                          {task.assignees.length > 3 && (
+                            <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{ marginLeft: '-6px' }}>
+                              +{task.assignees.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </article>;
+                  })}
+              </div>
+            </div>
+          </section>;
           })}
-        </div>
-      </div>
+      </main>
 
       {/* Edit Task Dialog */}
-      <Dialog open={!!editingTask} onOpenChange={(open) => !open && setEditingTask(null)}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t('board.editTask')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-title">{t('board.taskTitle')}</Label>
-              <Input
-                id="edit-title"
-                value={editTaskTitle}
-                onChange={(e) => setEditTaskTitle(e.target.value)}
-                placeholder={t('board.taskTitlePlaceholder')}
-                maxLength={200}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">{t('board.taskDescription')}</Label>
-              <Textarea
-                id="edit-description"
-                value={editTaskDescription}
-                onChange={(e) => setEditTaskDescription(e.target.value)}
-                placeholder={t('board.taskDescriptionPlaceholder')}
-                rows={3}
-                maxLength={1000}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t('board.priority')}</Label>
-              <Select value={editTaskPriority || undefined} onValueChange={(value) => setEditTaskPriority(value as any)}>
-                <SelectTrigger>
-                  <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor(editTaskPriority))}>
-                    {getPriorityLabel(editTaskPriority)}
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="low">
-                    <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor("low"))}>
-                      {t('board.priorityLow')}
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="medium">
-                    <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor("medium"))}>
-                      {t('board.priorityMedium')}
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="high">
-                    <span className={cn("px-2 py-1 rounded text-xs font-medium", getPriorityColor("high"))}>
-                      {t('board.priorityHigh')}
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{t('board.dueDate')}</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editTaskDueDate ? format(editTaskDueDate, 'PPP', { locale: getDateLocale() }) : t('board.pickDate')}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={editTaskDueDate}
-                    onSelect={setEditTaskDueDate}
-                    locale={getDateLocale()}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="space-y-2">
-              <Label>{t('board.assignees')}</Label>
-              <div className="flex flex-wrap gap-2">
-                {orgMembers.map((member) => (
-                  <button
-                    key={member.user_id}
-                    onClick={() => toggleAssignee(member.user_id)}
-                    className={cn(
-                      "flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors",
-                      editTaskAssignees.includes(member.user_id)
-                        ? "bg-primary/10 border-primary"
-                        : "bg-white border-gray-200 hover:border-gray-300"
-                    )}
-                  >
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={member.avatar_url} />
-                      <AvatarFallback>
-                        {member.full_name?.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{member.full_name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            {editingTask && (
-              <div className="space-y-2">
-                <Label>{t('board.attachments')}</Label>
-                <TaskAttachments taskId={editingTask.id} />
-              </div>
-            )}
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setEditingTask(null)}>
-              {t('board.cancel')}
-            </Button>
-            <Button onClick={handleUpdateTask}>
-              {t('board.save')}
-            </Button>
+          <div className="space-y-4">
+            {(() => {
+                const taskColumn = columns.find(c => c.id === editingTask?.column_id);
+                const isSimpleColumn = taskColumn && (taskColumn.column_type === 'sick_leave' || taskColumn.column_type === 'vacation');
+                return <>
+                  <div>
+                    <Label htmlFor="edit-title">{isSimpleColumn ? t('board.name') : t('board.title')} *</Label>
+                    <Input id="edit-title" value={editTaskTitle} onChange={e => setEditTaskTitle(e.target.value)} placeholder={isSimpleColumn ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
+                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                  </div>
+                  {!isSimpleColumn && <div>
+                      <Label>{t('board.priority')}</Label>
+                      <div className="flex gap-2">
+                        <Button type="button" variant={editTaskPriority === null ? "default" : "outline"} onClick={() => setEditTaskPriority(null)} className="flex-1">
+                          {t('board.priorityNone')}
+                        </Button>
+                        <Button type="button" variant={editTaskPriority === "low" ? "default" : "outline"} onClick={() => setEditTaskPriority("low")} className="flex-1">
+                          {t('board.priorityLow')}
+                        </Button>
+                        <Button type="button" variant={editTaskPriority === "medium" ? "default" : "outline"} onClick={() => setEditTaskPriority("medium")} className="flex-1">
+                          {t('board.priorityMedium')}
+                        </Button>
+                        <Button type="button" variant={editTaskPriority === "high" ? "default" : "outline"} onClick={() => setEditTaskPriority("high")} className="flex-1">
+                          {t('board.priorityHigh')}
+                        </Button>
+                      </div>
+                    </div>}
+                  <div>
+                    <Label>{isSimpleColumn ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !editTaskDueDate && "text-muted-foreground")}>
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {editTaskDueDate ? format(editTaskDueDate, "PPP", {
+                            locale: getDateLocale()
+                          }) : t('board.selectDate')}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar mode="single" selected={editTaskDueDate} onSelect={setEditTaskDueDate} initialFocus locale={getDateLocale()} className="pointer-events-auto" />
+                        {editTaskDueDate && <div className="p-3 border-t">
+                            <Button variant="ghost" className="w-full" onClick={() => setEditTaskDueDate(undefined)}>
+                              {t('board.clearDate')}
+                            </Button>
+                          </div>}
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  
+                  <div>
+                    <Label>{t('board.assignedTo')}</Label>
+                    <div className="space-y-3">
+                      {editTaskAssignees.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {editTaskAssignees.map(userId => {
+                            const member = orgMembers.find(m => m.user_id === userId);
+                            if (!member) return null;
+                            return (
+                              <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                                <Avatar className="h-9 w-9">
+                                  <AvatarImage src={member.avatar_url || undefined} />
+                                  <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
+                                    {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm font-medium">{member.full_name}</span>
+                                <button
+                                  onClick={() => handleRemoveAssignee(userId)}
+                                  className="ml-1 text-muted-foreground hover:text-destructive"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      <Select
+                        onValueChange={(value) => {
+                          if (value && !editTaskAssignees.includes(value)) {
+                            handleAddAssignee(value);
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <span className="text-muted-foreground">{t('board.addTeamMember')}</span>
+                        </SelectTrigger>
+                        <SelectContent className="z-[100]">
+                          {orgMembers
+                            .filter(m => !editTaskAssignees.includes(m.user_id))
+                            .map(member => (
+                              <SelectItem key={member.user_id} value={member.user_id}>
+                                {member.full_name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {editingTask && <TaskAttachments taskId={editingTask.id} />}
+                  
+                  <div className="flex gap-2 pt-4">
+                    <Button onClick={handleDeleteFromDialog} variant="destructive">
+                      {t('common.delete')}
+                    </Button>
+                    <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
+                      ✔ {t('board.complete')}
+                    </Button>
+                    <Button onClick={handleEditTask} className="flex-1">
+                      {t('common.save')}
+                    </Button>
+                  </div>
+                </>;
+              })()}
           </div>
         </DialogContent>
       </Dialog>
 
+      {/* Column Management Dialog */}
+      <ColumnManagement open={columnManagementOpen} onOpenChange={setColumnManagementOpen} columns={columns} boardId={board?.id || ''} onColumnsChange={fetchBoardData} />
+
       {/* Column Edit Sidebar */}
-      {editingColumn && (
-        <ColumnEditSidebar
-          column={editingColumn}
-          onClose={() => setEditingColumn(null)}
-          onSave={() => {
-            setEditingColumn(null);
-            fetchBoardData();
+      {editingColumn && <ColumnEditSidebar column={editingColumn} onClose={() => setEditingColumn(null)} onSave={fetchBoardData} />}
+
+      {/* Background Crop Editor */}
+      {cropEditorOpen && (pendingImagePreview || backgroundImageUrl) && (
+        <BackgroundCropEditor
+          imageUrl={pendingImagePreview || backgroundImageUrl!}
+          initialPositionX={backgroundPositionX}
+          initialPositionY={backgroundPositionY}
+          initialScale={backgroundScale}
+          initialFitMode={backgroundFitMode}
+          onClose={() => {
+            setCropEditorOpen(false);
+            // Clean up preview URL if exists
+            if (pendingImagePreview) {
+              URL.revokeObjectURL(pendingImagePreview);
+              setPendingImagePreview(null);
+              setPendingImageFile(null);
+            }
           }}
+          onApply={handleApplyBackgroundCrop}
         />
       )}
 
       {/* Delete Column Confirmation */}
-      <AlertDialog open={!!deleteColumnId} onOpenChange={(open) => !open && setDeleteColumnId(null)}>
+      <AlertDialog open={!!deleteColumnId} onOpenChange={open => !open && setDeleteColumnId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('board.deleteColumnTitle')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('board.deleteColumn')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('board.deleteColumnDescription')}
+              {t('board.deleteColumnConfirmation')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('board.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleteColumnId && handleDeleteColumn(deleteColumnId)}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              {t('board.delete')}
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteColumn} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Background Crop Editor */}
-      {cropEditorOpen && pendingImagePreview && (
-        <BackgroundCropEditor
-          imageUrl={pendingImagePreview}
-          onClose={() => {
-            setCropEditorOpen(false);
-            setPendingImageFile(null);
-            setPendingImagePreview(null);
-          }}
-          onApply={async (posX, posY, sc, mode) => {
-            if (!pendingImageFile) return;
-            await handleCropComplete(pendingImageFile, { x: posX, y: posY, scale: sc });
-          }}
-        />
-      )}
-
-      {/* Background Customization Panel */}
-      {editMode && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-4">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-gray-700">{t('board.background')}:</span>
-            
-            {/* Gradient presets */}
-            <div className="flex gap-2">
-              {[
-                'from-blue-50 to-blue-100',
-                'from-purple-50 to-purple-100',
-                'from-green-50 to-green-100',
-                'from-orange-50 to-orange-100',
-                'from-pink-50 to-pink-100'
-              ].map((gradient) => (
-                <button
-                  key={gradient}
-                  onClick={() => handleBackgroundChange(gradient)}
-                  className={cn(
-                    "w-10 h-10 rounded-lg border-2 transition-all",
-                    selectedBackground === gradient && !backgroundImageUrl
-                      ? "border-primary scale-110"
-                      : "border-gray-200 hover:border-gray-300",
-                    `bg-gradient-to-br ${gradient}`
-                  )}
-                />
-              ))}
-            </div>
-
-            {/* Image upload */}
-            <div className="flex gap-2 border-l border-gray-200 pl-4">
-              <label className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors",
-                backgroundImageUrl
-                  ? "bg-primary/10 border-primary"
-                  : "bg-white border-gray-200 hover:border-gray-300"
-              )}>
-                <Image className="h-4 w-4" />
-                <span className="text-sm">{t('board.uploadImage')}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                  className="hidden"
-                  disabled={uploadingBackground}
-                />
-              </label>
-
-              {backgroundImageUrl && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRemoveBackground}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+      
+      {/* Logo links onderaan */}
+      <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/dashboard")} />
+    </div>;
 };
-
 export default Board;
