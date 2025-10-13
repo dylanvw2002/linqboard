@@ -1396,7 +1396,7 @@ const Board = () => {
       
       {/* Demo Banner */}
       {isDemo && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-sm text-primary-foreground py-3 px-4 shadow-lg">
+        <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground py-3 px-4 shadow-lg">
           <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
             <span className="text-sm font-semibold">
               🎨 Demo Modus - Probeer alle features! Wijzigingen worden niet opgeslagen.
