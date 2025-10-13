@@ -594,7 +594,7 @@ const Board = () => {
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.5 : 0.75);
+  const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.8 : 0.75);
   const [isLandscape, setIsLandscape] = useState<boolean>(window.innerWidth > window.innerHeight);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
@@ -984,10 +984,10 @@ const Board = () => {
     }
   }, [editMode]);
 
-  // Load zoom level from localStorage, but force 0.5 on mobile
+  // Load zoom level from localStorage, but force 0.8 on mobile
   useEffect(() => {
     if (isMobile) {
-      setZoomLevel(0.5);
+      setZoomLevel(0.8);
     } else {
       const savedZoom = localStorage.getItem('boardZoomLevel');
       if (savedZoom) {
@@ -2045,7 +2045,7 @@ const Board = () => {
               ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 gap-1"
               : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2"
           )}>
-            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.2 : zoomLevel <= 0.5} className={cn(
+            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.5 : zoomLevel <= 0.5} className={cn(
               "text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold",
               isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg"
             )} title="Zoom uit (Ctrl/Cmd + -)">
@@ -2054,7 +2054,7 @@ const Board = () => {
             <span className={cn("text-foreground font-bold text-center", isMobile ? "text-xs min-w-[2.5rem]" : "text-sm min-w-[3.5rem]")}>
               {Math.round(zoomLevel * 100)}%
             </span>
-            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 3.0 : zoomLevel >= 1.0} className={cn(
+            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 2.0 : zoomLevel >= 1.0} className={cn(
               "text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold",
               isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg"
             )} title="Zoom in (Ctrl/Cmd + +)">
@@ -2134,8 +2134,8 @@ const Board = () => {
           </div>
         </div>}
       <main className="relative flex-1 min-h-0 overflow-auto" style={{
-          minWidth: '3000px',
-          minHeight: '2000px'
+          minWidth: isMobile ? '2000px' : '3000px',
+          minHeight: isMobile ? '1200px' : '2000px'
         }} onClick={e => {
           if (editMode && selectedColumn && e.target === e.currentTarget) {
             setSelectedColumn(null);
