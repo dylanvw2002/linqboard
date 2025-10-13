@@ -256,7 +256,7 @@ const Index = () => {
               
               {/* Zorgeloos Vastgoed - met logo */}
               <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px]">
-                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-9 sm:h-10 md:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
+                <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-16 sm:h-24 md:h-28 lg:h-32 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
               
               {/* Onderhoudscontracten.com - met logo */}
