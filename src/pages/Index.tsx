@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import todoBoardIllustration from "@/assets/todo-board-illustration.png";
+import collaborationIllustration from "@/assets/collaboration-illustration.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
 import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
@@ -106,7 +107,7 @@ const Index = () => {
                   </p>
                   
                   <div className="my-8 rounded-xl overflow-hidden shadow-xl border border-border/50">
-                    <img src={todoBoardIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" />
+                    <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto mb-8">
