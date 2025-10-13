@@ -888,7 +888,7 @@ export type Database = {
         | "yellow"
         | "purple"
         | "orange"
-      column_type: "regular" | "sick_leave" | "vacation"
+      column_type: "regular" | "sick_leave" | "vacation" | "announcement"
       subscription_plan: "free" | "pro" | "team" | "business"
       subscription_status:
         | "active"
@@ -1036,7 +1036,7 @@ export const Constants = {
         "purple",
         "orange",
       ],
-      column_type: ["regular", "sick_leave", "vacation"],
+      column_type: ["regular", "sick_leave", "vacation", "announcement"],
       subscription_plan: ["free", "pro", "team", "business"],
       subscription_status: [
         "active",

@@ -80,12 +80,13 @@ const DEMO_BOARD = {
 };
 
 const DEMO_COLUMNS: Column[] = [
-  { id: 'col-1', name: 'Te Doen', position: 0, width_ratio: 1, board_id: 'demo-board', x_position: 40, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'regular' },
-  { id: 'col-2', name: 'In Uitvoering', position: 1, width_ratio: 1, board_id: 'demo-board', x_position: 380, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'yellow', column_type: 'regular' },
-  { id: 'col-3', name: 'Review', position: 2, width_ratio: 1, board_id: 'demo-board', x_position: 720, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'purple', column_type: 'regular' },
-  { id: 'col-4', name: 'Ziek', position: 3, width_ratio: 1, board_id: 'demo-board', x_position: 1060, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'red', column_type: 'sick_leave' },
-  { id: 'col-5', name: 'Verlof', position: 4, width_ratio: 1, board_id: 'demo-board', x_position: 1400, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'vacation' },
-  { id: 'col-6', name: 'Afgerond', position: 5, width_ratio: 1, board_id: 'demo-board', x_position: 1740, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'green', column_type: 'regular' }
+  { id: 'col-0', name: 'Belangrijke Mededelingen', position: 0, width_ratio: 1, board_id: 'demo-board', x_position: 40, y_position: 50, width: 350, height: 400, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'orange', column_type: 'announcement' },
+  { id: 'col-1', name: 'Te Doen', position: 1, width_ratio: 1, board_id: 'demo-board', x_position: 430, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'regular' },
+  { id: 'col-2', name: 'In Uitvoering', position: 2, width_ratio: 1, board_id: 'demo-board', x_position: 770, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'yellow', column_type: 'regular' },
+  { id: 'col-3', name: 'Review', position: 3, width_ratio: 1, board_id: 'demo-board', x_position: 1110, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'purple', column_type: 'regular' },
+  { id: 'col-4', name: 'Ziek', position: 4, width_ratio: 1, board_id: 'demo-board', x_position: 1450, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'red', column_type: 'sick_leave' },
+  { id: 'col-5', name: 'Verlof', position: 5, width_ratio: 1, board_id: 'demo-board', x_position: 1790, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'blue', column_type: 'vacation' },
+  { id: 'col-6', name: 'Afgerond', position: 6, width_ratio: 1, board_id: 'demo-board', x_position: 2130, y_position: 50, width: 300, height: 600, header_height: 60, content_padding_top: 0, content_padding_right: 0, content_padding_bottom: 0, content_padding_left: 0, glow_type: 'green', column_type: 'regular' }
 ];
 
 const DEMO_MEMBERS: Assignee[] = [
@@ -102,6 +103,11 @@ const DEMO_MEMBERS: Assignee[] = [
 ];
 
 const DEMO_TASKS: Task[] = [
+  // Belangrijke mededelingen
+  { id: 'task-0-1', column_id: 'col-0', title: '🎉 Nieuwe versie live!', description: 'LinqBoard v2.0 is nu beschikbaar met extra features en verbeteringen', priority: 'high', position: 0, due_date: null, assignees: [] },
+  { id: 'task-0-2', column_id: 'col-0', title: '📅 Team meeting vrijdag 14:00', description: 'Maandelijkse review en planning voor Q2', priority: 'medium', position: 1, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  { id: 'task-0-3', column_id: 'col-0', title: '🔧 Geplande onderhoud zondag', description: 'Server maintenance van 02:00 - 06:00 uur', priority: 'medium', position: 2, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  
   { id: 'task-1', column_id: 'col-1', title: 'Website homepage ontwerp', description: 'Nieuwe homepage design maken', priority: 'high', position: 0, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[0]] },
   { id: 'task-2', column_id: 'col-1', title: 'Database migratie plannen', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[1]] },
   { id: 'task-3', column_id: 'col-1', title: 'API documentatie updaten', description: 'Alle endpoints documenteren', priority: 'low', position: 2, due_date: null, assignees: [] },
