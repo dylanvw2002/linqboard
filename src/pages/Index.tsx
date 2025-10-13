@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit, Clock, Bell, BarChart, Lock, Smartphone, Cloud } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
@@ -13,11 +13,43 @@ import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
 import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import useEmblaCarousel from "embla-carousel-react";
+import { useEffect } from "react";
+
 const Index = () => {
   const { t } = useTranslation();
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
+  
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    align: "start",
+    skipSnaps: false,
+    dragFree: true,
+  });
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const autoplay = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 3000);
+
+    return () => clearInterval(autoplay);
+  }, [emblaApi]);
+
+  const features = [
+    { icon: Zap, title: t('landing.realtimeTitle'), description: t('landing.realtimeDescription') },
+    { icon: Users, title: t('landing.teamManagementTitle'), description: t('landing.teamManagementDescription') },
+    { icon: Shield, title: t('landing.secureTitle'), description: t('landing.secureDescription') },
+    { icon: Clock, title: 'Tijdregistratie', description: 'Houd bij hoeveel tijd er aan taken wordt besteed' },
+    { icon: Bell, title: 'Notificaties', description: 'Blijf op de hoogte van updates en wijzigingen' },
+    { icon: BarChart, title: 'Analytics', description: 'Inzicht in teamproductiviteit en voortgang' },
+    { icon: Lock, title: 'Privacy', description: 'Jouw data blijft altijd privé en veilig' },
+    { icon: Smartphone, title: 'Mobile-first', description: 'Werkt perfect op alle apparaten' },
+    { icon: Cloud, title: 'Cloud Sync', description: 'Automatische synchronisatie tussen devices' },
+  ];
   
   const structuredData = {
     "@context": "https://schema.org",
@@ -145,37 +177,26 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-32 sm:py-40">
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-100 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+        <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-32 sm:py-40 overflow-hidden">
+          <div className={`transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-6">
+                {features.map((feature, index) => (
+                  <article 
+                    key={index}
+                    className="flex-[0_0_85%] sm:flex-[0_0_45%] md:flex-[0_0_30%] min-w-0 p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all"
+                  >
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                      <feature.icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                    </div>
+                    <h2 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h2>
+                    <p className="text-sm sm:text-base text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </article>
+                ))}
               </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t('landing.realtimeDescription')}
-              </p>
-            </article>
-
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-200 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t('landing.teamManagementDescription')}
-              </p>
-            </article>
-
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-300 sm:col-span-2 md:col-span-1 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.secureTitle')}</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t('landing.secureDescription')}
-              </p>
-            </article>
+            </div>
           </div>
         </section>
 
