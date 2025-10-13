@@ -11,6 +11,7 @@ import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
 import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
 import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png";
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
+import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 const Index = () => {
   const { t } = useTranslation();
@@ -201,11 +202,9 @@ const Index = () => {
                 <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-16 sm:h-20 w-auto transition-all" />
               </div>
               
-              {/* ODÉA Vastgoed Service - tekst placeholder */}
+              {/* ODÉA Vastgoed Service - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <span className="text-sm sm:text-base md:text-lg font-semibold text-foreground/70 text-center leading-tight">
-                  ODÉA Vastgoed Service
-                </span>
+                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-10 sm:h-12 w-auto transition-all" />
               </div>
               
               {/* NutriBuddi - met logo */}
