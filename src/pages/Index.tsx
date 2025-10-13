@@ -30,17 +30,17 @@ const Index = () => {
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
-        <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-background/80 border-b border-border/50 shadow-sm">
+        <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
           <div className="container mx-auto px-4 sm:px-6">
-            <nav className="flex items-center justify-between h-20">
+            <nav className="flex items-center justify-between h-16 sm:h-20">
               <div className="flex items-center gap-8">
-                <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 w-auto hover:scale-105 transition-transform duration-300" />
+                <img src={logo} alt={t('seo.home.logoAlt')} className="h-24 sm:h-32 w-auto hover:scale-105 transition-transform duration-300" />
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <LanguageSwitcher />
                 <Link to="/auth">
-                  <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-md hover:shadow-lg text-sm sm:text-base">
-                    <LogIn className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-1 sm:gap-2">
+                    <LogIn className="h-4 w-4" />
                     {t('auth.login')}
                   </Button>
                 </Link>
