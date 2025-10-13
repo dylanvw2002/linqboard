@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit, Bell, Paperclip, Layout, Calendar } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit, Bell, Paperclip, Layout, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
@@ -197,10 +197,28 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden">
+        <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden relative">
           <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">FEATURES</p>
+          
+          {/* Navigation Arrows */}
+          <button 
+            onClick={() => emblaApi?.scrollPrev()} 
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
+            aria-label="Previous"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          </button>
+          
+          <button 
+            onClick={() => emblaApi?.scrollNext()} 
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
+            aria-label="Next"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          </button>
+
           <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex touch-pan-y">
+            <div className="flex touch-pan-y transition-transform duration-500 ease-out">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
                 return (
@@ -209,7 +227,8 @@ const Index = () => {
                     className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4"
                   >
                     <article 
-                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}
+                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-300 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                      style={{ transitionDelay: `${index * 100}ms` }}
                     >
                       <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                         <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
