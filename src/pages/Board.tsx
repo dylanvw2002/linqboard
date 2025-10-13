@@ -346,7 +346,8 @@ const Board = () => {
         setBackgroundPositionX(boardData.background_position_x ?? 50);
         setBackgroundPositionY(boardData.background_position_y ?? 50);
         setBackgroundScale(boardData.background_scale ?? 100);
-        setBackgroundFitMode(boardData.background_fit_mode || 'scale');
+        const fitModeValue = boardData.background_fit_mode;
+        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'scale');
       }
 
       const { data: columnsData } = await supabase
@@ -449,7 +450,7 @@ const Board = () => {
   };
 
   useEffect(() => {
-    if (organizationId && organizationId !== 'demo') {
+    if (organizationId) {
       checkAccess();
       fetchBoardData();
       fetchOrgMembers();
@@ -479,9 +480,15 @@ const Board = () => {
           .eq('user_id', user.id)
           .single();
         
-        if (profile) {
-          setUserPlan(profile.subscription_tier || 'free');
-          setCanCustomizeBackground(profile.subscription_tier === 'premium' || profile.subscription_tier === 'enterprise');
+        const { data: subscription } = await supabase
+          .from('user_subscriptions')
+          .select('plan')
+          .eq('user_id', user.id)
+          .single();
+        
+        if (subscription) {
+          setUserPlan(subscription.plan || 'free');
+          setCanCustomizeBackground(subscription.plan === 'team' || subscription.plan === 'business');
         }
       }
     };
@@ -1178,6 +1185,8 @@ const Board = () => {
 
               <ColumnManagement
                 boardId={board?.id}
+                columns={columns}
+                onColumnsChange={() => fetchBoardData()}
                 open={columnManagementOpen}
                 onOpenChange={setColumnManagementOpen}
               />
@@ -1399,14 +1408,11 @@ const Board = () => {
                       .map((task) => (
                         <SimpleTaskCard
                           key={task.id}
-                          task={task}
-                          onEdit={() => openEditDialog(task, column.id)}
-                          onDelete={() => handleDeleteTask(task.id)}
-                          onDragStart={() => handleDragStart(task)}
-                          formatDueDate={formatDueDate}
-                          getPriorityColor={getPriorityColor}
-                          getPriorityLabel={getPriorityLabel}
-                          isDragging={isDragging && draggedTask?.id === task.id}
+                          title={task.title}
+                          description={task.description}
+                          dueDate={task.due_date || null}
+                          onClick={() => openEditDialog(task, column.id)}
+                          assignees={task.assignees}
                         />
                       ))}
                   </div>
@@ -1415,7 +1421,9 @@ const Board = () => {
                 {/* Resize Handles */}
                 {editMode && isSelected && (
                   <ResizeHandles
-                    onResizeStart={(e, handle) => handleResizeStart(e, column, handle)}
+                    mode="column"
+                    onMouseDown={(e, handle) => handleResizeStart(e, column, handle)}
+                    activeHandle={resizeHandle}
                   />
                 )}
               </div>
@@ -1546,12 +1554,9 @@ const Board = () => {
         <ColumnEditSidebar
           column={editingColumn}
           onClose={() => setEditingColumn(null)}
-          onUpdate={(updates) => {
-            setColumns(prev =>
-              prev.map(col =>
-                col.id === editingColumn.id ? { ...col, ...updates } : col
-              )
-            );
+          onSave={() => {
+            setEditingColumn(null);
+            fetchBoardData();
           }}
         />
       )}
@@ -1581,11 +1586,14 @@ const Board = () => {
       {cropEditorOpen && pendingImagePreview && (
         <BackgroundCropEditor
           imageUrl={pendingImagePreview}
-          onComplete={handleCropComplete}
-          onCancel={() => {
+          onClose={() => {
             setCropEditorOpen(false);
             setPendingImageFile(null);
             setPendingImagePreview(null);
+          }}
+          onApply={async (posX, posY, sc, mode) => {
+            if (!pendingImageFile) return;
+            await handleCropComplete(pendingImageFile, { x: posX, y: posY, scale: sc });
           }}
         />
       )}
