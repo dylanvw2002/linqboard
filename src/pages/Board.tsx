@@ -93,7 +93,12 @@ const DEMO_MEMBERS: Assignee[] = [
   { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie' },
   { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom' },
   { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa' },
-  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mark' }
+  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mark' },
+  { user_id: 'user-6', full_name: 'Emma van Dam', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma' },
+  { user_id: 'user-7', full_name: 'Bas Peters', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Bas' },
+  { user_id: 'user-8', full_name: 'Anna de Groot', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anna' },
+  { user_id: 'user-9', full_name: 'Pieter Smit', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Pieter' },
+  { user_id: 'user-10', full_name: 'Maria van Dijk', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria' }
 ];
 
 const DEMO_TASKS: Task[] = [
@@ -560,12 +565,23 @@ const Board = () => {
     }
   };
   useEffect(() => {
+    if (isDemo) {
+      // In demo mode, load demo data
+      setOrganization({ id: DEMO_ORG_ID, name: 'Demo Organisatie' });
+      setBoard({ id: 'demo-board', name: 'Demo Board', organization_id: DEMO_ORG_ID });
+      setColumns(DEMO_COLUMNS);
+      setTasks(DEMO_TASKS);
+      setOrgMembers(DEMO_MEMBERS);
+      setLoading(false);
+      return;
+    }
+    
     checkAccess();
     fetchBoardData();
     fetchOrgMembers();
     fetchUserPlan();
     checkBackgroundPermission();
-  }, [organizationId]);
+  }, [organizationId, isDemo]);
   
   const fetchUserPlan = async () => {
     try {
