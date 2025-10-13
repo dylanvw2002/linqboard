@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 
 interface ActiveUsersProps {
   organizationId: string;
+  isDemo?: boolean;
 }
 
 interface UserPresence {
@@ -17,12 +18,38 @@ interface UserPresence {
   online_at: string;
 }
 
-export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
+export const ActiveUsers = ({ organizationId, isDemo = false }: ActiveUsersProps) => {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
+    // Demo mode: show mock active users
+    if (isDemo) {
+      const demoActiveUsers: UserPresence[] = [
+        { 
+          user_id: 'demo-user-1', 
+          full_name: 'Sophie Bakker', 
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie',
+          online_at: new Date().toISOString()
+        },
+        { 
+          user_id: 'demo-user-2', 
+          full_name: 'Tom Jansen', 
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom',
+          online_at: new Date().toISOString()
+        },
+        { 
+          user_id: 'demo-user-3', 
+          full_name: 'Lisa Vermeer', 
+          avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa',
+          online_at: new Date().toISOString()
+        }
+      ];
+      setActiveUsers(demoActiveUsers);
+      return;
+    }
+    
     let roomChannel: RealtimeChannel | null = null;
     
     const setupPresence = async () => {
@@ -119,7 +146,7 @@ export const ActiveUsers = ({ organizationId }: ActiveUsersProps) => {
         }
       });
     };
-  }, [organizationId]);
+  }, [organizationId, isDemo]);
 
   return (
     <Popover>

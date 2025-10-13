@@ -89,11 +89,11 @@ const DEMO_COLUMNS: Column[] = [
 ];
 
 const DEMO_MEMBERS: Assignee[] = [
-  { user_id: 'user-1', full_name: 'Jan de Vries', avatar_url: null },
-  { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: null },
-  { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: null },
-  { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: null },
-  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: null }
+  { user_id: 'user-1', full_name: 'Jan de Vries', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jan' },
+  { user_id: 'user-2', full_name: 'Sophie Bakker', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sophie' },
+  { user_id: 'user-3', full_name: 'Tom Jansen', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom' },
+  { user_id: 'user-4', full_name: 'Lisa Vermeer', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa' },
+  { user_id: 'user-5', full_name: 'Mark Hendriks', avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mark' }
 ];
 
 const DEMO_TASKS: Task[] = [
@@ -1692,7 +1692,7 @@ const Board = () => {
           <button onClick={handleClearCompleted} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
             <Trash2 size={20} />
           </button>
-          <ActiveUsers organizationId={organizationId!} />
+          <ActiveUsers organizationId={organizationId!} isDemo={isDemo} />
         </div>
       </header>
 
