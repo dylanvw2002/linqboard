@@ -566,12 +566,32 @@ const Board = () => {
   };
   useEffect(() => {
     if (isDemo) {
-      // In demo mode, load demo data
+      // In demo mode, load demo data with default background
       setOrganization({ id: DEMO_ORG_ID, name: 'Demo Organisatie' });
-      setBoard({ id: 'demo-board', name: 'Demo Board', organization_id: DEMO_ORG_ID });
+      setBoard({ 
+        id: 'demo-board', 
+        name: 'Demo Board', 
+        organization_id: DEMO_ORG_ID,
+        background_gradient: 'from-blue-50 to-blue-100',
+        background_image_url: 'default',
+        background_fit_mode: 'scale',
+        background_scale: 100,
+        background_position_x: 50,
+        background_position_y: 50
+      });
       setColumns(DEMO_COLUMNS);
       setTasks(DEMO_TASKS);
       setOrgMembers(DEMO_MEMBERS);
+      setSelectedBackground('from-blue-50 to-blue-100');
+      
+      // Load default background image
+      const defaultBg = defaultBackground;
+      setBackgroundImageUrl(defaultBg);
+      setBackgroundFitMode('scale');
+      setBackgroundScale(100);
+      setBackgroundPositionX(50);
+      setBackgroundPositionY(50);
+      
       setLoading(false);
       return;
     }
