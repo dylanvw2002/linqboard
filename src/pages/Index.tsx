@@ -87,7 +87,7 @@ const Index = () => {
         </main>
 
         {/* Demo Section */}
-        <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6">
+        <section className="py-16 sm:py-20 px-4 sm:px-6 md:py-[96px]">
           <div className="container mx-auto max-w-6xl">
             <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-2xl hover:shadow-xl transition-all animate-fade-in">
               <div className="bg-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16">
@@ -141,7 +141,7 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-20 md:pt-24 pb-4">
+        <section className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-20 md:pt-24 pb-4 py-[9px]">
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
             <article className="p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all">
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
