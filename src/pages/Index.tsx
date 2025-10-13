@@ -29,7 +29,7 @@ const Index = () => {
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
-        <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/80 border-b border-border/50 shadow-sm">
+        <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-background/80 border-b border-border/50 shadow-sm">
           <div className="container mx-auto px-4 sm:px-6">
             <nav className="flex items-center justify-between h-20">
               <div className="flex items-center gap-8">
@@ -49,7 +49,7 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 pt-16 sm:pt-24 pb-8 min-h-[85vh] flex items-center">
+        <main className="container mx-auto px-4 sm:px-6 pt-32 sm:pt-36 pb-8 min-h-[85vh] flex items-center">
           <section className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center animate-fade-in w-full">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8">
