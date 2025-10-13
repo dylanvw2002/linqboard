@@ -393,7 +393,10 @@ const Dashboard = () => {
       const orgs = memberships?.map((m: any) => ({
         ...m.organizations,
         role: m.role
-      })).filter((org: any) => org.id) || [];
+      })).filter((org: any) => 
+        org.id && 
+        org.id !== '00000000-0000-0000-0000-000000000000' // Filter demo org uit
+      ) || [];
       setOrganizations(orgs);
     } catch (error: any) {
       toast.error(t('dashboard.loadOrgsError'));

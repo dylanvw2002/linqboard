@@ -638,12 +638,12 @@ const Board = () => {
   };
   
   useEffect(() => {
-    if (!board?.id) return;
+    if (!board?.id || isDemo) return;
     const cleanup = setupRealtimeSubscriptions();
     return () => {
       if (cleanup) cleanup();
     };
-  }, [board?.id]);
+  }, [board?.id, isDemo]);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
