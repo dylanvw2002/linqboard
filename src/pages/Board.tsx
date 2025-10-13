@@ -1995,7 +1995,12 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className="flex items-center justify-between gap-4 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-5 py-[18px] mx-[22px] rounded-[28px] shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] relative overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none">
+      <header className={cn(
+        "flex items-center justify-between gap-4 px-5 py-[18px] mx-[22px] rounded-[28px] relative",
+        isMobile 
+          ? "bg-white/90 dark:bg-card/90 border border-gray-200 dark:border-gray-700 shadow-md" 
+          : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none"
+      )}>
         <div className="flex items-center gap-4 relative z-10 min-w-0">
           <div className="min-w-0">
             <h1 className="font-extrabold tracking-[0.2px] leading-[1.1] text-[clamp(26px,3.5vw,48px)] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm">
@@ -2005,34 +2010,65 @@ const Board = () => {
               {t('board.liveOverview')}
             </p>
           </div>
-          <div className="[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 text-center shadow-[0_2px_8px_rgba(0,0,0,0.08)] shrink-0 relative">
+          <div className={cn(
+            "[font-variant-numeric:tabular-nums] font-bold text-[clamp(20px,3vw,40px)] px-3.5 py-1.5 rounded-2xl text-center shrink-0 relative",
+            isMobile
+              ? "bg-gradient-to-br from-primary/10 to-accent/10 border border-gray-200 dark:border-gray-700 shadow-sm"
+              : "backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+          )}>
             <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
             <div className="text-[clamp(10px,1.2vw,14px)] text-muted-foreground font-semibold whitespace-nowrap relative z-10">{formatDate(currentTime)}</div>
           </div>
         </div>
         <div className="flex gap-2.5 relative z-10">
-          <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] flex items-center gap-2 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+          <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className={cn(
+            "text-foreground px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 text-[clamp(12px,1.4vw,16px)] flex items-center gap-2 relative",
+            isMobile
+              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95"
+              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+          )}>
             <ArrowLeft className="w-4 h-4" />
             {isDemo ? t('demo.backToHome') : t('dashboard.title')}
           </button>
-          <div className="flex items-center gap-2 backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-3 py-2 rounded-2xl shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]">
-            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.01 : zoomLevel <= 0.5} className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg" title="Zoom uit (Ctrl/Cmd + -)">
+          <div className={cn(
+            "flex items-center gap-2 px-3 py-2 rounded-2xl",
+            isMobile
+              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm"
+              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)]"
+          )}>
+            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.01 : zoomLevel <= 0.5} className={cn(
+              "text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg",
+              isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95" : "hover:bg-white/30 dark:hover:bg-card/30"
+            )} title="Zoom uit (Ctrl/Cmd + -)">
               <ZoomOut className="w-4 h-4" />
             </button>
             <span className="text-foreground font-bold text-sm min-w-[3.5rem] text-center">
               {Math.round(zoomLevel * 100)}%
             </span>
-            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 3.0 : zoomLevel >= 1.0} className="text-foreground p-1 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg" title="Zoom in (Ctrl/Cmd + +)">
+            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 3.0 : zoomLevel >= 1.0} className={cn(
+              "text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold text-lg",
+              isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95" : "hover:bg-white/30 dark:hover:bg-card/30"
+            )} title="Zoom in (Ctrl/Cmd + +)">
               <ZoomIn className="w-4 h-4" />
             </button>
           </div>
-          <button onClick={handleFullscreen} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 text-[clamp(12px,1.4vw,16px)] relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+          <button onClick={handleFullscreen} className={cn(
+            "text-foreground px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 text-[clamp(12px,1.4vw,16px)] relative",
+            isMobile
+              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95"
+              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+          )}>
             ⛶ {t('board.fullscreen')}
           </button>
           {!isMobile && <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
               <Pencil size={20} />
             </button>}
-          <button onClick={handleClearCompleted} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+          <button onClick={handleClearCompleted} className={cn(
+            "text-foreground p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 relative",
+            isMobile
+              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95"
+              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+          )}>
             <Trash2 size={20} />
           </button>
           <ActiveUsers organizationId={organizationId!} isDemo={isDemo} />
