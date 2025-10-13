@@ -11,6 +11,7 @@ import JoinOrganization from "./pages/JoinOrganization";
 import Dashboard from "./pages/Dashboard";
 import Board from "./pages/Board";
 import BoardDemo from "./pages/BoardDemo";
+import DemoBoard from "./pages/DemoBoard";
 import Pricing from "./pages/Pricing";
 import Checkout from "./pages/Checkout";
 import Invoices from "./pages/Invoices";
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/board/:organizationId" element={<Board />} />
             <Route path="/board-demo" element={<BoardDemo />} />
+            <Route path="/demo-board" element={<DemoBoard />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/invoices" element={<Invoices />} />

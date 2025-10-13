@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
@@ -62,6 +62,17 @@ const Index = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link to="/demo-board" className="w-full sm:w-auto">
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 border-2 w-full group"
+                  >
+                    <Eye className="mr-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
+                    Probeer Live Demo
+                  </Button>
+                </Link>
+
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
                   <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
