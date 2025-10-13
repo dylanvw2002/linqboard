@@ -41,7 +41,7 @@ const Index = () => {
                 <Link to="/auth">
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
+                    className="bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
                   >
                     <LogIn className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     {t('auth.login')}
