@@ -91,7 +91,7 @@ const Index = () => {
         </main>
 
         {/* Demo Section */}
-        <section ref={demoSection.ref} className="py-32 sm:py-40 px-4 sm:px-6 min-h-screen flex items-center">
+        <section ref={demoSection.ref} className="py-12 sm:py-16 px-4 sm:px-6 min-h-screen flex items-center">
           <div className="container mx-auto max-w-6xl">
             <div className={`relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-2xl hover:shadow-xl transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="bg-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16">
@@ -145,7 +145,7 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-32 sm:py-40">
+        <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
             <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-100 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
@@ -180,7 +180,7 @@ const Index = () => {
         </section>
 
         {/* Partners Section */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 py-32 sm:py-40">
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className={`bg-muted/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">
               {t('landing.trustedBy')}
