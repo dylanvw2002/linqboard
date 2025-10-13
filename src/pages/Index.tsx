@@ -100,7 +100,7 @@ const Index = () => {
               <div className="bg-card rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16">
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                   {/* Left: Image */}
-                  <div className="rounded-xl overflow-hidden shadow-xl border border-border/50">
+                  <div className="rounded-xl overflow-hidden shadow-2xl border border-border/50">
                     <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" />
                   </div>
 
