@@ -223,7 +223,7 @@ const Index = () => {
 
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex touch-pan-y transition-transform duration-500 ease-out">
-              {features.map((feature, index) => {
+              {[...features, ...features, ...features].map((feature, index) => {
                 const Icon = feature.icon;
                 return (
                   <div 
