@@ -200,10 +200,14 @@ const Index = () => {
         <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden relative">
           <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">FEATURES</p>
           
+          {/* Gradient Overlays */}
+          <div className="absolute left-0 top-[60px] bottom-0 w-20 sm:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-[60px] bottom-0 w-20 sm:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          
           {/* Navigation Arrows */}
           <button 
             onClick={() => emblaApi?.scrollPrev()} 
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
             aria-label="Previous"
           >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -211,7 +215,7 @@ const Index = () => {
           
           <button 
             onClick={() => emblaApi?.scrollNext()} 
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
             aria-label="Next"
           >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
