@@ -1913,7 +1913,7 @@ const Board = () => {
       
       {/* Demo Banner */}
       {isDemo && <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground shadow-lg px-[16px] py-px">
-          <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2">
+          <div className="flex justify-between items-center sm:items-start gap-2">
             <span className="text-sm font-semibold text-left py-[4px]">
               {t('demo.bannerText')}
             </span>
