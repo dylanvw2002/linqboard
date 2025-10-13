@@ -1004,15 +1004,28 @@ const Board = () => {
     if (!isMobile) return;
 
     const handleOrientationChange = () => {
-      setIsLandscape(window.innerWidth > window.innerHeight);
+      // Force immediate state update
+      const newIsLandscape = window.innerWidth > window.innerHeight;
+      setIsLandscape(newIsLandscape);
+      console.log('Orientation changed:', newIsLandscape ? 'Landscape' : 'Portrait');
     };
+
+    // Check initial orientation
+    handleOrientationChange();
 
     window.addEventListener('resize', handleOrientationChange);
     window.addEventListener('orientationchange', handleOrientationChange);
+    // Also listen for screen orientation API if available
+    if (window.screen?.orientation) {
+      window.screen.orientation.addEventListener('change', handleOrientationChange);
+    }
 
     return () => {
       window.removeEventListener('resize', handleOrientationChange);
       window.removeEventListener('orientationchange', handleOrientationChange);
+      if (window.screen?.orientation) {
+        window.screen.orientation.removeEventListener('change', handleOrientationChange);
+      }
     };
   }, [isMobile]);
 
