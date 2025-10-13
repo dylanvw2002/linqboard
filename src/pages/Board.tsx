@@ -162,6 +162,13 @@ const Board = () => {
   const [board, setBoard] = useState<any>(null);
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  
+  // Demo mode: store initial data for reset on refresh
+  const [demoInitialData, setDemoInitialData] = useState<{
+    columns: Column[];
+    tasks: Task[];
+    board: any;
+  } | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [openDialog, setOpenDialog] = useState<string | null>(null);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -234,6 +241,35 @@ const Board = () => {
   };
 
   const handleAddColumn = async () => {
+    if (isDemo) {
+      const visibleColumns = columns.filter(c => c.x_position < 1500);
+      const maxX = visibleColumns.length > 0 ? Math.max(...visibleColumns.map(c => c.x_position + (c.width || 300))) : 40;
+      const newX = maxX + 40;
+      
+      const newColumn: Column = {
+        id: `demo-col-${Date.now()}`,
+        board_id: board?.id,
+        name: `${t('board.newColumn')} ${columns.length + 1}`,
+        position: columns.length,
+        width_ratio: 1,
+        x_position: newX,
+        y_position: 50,
+        width: 300,
+        height: 600,
+        header_height: 60,
+        content_padding_top: 0,
+        content_padding_right: 0,
+        content_padding_bottom: 0,
+        content_padding_left: 0,
+        glow_type: 'default',
+        column_type: 'regular'
+      };
+      
+      setColumns([...columns, newColumn]);
+      toast.success(t('board.columnAdded') + ' (demo)');
+      return;
+    }
+    
     try {
       // Place new column in a visible area (not too far right)
       // Find the rightmost column within reasonable bounds
@@ -274,8 +310,15 @@ const Board = () => {
   };
 
   const handleBackgroundChange = async (gradient: string) => {
-    if (!canCustomizeBackground) {
+    if (!canCustomizeBackground && !isDemo) {
       toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
+      return;
+    }
+    
+    if (isDemo) {
+      setSelectedBackground(gradient);
+      setBackgroundImageUrl("");
+      toast.success(t('board.backgroundUpdated') + ' (demo)');
       return;
     }
     
@@ -307,8 +350,13 @@ const Board = () => {
   };
 
   const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!canCustomizeBackground) {
+    if (!canCustomizeBackground && !isDemo) {
       toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
+      return;
+    }
+    
+    if (isDemo) {
+      toast.info('Achtergrond upload uitgeschakeld in demo mode');
       return;
     }
     
@@ -465,6 +513,26 @@ const Board = () => {
 
   const handleDeleteColumn = async () => {
     if (!deleteColumnId) return;
+    
+    if (isDemo) {
+      const columnTasks = tasks.filter(t => t.column_id === deleteColumnId);
+      if (columnTasks.length > 0) {
+        const firstColumn = columns.find(c => c.id !== deleteColumnId);
+        if (firstColumn) {
+          const updatedTasks = tasks.map(task => 
+            task.column_id === deleteColumnId 
+              ? { ...task, column_id: firstColumn.id } 
+              : task
+          );
+          setTasks(updatedTasks);
+        }
+      }
+      
+      setColumns(columns.filter(c => c.id !== deleteColumnId));
+      toast.success(t('board.columnDeleted') + ' (demo)');
+      setDeleteColumnId(null);
+      return;
+    }
     
     try {
       // First, check if there are tasks in this column
@@ -830,6 +898,8 @@ const Board = () => {
     }
   };
   const setupRealtimeSubscriptions = () => {
+    if (isDemo) return; // Disable realtime for demo
+    
     const channel = supabase.channel(`board-changes-${organizationId}`).on("postgres_changes", {
       event: "*",
       schema: "public",
@@ -934,6 +1004,22 @@ const Board = () => {
 
   const handleAddAssignee = async (userId: string) => {
     if (!editingTask) return;
+    
+    if (isDemo) {
+      setEditTaskAssignees([...editTaskAssignees, userId]);
+      const updatedTasks = tasks.map(task => {
+        if (task.id === editingTask.id) {
+          const assignee = orgMembers.find(m => m.user_id === userId);
+          const newAssignees = assignee ? [...(task.assignees || []), assignee] : task.assignees;
+          return { ...task, assignees: newAssignees };
+        }
+        return task;
+      });
+      setTasks(updatedTasks);
+      toast.success(t('board.assigneeAdded') + ' (demo)');
+      return;
+    }
+    
     try {
       const { error } = await supabase.from("task_assignees").insert({
         task_id: editingTask.id,
@@ -949,6 +1035,20 @@ const Board = () => {
 
   const handleRemoveAssignee = async (userId: string) => {
     if (!editingTask) return;
+    
+    if (isDemo) {
+      setEditTaskAssignees(editTaskAssignees.filter(id => id !== userId));
+      const updatedTasks = tasks.map(task => {
+        if (task.id === editingTask.id) {
+          return { ...task, assignees: (task.assignees || []).filter(a => a.user_id !== userId) };
+        }
+        return task;
+      });
+      setTasks(updatedTasks);
+      toast.success(t('board.assigneeRemoved') + ' (demo)');
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from("task_assignees")
@@ -964,16 +1064,36 @@ const Board = () => {
   };
   const handleEditTask = async () => {
     if (!editingTask) return;
-    try {
-      const validation = taskSchema.safeParse({
-        title: editTaskTitle,
-        description: editTaskDescription
+    
+    const validation = taskSchema.safeParse({
+      title: editTaskTitle,
+      description: editTaskDescription
+    });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+    
+    if (isDemo) {
+      const updatedTasks = tasks.map(task => {
+        if (task.id === editingTask.id) {
+          return {
+            ...task,
+            title: validation.data.title,
+            description: validation.data.description || null,
+            due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
+            priority: editTaskPriority
+          };
+        }
+        return task;
       });
-      if (!validation.success) {
-        toast.error(validation.error.errors[0].message);
-        return;
-      }
-      
+      setTasks(updatedTasks);
+      toast.success(t('board.taskUpdated') + ' (demo)');
+      setEditingTask(null);
+      return;
+    }
+    
+    try {
       const {
         error
       } = await supabase.from("tasks").update({
@@ -1041,21 +1161,45 @@ const Board = () => {
     setZoomLevel(0.75);
   };
   const handleAddTask = async (columnId: string) => {
-    try {
-      const validation = taskSchema.safeParse({
-        title: newTaskTitle,
-        description: newTaskDescription
-      });
-      if (!validation.success) {
-        toast.error(validation.error.errors[0].message);
-        return;
-      }
+    const validation = taskSchema.safeParse({
+      title: newTaskTitle,
+      description: newTaskDescription
+    });
+    if (!validation.success) {
+      toast.error(validation.error.errors[0].message);
+      return;
+    }
+    
+    const column = columns.find(col => col.id === columnId);
+    if (!column) {
+      toast.error(t('board.columnNotFound'));
+      return;
+    }
+    
+    if (isDemo) {
+      const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const newTask: Task = {
+        id: `demo-task-${Date.now()}`,
+        column_id: column.id,
+        title: validation.data.title,
+        description: validation.data.description || null,
+        priority: newTaskPriority,
+        due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
+        position: maxPosition + 1,
+        assignees: []
+      };
       
-      const column = columns.find(col => col.id === columnId);
-      if (!column) {
-        toast.error(t('board.columnNotFound'));
-        return;
-      }
+      setTasks([...tasks, newTask]);
+      toast.success(t('board.taskAdded') + ' (demo)');
+      setOpenDialog(null);
+      setNewTaskTitle("");
+      setNewTaskDescription("");
+      setNewTaskPriority("medium");
+      setNewTaskDueDate(undefined);
+      return;
+    }
+    
+    try {
       const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
       const {
         error
@@ -1080,6 +1224,12 @@ const Board = () => {
     }
   };
   const handleDeleteTask = async (taskId: string) => {
+    if (isDemo) {
+      setTasks(tasks.filter(t => t.id !== taskId));
+      toast.success(t('board.taskDeleted') + ' (demo)');
+      return;
+    }
+    
     try {
       const {
         error
@@ -1097,6 +1247,19 @@ const Board = () => {
       toast.error(t('board.completedColumnNotFound'));
       return;
     }
+    
+    if (isDemo) {
+      const maxPosition = tasks.filter(t => t.column_id === completedColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const updatedTasks = tasks.map(t => 
+        t.id === task.id 
+          ? { ...t, column_id: completedColumn.id, position: maxPosition + 1 }
+          : t
+      );
+      setTasks(updatedTasks);
+      toast.success(t('board.taskCompleted') + ' (demo)');
+      return;
+    }
+    
     try {
       const maxPosition = tasks.filter(t => t.column_id === completedColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
       const {
@@ -1113,6 +1276,15 @@ const Board = () => {
     }
   };
   const handleChangePriority = async (taskId: string, newPriority: "low" | "medium" | "high") => {
+    if (isDemo) {
+      const updatedTasks = tasks.map(t => 
+        t.id === taskId ? { ...t, priority: newPriority } : t
+      );
+      setTasks(updatedTasks);
+      toast.success(t('board.priorityChanged', { priority: getPriorityLabel(newPriority) }) + ' (demo)');
+      return;
+    }
+    
     try {
       const {
         error
@@ -1184,6 +1356,22 @@ const Board = () => {
       setIsDragging(false);
       return;
     }
+    
+    if (isDemo) {
+      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const updatedTasks = tasks.map(t => 
+        t.id === draggedTask.id 
+          ? { ...t, column_id: targetColumn.id, position: maxPosition + 1 }
+          : t
+      );
+      setTasks(updatedTasks);
+      toast.success(t('board.taskMoved', { column: targetColumn.name }) + ' (demo)');
+      setDraggedTask(null);
+      setDraggedOverColumn(null);
+      setIsDragging(false);
+      return;
+    }
+    
     try {
       const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
       const {
@@ -1316,6 +1504,21 @@ const Board = () => {
       setSelectedColumn(updated);
     };
     const handleMouseUp = async () => {
+      if (isDemo) {
+        const updatedColumns = columns.map(c => 
+          c.id === currentColumn.id ? currentColumn : c
+        );
+        setColumns(updatedColumns);
+        toast.success(t('board.columnUpdated') + ' (demo)');
+        setResizing(false);
+        setResizeHandle(null);
+        setResizeStart(null);
+        setSnapGuides(null);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        return;
+      }
+      
       try {
         const updateData: any = {
           header_height: Math.round(currentColumn.header_height || 60),
