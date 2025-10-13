@@ -16,61 +16,49 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import useEmblaCarousel from 'embla-carousel-react';
 import { useEffect } from 'react';
 const Index = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
-  
-  const [emblaRef, emblaApi] = useEmblaCarousel({ 
-    loop: true, 
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
     align: 'start'
   });
-
   useEffect(() => {
     if (!emblaApi) return;
-
     const play = () => {
       emblaApi.scrollNext();
     };
-
     const intervalId = setInterval(play, 3000);
-
     return () => clearInterval(intervalId);
   }, [emblaApi]);
-
-  const features = [
-    {
-      icon: Zap,
-      title: t('landing.realtimeTitle'),
-      description: t('landing.realtimeDescription')
-    },
-    {
-      icon: Users,
-      title: t('landing.teamManagementTitle'),
-      description: t('landing.teamManagementDescription')
-    },
-    {
-      icon: Layout,
-      title: 'Aanpasbare Kolommen',
-      description: 'Creëer en personaliseer je eigen kolommen met kleuren en achtergronden'
-    },
-    {
-      icon: Calendar,
-      title: 'Deadlines & Prioriteiten',
-      description: 'Stel vervaldatums in en beheer taakprioriteiten met kleurcodes'
-    },
-    {
-      icon: Paperclip,
-      title: 'Bestanden Bijvoegen',
-      description: 'Upload documenten, afbeeldingen en bestanden direct aan je taken'
-    },
-    {
-      icon: Shield,
-      title: t('landing.secureTitle'),
-      description: t('landing.secureDescription')
-    }
-  ];
-  
+  const features = [{
+    icon: Zap,
+    title: t('landing.realtimeTitle'),
+    description: t('landing.realtimeDescription')
+  }, {
+    icon: Users,
+    title: t('landing.teamManagementTitle'),
+    description: t('landing.teamManagementDescription')
+  }, {
+    icon: Layout,
+    title: 'Aanpasbare Kolommen',
+    description: 'Creëer en personaliseer je eigen kolommen met kleuren en achtergronden'
+  }, {
+    icon: Calendar,
+    title: 'Deadlines & Prioriteiten',
+    description: 'Stel vervaldatums in en beheer taakprioriteiten met kleurcodes'
+  }, {
+    icon: Paperclip,
+    title: 'Bestanden Bijvoegen',
+    description: 'Upload documenten, afbeeldingen en bestanden direct aan je taken'
+  }, {
+    icon: Shield,
+    title: t('landing.secureTitle'),
+    description: t('landing.secureDescription')
+  }];
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -197,7 +185,7 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-12 sm:py-16 w-full overflow-hidden relative">
+        <section ref={featuresSection.ref} className="py-12 w-full overflow-hidden relative sm:py-px">
           <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8">FEATURES</p>
           
           {/* Gradient Overlays */}
@@ -205,35 +193,22 @@ const Index = () => {
           <div className="absolute right-0 top-[60px] bottom-0 w-20 sm:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
           
           {/* Navigation Arrows */}
-          <button 
-            onClick={() => emblaApi?.scrollPrev()} 
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
-            aria-label="Previous"
-          >
+          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110" aria-label="Previous">
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
           
-          <button 
-            onClick={() => emblaApi?.scrollNext()} 
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110"
-            aria-label="Next"
-          >
+          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-2 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110" aria-label="Next">
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
 
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex touch-pan-y transition-transform duration-500 ease-out">
               {[...features, ...features, ...features].map((feature, index) => {
-                const Icon = feature.icon;
-                return (
-                  <div 
-                    key={index}
-                    className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4 py-4"
-                  >
-                    <article 
-                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.18)] transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                      style={{ transitionDelay: `${index * 100}ms` }}
-                    >
+              const Icon = feature.icon;
+              return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4 py-4">
+                    <article className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.18)] transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{
+                  transitionDelay: `${index * 100}ms`
+                }}>
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
                       
@@ -247,9 +222,8 @@ const Index = () => {
                         </p>
                       </div>
                     </article>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </div>
           </div>
         </section>
