@@ -287,7 +287,7 @@ const Pricing = () => {
       {/* Header with back button and language switcher */}
       <header className="container mx-auto px-4 sm:px-6 py-2">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate('/dashboard')} size="sm" className="text-xs sm:text-sm">
+          <Button variant="ghost" onClick={() => navigate(-1)} size="sm" className="text-xs sm:text-sm">
             <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
             {t('common.back')}
           </Button>
