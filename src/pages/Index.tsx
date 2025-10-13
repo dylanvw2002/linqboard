@@ -231,16 +231,21 @@ const Index = () => {
                     className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4"
                   >
                     <article 
-                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-300 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                       style={{ transitionDelay: `${index * 100}ms` }}
                     >
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                        <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                      {/* Subtle gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+                      
+                      <div className="relative z-10">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4 shadow-md">
+                          <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h3>
+                        <p className="text-sm sm:text-base text-muted-foreground">
+                          {feature.description}
+                        </p>
                       </div>
-                      <h3 className="text-lg sm:text-xl font-semibold mb-3">{feature.title}</h3>
-                      <p className="text-sm sm:text-base text-muted-foreground">
-                        {feature.description}
-                      </p>
                     </article>
                   </div>
                 );
