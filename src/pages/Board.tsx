@@ -147,12 +147,16 @@ const Board = () => {
   const [panPosition, setPanPosition] = useState({ x: 0, y: 0 });
   
   const {
-    organizationId
+    organizationId: rawOrgId
   } = useParams();
   const navigate = useNavigate();
   
+  // Redirect demo to real UUID
+  const DEMO_ORG_ID = '00000000-0000-0000-0000-000000000000';
+  const organizationId = rawOrgId === 'demo' ? DEMO_ORG_ID : rawOrgId;
+  
   // Detect demo mode
-  const isDemo = organizationId === 'demo';
+  const isDemo = organizationId === DEMO_ORG_ID;
   const [loading, setLoading] = useState(true);
   const [organization, setOrganization] = useState<any>(null);
   const [board, setBoard] = useState<any>(null);
@@ -230,11 +234,6 @@ const Board = () => {
   };
 
   const handleAddColumn = async () => {
-    if (isDemo) {
-      toast.info('✨ Demo mode - kolom toevoegen niet beschikbaar');
-      return;
-    }
-    
     try {
       // Place new column in a visible area (not too far right)
       // Find the rightmost column within reasonable bounds
@@ -275,11 +274,6 @@ const Board = () => {
   };
 
   const handleBackgroundChange = async (gradient: string) => {
-    if (isDemo) {
-      toast.info('✨ Demo mode - achtergrond wijzigen niet beschikbaar');
-      return;
-    }
-    
     if (!canCustomizeBackground) {
       toast.error('Upgrade naar Team of Business voor aangepaste achtergronden');
       return;
@@ -471,12 +465,6 @@ const Board = () => {
 
   const handleDeleteColumn = async () => {
     if (!deleteColumnId) return;
-    
-    if (isDemo) {
-      toast.info('✨ Demo mode - kolom verwijderen niet beschikbaar');
-      setDeleteColumnId(null);
-      return;
-    }
     
     try {
       // First, check if there are tasks in this column
@@ -678,8 +666,6 @@ const Board = () => {
   };
   
   const checkAccess = async () => {
-    if (isDemo) return; // Skip auth in demo mode
-    
     const {
       data: {
         session
@@ -689,9 +675,22 @@ const Board = () => {
       navigate("/auth");
       return;
     }
+    
+    // Check for existing membership
     const {
       data: membership
     } = await supabase.from("memberships").select("*").eq("user_id", session.user.id).eq("organization_id", organizationId).single();
+    
+    // Auto-create membership for demo org if missing
+    if (!membership && isDemo) {
+      await supabase.from("memberships").insert({
+        user_id: session.user.id,
+        organization_id: organizationId,
+        role: 'member'
+      });
+      return; // Membership created, continue
+    }
+    
     if (!membership) {
       toast.error(t('board.noAccess'));
       navigate("/dashboard");
@@ -699,8 +698,6 @@ const Board = () => {
   };
 
   const fetchOrgMembers = async () => {
-    if (isDemo) return; // Skip in demo mode
-    
     try {
       const { data: memberships } = await supabase
         .from("memberships")
@@ -726,22 +723,6 @@ const Board = () => {
     try {
       if (!organizationId) {
         navigate("/dashboard");
-        return;
-      }
-      
-      // Load demo data in demo mode
-      if (isDemo) {
-        setOrganization(DEMO_ORG);
-        setBoard(DEMO_BOARD);
-        setColumns(DEMO_COLUMNS);
-        setTasks(DEMO_TASKS);
-        setOrgMembers(DEMO_MEMBERS);
-        setBackgroundImageUrl(defaultBackground);
-        setBackgroundFitMode('cover');
-        setBackgroundPositionX(50);
-        setBackgroundPositionY(50);
-        setBackgroundScale(100);
-        setLoading(false);
         return;
       }
       
@@ -993,17 +974,6 @@ const Board = () => {
         return;
       }
       
-      if (isDemo) {
-        setTasks(tasks.map(t => 
-          t.id === editingTask.id 
-            ? { ...t, title: validation.data.title, description: validation.data.description || null, priority: editTaskPriority, due_date: editTaskDueDate?.toISOString() || null }
-            : t
-        ));
-        setEditingTask(null);
-        toast.success('✨ Demo mode - taak bijgewerkt (niet opgeslagen)');
-        return;
-      }
-      
       const {
         error
       } = await supabase.from("tasks").update({
@@ -1081,27 +1051,6 @@ const Board = () => {
         return;
       }
       
-      if (isDemo) {
-        const newTask: Task = {
-          id: `demo-task-${Date.now()}`,
-          column_id: columnId,
-          title: validation.data.title,
-          description: validation.data.description || null,
-          priority: newTaskPriority,
-          position: tasks.filter(t => t.column_id === columnId).length,
-          due_date: newTaskDueDate?.toISOString() || null,
-          assignees: []
-        };
-        setTasks([...tasks, newTask]);
-        setNewTaskTitle('');
-        setNewTaskDescription('');
-        setNewTaskPriority('medium');
-        setNewTaskDueDate(undefined);
-        setOpenDialog(null);
-        toast.success('✨ Demo mode - taak toegevoegd (niet opgeslagen)');
-        return;
-      }
-      
       const column = columns.find(col => col.id === columnId);
       if (!column) {
         toast.error(t('board.columnNotFound'));
@@ -1131,12 +1080,6 @@ const Board = () => {
     }
   };
   const handleDeleteTask = async (taskId: string) => {
-    if (isDemo) {
-      setTasks(tasks.filter(t => t.id !== taskId));
-      toast.success('✨ Demo mode - taak verwijderd (niet opgeslagen)');
-      return;
-    }
-    
     try {
       const {
         error
