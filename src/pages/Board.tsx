@@ -111,7 +111,7 @@ const DEMO_TASKS: Task[] = [
   { id: 'task-1', column_id: 'col-1', title: 'Website homepage ontwerp', description: 'Nieuwe homepage design maken', priority: 'high', position: 0, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[0]] },
   { id: 'task-2', column_id: 'col-1', title: 'Database migratie plannen', description: null, priority: 'medium', position: 1, due_date: null, assignees: [DEMO_MEMBERS[1]] },
   { id: 'task-3', column_id: 'col-1', title: 'API documentatie updaten', description: 'Alle endpoints documenteren', priority: 'low', position: 2, due_date: null, assignees: [] },
-  { id: 'task-4', column_id: 'col-1', title: 'Security audit uitvoeren', description: null, priority: 'high', position: 3, due_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[2]] },
+  { id: 'task-4', column_id: 'col-1', title: 'Security audit uitvoeren', description: null, priority: 'high', position: 3, due_date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[2]] },
   { id: 'task-5', column_id: 'col-1', title: 'Klant meeting voorbereiden', description: null, priority: 'medium', position: 4, due_date: null, assignees: [] },
   
   { id: 'task-6', column_id: 'col-2', title: 'Mobile app responsive maken', description: 'iOS en Android optimaliseren', priority: 'high', position: 0, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), assignees: [DEMO_MEMBERS[1], DEMO_MEMBERS[2]] },
