@@ -231,7 +231,7 @@ const Index = () => {
                     className="flex-[0_0_85%] sm:flex-[0_0_340px] min-w-0 pl-4 pr-4"
                   >
                     <article 
-                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-lg hover:shadow-2xl transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                      className={`h-full p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_20px_60px_rgb(0,0,0,0.18)] transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                       style={{ transitionDelay: `${index * 100}ms` }}
                     >
                       {/* Subtle gradient overlay */}
