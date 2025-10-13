@@ -24,7 +24,9 @@ const Index = () => {
   const partnersSection = useScrollAnimation(0.2);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
-    align: 'start'
+    align: 'start',
+    dragFree: true,
+    containScroll: 'trimSnaps'
   });
   useEffect(() => {
     if (!emblaApi) return;
@@ -191,36 +193,44 @@ const Index = () => {
         <section ref={featuresSection.ref} className="py-8 sm:py-12 w-full overflow-hidden relative">
           <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8 px-4">FEATURES</p>
           
-          {/* Gradient Overlays */}
-          <div className="absolute left-0 top-[50px] bottom-0 w-16 sm:w-20 lg:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-[50px] bottom-0 w-16 sm:w-20 lg:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          {/* Gradient Overlays - Hidden on mobile for better visibility */}
+          <div className="hidden sm:block absolute left-0 top-[50px] bottom-0 w-20 lg:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          <div className="hidden sm:block absolute right-0 top-[50px] bottom-0 w-20 lg:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
           
-          {/* Navigation Arrows */}
-          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-1 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95" aria-label="Previous">
+          {/* Navigation Arrows - Better mobile positioning */}
+          <button 
+            onClick={() => emblaApi?.scrollPrev()} 
+            className="absolute left-2 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" 
+            aria-label="Previous"
+          >
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
           
-          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-1 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white p-3 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95" aria-label="Next">
+          <button 
+            onClick={() => emblaApi?.scrollNext()} 
+            className="absolute right-2 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" 
+            aria-label="Next"
+          >
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
 
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex touch-pan-y transition-transform duration-500 ease-out">
+          <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
+            <div className="flex touch-pan-y select-none">
               {[...features, ...features, ...features].map((feature, index) => {
               const Icon = feature.icon;
-              return <div key={index} className="flex-[0_0_90%] sm:flex-[0_0_340px] min-w-0 pl-3 pr-3 sm:pl-4 sm:pr-4 py-4">
-                    <article className={`h-full p-5 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-card border border-border shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] active:shadow-[0_6px_16px_rgb(0,0,0,0.08)] transition-all duration-300 relative overflow-hidden ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{
+              return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_80%] md:flex-[0_0_340px] min-w-0 pl-2 pr-2 sm:pl-3 sm:pr-3 md:pl-4 md:pr-4 py-3 sm:py-4">
+                    <article className={`h-full p-4 sm:p-5 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl bg-card border border-border shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] active:shadow-[0_4px_16px_rgb(0,0,0,0.08)] transition-all duration-300 relative overflow-hidden touch-manipulation ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{
                   transitionDelay: `${index * 100}ms`
                 }}>
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
                       
                       <div className="relative z-10">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-3 sm:mb-4 shadow-md">
-                          <Icon className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-lg sm:rounded-xl bg-primary/60 flex items-center justify-center mb-2.5 sm:mb-3 md:mb-4 shadow-md">
+                          <Icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-white" aria-hidden="true" />
                         </div>
-                        <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2 sm:mb-3">{feature.title}</h3>
-                        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                        <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-1.5 sm:mb-2 md:mb-3 leading-snug">{feature.title}</h3>
+                        <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
                           {feature.description}
                         </p>
                       </div>
