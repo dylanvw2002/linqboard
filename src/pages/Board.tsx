@@ -119,8 +119,8 @@ const DEMO_TASKS: Task[] = [
   { id: 'task-13', column_id: 'col-3', title: 'Marketing content proofreading', description: null, priority: 'low', position: 2, due_date: null, assignees: [] },
   { id: 'task-14', column_id: 'col-3', title: 'Integration tests draaien', description: null, priority: 'medium', position: 3, due_date: null, assignees: [DEMO_MEMBERS[3]] },
   
-  { id: 'task-15', column_id: 'col-4', title: 'Jan de Vries', description: 'Ziek thuis met griep', priority: null, position: 0, due_date: null, assignees: [] },
-  { id: 'task-16', column_id: 'col-4', title: 'Lisa Vermeer', description: 'Doktersafspraak vanmiddag', priority: null, position: 1, due_date: null, assignees: [] },
+  { id: 'task-15', column_id: 'col-4', title: 'Jan de Vries', description: 'Ziek thuis met griep', priority: null, position: 0, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
+  { id: 'task-16', column_id: 'col-4', title: 'Lisa Vermeer', description: 'Doktersafspraak vanmiddag', priority: null, position: 1, due_date: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
   
   { id: 'task-17', column_id: 'col-5', title: 'Tom Jansen', description: '2 weken vakantie naar Spanje', priority: null, position: 0, due_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
   { id: 'task-18', column_id: 'col-5', title: 'Sophie Bakker', description: 'Weekend trip', priority: null, position: 1, due_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), assignees: [] },
