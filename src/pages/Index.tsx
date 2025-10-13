@@ -13,11 +13,30 @@ import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
 import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import useEmblaCarousel from 'embla-carousel-react';
+import { useEffect } from 'react';
 const Index = () => {
   const { t } = useTranslation();
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
+  
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true, 
+    align: 'start',
+    direction: 'rtl',
+    dragFree: true
+  });
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const intervalId = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [emblaApi]);
   
   const structuredData = {
     "@context": "https://schema.org",
@@ -145,67 +164,69 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-100 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t('landing.realtimeDescription')}
-              </p>
-            </article>
+        <section ref={featuresSection.ref} className="py-12 sm:py-16">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-6" style={{ direction: 'ltr' }}>
+              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                  <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.realtimeTitle')}</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  {t('landing.realtimeDescription')}
+                </p>
+              </article>
 
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-200 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Users className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t('landing.teamManagementDescription')}
-              </p>
-            </article>
+              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.teamManagementTitle')}</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  {t('landing.teamManagementDescription')}
+                </p>
+              </article>
 
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-300 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Layout className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">Aanpasbare Kolommen</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Creëer en personaliseer je eigen kolommen met kleuren en achtergronden
-              </p>
-            </article>
+              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                  <Layout className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold mb-3">Aanpasbare Kolommen</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Creëer en personaliseer je eigen kolommen met kleuren en achtergronden
+                </p>
+              </article>
 
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-100 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">Deadlines & Prioriteiten</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Stel vervaldatums in en beheer taakprioriteiten met kleurcodes
-              </p>
-            </article>
+              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                  <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold mb-3">Deadlines & Prioriteiten</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Stel vervaldatums in en beheer taakprioriteiten met kleurcodes
+                </p>
+              </article>
 
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-200 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Paperclip className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">Bestanden Bijvoegen</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Upload documenten, afbeeldingen en bestanden direct aan je taken
-              </p>
-            </article>
+              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                  <Paperclip className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold mb-3">Bestanden Bijvoegen</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Upload documenten, afbeeldingen en bestanden direct aan je taken
+                </p>
+              </article>
 
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-300 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
-              </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.secureTitle')}</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                {t('landing.secureDescription')}
-              </p>
-            </article>
+              <article className={`flex-[0_0_300px] sm:flex-[0_0_350px] p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all ${featuresSection.isVisible ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                  <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold mb-3">{t('landing.secureTitle')}</h2>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  {t('landing.secureDescription')}
+                </p>
+              </article>
+            </div>
           </div>
         </section>
 
