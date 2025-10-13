@@ -204,7 +204,7 @@ const Index = () => {
               
               {/* ODÉA Vastgoed Service - met logo */}
               <div className="flex items-center justify-center p-4 sm:p-6 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[100px] sm:min-h-[120px]">
-                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-10 sm:h-12 w-auto transition-all" />
+                <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" />
               </div>
               
               {/* NutriBuddi - met logo */}
