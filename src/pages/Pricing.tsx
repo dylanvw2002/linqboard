@@ -261,8 +261,8 @@ const Pricing = () => {
       />
       <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-accent/20 pb-4 relative">
       {/* Animated confetti elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 30 }).map((_, i) => (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none will-change-transform">
+        {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
             className="absolute animate-float"
@@ -270,14 +270,14 @@ const Pricing = () => {
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
               animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`
+              animationDuration: `${4 + Math.random() * 3}s`
             }}
           >
             <div 
               className="w-2 h-2 rounded-full"
               style={{
                 backgroundColor: ['#8B5CF6', '#F59E0B', '#EC4899', '#3B82F6'][Math.floor(Math.random() * 4)],
-                opacity: 0.4
+                opacity: 0.3
               }}
             />
           </div>
@@ -344,29 +344,27 @@ const Pricing = () => {
               </Card>) : plans.map((plan, index) => <Card 
               key={plan.plan_id} 
               className={`${getCardClassName(plan)} animate-fade-in`}
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${index * 50}ms` }}
             >
               {getPlanBadge(plan)}
               
               <CardHeader className="pb-3">
                 <CardTitle className="text-xl">{plan.name}</CardTitle>
-                <CardDescription>
-                  <div className="mt-2">
-                    <span className="text-2xl font-bold text-foreground">
-                      €{isYearly ? plan.price.yearly.toFixed(2) : plan.price.monthly.toFixed(2)}
-                    </span>
-                    <span className="text-sm text-muted-foreground ml-1">
-                      /{isYearly ? t('pricing.year') : t('pricing.month')}
-                    </span>
-                    {getYearlySavings(plan) && (
-                      <div className="mt-1">
-                        <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
-                          {t('pricing.saveAmount').replace('{amount}', getYearlySavings(plan) || '')}
-                        </Badge>
-                      </div>
-                    )}
-                  </div>
-                </CardDescription>
+                <div className="mt-2">
+                  <span className="text-2xl font-bold text-foreground">
+                    €{isYearly ? plan.price.yearly.toFixed(2) : plan.price.monthly.toFixed(2)}
+                  </span>
+                  <span className="text-sm text-muted-foreground ml-1">
+                    /{isYearly ? t('pricing.year') : t('pricing.month')}
+                  </span>
+                  {getYearlySavings(plan) && (
+                    <div className="mt-1">
+                      <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                        {t('pricing.saveAmount').replace('{amount}', getYearlySavings(plan) || '')}
+                      </Badge>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
 
               <CardContent className="pb-3">
