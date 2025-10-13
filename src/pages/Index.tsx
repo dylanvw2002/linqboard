@@ -30,19 +30,12 @@ const Index = () => {
           <div className="container mx-auto px-4 sm:px-6">
             <nav className="flex items-center justify-between h-20">
               <div className="flex items-center gap-8">
-                <img 
-                  src={logo} 
-                  alt={t('seo.home.logoAlt')} 
-                  className="h-16 sm:h-20 w-auto hover:scale-105 transition-transform duration-300" 
-                />
+                <img src={logo} alt={t('seo.home.logoAlt')} className="h-16 sm:h-20 w-auto hover:scale-105 transition-transform duration-300" />
               </div>
               <div className="flex items-center gap-3">
                 <LanguageSwitcher />
                 <Link to="/auth">
-                  <Button 
-                    size="lg" 
-                    className="bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
-                  >
+                  <Button size="lg" className="bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-md hover:shadow-lg text-sm sm:text-base">
                     <LogIn className="mr-1 sm:mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                     {t('auth.login')}
                   </Button>
@@ -135,7 +128,7 @@ const Index = () => {
                     </div>
 
                     <Link to="/board/demo">
-                      <Button size="lg" className="text-lg px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all">
+                      <Button size="lg" className="text-lg px-8 h-auto shadow-lg hover:shadow-xl transition-all py-[22px] my-[10px]">
                         {t('landing.demoButton')}
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
