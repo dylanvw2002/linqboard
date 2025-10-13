@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit, Bell, Paperclip, Layout, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
@@ -146,7 +146,7 @@ const Index = () => {
 
         {/* Features Section */}
         <section ref={featuresSection.ref} className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto">
             <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-100 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                 <Zap className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
@@ -167,7 +167,37 @@ const Index = () => {
               </p>
             </article>
 
-            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-300 sm:col-span-2 md:col-span-1 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-300 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                <Layout className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Aanpasbare Kolommen</h2>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Creëer en personaliseer je eigen kolommen met kleuren en achtergronden
+              </p>
+            </article>
+
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-100 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Deadlines & Prioriteiten</h2>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Stel vervaldatums in en beheer taakprioriteiten met kleurcodes
+              </p>
+            </article>
+
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-200 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
+                <Paperclip className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
+              </div>
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Bestanden Bijvoegen</h2>
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Upload documenten, afbeeldingen en bestanden direct aan je taken
+              </p>
+            </article>
+
+            <article className={`p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-md hover:shadow-xl transition-all duration-700 ease-out delay-300 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/60 flex items-center justify-center mb-4">
                 <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-white" aria-hidden="true" />
               </div>
