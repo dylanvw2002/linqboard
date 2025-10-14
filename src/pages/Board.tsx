@@ -2633,14 +2633,11 @@ const Board = () => {
                       if (!member) return null;
                       return (
                         <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
-                          <Avatar className="h-8 w-8">
-                            {member.avatar_url ? (
-                              <AvatarImage src={member.avatar_url} alt={member.full_name} />
-                            ) : (
-                              <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
-                                {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                              </AvatarFallback>
-                            )}
+                          <Avatar className="h-9 w-9">
+                            <AvatarImage src={member.avatar_url || undefined} />
+                            <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
+                              {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col">
                             <span className="text-sm font-medium">{member.full_name}</span>
@@ -2668,10 +2665,7 @@ const Board = () => {
                   <SelectContent className="z-[100]">
                     {orgMembersWithEmails.filter(m => !exportSelectedMembers.includes(m.user_id)).map(member => (
                       <SelectItem key={member.user_id} value={member.user_id}>
-                        <div className="flex items-center gap-2">
-                          <span>{member.full_name}</span>
-                          <span className="text-xs text-muted-foreground">({member.email})</span>
-                        </div>
+                        {member.full_name}
                       </SelectItem>
                     ))}
                   </SelectContent>
