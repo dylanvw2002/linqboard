@@ -2624,45 +2624,59 @@ const Board = () => {
           <div className="space-y-4">
             {/* Team Members Selection */}
             <div>
-              <Label className="mb-3 block">{t('board.exportSelectMembers')}</Label>
-              <div className="space-y-2 max-h-60 overflow-y-auto border rounded-md p-3">
-                {orgMembersWithEmails.map((member) => (
-                  <div key={member.user_id} className="flex items-center space-x-3 p-2 hover:bg-accent rounded-md">
-                    <Checkbox
-                      id={`member-${member.user_id}`}
-                      checked={exportSelectedMembers.includes(member.user_id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setExportSelectedMembers([...exportSelectedMembers, member.user_id]);
-                        } else {
-                          setExportSelectedMembers(exportSelectedMembers.filter(id => id !== member.user_id));
-                        }
-                      }}
-                    />
-                    <Label
-                      htmlFor={`member-${member.user_id}`}
-                      className="flex items-center space-x-3 flex-1 cursor-pointer"
-                    >
-                      <Avatar className="h-8 w-8">
-                        {member.avatar_url ? (
-                          <AvatarImage src={member.avatar_url} alt={member.full_name} />
-                        ) : (
-                          <AvatarFallback>{member.full_name.slice(0, 2).toUpperCase()}</AvatarFallback>
-                        )}
-                      </Avatar>
-                      <div className="flex flex-col">
-                        <span className="font-medium text-sm">{member.full_name}</span>
-                        <span className="text-xs text-muted-foreground">{member.email}</span>
-                      </div>
-                    </Label>
+              <Label>{t('board.exportSelectMembers')}</Label>
+              <div className="space-y-3">
+                {exportSelectedMembers.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {exportSelectedMembers.map(userId => {
+                      const member = orgMembersWithEmails.find(m => m.user_id === userId);
+                      if (!member) return null;
+                      return (
+                        <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                          <Avatar className="h-8 w-8">
+                            {member.avatar_url ? (
+                              <AvatarImage src={member.avatar_url} alt={member.full_name} />
+                            ) : (
+                              <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
+                                {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">{member.full_name}</span>
+                            <span className="text-xs text-muted-foreground">{member.email}</span>
+                          </div>
+                          <button
+                            onClick={() => setExportSelectedMembers(exportSelectedMembers.filter(id => id !== userId))}
+                            className="ml-1 text-muted-foreground hover:text-destructive"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
+                )}
+                <Select onValueChange={value => {
+                  if (value && !exportSelectedMembers.includes(value)) {
+                    setExportSelectedMembers([...exportSelectedMembers, value]);
+                  }
+                }}>
+                  <SelectTrigger className="w-full">
+                    <span className="text-muted-foreground">{t('board.addTeamMember')}</span>
+                  </SelectTrigger>
+                  <SelectContent className="z-[100]">
+                    {orgMembersWithEmails.filter(m => !exportSelectedMembers.includes(m.user_id)).map(member => (
+                      <SelectItem key={member.user_id} value={member.user_id}>
+                        <div className="flex items-center gap-2">
+                          <span>{member.full_name}</span>
+                          <span className="text-xs text-muted-foreground">({member.email})</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-              {exportSelectedMembers.length > 0 && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  {exportSelectedMembers.length} {exportSelectedMembers.length === 1 ? 'teamlid' : 'teamleden'} geselecteerd
-                </p>
-              )}
             </div>
 
             {/* External Email Addresses */}
