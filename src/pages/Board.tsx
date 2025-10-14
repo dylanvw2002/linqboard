@@ -2634,7 +2634,7 @@ const Board = () => {
                       return (
                         <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
                           <Avatar className="h-9 w-9">
-                            <AvatarImage src={member.avatar_url || undefined} />
+                            {member.avatar_url && <AvatarImage src={member.avatar_url} />}
                             <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
                               {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </AvatarFallback>
