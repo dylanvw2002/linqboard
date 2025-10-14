@@ -953,7 +953,10 @@ const Board = () => {
       .rpc('get_org_member_emails', { _org_id: board.organization_id });
 
     if (!error && data) {
+      console.log('Fetched org members with emails:', data);
       setOrgMembersWithEmails(data);
+    } else if (error) {
+      console.error('Error fetching org members with emails:', error);
     }
   };
   const fetchUserPlan = async () => {
@@ -2634,7 +2637,9 @@ const Board = () => {
                       return (
                         <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
                           <Avatar className="h-9 w-9">
-                            {member.avatar_url && <AvatarImage src={member.avatar_url} />}
+                            {member.avatar_url ? (
+                              <AvatarImage src={member.avatar_url} alt={member.full_name} />
+                            ) : null}
                             <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
                               {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </AvatarFallback>
