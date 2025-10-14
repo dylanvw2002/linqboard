@@ -56,170 +56,107 @@ END:VCALENDAR`;
 // Email template constant (Outlook-compatible)
 const EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="nl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LinqBoard – Taak Export</title>
-    <!--[if mso]>
-      <style type="text/css">
-        body, table, td, a { font-family: Arial, sans-serif !important; }
-      </style>
-    <![endif]-->
-  </head>
-  <body style="margin:0; padding:0; background:linear-gradient(135deg, #f0f4ff 0%, #e9efff 50%, #f5f8ff 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
-    
-    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg, #f0f4ff 0%, #e9efff 50%, #f5f8ff 100%);">
-      <tr>
-        <td align="center" style="padding:20px 20px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinqBoard – Taak Export</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f3ff;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f3ff;">
+    <tr>
+      <td align="center" style="padding:20px;">
+        
+        <!-- Logo -->
+        <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" width="320" height="320" style="display:block;margin:0 auto 20px;" />
+        
+        <!-- Main Container -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
           
-          <!-- Main container -->
-          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:650px;">
-            
-            <!-- Header with logo -->
-            <tr>
-              <td align="center" style="padding:0 0 16px 0;">
-                <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:160px;" height="160" />
-              </td>
-            </tr>
-            
-            <!-- White content card -->
-            <tr>
-              <td bgcolor="#ffffff" style="border-radius:24px; padding:0; box-shadow: 0 20px 60px rgba(99, 102, 241, 0.12), 0 4px 16px rgba(0, 0, 0, 0.04);">
-                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-                  
-                  <!-- Top accent bar -->
+          <!-- Priority Badge -->
+          <tr>
+            <td align="center" style="padding:32px 32px 16px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:{{priorityBg}};color:{{priorityFg}};font-size:14px;font-weight:700;padding:10px 24px;border-radius:20px;text-transform:uppercase;">
+                    {{priorityLabel}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Title -->
+          <tr>
+            <td align="center" style="padding:0 32px 24px;">
+              <h1 style="margin:0;font-size:28px;font-weight:700;color:#1e1b4b;">{{title}}</h1>
+            </td>
+          </tr>
+          
+          <!-- Description -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px;border-radius:8px;font-size:15px;line-height:1.6;color:#334155;">
+                {{description}}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Assignees -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <div style="background:#faf5ff;border-radius:12px;padding:20px;border:2px solid #e9d5ff;">
+                <div style="font-size:14px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:16px;text-align:center;">
+                  👥 Toegewezen aan
+                </div>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td height="6" style="background:linear-gradient(90deg, #818cf8 0%, #a5b4fc 50%, #c7d2fe 100%); border-radius:24px 24px 0 0;"></td>
-                  </tr>
-                  
-                  <!-- Spacer -->
-                  <tr><td height="20" style="line-height:20px; font-size:0;">&nbsp;</td></tr>
-                  
-                  <!-- Priority badge only -->
-                  <tr>
-                    <td align="center" style="padding:0 32px;">
-                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="background:{{priorityBg}}; color:{{priorityFg}}; font-size:13px; line-height:18px; padding:10px 20px; border-radius:20px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
-                            {{priorityLabel}}
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  
-                  <!-- Spacer -->
-                  <tr><td height="24" style="line-height:24px; font-size:0;">&nbsp;</td></tr>
-                  
-                  <!-- Title -->
-                  <tr>
-                    <td align="center" style="padding:0 32px;">
-                      <h1 style="margin:0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:32px; line-height:40px; font-weight:800; color:#1e1b4b; letter-spacing:-0.5px;">
-                        {{title}}
-                      </h1>
-                    </td>
-                  </tr>
-                  
-                  <!-- Spacer -->
-                  <tr><td height="24" style="line-height:24px; font-size:0;">&nbsp;</td></tr>
-                  
-                  <!-- Description box -->
-                  <tr>
-                    <td align="left" style="padding:0 32px;">
-                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius:16px; border:2px solid #e0e7ff;">
-                        <tr>
-                          <td style="padding:20px 24px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:15px; line-height:26px; color:#334155;">
-                            {{description}}
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  
-                  <!-- Spacer -->
-                  <tr><td height="32" style="line-height:32px; font-size:0;">&nbsp;</td></tr>
-                  
-                  <!-- Assignees section -->
-                  <tr>
-                    <td style="padding:0 32px;">
-                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-radius:16px; padding:24px; border:2px solid #e9d5ff;">
-                        <tr>
-                          <td align="center">
-                            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:14px; font-weight:700; color:#6b21a8; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">
-                              👥 Toegewezen aan
-                            </div>
-                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" style="margin:0 auto;">
-                              <tr>
-                                {{assigneesHtml}}
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  
-                  <!-- Spacer -->
-                  <tr><td height="24" style="line-height:24px; font-size:0;">&nbsp;</td></tr>
-                  
-                  <!-- Attachments section -->
-                  <tr>
-                    <td style="padding:0 32px;">
-                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg, #fef9f5 0%, #fef3e8 100%); border-radius:16px; padding:24px; border:2px solid #fed7aa;">
-                        <tr>
-                          <td>
-                            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:14px; font-weight:700; color:#9a3412; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">
-                              📎 Bijlagen
-                            </div>
-                            <ul style="padding-left:20px; margin:0; list-style-type:disc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:14px; line-height:28px; color:#451a03;">
-                              {{attachmentsText}}
-                            </ul>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  
-                  <!-- Spacer -->
-                  <tr><td height="32" style="line-height:32px; font-size:0;">&nbsp;</td></tr>
-                  
-                  <!-- CTA Button -->
-                  <tr>
-                    <td align="center" style="padding:0 32px 40px 32px;">
-                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                        <tr>
-                          <td style="background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius:16px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);">
-                            <a href="{{taskUrl}}" target="_blank" style="display:block; padding:18px 48px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:16px; font-weight:700; color:#ffffff !important; text-decoration:none !important; letter-spacing:0.5px;">
-                              🔗 Bekijk in LinqBoard
-                            </a>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  
-                </table>
-              </td>
-            </tr>
-            
-            <!-- Footer -->
-            <tr>
-              <td align="center" style="padding:32px 20px;">
-                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-                  <tr>
-                    <td align="center" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:13px; color:#64748b; line-height:20px;">
-                      © 2025 LinqBoard – Samen, van to-do naar done.
-                    </td>
+                    {{assigneesHtml}}
                   </tr>
                 </table>
-              </td>
-            </tr>
-            
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Attachments -->
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <div style="background:#fef9f5;border-radius:12px;padding:20px;border:2px solid #fed7aa;">
+                <div style="font-size:14px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:12px;">
+                  📎 Bijlagen
+                </div>
+                <ul style="margin:0;padding-left:20px;font-size:14px;line-height:1.8;color:#451a03;">
+                  {{attachmentsText}}
+                </ul>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- CTA Button -->
+          <tr>
+            <td align="center" style="padding:0 32px 40px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px;box-shadow:0 4px 12px rgba(99,102,241,0.4);">
+                    <a href="{{taskUrl}}" style="display:block;padding:16px 40px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;">
+                      🔗 Bekijk in LinqBoard
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+        </table>
+        
+        <!-- Footer -->
+        <div style="margin-top:24px;font-size:13px;color:#64748b;text-align:center;">
+          © 2025 LinqBoard – Samen, van to-do naar done.
+        </div>
+        
+      </td>
+    </tr>
+  </table>
+</body>
 </html>`;
 
 // Generate HTML email template
@@ -256,19 +193,25 @@ function generateEmailHTML(
       .substring(0, 2);
   };
   
-  // Generate assignees HTML - table cells for horizontal layout
+  // Generate assignees HTML - simplified for email compatibility
   const assigneesHtml = assignees.length > 0 
     ? assignees.map(a => `
-        <td style="text-align:center; padding:0 10px;">
-          <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%); color:#ffffff; font-weight:700; display:flex; align-items:center; justify-content:center; border:3px solid #ffffff; box-shadow:0 6px 16px rgba(139, 92, 246, 0.3); font-size:20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; margin:0 auto;">
-            ${getInitials(a.full_name)}
-          </div>
-          <div style="font-size:14px; color:#4c1d95; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; margin-top:8px;">
-            ${a.full_name}
-          </div>
+        <td align="center" style="padding:0 12px;">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:22px;border:3px solid #fff;box-shadow:0 4px 12px rgba(139,92,246,0.3);">
+                <div style="line-height:70px;">${getInitials(a.full_name)}</div>
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding-top:8px;font-size:14px;color:#4c1d95;font-weight:600;">
+                ${a.full_name}
+              </td>
+            </tr>
+          </table>
         </td>
       `).join('')
-    : '<td style="text-align:center; color:#9ca3af; font-style:italic; font-size:14px;">Niet toegewezen</td>';
+    : '<td align="center" style="color:#9ca3af;font-style:italic;font-size:14px;">Niet toegewezen</td>';
   
   // Format file size
   const formatFileSize = (bytes: number): string => {
