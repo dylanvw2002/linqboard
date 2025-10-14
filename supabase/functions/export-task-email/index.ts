@@ -138,9 +138,9 @@ function generateEmailHTML(
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${task.title} - LinqBoard</title>
     </head>
-    <body style="margin: 0; padding: 0; background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <body style="margin: 0; padding: 0; background: linear-gradient(135deg, #9333ea 0%, #7c3aed 25%, #6b21a8 50%, #7c3aed 75%, #9333ea 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
       <!-- Wrapper with gradient background -->
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); padding: 40px 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(135deg, #9333ea 0%, #7c3aed 25%, #6b21a8 50%, #7c3aed 75%, #9333ea 100%); padding: 40px 20px;">
         <tr>
           <td align="center">
             <!-- Main container -->
@@ -155,13 +155,13 @@ function generateEmailHTML(
               
               <!-- Task Card Container -->
               <tr>
-                <td style="background: #ffffff; border: 3px solid #8B7BE8; border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden;">
+                <td style="background: #ffffff; border: 2px solid rgba(139, 123, 232, 0.3); border-radius: 24px; box-shadow: 0 10px 40px rgba(107, 93, 211, 0.25), 0 2px 8px rgba(0, 0, 0, 0.1); padding: 0; overflow: hidden;">
 
                   <!-- Personal Message (if exists) -->
                   ${personalMessage ? `
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                       <tr>
-                        <td style="padding: 24px 32px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9ff 100%); border-bottom: 2px solid #8B7BE8;">
+                        <td style="padding: 20px; margin: 20px; background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-left: 4px solid #8B7BE8; border-radius: 16px;">
                           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                             <tr>
                               <td style="padding-bottom: 8px;">
@@ -188,7 +188,7 @@ function generateEmailHTML(
                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                           <tr>
                             <td style="padding-bottom: 24px;">
-                              <h1 style="margin: 0; color: #1a202c; font-size: 28px; font-weight: 700; line-height: 1.3;">
+                              <h1 style="margin: 0; color: #1a202c; font-size: 28px; font-weight: 600; line-height: 1.3; font-family: Georgia, 'Times New Roman', Times, serif; letter-spacing: -0.5px;">
                                 ${task.title}
                               </h1>
                             </td>
@@ -202,20 +202,20 @@ function generateEmailHTML(
                               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                   <td style="padding-right: 8px;">
-                                    <span style="display: inline-block; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4c51bf; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid #a5b4fc;">
+                                    <span style="display: inline-block; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4c51bf; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(165, 180, 252, 0.5);">
                                       📋 ${column.name}
                                     </span>
                                   </td>
                                   ${task.priority ? `
                                     <td style="padding-right: 8px;">
-                                      <span style="display: inline-block; background: ${priorityColor}; color: white; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; box-shadow: 0 2px 8px ${priorityColor}40;">
+                                      <span style="display: inline-block; background: ${priorityColor}; color: white; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 8px ${priorityColor}40;">
                                         ${priorityLabel}
                                       </span>
                                     </td>
                                   ` : ''}
                                   ${task.due_date ? `
                                     <td>
-                                      <span style="display: inline-block; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid #fbbf24;">
+                                      <span style="display: inline-block; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(251, 191, 36, 0.5);">
                                         📅 ${new Date(task.due_date).toLocaleDateString(language === 'en' ? 'en-US' : 'nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}
                                       </span>
                                     </td>
@@ -230,7 +230,7 @@ function generateEmailHTML(
                         ${task.description ? `
                           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                             <tr>
-                              <td style="padding: 20px; background: #f7fafc; border-left: 4px solid #8B7BE8; border-radius: 8px; margin-bottom: 24px;">
+                              <td style="padding: 16px; margin: 16px 20px; background: #fafbfc; border-left: 4px solid #8B7BE8; border-radius: 12px;">
                                 <p style="margin: 0; color: #4a5568; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${task.description.replace(/\n/g, '<br>')}</p>
                               </td>
                             </tr>
@@ -256,8 +256,8 @@ function generateEmailHTML(
                                       <td style="padding-right: 16px; padding-bottom: 12px;">
                                         <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                                           <tr>
-                                            <td align="center">
-                                              <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; margin-bottom: 6px; box-shadow: 0 4px 12px rgba(139, 123, 232, 0.3);">
+                                             <td align="center">
+                                              <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; margin-bottom: 6px; border: 2px solid #ffffff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                                                 ${getInitials(a.full_name)}
                                               </div>
                                             </td>
@@ -291,7 +291,7 @@ function generateEmailHTML(
                             </tr>
                             <tr>
                               <td style="padding-bottom: 24px;">
-                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #f7fafc; border-radius: 12px; padding: 16px;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #fafbfc; border-radius: 12px; padding: 16px; margin: 16px 20px; border: 1px solid #e5e7eb;">
                                   ${comments.map((c, idx) => `
                                     <tr>
                                       <td style="padding: 12px 0; ${idx < comments.length - 1 ? 'border-bottom: 1px solid #e2e8f0;' : ''}">
@@ -339,7 +339,7 @@ function generateEmailHTML(
                                 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                                   ${attachments.map(att => `
                                     <tr>
-                                      <td style="padding: 12px 16px; background: #f7fafc; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                                      <td style="padding: 16px; margin: 16px 20px; background: #fafbfc; border-radius: 12px; border: 1px solid #e5e7eb;">
                                         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
                                           <tr>
                                             <td style="width: 40px; vertical-align: middle;">
