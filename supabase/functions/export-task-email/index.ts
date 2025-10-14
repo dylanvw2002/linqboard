@@ -304,12 +304,20 @@ serve(async (req) => {
     let memberEmails: string[] = [];
     if (memberUserIds && memberUserIds.length > 0) {
       const { data: memberData, error: emailError } = await supabaseClient
-        .rpc('get_org_member_emails', { _org_id: task.columns.boards.organization_id });
+        .from('profiles')
+        .select('user_id')
+        .in('user_id', memberUserIds);
 
       if (!emailError && memberData) {
-        memberEmails = memberData
-          .filter((m: any) => memberUserIds.includes(m.user_id))
-          .map((m: any) => m.email);
+        // Get emails from auth.users for these user_ids
+        const { data: { users }, error: usersError } = await supabaseClient.auth.admin.listUsers();
+        
+        if (!usersError && users) {
+          memberEmails = users
+            .filter((u: any) => memberUserIds.includes(u.id))
+            .map((u: any) => u.email)
+            .filter((email: string) => email);
+        }
       }
     }
 
