@@ -53,96 +53,181 @@ END:VEVENT
 END:VCALENDAR`;
 }
 
-// Email template constant
+// Email template constant (Outlook-compatible)
 const EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="nl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LinqBoard – Taak Export</title>
+    <title>LinqBoard – Taak Export (Outlook-proof)</title>
+    <!--[if mso]>
+      <style type="text/css">
+        body, table, td, a { font-family: Arial, sans-serif !important; }
+      </style>
+    <![endif]-->
   </head>
-  <body
-    style="position:relative;margin:0;padding:0;background:linear-gradient(180deg, #f5f3ff 0%, #ede9fe 50%, #f5f3ff 100%);background-repeat:no-repeat;background-attachment:fixed;font-family:Inter,Arial,sans-serif;color:#000;min-height:100vh;"
-  >
-    <table
-      align="center"
-      width="100%"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      style="max-width:600px;margin:0 auto;padding:40px 20px;position:relative;z-index:2;"
-    >
+  <body style="margin:0; padding:0; background:#ede9fe;">
+    <!-- Background (with VML for Outlook) -->
+    <!--[if mso | IE]>
+      <v:background fill="t">
+        <v:fill type="gradient" color="#f5f3ff" color2="#ede9fe" angle="180" />
+      </v:background>
+    <![endif]-->
+
+    <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ede9fe">
       <tr>
-        <td
-          style="background:#fff;border:1px solid rgba(215,205,255,0.3);border-radius:16px;box-shadow:0 6px 24px rgba(160,140,255,0.15);padding:32px;color:#000;"
-        >
-          <div style="margin-bottom:16px;text-align:center;">
-            <span
-              style="background:{{priorityBg}};color:{{priorityFg}};padding:6px 14px;border-radius:12px;font-size:13px;margin-right:8px;display:inline-block;letter-spacing:0.2px;"
-              >{{priorityLabel}}</span
-            >
-            <span
-              style="background:linear-gradient(90deg,#fde68a,#fef9c3);color:#000;padding:6px 14px;border-radius:12px;font-size:13px;display:inline-block;letter-spacing:0.2px;"
-              >{{deadline}}</span
-            >
-          </div>
-
-          <h1
-            style="font-family:Inter,Arial,sans-serif;font-size:26px;font-weight:700;margin:0 0 12px;text-align:center;color:#000;"
-          >
-            {{title}}
-          </h1>
-
-          <div
-            style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px 18px;border-radius:12px;margin-bottom:28px;line-height:1.6;font-size:15px;color:#000;"
-          >
-            {{description}}
-          </div>
-
-          <h3
-            style="font-size:17px;color:#000;margin-bottom:12px;margin-top:0;text-align:center;"
-          >
-            👥 Toegewezen aan
-          </h3>
-          <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <td align="center" style="padding:32px 16px;">
+          <!-- Outer container -->
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;">
             <tr>
-              {{assigneesHtml}}
+              <td bgcolor="#ffffff" style="border:1px solid #E3DFFC; border-radius:16px; padding:0;">
+                <!-- Inner content as table-only for Outlook compatibility -->
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse:separate; border-spacing:0;">
+
+                  <!-- Spacer -->
+                  <tr><td height="24" style="line-height:24px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Priority + Deadline -->
+                  <tr>
+                    <td align="center" style="padding:0 24px;">
+                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="background:{{priorityBg}}; color:{{priorityFg}}; font-size:13px; line-height:18px; padding:6px 14px; border-radius:12px; font-weight:600;">
+                            {{priorityLabel}}
+                          </td>
+                          <td width="8">&nbsp;</td>
+                          <td style="background:#fde68a; color:#000; font-size:13px; line-height:18px; padding:6px 14px; border-radius:12px; font-weight:600;">
+                            {{deadline}}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="16" style="line-height:16px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Title -->
+                  <tr>
+                    <td align="center" style="padding:0 24px;">
+                      <h1 style="margin:0; font-family:Inter, Arial, sans-serif; font-size:26px; line-height:34px; font-weight:700; color:#000;">
+                        {{title}}
+                      </h1>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="12" style="line-height:12px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Description -->
+                  <tr>
+                    <td align="left" style="padding:0 24px;">
+                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:#f9fafb;">
+                        <tr>
+                          <td width="6" bgcolor="#c7d2fe" style="font-size:0; line-height:0;">&nbsp;</td>
+                          <td style="padding:14px 16px; font-family:Inter, Arial, sans-serif; font-size:15px; line-height:24px; color:#000;">
+                            {{description}}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="24" style="line-height:24px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Assignees header -->
+                  <tr>
+                    <td align="center" style="padding:0 24px; font-family:Inter, Arial, sans-serif; color:#000;">
+                      <strong style="font-size:17px;">👥 Toegewezen aan</strong>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="12" style="line-height:12px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Assignees list (cells injected) -->
+                  <tr>
+                    <td align="center" style="padding:0 16px;">
+                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          {{assigneesHtml}}
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="20" style="line-height:20px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Attachments header -->
+                  <tr>
+                    <td align="center" style="padding:0 24px; font-family:Inter, Arial, sans-serif; color:#000;">
+                      <strong style="font-size:17px;">📎 Bijlagen</strong>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="8" style="line-height:8px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- Attachments list (niet klikbaar) -->
+                  <tr>
+                    <td align="left" style="padding:0 24px;">
+                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="font-family:Inter, Arial, sans-serif; font-size:14px; line-height:22px; color:#000;">
+                            <ul style="padding-left:18px; margin:0; list-style-type:disc;">
+                              {{attachmentsText}}
+                            </ul>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer -->
+                  <tr><td height="24" style="line-height:24px; font-size:0;">&nbsp;</td></tr>
+
+                  <!-- CTA -->
+                  <tr>
+                    <td align="center" style="padding:0 24px;">
+                      <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td bgcolor="#818cf8" style="border-radius:12px;">
+                            <a href="{{taskUrl}}" style="display:inline-block; padding:14px 32px; font-family:Inter, Arial, sans-serif; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none;">🔗 Bekijk in LinqBoard</a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Spacer bottom -->
+                  <tr><td height="28" style="line-height:28px; font-size:0;">&nbsp;</td></tr>
+
+                </table>
+              </td>
             </tr>
+
+            <!-- Footer met groter logo -->
+            <tr>
+              <td align="center" style="padding:18px 8px 0 8px;">
+                <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;">
+                  <tr>
+                    <td align="left" valign="middle" width="180">
+                      <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:70px;" height="70" />
+                    </td>
+                    <td align="right" valign="middle" style="font-family:Inter, Arial, sans-serif; font-size:13px; color:#000;">
+                      © 2025 LinqBoard – Samen, van to-do naar done.
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
           </table>
-
-          <h3
-            style="font-size:17px;color:#000;margin-top:10px;margin-bottom:10px;text-align:center;"
-          >
-            📎 Bijlagen
-          </h3>
-          <ul style="padding-left:20px;margin-top:0;">
-            {{attachmentsHtml}}
-          </ul>
-
-          <div style="text-align:center;margin-top:32px;">
-            <a
-              href="{{taskUrl}}"
-              style="background:linear-gradient(135deg,#a5b4fc,#818cf8);color:#fff;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block;box-shadow:0 2px 8px rgba(99,102,241,0.25);"
-              >🔗 Bekijk in LinqBoard</a
-            >
-          </div>
-        </td>
-      </tr>
-
-      <tr>
-        <td
-          style="text-align:center;padding:28px 0 0 0;color:#000;font-size:13px;position:relative;"
-        >
-          © 2025 LinqBoard – Samen, van to-do naar done.
         </td>
       </tr>
     </table>
-
-    <img
-      src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-linqboard.png"
-      alt="LinqBoard Logo"
-      style="position:fixed;bottom:20px;left:20px;height:140px;opacity:0.95;z-index:1;"
-    />
   </body>
 </html>`;
 
@@ -208,15 +293,11 @@ function generateEmailHTML(
     return `${(bytes / 1024).toFixed(0)} KB`;
   };
   
-  // Generate attachments HTML
-  const attachmentsHtml = attachments.length > 0
+  // Generate attachments text (simple list items, not clickable links)
+  const attachmentsText = attachments.length > 0
     ? attachments.map(att => `
         <li style="margin-bottom:6px;">
-          <a
-            href="${att.file_path}"
-            style="color:#6366f1;text-decoration:none;font-size:14px;font-weight:500;"
-          >${att.file_name}</a>
-          <span style="color:#999;font-size:13px;">(${formatFileSize(att.file_size)})</span>
+          ${att.file_name} <span style="color:#999;">(${formatFileSize(att.file_size)})</span>
         </li>
       `).join('')
     : '<li style="color:#999;font-style:italic;">Geen bijlagen</li>';
@@ -233,7 +314,7 @@ function generateEmailHTML(
     .replace(/{{title}}/g, task.title)
     .replace(/{{description}}/g, description)
     .replace(/{{assigneesHtml}}/g, assigneesHtml)
-    .replace(/{{attachmentsHtml}}/g, attachmentsHtml)
+    .replace(/{{attachmentsText}}/g, attachmentsText)
     .replace(/{{taskUrl}}/g, taskUrl);
   
   return html;
