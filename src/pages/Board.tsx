@@ -1574,7 +1574,14 @@ const Board = () => {
         }
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
+      
+      if (!data || !data.success) {
+        throw new Error(data?.error || 'Failed to export task');
+      }
       
       toast.success(t('board.exportSuccess'));
       setExportDialogOpen(false);
