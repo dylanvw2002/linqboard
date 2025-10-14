@@ -62,8 +62,8 @@ async function generateEmailHTML(
   boardId: string,
   language: string
 ): Promise<string> {
-  // Read template
-  const templatePath = new URL('./template.html', import.meta.url).pathname;
+  // Read template - use import.meta.url to get correct path in Deno
+  const templatePath = new URL('./template.html', import.meta.url);
   const templateHtml = await Deno.readTextFile(templatePath);
   
   // Priority configuration
