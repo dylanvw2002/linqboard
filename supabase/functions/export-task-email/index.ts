@@ -78,7 +78,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
             <!-- Header with logo -->
             <tr>
               <td align="center" style="padding:0 0 24px 0;">
-                <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:80px;" height="80" />
+                <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:160px;" height="160" />
               </td>
             </tr>
             
@@ -95,17 +95,13 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                   <!-- Spacer -->
                   <tr><td height="32" style="line-height:32px; font-size:0;">&nbsp;</td></tr>
                   
-                  <!-- Priority + Deadline badges -->
+                  <!-- Priority badge only -->
                   <tr>
                     <td align="center" style="padding:0 32px;">
                       <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                         <tr>
                           <td style="background:{{priorityBg}}; color:{{priorityFg}}; font-size:13px; line-height:18px; padding:10px 20px; border-radius:20px; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
                             {{priorityLabel}}
-                          </td>
-                          <td width="12">&nbsp;</td>
-                          <td style="background:linear-gradient(135deg, #fef3c7, #fde68a); color:#78350f; font-size:13px; line-height:18px; padding:10px 20px; border-radius:20px; font-weight:700; letter-spacing:0.3px; box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);">
-                            📅 {{deadline}}
                           </td>
                         </tr>
                       </table>
@@ -192,8 +188,8 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <td align="center" style="padding:0 32px 40px 32px;">
                       <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td style="background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius:16px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);">
-                            <a href="{{taskUrl}}" style="display:inline-block; padding:18px 48px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:16px; font-weight:700; color:#ffffff; text-decoration:none; letter-spacing:0.5px;">
+                          <td style="background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius:16px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1); mso-hide:all;">
+                            <a href="{{taskUrl}}" style="display:inline-block; padding:18px 48px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:16px; font-weight:700; color:#ffffff !important; text-decoration:none; letter-spacing:0.5px;">
                               🔗 Bekijk in LinqBoard
                             </a>
                           </td>
@@ -244,11 +240,6 @@ function generateEmailHTML(
   
   const priority = task.priority || 'low';
   const priorityData = priorityConfig[priority as keyof typeof priorityConfig];
-  
-  // Format deadline
-  const deadline = task.due_date 
-    ? new Date(task.due_date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })
-    : 'Geen deadline';
   
   // Format description
   const description = task.description 
@@ -311,7 +302,6 @@ function generateEmailHTML(
     .replace(/{{priorityBg}}/g, priorityData.bg)
     .replace(/{{priorityFg}}/g, priorityData.fg)
     .replace(/{{priorityLabel}}/g, priorityData.label)
-    .replace(/{{deadline}}/g, deadline)
     .replace(/{{title}}/g, task.title)
     .replace(/{{description}}/g, description)
     .replace(/{{assigneesHtml}}/g, assigneesHtml)
