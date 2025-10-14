@@ -112,121 +112,302 @@ function generateEmailHTML(
     low: '#10b981'
   };
   
+  const priorityLabels = {
+    nl: { high: 'Hoog', medium: 'Gemiddeld', low: 'Laag' },
+    en: { high: 'High', medium: 'Medium', low: 'Low' }
+  };
+  
   const priorityColor = task.priority ? priorityColors[task.priority as keyof typeof priorityColors] : '#6b7280';
+  const priorityLabel = task.priority ? priorityLabels[language as keyof typeof priorityLabels][task.priority as keyof typeof priorityColors] : task.priority;
+  
+  // Function to get initials from name
+  const getInitials = (name: string): string => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
   
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-      <div style="background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); padding: 30px; text-align: center;">
-        <h1 style="color: white; margin: 0;">LinqBoard</h1>
-      </div>
-      
-      <div style="padding: 30px; background: white;">
-        <h2 style="color: #333;">${t.greeting},</h2>
-        
-        <p style="color: #666; line-height: 1.6;">
-          ${t.intro}
-        </p>
-        
-        ${personalMessage ? `
-          <div style="background: #f5f3ff; padding: 15px; border-left: 4px solid #8B7BE8; margin: 20px 0;">
-            <h4 style="margin: 0 0 10px 0; color: #8B7BE8;">${t.personalMessage}</h4>
-            <p style="margin: 0; color: #666;">${personalMessage}</p>
-          </div>
-        ` : ''}
-        
-        <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin: 0 0 15px 0; color: #8B7BE8;">${t.taskDetails}</h3>
-          
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 8px 0; color: #666; font-weight: bold;">${t.column}:</td>
-              <td style="padding: 8px 0; color: #333;">${column.name}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #666; font-weight: bold;">${t.title}:</td>
-              <td style="padding: 8px 0; color: #333;">${task.title}</td>
-            </tr>
-            ${task.description ? `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${task.title} - LinqBoard</title>
+    </head>
+    <body style="margin: 0; padding: 0; background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+      <!-- Wrapper with gradient background -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); padding: 40px 20px;">
+        <tr>
+          <td align="center">
+            <!-- Main container -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%;">
+              
+              <!-- Header with Logo -->
               <tr>
-                <td style="padding: 8px 0; color: #666; font-weight: bold; vertical-align: top;">${t.description}:</td>
-                <td style="padding: 8px 0; color: #333;">${task.description.replace(/\n/g, '<br>')}</td>
-              </tr>
-            ` : ''}
-            ${task.priority ? `
-              <tr>
-                <td style="padding: 8px 0; color: #666; font-weight: bold;">${t.priority}:</td>
-                <td style="padding: 8px 0;">
-                  <span style="background: ${priorityColor}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; text-transform: uppercase;">
-                    ${task.priority}
-                  </span>
+                <td align="center" style="padding: 0 0 30px 0;">
+                  <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/board-backgrounds/logo-linqboard.png" alt="LinqBoard Logo" style="height: 50px; width: auto; display: block;" />
                 </td>
               </tr>
-            ` : ''}
-            ${task.due_date ? `
+              
+              <!-- Task Card Container -->
               <tr>
-                <td style="padding: 8px 0; color: #666; font-weight: bold;">${t.dueDate}:</td>
-                <td style="padding: 8px 0; color: #333;">${new Date(task.due_date).toLocaleDateString(language === 'en' ? 'en-US' : 'nl-NL')}</td>
+                <td style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1); overflow: hidden;">
+                  
+                  <!-- Personal Message (if exists) -->
+                  ${personalMessage ? `
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding: 24px 32px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9ff 100%); border-bottom: 2px solid #8B7BE8;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding-bottom: 8px;">
+                                <span style="display: inline-block; background: #8B7BE8; color: white; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 12px;">💬 ${t.personalMessage}</span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="color: #4a5568; font-size: 15px; line-height: 1.6; font-style: italic;">
+                                "${personalMessage}"
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  ` : ''}
+                  
+                  <!-- Task Content -->
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                      <td style="padding: 32px;">
+                        
+                        <!-- Task Title -->
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                          <tr>
+                            <td style="padding-bottom: 24px;">
+                              <h1 style="margin: 0; color: #1a202c; font-size: 28px; font-weight: 700; line-height: 1.3;">
+                                ${task.title}
+                              </h1>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <!-- Column & Priority Badges -->
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                          <tr>
+                            <td style="padding-bottom: 24px;">
+                              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                  <td style="padding-right: 8px;">
+                                    <span style="display: inline-block; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4c51bf; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid #a5b4fc;">
+                                      📋 ${column.name}
+                                    </span>
+                                  </td>
+                                  ${task.priority ? `
+                                    <td style="padding-right: 8px;">
+                                      <span style="display: inline-block; background: ${priorityColor}; color: white; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; box-shadow: 0 2px 8px ${priorityColor}40;">
+                                        ${priorityLabel}
+                                      </span>
+                                    </td>
+                                  ` : ''}
+                                  ${task.due_date ? `
+                                    <td>
+                                      <span style="display: inline-block; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid #fbbf24;">
+                                        📅 ${new Date(task.due_date).toLocaleDateString(language === 'en' ? 'en-US' : 'nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                      </span>
+                                    </td>
+                                  ` : ''}
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <!-- Description -->
+                        ${task.description ? `
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding: 20px; background: #f7fafc; border-left: 4px solid #8B7BE8; border-radius: 8px; margin-bottom: 24px;">
+                                <p style="margin: 0; color: #4a5568; font-size: 15px; line-height: 1.7; white-space: pre-wrap;">${task.description.replace(/\n/g, '<br>')}</p>
+                              </td>
+                            </tr>
+                            <tr><td style="height: 24px;"></td></tr>
+                          </table>
+                        ` : ''}
+                        
+                        <!-- Assigned Users -->
+                        ${assignees.length > 0 ? `
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding-bottom: 12px;">
+                                <h3 style="margin: 0; color: #2d3748; font-size: 16px; font-weight: 600;">
+                                  👥 ${t.assignees}
+                                </h3>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding-bottom: 24px;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                  <tr>
+                                    ${assignees.map(a => `
+                                      <td style="padding-right: 16px; padding-bottom: 12px;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                                          <tr>
+                                            <td align="center">
+                                              <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #8B7BE8 0%, #6B5DD3 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px; margin-bottom: 6px; box-shadow: 0 4px 12px rgba(139, 123, 232, 0.3);">
+                                                ${getInitials(a.full_name)}
+                                              </div>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td align="center">
+                                              <div style="color: #4a5568; font-size: 13px; font-weight: 500; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                ${a.full_name}
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </table>
+                                      </td>
+                                    `).join('')}
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        ` : ''}
+                        
+                        <!-- Comments -->
+                        ${comments.length > 0 ? `
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding-bottom: 12px;">
+                                <h3 style="margin: 0; color: #2d3748; font-size: 16px; font-weight: 600;">
+                                  💬 ${t.comments}
+                                </h3>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding-bottom: 24px;">
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #f7fafc; border-radius: 12px; padding: 16px;">
+                                  ${comments.map((c, idx) => `
+                                    <tr>
+                                      <td style="padding: 12px 0; ${idx < comments.length - 1 ? 'border-bottom: 1px solid #e2e8f0;' : ''}">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                          <tr>
+                                            <td style="width: 36px; vertical-align: top; padding-right: 12px;">
+                                              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">
+                                                ${getInitials(c.full_name)}
+                                              </div>
+                                            </td>
+                                            <td style="vertical-align: top;">
+                                              <div style="color: #8B7BE8; font-weight: 600; font-size: 14px; margin-bottom: 4px;">
+                                                ${c.full_name}
+                                              </div>
+                                              <div style="color: #4a5568; font-size: 14px; line-height: 1.6; margin-bottom: 6px;">
+                                                ${c.content}
+                                              </div>
+                                              <div style="color: #a0aec0; font-size: 12px;">
+                                                ${new Date(c.created_at).toLocaleDateString(language === 'en' ? 'en-US' : 'nl-NL', { day: 'numeric', month: 'short' })} om ${new Date(c.created_at).toLocaleTimeString(language === 'en' ? 'en-US' : 'nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </table>
+                                      </td>
+                                    </tr>
+                                  `).join('')}
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        ` : ''}
+                        
+                        <!-- Attachments -->
+                        ${attachments.length > 0 ? `
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding-bottom: 12px;">
+                                <h3 style="margin: 0; color: #2d3748; font-size: 16px; font-weight: 600;">
+                                  📎 ${t.attachments}
+                                </h3>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                  ${attachments.map(att => `
+                                    <tr>
+                                      <td style="padding: 12px 16px; background: #f7fafc; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e2e8f0;">
+                                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                          <tr>
+                                            <td style="width: 40px; vertical-align: middle;">
+                                              <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                                                ${att.file_type.startsWith('image/') ? '🖼️' : att.file_type.includes('pdf') ? '📄' : att.file_type.includes('word') || att.file_type.includes('document') ? '📝' : att.file_type.includes('sheet') || att.file_type.includes('excel') ? '📊' : '📎'}
+                                              </div>
+                                            </td>
+                                            <td style="vertical-align: middle; padding-left: 12px;">
+                                              <div style="color: #2d3748; font-weight: 500; font-size: 14px; margin-bottom: 2px;">
+                                                ${att.file_name}
+                                              </div>
+                                              <div style="color: #a0aec0; font-size: 12px;">
+                                                ${(att.file_size / 1024).toFixed(1)} KB
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </table>
+                                      </td>
+                                    </tr>
+                                    <tr><td style="height: 8px;"></td></tr>
+                                  `).join('')}
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
+                        ` : ''}
+                        
+                        <!-- Calendar Note -->
+                        ${task.due_date ? `
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding-top: 24px; padding: 16px; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; border: 1px solid #fbbf24;">
+                                <p style="margin: 0; color: #92400e; font-size: 13px; line-height: 1.6;">
+                                  <strong>📅 ${t.calendarNote}</strong>
+                                </p>
+                              </td>
+                            </tr>
+                          </table>
+                        ` : ''}
+                        
+                      </td>
+                    </tr>
+                  </table>
+                  
+                </td>
               </tr>
-            ` : ''}
-          </table>
-        </div>
-        
-        ${assignees.length > 0 ? `
-          <div style="margin: 20px 0;">
-            <h4 style="color: #333; margin-bottom: 10px;">${t.assignees}</h4>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-              ${assignees.map(a => `
-                <div style="background: #f5f3ff; padding: 8px 12px; border-radius: 6px; display: inline-block;">
-                  <span style="color: #8B7BE8; font-weight: 500;">${a.full_name}</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-        
-        ${comments.length > 0 ? `
-          <div style="margin: 20px 0;">
-            <h4 style="color: #333; margin-bottom: 10px;">${t.comments}</h4>
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
-              ${comments.map(c => `
-                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">
-                  <div style="color: #8B7BE8; font-weight: 500; margin-bottom: 5px;">${c.full_name}</div>
-                  <div style="color: #666; font-size: 14px;">${c.content}</div>
-                  <div style="color: #999; font-size: 12px; margin-top: 5px;">
-                    ${new Date(c.created_at).toLocaleDateString(language === 'en' ? 'en-US' : 'nl-NL')} 
-                    ${new Date(c.created_at).toLocaleTimeString(language === 'en' ? 'en-US' : 'nl-NL', { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-        
-        ${attachments.length > 0 ? `
-          <div style="margin: 20px 0;">
-            <h4 style="color: #333; margin-bottom: 10px;">${t.attachments}</h4>
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 8px;">
-              ${attachments.map(att => `
-                <div style="padding: 8px; margin-bottom: 8px; background: white; border-radius: 4px;">
-                  📎 ${att.file_name} <span style="color: #999; font-size: 12px;">(${(att.file_size / 1024).toFixed(1)} KB)</span>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-        
-        ${task.due_date ? `
-          <p style="color: #666; font-size: 14px; font-style: italic; margin-top: 20px;">
-            📅 ${t.calendarNote}
-          </p>
-        ` : ''}
-      </div>
-      
-      <div style="background: #f9f9f9; padding: 20px; text-align: center; color: #666; font-size: 12px;">
-        <p>${t.footer}</p>
-        <p>KvK: 97289388 | BTW: NL005260317B10</p>
-      </div>
-    </div>
+              
+              <!-- Footer -->
+              <tr>
+                <td align="center" style="padding: 30px 20px 0 20px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                      <td align="center" style="color: rgba(255, 255, 255, 0.9); font-size: 14px; line-height: 1.6;">
+                        <strong style="font-size: 16px; display: block; margin-bottom: 8px;">LinqBoard</strong>
+                        Sikkelvoorde 4, 3204 EJ Spijkenisse<br>
+                        KvK: 97289388 | BTW: NL005260317B10
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
   `;
 }
 
