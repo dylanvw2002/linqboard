@@ -2627,7 +2627,16 @@ const Board = () => {
 
       {/* Export Task Dialog */}
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogContent 
+          className="max-w-lg max-h-[80vh] overflow-y-auto"
+          onInteractOutside={(e) => {
+            // Prevent closing when clicking on Select dropdown
+            const target = e.target as HTMLElement;
+            if (target.closest('[role="listbox"]') || target.closest('[data-radix-select-content]')) {
+              e.preventDefault();
+            }
+          }}
+        >
           <DialogHeader>
             <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
           </DialogHeader>
