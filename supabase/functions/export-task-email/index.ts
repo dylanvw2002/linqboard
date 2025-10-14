@@ -347,7 +347,7 @@ serve(async (req) => {
     }
 
     // Fetch assignees
-    const { data: assigneesData } = await supabaseClient
+    const { data: assigneesData, error: assigneesError } = await supabaseClient
       .from('task_assignees')
       .select(`
         user_id,
@@ -358,11 +358,16 @@ serve(async (req) => {
       `)
       .eq('task_id', taskId);
 
+    console.log('Assignees raw data:', JSON.stringify(assigneesData, null, 2));
+    console.log('Assignees error:', assigneesError);
+
     const assignees = assigneesData?.map((a: any) => ({
       user_id: a.user_id,
       full_name: a.profiles?.full_name || 'Unknown',
       avatar_url: a.profiles?.avatar_url
     })) || [];
+
+    console.log('Processed assignees:', JSON.stringify(assignees, null, 2));
 
     // Fetch comments
     const { data: commentsData } = await supabaseClient
@@ -390,6 +395,7 @@ serve(async (req) => {
     const attachments = attachmentsData || [];
 
     // Generate email HTML
+    console.log('Generating email with assignees:', assignees);
     const emailHtml = generateEmailHTML(
       task,
       task.columns,
@@ -398,6 +404,7 @@ serve(async (req) => {
       task.columns.board_id,
       language
     );
+    console.log('Email HTML length:', emailHtml.length);
 
     const resend = new Resend(resendApiKey);
     
