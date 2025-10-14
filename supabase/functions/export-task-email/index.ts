@@ -155,7 +155,7 @@ function generateEmailHTML(
               
               <!-- Task Card Container -->
               <tr>
-                <td style="background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1); overflow: hidden;">
+                <td style="background: linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%); border: 3px solid #8B7BE8; border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden;">
                   
                   <!-- Personal Message (if exists) -->
                   ${personalMessage ? `
