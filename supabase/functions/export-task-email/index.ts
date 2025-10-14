@@ -70,14 +70,14 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
     
     <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg, #f0f4ff 0%, #e9efff 50%, #f5f8ff 100%);">
       <tr>
-        <td align="center" style="padding:40px 20px;">
+        <td align="center" style="padding:20px 20px;">
           
           <!-- Main container -->
           <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:650px;">
             
             <!-- Header with logo -->
             <tr>
-              <td align="center" style="padding:0 0 24px 0;">
+              <td align="center" style="padding:0 0 16px 0;">
                 <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:160px;" height="160" />
               </td>
             </tr>
@@ -93,7 +93,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                   </tr>
                   
                   <!-- Spacer -->
-                  <tr><td height="32" style="line-height:32px; font-size:0;">&nbsp;</td></tr>
+                  <tr><td height="20" style="line-height:20px; font-size:0;">&nbsp;</td></tr>
                   
                   <!-- Priority badge only -->
                   <tr>
@@ -188,8 +188,8 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <td align="center" style="padding:0 32px 40px 32px;">
                       <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td style="background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius:16px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1); mso-hide:all;">
-                            <a href="{{taskUrl}}" style="display:inline-block; padding:18px 48px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:16px; font-weight:700; color:#ffffff !important; text-decoration:none; letter-spacing:0.5px;">
+                          <td style="background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius:16px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);">
+                            <a href="{{taskUrl}}" target="_blank" style="display:block; padding:18px 48px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size:16px; font-weight:700; color:#ffffff !important; text-decoration:none !important; letter-spacing:0.5px;">
                               🔗 Bekijk in LinqBoard
                             </a>
                           </td>
@@ -256,26 +256,16 @@ function generateEmailHTML(
       .substring(0, 2);
   };
   
-  // Generate assignees HTML
+  // Generate assignees HTML - table cells for horizontal layout
   const assigneesHtml = assignees.length > 0 
     ? assignees.map(a => `
         <td style="text-align:center; padding:0 10px;">
-          <table role="presentation" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-              <td align="center">
-                <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%); color:#ffffff; font-weight:700; display:inline-flex; align-items:center; justify-content:center; border:3px solid #ffffff; box-shadow:0 6px 16px rgba(139, 92, 246, 0.3); font-size:20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
-                  ${getInitials(a.full_name)}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding-top:8px;">
-                <div style="font-size:14px; color:#4c1d95; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;">
-                  ${a.full_name}
-                </div>
-              </td>
-            </tr>
-          </table>
+          <div style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%); color:#ffffff; font-weight:700; display:flex; align-items:center; justify-content:center; border:3px solid #ffffff; box-shadow:0 6px 16px rgba(139, 92, 246, 0.3); font-size:20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; margin:0 auto;">
+            ${getInitials(a.full_name)}
+          </div>
+          <div style="font-size:14px; color:#4c1d95; font-weight:600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; margin-top:8px;">
+            ${a.full_name}
+          </div>
         </td>
       `).join('')
     : '<td style="text-align:center; color:#9ca3af; font-style:italic; font-size:14px;">Niet toegewezen</td>';
