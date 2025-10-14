@@ -278,7 +278,9 @@
     "exportError": "Er ging iets mis bij het versturen",
     "exportNoEmails": "Voeg minimaal één emailadres toe",
     "exportInvalidEmails": "Eén of meer emailadressen zijn niet geldig",
-    "exportTooManyEmails": "Je kunt maximaal 10 ontvangers toevoegen"
+    "exportTooManyEmails": "Je kunt maximaal 10 ontvangers toevoegen",
+    "exportSelectMembers": "Selecteer ontvangers",
+    "exportExternalEmails": "Versturen naar extern emailadres"
   },
   "column": {
     "name": "Naam",
