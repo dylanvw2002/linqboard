@@ -80,7 +80,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           <!-- Outer container -->
           <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;">
             <tr>
-              <td bgcolor="#ffffff" style="border:1px solid #E3DFFC; border-radius:16px; padding:0;">
+              <td bgcolor="#ffffff" style="border:1px solid #E3DFFC; border-radius:24px; padding:0; box-shadow: 0 8px 24px rgba(160, 140, 255, 0.15);">
                 <!-- Inner content as table-only for Outlook compatibility -->
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse:separate; border-spacing:0;">
 
@@ -92,12 +92,12 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <td align="center" style="padding:0 24px;">
                       <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td style="background:{{priorityBg}}; color:{{priorityFg}}; font-size:13px; line-height:18px; padding:6px 14px; border-radius:12px; font-weight:600;">
+                          <td style="background:{{priorityBg}}; color:{{priorityFg}}; font-size:14px; line-height:20px; padding:8px 18px; border-radius:16px; font-weight:700; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                             {{priorityLabel}}
                           </td>
-                          <td width="8">&nbsp;</td>
-                          <td style="background:#fde68a; color:#000; font-size:13px; line-height:18px; padding:6px 14px; border-radius:12px; font-weight:600;">
-                            {{deadline}}
+                          <td width="12">&nbsp;</td>
+                          <td style="background:linear-gradient(135deg, #fde68a, #fef9c3); color:#000; font-size:14px; line-height:20px; padding:8px 18px; border-radius:16px; font-weight:700; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            📅 {{deadline}}
                           </td>
                         </tr>
                       </table>
@@ -193,8 +193,8 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                     <td align="center" style="padding:0 24px;">
                       <table role="presentation" border="0" cellspacing="0" cellpadding="0">
                         <tr>
-                          <td bgcolor="#818cf8" style="border-radius:12px;">
-                            <a href="{{taskUrl}}" style="display:inline-block; padding:14px 32px; font-family:Inter, Arial, sans-serif; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none;">🔗 Bekijk in LinqBoard</a>
+                          <td style="background:linear-gradient(135deg, #a5b4fc, #818cf8); border-radius:16px; box-shadow: 0 4px 12px rgba(129, 140, 248, 0.3);">
+                            <a href="{{taskUrl}}" style="display:inline-block; padding:16px 40px; font-family:Inter, Arial, sans-serif; font-size:16px; font-weight:700; color:#ffffff; text-decoration:none; letter-spacing:0.3px;">🔗 Bekijk in LinqBoard</a>
                           </td>
                         </tr>
                       </table>
@@ -213,8 +213,8 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
               <td align="center" style="padding:18px 8px 0 8px;">
                 <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;">
                   <tr>
-                    <td align="left" valign="middle" width="180">
-                      <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:70px;" height="70" />
+                    <td align="left" valign="middle" width="220">
+                      <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="display:block; height:120px;" height="120" />
                     </td>
                     <td align="right" valign="middle" style="font-family:Inter, Arial, sans-serif; font-size:13px; color:#000;">
                       © 2025 LinqBoard – Samen, van to-do naar done.
