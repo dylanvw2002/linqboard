@@ -2662,7 +2662,7 @@ const Board = () => {
                   <SelectTrigger className="w-full">
                     <span className="text-muted-foreground">{t('board.addTeamMember')}</span>
                   </SelectTrigger>
-                  <SelectContent className="z-[100]">
+                  <SelectContent className="z-[9999] bg-popover">
                     {orgMembersWithEmails.filter(m => !exportSelectedMembers.includes(m.user_id)).map(member => (
                       <SelectItem key={member.user_id} value={member.user_id}>
                         {member.full_name}
