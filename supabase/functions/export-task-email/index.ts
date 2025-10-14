@@ -53,19 +53,108 @@ END:VEVENT
 END:VCALENDAR`;
 }
 
-// Generate HTML email template using the template file
-async function generateEmailHTML(
+// Email template constant
+const EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LinqBoard – Taak Export</title>
+  </head>
+  <body
+    style="position:relative;margin:0;padding:0;background:linear-gradient(180deg, #f5f3ff 0%, #ede9fe 50%, #f5f3ff 100%);background-repeat:no-repeat;background-attachment:fixed;font-family:Inter,Arial,sans-serif;color:#000;min-height:100vh;"
+  >
+    <table
+      align="center"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      role="presentation"
+      style="max-width:600px;margin:0 auto;padding:40px 20px;position:relative;z-index:2;"
+    >
+      <tr>
+        <td
+          style="background:#fff;border:1px solid rgba(215,205,255,0.3);border-radius:16px;box-shadow:0 6px 24px rgba(160,140,255,0.15);padding:32px;color:#000;"
+        >
+          <div style="margin-bottom:16px;text-align:center;">
+            <span
+              style="background:{{priorityBg}};color:{{priorityFg}};padding:6px 14px;border-radius:12px;font-size:13px;margin-right:8px;display:inline-block;letter-spacing:0.2px;"
+              >{{priorityLabel}}</span
+            >
+            <span
+              style="background:linear-gradient(90deg,#fde68a,#fef9c3);color:#000;padding:6px 14px;border-radius:12px;font-size:13px;display:inline-block;letter-spacing:0.2px;"
+              >{{deadline}}</span
+            >
+          </div>
+
+          <h1
+            style="font-family:Inter,Arial,sans-serif;font-size:26px;font-weight:700;margin:0 0 12px;text-align:center;color:#000;"
+          >
+            {{title}}
+          </h1>
+
+          <div
+            style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px 18px;border-radius:12px;margin-bottom:28px;line-height:1.6;font-size:15px;color:#000;"
+          >
+            {{description}}
+          </div>
+
+          <h3
+            style="font-size:17px;color:#000;margin-bottom:12px;margin-top:0;text-align:center;"
+          >
+            👥 Toegewezen aan
+          </h3>
+          <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+            <tr>
+              {{assigneesHtml}}
+            </tr>
+          </table>
+
+          <h3
+            style="font-size:17px;color:#000;margin-top:10px;margin-bottom:10px;text-align:center;"
+          >
+            📎 Bijlagen
+          </h3>
+          <ul style="padding-left:20px;margin-top:0;">
+            {{attachmentsHtml}}
+          </ul>
+
+          <div style="text-align:center;margin-top:32px;">
+            <a
+              href="{{taskUrl}}"
+              style="background:linear-gradient(135deg,#a5b4fc,#818cf8);color:#fff;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block;box-shadow:0 2px 8px rgba(99,102,241,0.25);"
+              >🔗 Bekijk in LinqBoard</a
+            >
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td
+          style="text-align:center;padding:28px 0 0 0;color:#000;font-size:13px;position:relative;"
+        >
+          © 2025 LinqBoard – Samen, van to-do naar done.
+        </td>
+      </tr>
+    </table>
+
+    <img
+      src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-linqboard.png"
+      alt="LinqBoard Logo"
+      style="position:fixed;bottom:20px;left:20px;height:140px;opacity:0.95;z-index:1;"
+    />
+  </body>
+</html>`;
+
+// Generate HTML email template
+function generateEmailHTML(
   task: any, 
   column: any, 
   assignees: any[], 
   attachments: any[],
   boardId: string,
   language: string
-): Promise<string> {
-  // Read template - use import.meta.url to get correct path in Deno
-  const templatePath = new URL('./template.html', import.meta.url);
-  const templateHtml = await Deno.readTextFile(templatePath);
-  
+): string {
   // Priority configuration
   const priorityConfig = {
     high: { bg: 'linear-gradient(135deg, #fca5a5, #f87171)', fg: '#fff', label: 'Hoog' },
@@ -136,7 +225,7 @@ async function generateEmailHTML(
   const taskUrl = `https://linqboard.io/board/${boardId}`;
   
   // Replace all placeholders
-  let html = templateHtml
+  let html = EMAIL_TEMPLATE
     .replace(/{{priorityBg}}/g, priorityData.bg)
     .replace(/{{priorityFg}}/g, priorityData.fg)
     .replace(/{{priorityLabel}}/g, priorityData.label)
@@ -296,7 +385,7 @@ serve(async (req) => {
     const attachments = attachmentsData || [];
 
     // Generate email HTML
-    const emailHtml = await generateEmailHTML(
+    const emailHtml = generateEmailHTML(
       task,
       task.columns,
       assignees,
