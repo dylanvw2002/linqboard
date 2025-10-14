@@ -596,10 +596,17 @@ const Board = () => {
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
   const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.33 : 0.75);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [exportSelectedMembers, setExportSelectedMembers] = useState<string[]>([]);
   const [exportEmails, setExportEmails] = useState("");
   const [exportMessage, setExportMessage] = useState("");
   const [exportIncludeAttachments, setExportIncludeAttachments] = useState(true);
   const [exportingTask, setExportingTask] = useState(false);
+  const [orgMembersWithEmails, setOrgMembersWithEmails] = useState<Array<{
+    user_id: string;
+    full_name: string;
+    avatar_url: string | null;
+    email: string;
+  }>>([]);
   const [isLandscape, setIsLandscape] = useState<boolean>(window.innerWidth > window.innerHeight);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
@@ -933,9 +940,21 @@ const Board = () => {
     checkAccess();
     fetchBoardData();
     fetchOrgMembers();
+    fetchOrgMembersWithEmails();
     fetchUserPlan();
     checkBackgroundPermission();
   }, [organizationId, isDemo, t]);
+  
+  const fetchOrgMembersWithEmails = async () => {
+    if (!board?.organization_id || isDemo) return;
+
+    const { data, error } = await supabase
+      .rpc('get_org_member_emails', { _org_id: board.organization_id });
+
+    if (!error && data) {
+      setOrgMembersWithEmails(data);
+    }
+  };
   const fetchUserPlan = async () => {
     try {
       const {
@@ -1502,22 +1521,28 @@ const Board = () => {
   const handleExportTask = async () => {
     if (!editingTask) return;
     
-    // Validate emails
+    // Parse external emails
     const emails = exportEmails.split(',').map(e => e.trim()).filter(e => e);
-    if (emails.length === 0) {
-      toast.error(t('board.exportNoEmails'));
+    
+    // Validate external emails if provided
+    if (emails.length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const invalidEmails = emails.filter(e => !emailRegex.test(e));
+      if (invalidEmails.length > 0) {
+        toast.error(t('board.exportInvalidEmails'));
+        return;
+      }
+    }
+    
+    // Check total recipients
+    const totalRecipients = exportSelectedMembers.length + emails.length;
+    
+    if (totalRecipients === 0) {
+      toast.error(t('board.exportNoRecipients'));
       return;
     }
     
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const invalidEmails = emails.filter(e => !emailRegex.test(e));
-    if (invalidEmails.length > 0) {
-      toast.error(t('board.exportInvalidEmails'));
-      return;
-    }
-    
-    if (emails.length > 10) {
+    if (totalRecipients > 10) {
       toast.error(t('board.exportTooManyEmails'));
       return;
     }
@@ -1534,6 +1559,7 @@ const Board = () => {
       const { data, error } = await supabase.functions.invoke('export-task-email', {
         body: {
           taskId: editingTask.id,
+          memberUserIds: exportSelectedMembers,
           recipientEmails: emails,
           personalMessage: exportMessage || undefined,
           includeAttachments: exportIncludeAttachments,
@@ -1548,6 +1574,7 @@ const Board = () => {
       
       toast.success(t('board.exportSuccess'));
       setExportDialogOpen(false);
+      setExportSelectedMembers([]);
       setExportEmails("");
       setExportMessage("");
       setExportIncludeAttachments(true);
@@ -2589,13 +2616,57 @@ const Board = () => {
 
       {/* Export Task Dialog */}
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* Team Members Selection */}
             <div>
-              <Label htmlFor="export-emails">{t('board.exportEmails')} *</Label>
+              <Label className="mb-3 block">{t('board.exportSelectMembers')}</Label>
+              <div className="space-y-2 max-h-60 overflow-y-auto border rounded-md p-3">
+                {orgMembersWithEmails.map((member) => (
+                  <div key={member.user_id} className="flex items-center space-x-3 p-2 hover:bg-accent rounded-md">
+                    <Checkbox
+                      id={`member-${member.user_id}`}
+                      checked={exportSelectedMembers.includes(member.user_id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setExportSelectedMembers([...exportSelectedMembers, member.user_id]);
+                        } else {
+                          setExportSelectedMembers(exportSelectedMembers.filter(id => id !== member.user_id));
+                        }
+                      }}
+                    />
+                    <Label
+                      htmlFor={`member-${member.user_id}`}
+                      className="flex items-center space-x-3 flex-1 cursor-pointer"
+                    >
+                      <Avatar className="h-8 w-8">
+                        {member.avatar_url ? (
+                          <AvatarImage src={member.avatar_url} alt={member.full_name} />
+                        ) : (
+                          <AvatarFallback>{member.full_name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm">{member.full_name}</span>
+                        <span className="text-xs text-muted-foreground">{member.email}</span>
+                      </div>
+                    </Label>
+                  </div>
+                ))}
+              </div>
+              {exportSelectedMembers.length > 0 && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {exportSelectedMembers.length} {exportSelectedMembers.length === 1 ? 'teamlid' : 'teamleden'} geselecteerd
+                </p>
+              )}
+            </div>
+
+            {/* External Email Addresses */}
+            <div>
+              <Label htmlFor="export-emails">{t('board.exportExternalEmails')}</Label>
               <Input
                 id="export-emails"
                 value={exportEmails}

@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@4.0.0";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,7 +10,8 @@ const corsHeaders = {
 
 interface TaskExportRequest {
   taskId: string;
-  recipientEmails: string[];
+  recipientEmails?: string[];
+  memberUserIds?: string[];
   personalMessage?: string;
   includeAttachments: boolean;
   language: string;
@@ -249,17 +251,20 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { taskId, recipientEmails, personalMessage, includeAttachments, language }: TaskExportRequest = await req.json();
+    const { 
+      taskId, 
+      recipientEmails = [], 
+      memberUserIds = [],
+      personalMessage, 
+      includeAttachments, 
+      language 
+    }: TaskExportRequest = await req.json();
 
-    console.log('Exporting task:', { taskId, recipientEmails, language });
+    console.log('Exporting task:', { taskId, recipientEmails, memberUserIds, language });
 
     // Validate input
-    if (!taskId || !recipientEmails || recipientEmails.length === 0) {
-      throw new Error('Missing required fields');
-    }
-
-    if (recipientEmails.length > 10) {
-      throw new Error('Maximum 10 recipients allowed');
+    if (!taskId) {
+      throw new Error('Task ID is required');
     }
 
     // Fetch task with column info
@@ -295,19 +300,43 @@ serve(async (req) => {
       throw new Error('Access denied');
     }
 
+    // Fetch emails for selected members
+    let memberEmails: string[] = [];
+    if (memberUserIds && memberUserIds.length > 0) {
+      const { data: memberData, error: emailError } = await supabaseClient
+        .rpc('get_org_member_emails', { _org_id: task.columns.boards.organization_id });
+
+      if (!emailError && memberData) {
+        memberEmails = memberData
+          .filter((m: any) => memberUserIds.includes(m.user_id))
+          .map((m: any) => m.email);
+      }
+    }
+
+    // Combine member emails and external recipients
+    const allRecipients = [...memberEmails, ...recipientEmails];
+
+    if (allRecipients.length === 0) {
+      throw new Error('At least one recipient is required');
+    }
+
+    if (allRecipients.length > 10) {
+      throw new Error('Maximum 10 recipients allowed');
+    }
+
     // Fetch assignees
     const { data: assigneesData } = await supabaseClient
       .from('task_assignees')
       .select(`
         user_id,
-        profiles (
+        profiles!inner (
           full_name,
           avatar_url
         )
       `)
       .eq('task_id', taskId);
 
-    const assignees = assigneesData?.map(a => ({
+    const assignees = assigneesData?.map((a: any) => ({
       user_id: a.user_id,
       full_name: a.profiles?.full_name || 'Unknown',
       avatar_url: a.profiles?.avatar_url
@@ -325,7 +354,7 @@ serve(async (req) => {
       .eq('task_id', taskId)
       .order('created_at', { ascending: true });
 
-    const comments = commentsData?.map(c => ({
+    const comments = commentsData?.map((c: any) => ({
       ...c,
       full_name: c.profiles?.full_name || 'Unknown'
     })) || [];
@@ -357,9 +386,10 @@ serve(async (req) => {
     // Add .ics file if due_date exists
     if (task.due_date) {
       const icsContent = generateICS(task, task.columns.name, language);
+      const icsBytes = new TextEncoder().encode(icsContent);
       emailAttachments.push({
         filename: `${task.title.replace(/[^a-z0-9]/gi, '_')}.ics`,
-        content: Buffer.from(icsContent).toString('base64'),
+        content: base64Encode(icsBytes.buffer as ArrayBuffer),
       });
     }
 
@@ -376,7 +406,7 @@ serve(async (req) => {
           const buffer = await fileData.arrayBuffer();
           emailAttachments.push({
             filename: attachment.file_name,
-            content: Buffer.from(buffer).toString('base64'),
+            content: base64Encode(buffer),
           });
         }
       }
@@ -385,7 +415,7 @@ serve(async (req) => {
     // Send email
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'LinqBoard <info@linqboard.io>',
-      to: recipientEmails,
+      to: allRecipients,
       subject: `${language === 'en' ? 'Task' : 'Taak'}: ${task.title}`,
       html: emailHtml,
       attachments: emailAttachments.length > 0 ? emailAttachments : undefined,
@@ -397,7 +427,7 @@ serve(async (req) => {
 
     console.log('Task exported successfully:', emailData);
 
-    // Log the export (optional)
+    // Log the export
     await supabaseClient
       .from('activity_log')
       .insert({

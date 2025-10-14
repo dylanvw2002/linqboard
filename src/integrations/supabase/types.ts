@@ -843,6 +843,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_org_member_emails: {
+        Args: { _org_id: string }
+        Returns: {
+          avatar_url: string
+          email: string
+          full_name: string
+          user_id: string
+        }[]
+      }
       get_user_org_id: {
         Args: { _board_id: string; _user_id: string }
         Returns: string
