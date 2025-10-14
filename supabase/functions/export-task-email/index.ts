@@ -149,7 +149,7 @@ function generateEmailHTML(
               <!-- Header with Logo -->
               <tr>
                 <td align="center" style="padding: 0 0 30px 0;">
-                  <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/board-backgrounds/logo-linqboard.png" alt="LinqBoard Logo" style="height: 50px; width: auto; display: block;" />
+                  <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-linqboard.png" alt="LinqBoard Logo" style="height: 50px; width: auto; display: block;" />
                 </td>
               </tr>
               
