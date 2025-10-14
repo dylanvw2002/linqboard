@@ -1,5 +1,8 @@
 project_id = "jfdpljhkrcuietevzshr"
 
+[functions.export-task-email]
+verify_jwt = true
+
 [functions.create_org]
 verify_jwt = true
 

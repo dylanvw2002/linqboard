@@ -12,7 +12,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
@@ -595,6 +595,11 @@ const Board = () => {
   const [userPlan, setUserPlan] = useState<string>('free');
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
   const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.33 : 0.75);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [exportEmails, setExportEmails] = useState("");
+  const [exportMessage, setExportMessage] = useState("");
+  const [exportIncludeAttachments, setExportIncludeAttachments] = useState(true);
+  const [exportingTask, setExportingTask] = useState(false);
   const [isLandscape, setIsLandscape] = useState<boolean>(window.innerWidth > window.innerHeight);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
@@ -1492,6 +1497,66 @@ const Board = () => {
     const taskId = editingTask.id;
     setEditingTask(null);
     await handleDeleteTask(taskId);
+  };
+  
+  const handleExportTask = async () => {
+    if (!editingTask) return;
+    
+    // Validate emails
+    const emails = exportEmails.split(',').map(e => e.trim()).filter(e => e);
+    if (emails.length === 0) {
+      toast.error(t('board.exportNoEmails'));
+      return;
+    }
+    
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const invalidEmails = emails.filter(e => !emailRegex.test(e));
+    if (invalidEmails.length > 0) {
+      toast.error(t('board.exportInvalidEmails'));
+      return;
+    }
+    
+    if (emails.length > 10) {
+      toast.error(t('board.exportTooManyEmails'));
+      return;
+    }
+    
+    setExportingTask(true);
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('Not authenticated');
+      }
+      
+      const { data, error } = await supabase.functions.invoke('export-task-email', {
+        body: {
+          taskId: editingTask.id,
+          recipientEmails: emails,
+          personalMessage: exportMessage || undefined,
+          includeAttachments: exportIncludeAttachments,
+          language: i18n.language
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast.success(t('board.exportSuccess'));
+      setExportDialogOpen(false);
+      setExportEmails("");
+      setExportMessage("");
+      setExportIncludeAttachments(true);
+    } catch (error: any) {
+      console.error('Export error:', error);
+      toast.error(t('board.exportError') + ': ' + (error.message || 'Unknown error'));
+    } finally {
+      setExportingTask(false);
+    }
   };
   const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
   const handleClearCompleted = async () => {
@@ -2505,6 +2570,10 @@ const Board = () => {
                     <Button onClick={handleDeleteFromDialog} variant="destructive">
                       {t('common.delete')}
                     </Button>
+                    <Button onClick={() => setExportDialogOpen(true)} variant="outline" className="flex-1">
+                      <Mail className="mr-2 h-4 w-4" />
+                      {t('board.exportTask')}
+                    </Button>
                     <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
                       ✔ {t('board.complete')}
                     </Button>
@@ -2514,6 +2583,76 @@ const Board = () => {
                   </div>
                 </>;
               })()}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Export Task Dialog */}
+      <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="export-emails">{t('board.exportEmails')} *</Label>
+              <Input
+                id="export-emails"
+                value={exportEmails}
+                onChange={(e) => setExportEmails(e.target.value)}
+                placeholder={t('board.exportEmailsPlaceholder')}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('board.exportEmailsHint')}
+              </p>
+            </div>
+            
+            <div>
+              <Label htmlFor="export-message">{t('board.exportMessage')}</Label>
+              <Textarea
+                id="export-message"
+                value={exportMessage}
+                onChange={(e) => setExportMessage(e.target.value)}
+                placeholder={t('board.exportMessagePlaceholder')}
+                rows={3}
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="export-attachments"
+                checked={exportIncludeAttachments}
+                onChange={(e) => setExportIncludeAttachments(e.target.checked)}
+                className="rounded"
+              />
+              <Label htmlFor="export-attachments" className="cursor-pointer">
+                {t('board.exportIncludeAttachments')}
+              </Label>
+            </div>
+            
+            <div className="bg-muted/50 p-3 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                {t('board.exportInfo')}
+              </p>
+            </div>
+            
+            <div className="flex gap-2 pt-2">
+              <Button
+                onClick={() => setExportDialogOpen(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                onClick={handleExportTask}
+                disabled={exportingTask}
+                className="flex-1"
+              >
+                {exportingTask ? t('board.exporting') : t('board.sendEmail')}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
