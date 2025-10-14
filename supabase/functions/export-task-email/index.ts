@@ -53,48 +53,40 @@ END:VEVENT
 END:VCALENDAR`;
 }
 
-// Generate HTML email template
-function generateEmailHTML(
+// Generate HTML email template using the template file
+async function generateEmailHTML(
   task: any, 
   column: any, 
   assignees: any[], 
-  comments: any[], 
   attachments: any[],
-  personalMessage: string | undefined,
+  boardId: string,
   language: string
-): string {
-  const translations = {
-    nl: {
-      high: 'Hoog',
-      medium: 'Gemiddeld',
-      low: 'Laag',
-      assignees: 'Toegewezen aan',
-      attachments: 'Bijlagen',
-      viewInLinqBoard: 'Bekijk in LinqBoard'
-    },
-    en: {
-      high: 'High',
-      medium: 'Medium',
-      low: 'Low',
-      assignees: 'Assigned to',
-      attachments: 'Attachments',
-      viewInLinqBoard: 'View in LinqBoard'
-    }
-  };
+): Promise<string> {
+  // Read template
+  const templatePath = new URL('./template.html', import.meta.url).pathname;
+  const templateHtml = await Deno.readTextFile(templatePath);
   
-  const t = translations[language as keyof typeof translations] || translations.nl;
-  
-  // Priority styling
+  // Priority configuration
   const priorityConfig = {
-    high: { bg: '#f87171', color: '#fff' },
-    medium: { bg: '#fb923c', color: '#fff' },
-    low: { bg: '#10b981', color: '#fff' }
+    high: { bg: 'linear-gradient(135deg, #fca5a5, #f87171)', fg: '#fff', label: 'Hoog' },
+    medium: { bg: 'linear-gradient(135deg, #fcd34d, #fbbf24)', fg: '#000', label: 'Middel' },
+    low: { bg: 'linear-gradient(135deg, #86efac, #4ade80)', fg: '#000', label: 'Laag' }
   };
   
-  const priorityStyle = task.priority ? priorityConfig[task.priority as keyof typeof priorityConfig] : null;
-  const priorityLabel = task.priority ? t[task.priority as keyof typeof priorityConfig] : '';
+  const priority = task.priority || 'low';
+  const priorityData = priorityConfig[priority as keyof typeof priorityConfig];
   
-  // Function to get initials from name
+  // Format deadline
+  const deadline = task.due_date 
+    ? new Date(task.due_date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })
+    : 'Geen deadline';
+  
+  // Format description
+  const description = task.description 
+    ? task.description.replace(/\n/g, '<br>')
+    : '<span style="color:#999;font-style:italic;">Geen beschrijving</span>';
+  
+  // Helper function for initials
   const getInitials = (name: string): string => {
     return name
       .split(' ')
@@ -104,125 +96,58 @@ function generateEmailHTML(
       .substring(0, 2);
   };
   
+  // Generate assignees HTML
+  const assigneesHtml = assignees.length > 0 
+    ? assignees.map(a => `
+        <td style="text-align:center;padding:0 8px 16px 0;">
+          <div
+            style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#c7d2fe,#a5b4fc);color:#000;font-weight:600;display:flex;align-items:center;justify-content:center;margin:auto;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);font-size:14px;"
+          >
+            ${getInitials(a.full_name)}
+          </div>
+          <div
+            style="font-size:13px;color:#000;margin-top:4px;max-width:80px;word-break:break-word;"
+          >
+            ${a.full_name}
+          </div>
+        </td>
+      `).join('')
+    : '<td style="text-align:center;color:#999;font-style:italic;">Niet toegewezen</td>';
+  
   // Format file size
   const formatFileSize = (bytes: number): string => {
     return `${(bytes / 1024).toFixed(0)} KB`;
   };
   
-  return `<!DOCTYPE html>
-<html lang="${language}">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LinqBoard – Taak Export</title>
-  </head>
-  <body
-    style="position:relative;margin:0;padding:0;background:linear-gradient(180deg, #f5f3ff 0%, #ede9fe 50%, #f5f3ff 100%);background-repeat:no-repeat;background-attachment:fixed;font-family:Inter,Arial,sans-serif;color:#000;min-height:100vh;"
-  >
-    <table
-      align="center"
-      width="100%"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      style="max-width:600px;margin:0 auto;padding:40px 20px;position:relative;z-index:2;"
-    >
-      <!-- Witte container -->
-      <tr>
-        <td
-          style="background:#fff;border:1px solid rgba(215,205,255,0.3);border-radius:16px;box-shadow:0 6px 24px rgba(160,140,255,0.15);padding:32px;color:#000;"
-        >
-          <!-- Prioriteit & Deadline -->
-          <div style="margin-bottom:16px;text-align:center;">
-            ${priorityStyle ? `<span
-              style="background:${priorityStyle.bg};color:${priorityStyle.color};padding:6px 14px;border-radius:12px;font-size:13px;margin-right:8px;display:inline-block;letter-spacing:0.2px;"
-              >${priorityLabel}</span>` : ''}
-            ${task.due_date ? `<span
-              style="background:linear-gradient(90deg,#fde68a,#fef9c3);color:#000;padding:6px 14px;border-radius:12px;font-size:13px;display:inline-block;letter-spacing:0.2px;"
-              >${new Date(task.due_date).toLocaleDateString(language === 'en' ? 'en-US' : 'nl-NL', { day: 'numeric', month: 'short', year: 'numeric' })}</span>` : ''}
-          </div>
-
-          <!-- Titel -->
-          <h1
-            style="font-family:Inter,Arial,sans-serif;font-size:26px;font-weight:700;margin:0 0 12px;text-align:center;color:#000;"
-          >
-            ${task.title}
-          </h1>
-
-          <!-- Beschrijving -->
-          ${task.description ? `<div
-            style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px 18px;border-radius:12px;margin-bottom:28px;line-height:1.6;font-size:15px;color:#000;"
-          >
-            ${task.description.replace(/\n/g, '<br>')}
-          </div>` : ''}
-
-          <!-- Toegewezen personen -->
-          ${assignees.length > 0 ? `<h3
-            style="font-size:17px;color:#000;margin-bottom:12px;margin-top:0;text-align:center;"
-          >
-            👥 ${t.assignees}
-          </h3>
-          <table role="presentation" cellpadding="0" cellspacing="0" align="center">
-            <tr>
-              ${assignees.map(a => `<td style="text-align:center;padding:0 8px 16px 0;">
-                <div
-                  style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#c7d2fe,#a5b4fc);color:#000;font-weight:600;display:flex;align-items:center;justify-content:center;margin:auto;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.08);font-size:14px;"
-                >
-                  ${getInitials(a.full_name)}
-                </div>
-                <div
-                  style="font-size:13px;color:#000;margin-top:4px;max-width:80px;word-break:break-word;"
-                >
-                  ${a.full_name}
-                </div>
-              </td>`).join('')}
-            </tr>
-          </table>` : ''}
-
-          <!-- Bijlagen -->
-          ${attachments.length > 0 ? `<h3
-            style="font-size:17px;color:#000;margin-top:10px;margin-bottom:10px;text-align:center;"
-          >
-            📎 ${t.attachments}
-          </h3>
-          <ul style="padding-left:20px;margin-top:0;">
-            ${attachments.map(att => `<li style="margin-bottom:6px;">
-              <a
-                href="${att.file_path}"
-                style="color:#6366f1;text-decoration:none;font-size:14px;font-weight:500;"
-                >${att.file_name}</a>
-              <span style="color:#999;font-size:13px;">(${formatFileSize(att.file_size)})</span>
-            </li>`).join('')}
-          </ul>` : ''}
-
-          <!-- CTA -->
-          <div style="text-align:center;margin-top:32px;">
-            <a
-              href="https://linqboard.io"
-              style="background:linear-gradient(135deg,#a5b4fc,#818cf8);color:#fff;padding:14px 32px;border-radius:12px;text-decoration:none;font-weight:600;font-size:15px;display:inline-block;box-shadow:0 2px 8px rgba(99,102,241,0.25);"
-              >🔗 ${t.viewInLinqBoard}</a>
-          </div>
-        </td>
-      </tr>
-
-      <!-- Footer -->
-      <tr>
-        <td
-          style="text-align:center;padding:28px 0 0 0;color:#000;font-size:13px;position:relative;"
-        >
-          © 2025 LinqBoard – Samen, van to-do naar done.
-        </td>
-      </tr>
-    </table>
-
-    <!-- Logo linksonder -->
-    <img
-      src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/logo-linqboard.png"
-      alt="LinqBoard Logo"
-      style="position:fixed;bottom:20px;left:20px;height:140px;opacity:0.95;z-index:1;"
-    />
-  </body>
-</html>`;
+  // Generate attachments HTML
+  const attachmentsHtml = attachments.length > 0
+    ? attachments.map(att => `
+        <li style="margin-bottom:6px;">
+          <a
+            href="${att.file_path}"
+            style="color:#6366f1;text-decoration:none;font-size:14px;font-weight:500;"
+          >${att.file_name}</a>
+          <span style="color:#999;font-size:13px;">(${formatFileSize(att.file_size)})</span>
+        </li>
+      `).join('')
+    : '<li style="color:#999;font-style:italic;">Geen bijlagen</li>';
+  
+  // Task URL
+  const taskUrl = `https://linqboard.io/board/${boardId}`;
+  
+  // Replace all placeholders
+  let html = templateHtml
+    .replace(/{{priorityBg}}/g, priorityData.bg)
+    .replace(/{{priorityFg}}/g, priorityData.fg)
+    .replace(/{{priorityLabel}}/g, priorityData.label)
+    .replace(/{{deadline}}/g, deadline)
+    .replace(/{{title}}/g, task.title)
+    .replace(/{{description}}/g, description)
+    .replace(/{{assigneesHtml}}/g, assigneesHtml)
+    .replace(/{{attachmentsHtml}}/g, attachmentsHtml)
+    .replace(/{{taskUrl}}/g, taskUrl);
+  
+  return html;
 }
 
 serve(async (req) => {
@@ -371,13 +296,12 @@ serve(async (req) => {
     const attachments = attachmentsData || [];
 
     // Generate email HTML
-    const emailHtml = generateEmailHTML(
+    const emailHtml = await generateEmailHTML(
       task,
       task.columns,
       assignees,
-      comments,
       attachments,
-      personalMessage,
+      task.columns.board_id,
       language
     );
 
@@ -417,9 +341,9 @@ serve(async (req) => {
 
     // Send email
     const { data: emailData, error: emailError } = await resend.emails.send({
-      from: 'LinqBoard <info@linqboard.io>',
+      from: 'LinqBoard <no-reply@linqboard.io>',
       to: allRecipients,
-      subject: `${language === 'en' ? 'Task' : 'Taak'}: ${task.title}`,
+      subject: `📋 ${task.title} - LinqBoard`,
       html: emailHtml,
       attachments: emailAttachments.length > 0 ? emailAttachments : undefined,
     });
