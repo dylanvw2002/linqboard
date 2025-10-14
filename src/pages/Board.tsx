@@ -2637,17 +2637,12 @@ const Board = () => {
                       return (
                         <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
                           <Avatar className="h-9 w-9">
-                            {member.avatar_url ? (
-                              <AvatarImage src={member.avatar_url} alt={member.full_name} />
-                            ) : null}
+                            <AvatarImage src={member.avatar_url || undefined} />
                             <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
                               {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium">{member.full_name}</span>
-                            <span className="text-xs text-muted-foreground">{member.email}</span>
-                          </div>
+                          <span className="text-sm font-medium">{member.full_name}</span>
                           <button
                             onClick={() => setExportSelectedMembers(exportSelectedMembers.filter(id => id !== userId))}
                             className="ml-1 text-muted-foreground hover:text-destructive"
