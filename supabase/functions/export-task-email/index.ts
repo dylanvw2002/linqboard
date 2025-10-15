@@ -104,32 +104,47 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           <!-- Assignees -->
           <tr>
             <td style="padding:0 20px 16px;">
-              <div style="background:#faf5ff;border-radius:20px;padding:16px;border:2px solid #e9d5ff;">
-                <div style="font-size:13px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:12px;text-align:center;">
-                  👥 Toegewezen aan
-                </div>
-                <div style="text-align:center;">
-                  <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;">
-                    <tr>
-                      {{assigneesHtml}}
-                    </tr>
-                  </table>
-                </div>
-              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#faf5ff;border-radius:20px;border:2px solid #a855f7;">
+                <tr>
+                  <td style="padding:16px;">
+                    <div style="font-size:13px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:12px;text-align:center;">
+                      👥 Toegewezen aan
+                    </div>
+                    <div style="text-align:center;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;">
+                        <tr>
+                          {{assigneesHtml}}
+                        </tr>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           
           <!-- Attachments -->
           <tr>
             <td style="padding:0 20px 16px;">
-              <div style="background:#fef9f5;border-radius:20px;padding:16px;border:2px solid #fed7aa;">
-                <div style="font-size:13px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:10px;">
-                  📎 Bijlagen
-                </div>
-                <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:#451a03;">
-                  {{attachmentsText}}
-                </ul>
-              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fef9f5;border-radius:20px;border:2px solid #f97316;">
+                <tr>
+                  <td style="padding:16px;">
+                    <div style="font-size:13px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:10px;">
+                      📎 Bijlagen
+                    </div>
+                    <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:#451a03;">
+                      {{attachmentsText}}
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Personal Message -->
+          <tr>
+            <td style="padding:0 20px 16px;">
+              {{personalMessageHtml}}
             </td>
           </tr>
           
@@ -168,7 +183,8 @@ function generateEmailHTML(
   assignees: any[], 
   attachments: any[],
   boardId: string,
-  language: string
+  language: string,
+  personalMessage?: string
 ): string {
   // Priority configuration
   const priorityConfig = {
@@ -232,6 +248,22 @@ function generateEmailHTML(
   // Task URL
   const taskUrl = `https://linqboard.io/board/${boardId}`;
   
+  // Personal message HTML
+  const personalMessageHtml = personalMessage 
+    ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eff6ff;border-radius:20px;border:2px solid #3b82f6;">
+        <tr>
+          <td style="padding:16px;">
+            <div style="font-size:13px;font-weight:700;color:#1e40af;text-transform:uppercase;margin-bottom:10px;">
+              💌 Persoonlijk bericht
+            </div>
+            <div style="font-size:14px;line-height:1.6;color:#1e3a8a;">
+              ${personalMessage.replace(/\n/g, '<br>')}
+            </div>
+          </td>
+        </tr>
+      </table>`
+    : '';
+  
   // Replace all placeholders
   let html = EMAIL_TEMPLATE
     .replace(/{{priorityBg}}/g, priorityData.bg)
@@ -241,6 +273,7 @@ function generateEmailHTML(
     .replace(/{{description}}/g, description)
     .replace(/{{assigneesHtml}}/g, assigneesHtml)
     .replace(/{{attachmentsText}}/g, attachmentsText)
+    .replace(/{{personalMessageHtml}}/g, personalMessageHtml)
     .replace(/{{taskUrl}}/g, taskUrl);
   
   return html;
@@ -413,7 +446,8 @@ serve(async (req) => {
       assignees,
       attachments,
       task.columns.board_id,
-      language
+      language,
+      personalMessage
     );
     console.log('Email HTML length:', emailHtml.length);
 
