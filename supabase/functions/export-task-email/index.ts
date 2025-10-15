@@ -208,9 +208,9 @@ async function generateEmailHTML(
 ): Promise<string> {
   // Priority configuration
   const priorityConfig = {
-    high: { bg: '#ef4444', fg: '#fff', label: 'Hoog' },
-    medium: { bg: '#eab308', fg: '#000', label: 'Middel' },
-    low: { bg: '#22c55e', fg: '#fff', label: 'Laag' }
+    high: { bg: '#fecaca', fg: '#991b1b', label: 'Hoog' },
+    medium: { bg: '#fef08a', fg: '#854d0e', label: 'Middel' },
+    low: { bg: '#bbf7d0', fg: '#166534', label: 'Laag' }
   };
   
   const priority = task.priority || 'low';
