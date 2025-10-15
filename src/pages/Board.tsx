@@ -2514,9 +2514,7 @@ const Board = () => {
                       <Mail className="mr-2 h-4 w-4" />
                       {t('board.exportTask')}
                     </Button>
-                    <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
-                      ✔ {t('board.complete')}
-                    </Button>
+                    
                   </div>
                 </>;
               })()}
