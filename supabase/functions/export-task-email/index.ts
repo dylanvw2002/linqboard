@@ -346,33 +346,37 @@ serve(async (req) => {
       throw new Error('Maximum 10 recipients allowed');
     }
 
-    // Fetch assignees with proper join
+    // Fetch assignees - first get user_ids
     const { data: assigneesData, error: assigneesError } = await supabaseClient
       .from('task_assignees')
-      .select(`
-        user_id,
-        profiles (
-          user_id,
-          full_name,
-          avatar_url
-        )
-      `)
+      .select('user_id')
       .eq('task_id', taskId);
 
-    console.log('Assignees raw data:', JSON.stringify(assigneesData, null, 2));
-    console.log('Assignees error:', assigneesError);
+    console.log('Task assignees data:', JSON.stringify(assigneesData, null, 2));
+    console.log('Task assignees error:', assigneesError);
 
-    const assignees = assigneesData?.map((a: any) => {
-      const profile = a.profiles;
-      console.log('Processing assignee:', a.user_id, 'Profile:', profile);
-      return {
-        user_id: a.user_id,
-        full_name: profile?.full_name || 'Onbekend',
-        avatar_url: profile?.avatar_url
-      };
-    }).filter(a => a.full_name !== 'Onbekend') || [];
+    let assignees: any[] = [];
 
-    console.log('Processed assignees:', JSON.stringify(assignees, null, 2));
+    if (assigneesData && assigneesData.length > 0) {
+      const userIds = assigneesData.map(a => a.user_id);
+      
+      // Then fetch profiles for those user_ids
+      const { data: profilesData, error: profilesError } = await supabaseClient
+        .from('profiles')
+        .select('user_id, full_name, avatar_url')
+        .in('user_id', userIds);
+
+      console.log('Profiles data:', JSON.stringify(profilesData, null, 2));
+      console.log('Profiles error:', profilesError);
+
+      assignees = profilesData?.map((profile: any) => ({
+        user_id: profile.user_id,
+        full_name: profile.full_name || 'Onbekend',
+        avatar_url: profile.avatar_url
+      })) || [];
+    }
+
+    console.log('Final assignees:', JSON.stringify(assignees, null, 2));
 
     // Fetch comments
     const { data: commentsData } = await supabaseClient
