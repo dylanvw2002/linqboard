@@ -61,7 +61,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LinqBoard – Taak Export</title>
 </head>
-<body style="margin:0;padding:0;background:#f5f3ff;font-family:Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#f5f3ff;font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f3ff;">
     <tr>
       <td align="center" style="padding:12px;">
@@ -346,12 +346,13 @@ serve(async (req) => {
       throw new Error('Maximum 10 recipients allowed');
     }
 
-    // Fetch assignees
+    // Fetch assignees with proper join
     const { data: assigneesData, error: assigneesError } = await supabaseClient
       .from('task_assignees')
       .select(`
         user_id,
-        profiles!inner (
+        profiles (
+          user_id,
           full_name,
           avatar_url
         )
@@ -361,11 +362,15 @@ serve(async (req) => {
     console.log('Assignees raw data:', JSON.stringify(assigneesData, null, 2));
     console.log('Assignees error:', assigneesError);
 
-    const assignees = assigneesData?.map((a: any) => ({
-      user_id: a.user_id,
-      full_name: a.profiles?.full_name || 'Unknown',
-      avatar_url: a.profiles?.avatar_url
-    })) || [];
+    const assignees = assigneesData?.map((a: any) => {
+      const profile = a.profiles;
+      console.log('Processing assignee:', a.user_id, 'Profile:', profile);
+      return {
+        user_id: a.user_id,
+        full_name: profile?.full_name || 'Onbekend',
+        avatar_url: profile?.avatar_url
+      };
+    }).filter(a => a.full_name !== 'Onbekend') || [];
 
     console.log('Processed assignees:', JSON.stringify(assignees, null, 2));
 
