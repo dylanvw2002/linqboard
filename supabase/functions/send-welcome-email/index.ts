@@ -2,12 +2,36 @@ import { Resend } from 'https://esm.sh/resend@4.0.0';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY') as string);
 
+// Helper function to convert image URL to base64
+async function imageUrlToBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch image');
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
+    
+    // Determine MIME type from URL
+    const ext = url.split('.').pop()?.toLowerCase();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+    
+    return `data:${mimeType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return ''; // Return empty string on error
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-function createWelcomeEmail(userName: string): string {
+function createWelcomeEmail(userName: string, logoBase64: string): string {
   return `
 <!DOCTYPE html>
 <html>
@@ -24,7 +48,7 @@ function createWelcomeEmail(userName: string): string {
           <!-- Header with Logo -->
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 16px 0 0;">
-              <img src="https://linqboard.lovable.app/logo-transparent.png" alt="LinqBoard" style="max-width: 180px; height: auto; margin-bottom: 10px;">
+              <img src="${logoBase64}" alt="LinqBoard" style="max-width: 180px; height: auto; margin-bottom: 10px;">
             </td>
           </tr>
           
@@ -152,8 +176,12 @@ Deno.serve(async (req) => {
     
     console.log('Sending welcome email to:', email);
 
+    // Convert logo to base64 for embedding
+    const logoUrl = 'https://linqboard.lovable.app/logo-transparent.png';
+    const logoBase64 = await imageUrlToBase64(logoUrl);
+
     // Create HTML email
-    const html = createWelcomeEmail(userName || 'daar');
+    const html = createWelcomeEmail(userName || 'daar', logoBase64);
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({

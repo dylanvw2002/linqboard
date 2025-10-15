@@ -3,6 +3,30 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@4.0.0";
 import jsPDF from "https://esm.sh/jspdf@2.5.1";
 
+// Helper function to convert image URL to base64
+async function imageUrlToBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch image');
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
+    
+    // Determine MIME type from URL
+    const ext = url.split('.').pop()?.toLowerCase();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+    
+    return `data:${mimeType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return ''; // Return empty string on error
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -173,11 +197,15 @@ serve(async (req) => {
       throw new Error(`Invoice not found: ${invoiceError?.message}`);
     }
 
+    // Convert logo to base64 for embedding
+    const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
+    const logoBase64 = await imageUrlToBase64(logoUrl);
+
     // Create email template
     const emailHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: #ffffff; padding: 30px; text-align: center; border-bottom: 3px solid #8B7BE8;">
-          <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" style="height: 80px; width: auto;" />
+          <img src="${logoBase64}" alt="LinqBoard" style="height: 80px; width: auto;" />
         </div>
         
         <div style="padding: 30px; background: white;">

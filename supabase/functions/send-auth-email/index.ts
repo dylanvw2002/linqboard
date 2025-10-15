@@ -2,13 +2,37 @@ import { Resend } from 'https://esm.sh/resend@4.0.0';
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY') as string);
 
+// Helper function to convert image URL to base64
+async function imageUrlToBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch image');
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64 = btoa(binary);
+    
+    // Determine MIME type from URL
+    const ext = url.split('.').pop()?.toLowerCase();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+    
+    return `data:${mimeType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return ''; // Return empty string on error
+  }
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 // HTML email template function
-function createConfirmationEmail(confirmation_url: string, token: string): string {
+function createConfirmationEmail(confirmation_url: string, token: string, logoBase64: string): string {
   return `
 <!DOCTYPE html>
 <html>
@@ -25,7 +49,7 @@ function createConfirmationEmail(confirmation_url: string, token: string): strin
           <!-- Header with Logo -->
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 16px 0 0;">
-              <img src="https://linqboard.lovable.app/logo-transparent.png" alt="LinqBoard" style="max-width: 180px; height: auto; margin-bottom: 10px;">
+              <img src="${logoBase64}" alt="LinqBoard" style="max-width: 180px; height: auto; margin-bottom: 10px;">
             </td>
           </tr>
           
@@ -132,8 +156,12 @@ Deno.serve(async (req) => {
     const supabase_url = Deno.env.get('SUPABASE_URL') ?? email_data.site_url;
     const confirmation_url = `${supabase_url}/auth/v1/verify?token=${email_data.token_hash}&type=${email_data.email_action_type}&redirect_to=${email_data.redirect_to}`;
 
+    // Convert logo to base64 for embedding
+    const logoUrl = 'https://linqboard.lovable.app/logo-transparent.png';
+    const logoBase64 = await imageUrlToBase64(logoUrl);
+
     // Create HTML email
-    const html = createConfirmationEmail(confirmation_url, email_data.token);
+    const html = createConfirmationEmail(confirmation_url, email_data.token, logoBase64);
 
     // Determine subject based on action type
     let subject = 'Bevestig je LinqBoard account';
