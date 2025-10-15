@@ -946,13 +946,14 @@ const Board = () => {
     fetchUserPlan();
     checkBackgroundPermission();
   }, [organizationId, isDemo, t]);
-  
   const fetchOrgMembersWithEmails = async () => {
     if (!organizationId || isDemo) return;
-
-    const { data, error } = await supabase
-      .rpc('get_org_member_emails', { _org_id: organizationId });
-
+    const {
+      data,
+      error
+    } = await supabase.rpc('get_org_member_emails', {
+      _org_id: organizationId
+    });
     if (!error && data) {
       console.log('Fetched org members with emails:', data);
       setOrgMembersWithEmails(data);
@@ -1031,7 +1032,6 @@ const Board = () => {
   // Monitor orientation changes on mobile
   useEffect(() => {
     if (!isMobile) return;
-
     const handleOrientationChange = () => {
       // Force immediate state update
       const newIsLandscape = window.innerWidth > window.innerHeight;
@@ -1041,14 +1041,12 @@ const Board = () => {
 
     // Check initial orientation
     handleOrientationChange();
-
     window.addEventListener('resize', handleOrientationChange);
     window.addEventListener('orientationchange', handleOrientationChange);
     // Also listen for screen orientation API if available
     if (window.screen?.orientation) {
       window.screen.orientation.addEventListener('change', handleOrientationChange);
     }
-
     return () => {
       window.removeEventListener('resize', handleOrientationChange);
       window.removeEventListener('orientationchange', handleOrientationChange);
@@ -1425,7 +1423,10 @@ const Board = () => {
       return;
     }
     try {
-      console.log('Adding assignee:', { task_id: editingTask.id, user_id: userId });
+      console.log('Adding assignee:', {
+        task_id: editingTask.id,
+        user_id: userId
+      });
       const {
         error
       } = await supabase.from("task_assignees").insert({
@@ -1529,13 +1530,12 @@ const Board = () => {
     setEditingTask(null);
     await handleDeleteTask(taskId);
   };
-  
   const handleExportTask = async () => {
     if (!editingTask) return;
-    
+
     // Parse external emails
     const emails = exportEmails.split(',').map(e => e.trim()).filter(e => e);
-    
+
     // Validate external emails if provided
     if (emails.length > 0) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1545,30 +1545,31 @@ const Board = () => {
         return;
       }
     }
-    
+
     // Check total recipients
     const totalRecipients = exportSelectedMembers.length + emails.length;
-    
     if (totalRecipients === 0) {
       toast.error(t('board.exportNoRecipients'));
       return;
     }
-    
     if (totalRecipients > 10) {
       toast.error(t('board.exportTooManyEmails'));
       return;
     }
-    
     setExportingTask(true);
-    
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) {
         throw new Error('Not authenticated');
       }
-      
-      const { data, error } = await supabase.functions.invoke('export-task-email', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('export-task-email', {
         body: {
           taskId: editingTask.id,
           memberUserIds: exportSelectedMembers,
@@ -1581,16 +1582,13 @@ const Board = () => {
           Authorization: `Bearer ${session.access_token}`
         }
       });
-      
       if (error) {
         console.error('Edge function error:', error);
         throw error;
       }
-      
       if (!data || !data.success) {
         throw new Error(data?.error || 'Failed to export task');
       }
-      
       toast.success(t('board.exportSuccess'));
       setExportDialogOpen(false);
       setExportSelectedMembers([]);
@@ -2039,8 +2037,7 @@ const Board = () => {
   }
   return <div className="h-screen overflow-hidden relative">
       {/* Mobile Portrait Mode Overlay */}
-      {isMobile && !isLandscape && (
-        <div className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-md flex items-center justify-center p-6">
+      {isMobile && !isLandscape && <div className="fixed inset-0 z-[200] bg-background/95 backdrop-blur-md flex items-center justify-center p-6">
           <div className="text-center max-w-sm">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
               <svg className="w-10 h-10 text-primary animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2056,8 +2053,7 @@ const Board = () => {
               {t('board.landscapeRequired')}
             </p>
           </div>
-        </div>
-      )}
+        </div>}
 
       {/* Fixed background layer - doesn't scale with zoom */}
       <div className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} style={{
@@ -2120,89 +2116,44 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className={cn(
-        "flex items-center gap-2 rounded-[28px] relative",
-        isMobile 
-          ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-3 py-2 mx-2" 
-          : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]"
-      )}>
+      <header className={cn("flex items-center gap-2 rounded-[28px] relative", isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-3 py-2 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
         <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full justify-between" : "gap-4")}>
           <div className="min-w-0 flex-1">
-            <h1 className={cn(
-              "font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm",
-              isMobile ? "text-base" : "text-[clamp(26px,3.5vw,48px)]"
-            )}>
+            <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-base" : "text-[clamp(26px,3.5vw,48px)]")}>
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
-            <p className={cn(
-              "text-muted-foreground font-semibold",
-              isMobile ? "text-xs" : "text-[clamp(12px,1.4vw,16px)]"
-            )}>
+            <p className={cn("text-muted-foreground font-semibold", isMobile ? "text-xs" : "text-[clamp(12px,1.4vw,16px)]")}>
               {t('board.liveOverview')}
             </p>
           </div>
-          <div className={cn(
-            "[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative",
-            isMobile
-              ? "bg-gradient-to-br from-primary/10 to-accent/10 border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 text-lg"
-              : "backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]"
-          )}>
+          <div className={cn("[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative", isMobile ? "bg-gradient-to-br from-primary/10 to-accent/10 border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 text-lg" : "backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]")}>
             <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
-            <div className={cn(
-              "text-muted-foreground font-semibold whitespace-nowrap relative z-10",
-              isMobile ? "text-[9px]" : "text-[clamp(10px,1.2vw,14px)]"
-            )}>{formatDate(currentTime)}</div>
+            <div className={cn("text-muted-foreground font-semibold whitespace-nowrap relative z-10", isMobile ? "text-[9px]" : "text-[clamp(10px,1.2vw,14px)]")}>{formatDate(currentTime)}</div>
           </div>
         </div>
         <div className={cn("flex relative z-10", isMobile ? "w-full justify-between gap-1" : "gap-2.5")}>
-          <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className={cn(
-            "text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-1 relative",
-            isMobile
-              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 px-2 py-1.5 rounded-lg text-xs"
-              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)] gap-2"
-          )}>
+          <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className={cn("text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-1 relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 px-2 py-1.5 rounded-lg text-xs" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)] gap-2")}>
             <ArrowLeft className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
             {!isMobile && (isDemo ? t('demo.backToHome') : t('dashboard.title'))}
           </button>
-          <div className={cn(
-            "flex items-center rounded-2xl",
-            isMobile
-              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 gap-1"
-              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2"
-          )}>
-            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.2 : zoomLevel <= 0.5} className={cn(
-              "text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold",
-              isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg"
-            )} title="Zoom uit (Ctrl/Cmd + -)">
+          <div className={cn("flex items-center rounded-2xl", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 gap-1" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2")}>
+            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.2 : zoomLevel <= 0.5} className={cn("text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold", isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg")} title="Zoom uit (Ctrl/Cmd + -)">
               <ZoomOut className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
             </button>
             <span className={cn("text-foreground font-bold text-center", isMobile ? "text-xs min-w-[2.5rem]" : "text-sm min-w-[3.5rem]")}>
               {Math.round(zoomLevel * 100)}%
             </span>
-            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 1.0 : zoomLevel >= 1.0} className={cn(
-              "text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold",
-              isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg"
-            )} title="Zoom in (Ctrl/Cmd + +)">
+            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 1.0 : zoomLevel >= 1.0} className={cn("text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold", isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg")} title="Zoom in (Ctrl/Cmd + +)">
               <ZoomIn className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
             </button>
           </div>
-          {!isMobile && <button onClick={handleFullscreen} className={cn(
-            "text-foreground px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 text-[clamp(12px,1.4vw,16px)] relative",
-            isMobile
-              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95"
-              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
-          )}>
+          {!isMobile && <button onClick={handleFullscreen} className={cn("text-foreground px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 text-[clamp(12px,1.4vw,16px)] relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none")}>
             ⛶ {t('board.fullscreen')}
           </button>}
           {!isMobile && <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
               <Pencil size={20} />
             </button>}
-          <button onClick={handleClearCompleted} className={cn(
-            "text-foreground font-bold cursor-pointer transition-all duration-300 relative",
-            isMobile
-              ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 p-1.5 rounded-lg"
-              : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none p-2.5 rounded-2xl"
-          )}>
+          <button onClick={handleClearCompleted} className={cn("text-foreground font-bold cursor-pointer transition-all duration-300 relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 p-1.5 rounded-lg" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none p-2.5 rounded-2xl")}>
             <Trash2 size={isMobile ? 16 : 20} />
           </button>
           <ActiveUsers organizationId={organizationId!} isDemo={isDemo} />
@@ -2546,12 +2497,7 @@ const Board = () => {
                               </div>;
                         })}
                         </div>}
-                      <TeamMemberSelect
-                        members={orgMembers}
-                        selectedMembers={editTaskAssignees}
-                        onSelect={handleAddAssignee}
-                        placeholder={t('board.addTeamMember')}
-                      />
+                      <TeamMemberSelect members={orgMembers} selectedMembers={editTaskAssignees} onSelect={handleAddAssignee} placeholder={t('board.addTeamMember')} />
                     </div>
                   </div>
                   
@@ -2580,16 +2526,13 @@ const Board = () => {
 
       {/* Export Task Dialog */}
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
-        <DialogContent 
-          className="max-w-lg max-h-[80vh] flex flex-col"
-          onInteractOutside={(e) => {
+        <DialogContent className="max-w-lg max-h-[80vh] flex flex-col" onInteractOutside={e => {
             // Prevent closing when clicking on Select dropdown
             const target = e.target as HTMLElement;
             if (target.closest('[role="listbox"]') || target.closest('[data-radix-select-content]')) {
               e.preventDefault();
             }
-          }}
-        >
+          }}>
           <DialogHeader>
             <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
           </DialogHeader>
@@ -2598,13 +2541,11 @@ const Board = () => {
             <div>
               <Label>{t('board.exportSelectMembers')}</Label>
               <div className="space-y-3">
-                {exportSelectedMembers.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
+                {exportSelectedMembers.length > 0 && <div className="flex flex-wrap gap-2">
                     {exportSelectedMembers.map(userId => {
                       const member = orgMembersWithEmails.find(m => m.user_id === userId);
                       if (!member) return null;
-                      return (
-                        <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                      return <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
                           <Avatar className="h-9 w-9">
                             <AvatarImage src={member.avatar_url || undefined} />
                             <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
@@ -2612,37 +2553,22 @@ const Board = () => {
                             </AvatarFallback>
                           </Avatar>
                           <span className="text-sm font-medium">{member.full_name}</span>
-                          <button
-                            onClick={() => setExportSelectedMembers(exportSelectedMembers.filter(id => id !== userId))}
-                            className="ml-1 text-muted-foreground hover:text-destructive"
-                          >
+                          <button onClick={() => setExportSelectedMembers(exportSelectedMembers.filter(id => id !== userId))} className="ml-1 text-muted-foreground hover:text-destructive">
                             ×
                           </button>
-                        </div>
-                      );
+                        </div>;
                     })}
-                  </div>
-                )}
-                <TeamMemberSelect
-                  members={orgMembersWithEmails}
-                  selectedMembers={exportSelectedMembers}
-                  onSelect={(userId) => {
+                  </div>}
+                <TeamMemberSelect members={orgMembersWithEmails} selectedMembers={exportSelectedMembers} onSelect={userId => {
                     setExportSelectedMembers([...exportSelectedMembers, userId]);
-                  }}
-                  placeholder={t('board.addTeamMember')}
-                />
+                  }} placeholder={t('board.addTeamMember')} />
               </div>
             </div>
 
             {/* External Email Addresses */}
             <div>
               <Label htmlFor="export-emails">{t('board.exportExternalEmails')}</Label>
-              <Input
-                id="export-emails"
-                value={exportEmails}
-                onChange={(e) => setExportEmails(e.target.value)}
-                placeholder={t('board.exportEmailsPlaceholder')}
-              />
+              <Input id="export-emails" value={exportEmails} onChange={e => setExportEmails(e.target.value)} placeholder={t('board.exportEmailsPlaceholder')} />
               <p className="text-xs text-muted-foreground mt-1">
                 {t('board.exportEmailsHint')}
               </p>
@@ -2650,23 +2576,11 @@ const Board = () => {
             
             <div>
               <Label htmlFor="export-message">{t('board.exportMessage')}</Label>
-              <Textarea
-                id="export-message"
-                value={exportMessage}
-                onChange={(e) => setExportMessage(e.target.value)}
-                placeholder={t('board.exportMessagePlaceholder')}
-                rows={3}
-              />
+              <Textarea id="export-message" value={exportMessage} onChange={e => setExportMessage(e.target.value)} placeholder={t('board.exportMessagePlaceholder')} rows={3} />
             </div>
             
             <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="export-attachments"
-                checked={exportIncludeAttachments}
-                onChange={(e) => setExportIncludeAttachments(e.target.checked)}
-                className="rounded"
-              />
+              <input type="checkbox" id="export-attachments" checked={exportIncludeAttachments} onChange={e => setExportIncludeAttachments(e.target.checked)} className="rounded" />
               <Label htmlFor="export-attachments" className="cursor-pointer">
                 {t('board.exportIncludeAttachments')}
               </Label>
@@ -2679,18 +2593,10 @@ const Board = () => {
             </div>
             
             <div className="flex gap-2 pt-2">
-              <Button
-                onClick={() => setExportDialogOpen(false)}
-                variant="outline"
-                className="flex-1"
-              >
+              <Button onClick={() => setExportDialogOpen(false)} variant="outline" className="flex-1">
                 {t('common.cancel')}
               </Button>
-              <Button
-                onClick={handleExportTask}
-                disabled={exportingTask}
-                className="flex-1"
-              >
+              <Button onClick={handleExportTask} disabled={exportingTask} className="flex-1">
                 {exportingTask ? t('board.exporting') : t('board.sendEmail')}
               </Button>
             </div>
@@ -2702,7 +2608,7 @@ const Board = () => {
       <ColumnManagement open={columnManagementOpen} onOpenChange={setColumnManagementOpen} columns={columns} boardId={board?.id || ''} onColumnsChange={fetchBoardData} />
 
       {/* Edit mode toolbar - rendered before sidebar so sidebar is on top */}
-      {editMode && !isMobile && <div className="fixed top-[90px] left-[22px] right-[22px] z-20 flex items-center justify-between px-4 py-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg">
+      {editMode && !isMobile && <div className="fixed top-[90px] left-[22px] right-[22px] z-20 flex items-center justify-between px-4 py-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg my-[70px]">
           <span className="text-sm font-semibold text-primary">
             🔧 {t('board.editModeActive')}
           </span>
