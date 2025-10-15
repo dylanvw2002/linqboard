@@ -1424,16 +1424,23 @@ const Board = () => {
       return;
     }
     try {
+      console.log('Adding assignee:', { task_id: editingTask.id, user_id: userId });
       const {
         error
       } = await supabase.from("task_assignees").insert({
         task_id: editingTask.id,
         user_id: userId
       });
-      if (error) throw error;
+      if (error) {
+        console.error('Error inserting assignee:', error);
+        throw error;
+      }
+      console.log('Assignee added successfully');
       setEditTaskAssignees([...editTaskAssignees, userId]);
       await fetchBoardData();
+      toast.success(t('board.assigneeAdded'));
     } catch (error) {
+      console.error('Failed to add assignee:', error);
       toast.error(t('board.errorAddingAssignee'));
     }
   };

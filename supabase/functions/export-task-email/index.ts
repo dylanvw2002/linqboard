@@ -108,11 +108,13 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                 <div style="font-size:13px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:12px;text-align:center;">
                   👥 Toegewezen aan
                 </div>
-                <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    {{assigneesHtml}}
-                  </tr>
-                </table>
+                <div style="text-align:center;">
+                  <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;">
+                    <tr>
+                      {{assigneesHtml}}
+                    </tr>
+                  </table>
+                </div>
               </div>
             </td>
           </tr>
