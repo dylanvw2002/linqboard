@@ -213,12 +213,17 @@ function generateEmailHTML(
   
   // Generate assignees HTML - simplified for email compatibility
   const assigneesHtml = assignees.length > 0 
-    ? assignees.map(a => `
+    ? assignees.map(a => {
+        const avatarContent = a.avatar_url 
+          ? `<img src="${a.avatar_url}" alt="${a.full_name}" width="56" height="56" style="display:block;width:56px;height:56px;border-radius:50%;border:2px solid #fff;box-shadow:0 3px 10px rgba(139,92,246,0.3);" />`
+          : `<div style="width:56px;height:56px;line-height:56px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:18px;border:2px solid #fff;box-shadow:0 3px 10px rgba(139,92,246,0.3);text-align:center;">${getInitials(a.full_name)}</div>`;
+        
+        return `
         <td align="center" style="padding:0 8px;">
           <table cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td align="center" valign="middle" style="width:56px;height:56px;line-height:56px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:18px;border:2px solid #fff;box-shadow:0 3px 10px rgba(139,92,246,0.3);">
-                ${getInitials(a.full_name)}
+              <td align="center" valign="middle">
+                ${avatarContent}
               </td>
             </tr>
             <tr>
@@ -228,7 +233,8 @@ function generateEmailHTML(
             </tr>
           </table>
         </td>
-      `).join('')
+      `;
+      }).join('')
     : '<td align="center" style="color:#9ca3af;font-style:italic;font-size:13px;">Niet toegewezen</td>';
   
   // Format file size
