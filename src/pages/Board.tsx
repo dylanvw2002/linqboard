@@ -2615,15 +2615,15 @@ const Board = () => {
                     <Button onClick={handleDeleteFromDialog} variant="destructive">
                       {t('common.delete')}
                     </Button>
+                    <Button onClick={handleEditTask} className="flex-1">
+                      {t('common.save')}
+                    </Button>
                     <Button onClick={() => setExportDialogOpen(true)} variant="outline" className="flex-1">
                       <Mail className="mr-2 h-4 w-4" />
                       {t('board.exportTask')}
                     </Button>
                     <Button onClick={handleCompleteFromDialog} variant="outline" className="flex-1">
                       ✔ {t('board.complete')}
-                    </Button>
-                    <Button onClick={handleEditTask} className="flex-1">
-                      {t('common.save')}
                     </Button>
                   </div>
                 </>;
