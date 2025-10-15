@@ -64,20 +64,20 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
 <body style="margin:0;padding:0;background:#f5f3ff;font-family:Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f3ff;">
     <tr>
-      <td align="center" style="padding:20px;">
+      <td align="center" style="padding:12px;">
         
         <!-- Logo -->
-        <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" width="320" height="320" style="display:block;margin:0 auto 20px;" />
+        <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" width="180" height="180" style="display:block;margin:0 auto 12px;" />
         
         <!-- Main Container -->
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
           
           <!-- Priority Badge -->
           <tr>
-            <td align="center" style="padding:32px 32px 16px;">
+            <td align="center" style="padding:20px 20px 12px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:{{priorityBg}};color:{{priorityFg}};font-size:14px;font-weight:700;padding:10px 24px;border-radius:24px;text-transform:uppercase;">
+                  <td style="background:{{priorityBg}};color:{{priorityFg}};font-size:13px;font-weight:700;padding:8px 20px;border-radius:24px;text-transform:uppercase;">
                     {{priorityLabel}}
                   </td>
                 </tr>
@@ -87,15 +87,15 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           
           <!-- Title -->
           <tr>
-            <td align="center" style="padding:0 32px 24px;">
-              <h1 style="margin:0;font-size:28px;font-weight:700;color:#1e1b4b;">{{title}}</h1>
+            <td align="center" style="padding:0 20px 16px;">
+              <h1 style="margin:0;font-size:24px;font-weight:700;color:#1e1b4b;">{{title}}</h1>
             </td>
           </tr>
           
           <!-- Description -->
           <tr>
-            <td style="padding:0 32px 24px;">
-              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px;border-radius:16px;font-size:15px;line-height:1.6;color:#334155;">
+            <td style="padding:0 20px 16px;">
+              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:12px;border-radius:16px;font-size:14px;line-height:1.5;color:#334155;">
                 {{description}}
               </div>
             </td>
@@ -103,9 +103,9 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           
           <!-- Assignees -->
           <tr>
-            <td style="padding:0 32px 24px;">
-              <div style="background:#faf5ff;border-radius:20px;padding:20px;border:2px solid #e9d5ff;">
-                <div style="font-size:14px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:16px;text-align:center;">
+            <td style="padding:0 20px 16px;">
+              <div style="background:#faf5ff;border-radius:20px;padding:16px;border:2px solid #e9d5ff;">
+                <div style="font-size:13px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:12px;text-align:center;">
                   👥 Toegewezen aan
                 </div>
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -119,12 +119,12 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           
           <!-- Attachments -->
           <tr>
-            <td style="padding:0 32px 24px;">
-              <div style="background:#fef9f5;border-radius:20px;padding:20px;border:2px solid #fed7aa;">
-                <div style="font-size:14px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:12px;">
+            <td style="padding:0 20px 16px;">
+              <div style="background:#fef9f5;border-radius:20px;padding:16px;border:2px solid #fed7aa;">
+                <div style="font-size:13px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:10px;">
                   📎 Bijlagen
                 </div>
-                <ul style="margin:0;padding-left:20px;font-size:14px;line-height:1.8;color:#451a03;">
+                <ul style="margin:0;padding-left:20px;font-size:13px;line-height:1.6;color:#451a03;">
                   {{attachmentsText}}
                 </ul>
               </div>
@@ -133,11 +133,11 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           
           <!-- CTA Button -->
           <tr>
-            <td align="center" style="padding:0 32px 40px;">
+            <td align="center" style="padding:0 20px 24px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:20px;box-shadow:0 4px 12px rgba(99,102,241,0.4);">
-                    <a href="{{taskUrl}}" style="display:block;padding:16px 40px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;">
+                    <a href="{{taskUrl}}" style="display:block;padding:14px 36px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;">
                       🔗 Bekijk in LinqBoard
                     </a>
                   </td>
@@ -149,7 +149,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
         </table>
         
         <!-- Footer -->
-        <div style="margin-top:24px;font-size:13px;color:#64748b;text-align:center;">
+        <div style="margin-top:16px;font-size:12px;color:#64748b;text-align:center;padding-bottom:12px;">
           © 2025 LinqBoard – Samen, van to-do naar done.
         </div>
         
@@ -196,22 +196,22 @@ function generateEmailHTML(
   // Generate assignees HTML - simplified for email compatibility
   const assigneesHtml = assignees.length > 0 
     ? assignees.map(a => `
-        <td align="center" style="padding:0 12px;">
+        <td align="center" style="padding:0 8px;">
           <table cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td align="center" style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:22px;border:3px solid #fff;box-shadow:0 4px 12px rgba(139,92,246,0.3);">
-                <div style="line-height:70px;">${getInitials(a.full_name)}</div>
+              <td align="center" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:18px;border:2px solid #fff;box-shadow:0 3px 10px rgba(139,92,246,0.3);">
+                <div style="line-height:56px;">${getInitials(a.full_name)}</div>
               </td>
             </tr>
             <tr>
-              <td align="center" style="padding-top:8px;font-size:14px;color:#4c1d95;font-weight:600;">
+              <td align="center" style="padding-top:6px;font-size:13px;color:#4c1d95;font-weight:600;">
                 ${a.full_name}
               </td>
             </tr>
           </table>
         </td>
       `).join('')
-    : '<td align="center" style="color:#9ca3af;font-style:italic;font-size:14px;">Niet toegewezen</td>';
+    : '<td align="center" style="color:#9ca3af;font-style:italic;font-size:13px;">Niet toegewezen</td>';
   
   // Format file size
   const formatFileSize = (bytes: number): string => {
