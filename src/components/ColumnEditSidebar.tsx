@@ -68,7 +68,7 @@ export const ColumnEditSidebar = ({
       toast.error(t('board.saveError') + error.message);
     }
   };
-  return <div className="fixed right-0 top-0 h-full w-80 bg-background shadow-2xl z-[99999] overflow-y-auto border-l">
+  return <div className="fixed right-0 top-0 h-full w-80 bg-background shadow-2xl overflow-y-auto border-l" style={{ zIndex: 999999 }}>
       <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-bold">{t('board.editColumn')}</h3>
