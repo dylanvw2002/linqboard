@@ -201,8 +201,8 @@ function generateEmailHTML(
         <td align="center" style="padding:0 8px;">
           <table cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td align="center" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:18px;border:2px solid #fff;box-shadow:0 3px 10px rgba(139,92,246,0.3);">
-                <div style="line-height:56px;">${getInitials(a.full_name)}</div>
+              <td align="center" valign="middle" style="width:56px;height:56px;line-height:56px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:18px;border:2px solid #fff;box-shadow:0 3px 10px rgba(139,92,246,0.3);">
+                ${getInitials(a.full_name)}
               </td>
             </tr>
             <tr>
