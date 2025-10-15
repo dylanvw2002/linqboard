@@ -2647,7 +2647,7 @@ const Board = () => {
           <DialogHeader>
             <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 overflow-y-auto flex-1">
+          <div className="space-y-4 overflow-y-auto flex-1 px-6">
             {/* Team Members Selection */}
             <div>
               <Label>{t('board.exportSelectMembers')}</Label>
