@@ -70,14 +70,14 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
         <img src="https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo's/logo-transparent.png" alt="LinqBoard" width="320" height="320" style="display:block;margin:0 auto 20px;" />
         
         <!-- Main Container -->
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
           
           <!-- Priority Badge -->
           <tr>
             <td align="center" style="padding:32px 32px 16px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="background:{{priorityBg}};color:{{priorityFg}};font-size:14px;font-weight:700;padding:10px 24px;border-radius:20px;text-transform:uppercase;">
+                  <td style="background:{{priorityBg}};color:{{priorityFg}};font-size:14px;font-weight:700;padding:10px 24px;border-radius:24px;text-transform:uppercase;">
                     {{priorityLabel}}
                   </td>
                 </tr>
@@ -95,7 +95,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           <!-- Description -->
           <tr>
             <td style="padding:0 32px 24px;">
-              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px;border-radius:8px;font-size:15px;line-height:1.6;color:#334155;">
+              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:16px;border-radius:16px;font-size:15px;line-height:1.6;color:#334155;">
                 {{description}}
               </div>
             </td>
@@ -104,7 +104,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           <!-- Assignees -->
           <tr>
             <td style="padding:0 32px 24px;">
-              <div style="background:#faf5ff;border-radius:12px;padding:20px;border:2px solid #e9d5ff;">
+              <div style="background:#faf5ff;border-radius:20px;padding:20px;border:2px solid #e9d5ff;">
                 <div style="font-size:14px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:16px;text-align:center;">
                   👥 Toegewezen aan
                 </div>
@@ -120,7 +120,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           <!-- Attachments -->
           <tr>
             <td style="padding:0 32px 24px;">
-              <div style="background:#fef9f5;border-radius:12px;padding:20px;border:2px solid #fed7aa;">
+              <div style="background:#fef9f5;border-radius:20px;padding:20px;border:2px solid #fed7aa;">
                 <div style="font-size:14px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:12px;">
                   📎 Bijlagen
                 </div>
@@ -136,7 +136,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
             <td align="center" style="padding:0 32px 40px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px;box-shadow:0 4px 12px rgba(99,102,241,0.4);">
+                  <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:20px;box-shadow:0 4px 12px rgba(99,102,241,0.4);">
                     <a href="{{taskUrl}}" style="display:block;padding:16px 40px;font-size:16px;font-weight:700;color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;">
                       🔗 Bekijk in LinqBoard
                     </a>
