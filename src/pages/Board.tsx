@@ -2067,6 +2067,56 @@ const Board = () => {
         backgroundRepeat: 'no-repeat'
       })
     }} />
+
+      {/* Edit mode toolbar - OUTSIDE scaled canvas so dropdowns work */}
+      {editMode && !isMobile && <div className="fixed top-[120px] left-[22px] right-[22px] z-[150] flex items-center justify-between px-4 py-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg">
+          <span className="text-sm font-semibold text-primary">
+            🔧 {t('board.editModeActive')}
+          </span>
+          <div className="flex items-center gap-2">
+            {(userPlan === 'team' || userPlan === 'business') && <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
+                <Select value={backgroundImageUrl === defaultBackground ? 'default' : selectedBackground} onValueChange={value => {
+                if (value === 'default') {
+                  handleSetDefaultBackground();
+                } else {
+                  handleBackgroundChange(value);
+                }
+              }} disabled={!canCustomizeBackground}>
+                  <SelectTrigger className="w-[200px]">
+                    <span>🎨 {t('board.backgroundsLabel')}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">{t('board.backgroundDefault')}</SelectItem>
+                    <SelectItem value="from-blue-50 to-blue-100">{t('board.backgroundBlue')}</SelectItem>
+                    <SelectItem value="from-purple-50 to-pink-100">{t('board.backgroundPurplePink')}</SelectItem>
+                    <SelectItem value="from-green-50 to-emerald-100">{t('board.backgroundGreen')}</SelectItem>
+                    <SelectItem value="from-orange-50 to-yellow-100">{t('board.backgroundOrangeYellow')}</SelectItem>
+                    <SelectItem value="from-gray-50 to-gray-100">{t('board.backgroundGray')}</SelectItem>
+                    <SelectItem value="from-rose-50 to-pink-100">{t('board.backgroundRose')}</SelectItem>
+                    <SelectItem value="from-cyan-50 to-blue-100">{t('board.backgroundCyan')}</SelectItem>
+                    <SelectItem value="from-indigo-50 to-purple-100">{t('board.backgroundIndigo')}</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {backgroundImageUrl && backgroundImageUrl !== defaultBackground ? <Button size="sm" variant="destructive" onClick={handleRemoveBackgroundImage} disabled={!canCustomizeBackground} className="flex items-center gap-1">
+                    <X className="h-4 w-4" />
+                    {t('board.removeImage')}
+                  </Button> : <Button size="sm" variant="outline" disabled={uploadingBackground || !canCustomizeBackground} className="relative flex items-center gap-1">
+                    <input type="file" accept="image/*" onChange={handleBackgroundImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" disabled={uploadingBackground || !canCustomizeBackground} />
+                    <Image className="h-4 w-4" />
+                    {uploadingBackground ? t('board.uploading') : t('board.addImage')}
+                  </Button>}
+              </div>}
+            {(userPlan === 'free' || userPlan === 'pro') && <div className="text-xs text-muted-foreground border-r border-primary/20 pr-2">
+                🎨 {t('board.backgroundUpgradeRequired')}
+              </div>}
+            
+            <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              {t('board.addColumn')}
+            </Button>
+          </div>
+        </div>}
       
       {/* Canvas layer with touch gestures */}
       <div className="origin-top-left overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} style={{
@@ -2208,54 +2258,6 @@ const Board = () => {
       </header>
 
       {/* Canvas Board */}
-      {editMode && !isMobile && <div className="flex items-center justify-between px-4 py-2 bg-primary/10 border border-primary/20 rounded-lg mx-[22px]">
-          <span className="text-sm font-semibold text-primary">
-            🔧 {t('board.editModeActive')}
-          </span>
-          <div className="flex items-center gap-2">
-            {(userPlan === 'team' || userPlan === 'business') && <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
-                <Select value={backgroundImageUrl === defaultBackground ? 'default' : selectedBackground} onValueChange={value => {
-                if (value === 'default') {
-                  handleSetDefaultBackground();
-                } else {
-                  handleBackgroundChange(value);
-                }
-              }} disabled={!canCustomizeBackground}>
-                  <SelectTrigger className="w-[200px]">
-                    <span>🎨 {t('board.backgroundsLabel')}</span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">{t('board.backgroundDefault')}</SelectItem>
-                    <SelectItem value="from-blue-50 to-blue-100">{t('board.backgroundBlue')}</SelectItem>
-                    <SelectItem value="from-purple-50 to-pink-100">{t('board.backgroundPurplePink')}</SelectItem>
-                    <SelectItem value="from-green-50 to-emerald-100">{t('board.backgroundGreen')}</SelectItem>
-                    <SelectItem value="from-orange-50 to-yellow-100">{t('board.backgroundOrangeYellow')}</SelectItem>
-                    <SelectItem value="from-gray-50 to-gray-100">{t('board.backgroundGray')}</SelectItem>
-                    <SelectItem value="from-rose-50 to-pink-100">{t('board.backgroundRose')}</SelectItem>
-                    <SelectItem value="from-cyan-50 to-blue-100">{t('board.backgroundCyan')}</SelectItem>
-                    <SelectItem value="from-indigo-50 to-purple-100">{t('board.backgroundIndigo')}</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                {backgroundImageUrl && backgroundImageUrl !== defaultBackground ? <Button size="sm" variant="destructive" onClick={handleRemoveBackgroundImage} disabled={!canCustomizeBackground} className="flex items-center gap-1">
-                    <X className="h-4 w-4" />
-                    {t('board.removeImage')}
-                  </Button> : <Button size="sm" variant="outline" disabled={uploadingBackground || !canCustomizeBackground} className="relative flex items-center gap-1">
-                    <input type="file" accept="image/*" onChange={handleBackgroundImageUpload} className="absolute inset-0 opacity-0 cursor-pointer" disabled={uploadingBackground || !canCustomizeBackground} />
-                    <Image className="h-4 w-4" />
-                    {uploadingBackground ? t('board.uploading') : t('board.addImage')}
-                  </Button>}
-              </div>}
-            {(userPlan === 'free' || userPlan === 'pro') && <div className="text-xs text-muted-foreground border-r border-primary/20 pr-2">
-                🎨 {t('board.backgroundUpgradeRequired')}
-              </div>}
-            
-            <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              {t('board.addColumn')}
-            </Button>
-          </div>
-        </div>}
       <main className="relative flex-1 min-h-0 overflow-auto" style={{
           minWidth: isMobile ? '6000px' : '3000px',
           minHeight: isMobile ? '4000px' : '2000px'
