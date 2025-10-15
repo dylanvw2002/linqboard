@@ -32,6 +32,7 @@ import { SimpleTaskCard } from "@/components/SimpleTaskCard";
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
 import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
+import { TeamMemberSelect } from "@/components/TeamMemberSelect";
 interface Column {
   id: string;
   name: string;
@@ -2594,20 +2595,12 @@ const Board = () => {
                               </div>;
                         })}
                         </div>}
-                      <Select onValueChange={value => {
-                        if (value && !editTaskAssignees.includes(value)) {
-                          handleAddAssignee(value);
-                        }
-                      }}>
-                        <SelectTrigger className="w-full">
-                          <span className="text-muted-foreground">{t('board.addTeamMember')}</span>
-                        </SelectTrigger>
-                        <SelectContent className="z-[100]">
-                          {orgMembers.filter(m => !editTaskAssignees.includes(m.user_id)).map(member => <SelectItem key={member.user_id} value={member.user_id}>
-                                {member.full_name}
-                              </SelectItem>)}
-                        </SelectContent>
-                      </Select>
+                      <TeamMemberSelect
+                        members={orgMembers}
+                        selectedMembers={editTaskAssignees}
+                        onSelect={handleAddAssignee}
+                        placeholder={t('board.addTeamMember')}
+                      />
                     </div>
                   </div>
                   
@@ -2679,22 +2672,14 @@ const Board = () => {
                     })}
                   </div>
                 )}
-                <Select onValueChange={value => {
-                  if (value && !exportSelectedMembers.includes(value)) {
-                    setExportSelectedMembers([...exportSelectedMembers, value]);
-                  }
-                }}>
-                  <SelectTrigger className="w-full">
-                    <span className="text-muted-foreground">{t('board.addTeamMember')}</span>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {orgMembersWithEmails.filter(m => !exportSelectedMembers.includes(m.user_id)).map(member => (
-                      <SelectItem key={member.user_id} value={member.user_id}>
-                        {member.full_name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <TeamMemberSelect
+                  members={orgMembersWithEmails}
+                  selectedMembers={exportSelectedMembers}
+                  onSelect={(userId) => {
+                    setExportSelectedMembers([...exportSelectedMembers, userId]);
+                  }}
+                  placeholder={t('board.addTeamMember')}
+                />
               </div>
             </div>
 
