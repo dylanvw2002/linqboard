@@ -150,7 +150,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
           
           <!-- CTA Button -->
           <tr>
-            <td align="center" style="padding:0 12px 12px;">
+            <td align="center" style="padding:0 12px 8px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;box-shadow:0 3px 8px rgba(99,102,241,0.4);">
@@ -160,6 +160,15 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
                   </td>
                 </tr>
               </table>
+            </td>
+          </tr>
+          
+          <!-- URL Text -->
+          <tr>
+            <td align="center" style="padding:0 12px 12px;">
+              <a href="{{taskUrl}}" style="font-size:11px;color:#6366f1;text-decoration:underline;word-break:break-all;">
+                {{taskUrl}}
+              </a>
             </td>
           </tr>
           
