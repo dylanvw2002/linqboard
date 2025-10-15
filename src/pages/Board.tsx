@@ -2070,7 +2070,7 @@ const Board = () => {
     }} />
 
       {/* Edit mode toolbar - OUTSIDE scaled canvas so dropdowns work */}
-      {editMode && !isMobile && <div className="fixed top-[120px] left-[22px] right-[22px] z-[150] flex items-center justify-between px-4 py-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg">
+      {editMode && !isMobile && <div className="fixed top-[90px] left-[22px] right-[22px] z-[150] flex items-center justify-between px-4 py-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg">
           <span className="text-sm font-semibold text-primary">
             🔧 {t('board.editModeActive')}
           </span>
