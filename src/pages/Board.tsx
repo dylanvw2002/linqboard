@@ -948,10 +948,10 @@ const Board = () => {
   }, [organizationId, isDemo, t]);
   
   const fetchOrgMembersWithEmails = async () => {
-    if (!board?.organization_id || isDemo) return;
+    if (!organizationId || isDemo) return;
 
     const { data, error } = await supabase
-      .rpc('get_org_member_emails', { _org_id: board.organization_id });
+      .rpc('get_org_member_emails', { _org_id: organizationId });
 
     if (!error && data) {
       console.log('Fetched org members with emails:', data);
