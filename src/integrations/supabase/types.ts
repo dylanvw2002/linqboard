@@ -813,6 +813,77 @@ export type Database = {
           },
         ]
       }
+      widget_chat_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          role: string
+          widget_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          role: string
+          widget_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          role?: string
+          widget_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "widget_chat_messages_widget_id_fkey"
+            columns: ["widget_id"]
+            isOneToOne: false
+            referencedRelation: "widgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      widgets: {
+        Row: {
+          board_id: string
+          created_at: string | null
+          height: number
+          id: string
+          settings: Json | null
+          updated_at: string | null
+          widget_type: string
+          width: number
+          x_position: number
+          y_position: number
+        }
+        Insert: {
+          board_id: string
+          created_at?: string | null
+          height?: number
+          id?: string
+          settings?: Json | null
+          updated_at?: string | null
+          widget_type: string
+          width?: number
+          x_position?: number
+          y_position?: number
+        }
+        Update: {
+          board_id?: string
+          created_at?: string | null
+          height?: number
+          id?: string
+          settings?: Json | null
+          updated_at?: string | null
+          widget_type?: string
+          width?: number
+          x_position?: number
+          y_position?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

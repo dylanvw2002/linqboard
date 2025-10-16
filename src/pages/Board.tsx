@@ -33,6 +33,8 @@ import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
 import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
 import { TeamMemberSelect } from "@/components/TeamMemberSelect";
+import { WidgetContainer } from "@/components/WidgetContainer";
+import { MessageSquare } from "lucide-react";
 interface Column {
   id: string;
   name: string;
@@ -534,6 +536,7 @@ const Board = () => {
   const [board, setBoard] = useState<any>(null);
   const [columns, setColumns] = useState<Column[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [widgets, setWidgets] = useState<any[]>([]);
 
   // Demo mode: store initial data for reset on refresh
   const [demoInitialData, setDemoInitialData] = useState<{
@@ -914,6 +917,73 @@ const Board = () => {
       toast.error(t('board.deleteError') + error.message);
     }
   };
+  
+  const handleAddWidget = async (widgetType: 'chat' | 'notes' | 'calculator' | 'timer') => {
+    if (isDemo) {
+      toast.info('Widgets uitgeschakeld in demo mode');
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase
+        .from('widgets')
+        .insert({
+          board_id: board?.id,
+          widget_type: widgetType,
+          x_position: 100,
+          y_position: 100,
+          width: 400,
+          height: 500,
+        })
+        .select()
+        .single();
+        
+      if (error) throw error;
+      
+      setWidgets([...widgets, data]);
+      toast.success('Widget toegevoegd!');
+    } catch (error: any) {
+      toast.error('Fout bij toevoegen widget: ' + error.message);
+    }
+  };
+  
+  const handleDeleteWidget = async (widgetId: string) => {
+    if (isDemo) {
+      toast.info('Widgets uitgeschakeld in demo mode');
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('widgets')
+        .delete()
+        .eq('id', widgetId);
+        
+      if (error) throw error;
+      
+      setWidgets(widgets.filter(w => w.id !== widgetId));
+      toast.success('Widget verwijderd');
+    } catch (error: any) {
+      toast.error('Fout bij verwijderen widget: ' + error.message);
+    }
+  };
+  
+  const handleUpdateWidget = async (widgetId: string, updates: any) => {
+    if (isDemo) return;
+    
+    try {
+      const { error } = await supabase
+        .from('widgets')
+        .update(updates)
+        .eq('id', widgetId);
+        
+      if (error) throw error;
+      
+      setWidgets(widgets.map(w => w.id === widgetId ? { ...w, ...updates } : w));
+    } catch (error: any) {
+      console.error('Error updating widget:', error);
+    }
+  };
   useEffect(() => {
     if (isDemo) {
       // In demo mode, load demo data with translations
@@ -1252,6 +1322,14 @@ const Board = () => {
         data: columnsData
       } = await supabase.from("columns").select("*").eq("board_id", boardResult.data.id).order("position");
       setColumns(columnsData || []);
+      
+      // Fetch widgets
+      const { data: widgetsData } = await supabase
+        .from("widgets")
+        .select("*")
+        .eq("board_id", boardResult.data.id);
+      setWidgets(widgetsData || []);
+      
       if (columnsData && columnsData.length > 0) {
         const columnIds = columnsData.map(c => c.id);
 
@@ -1312,6 +1390,12 @@ const Board = () => {
       event: "*",
       schema: "public",
       table: "columns"
+    }, () => {
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "widgets"
     }, () => {
       fetchBoardData();
     }).on("postgres_changes", {
@@ -2236,6 +2320,17 @@ const Board = () => {
             </div>
           </>}
 
+        {/* Widgets */}
+        {widgets.map(widget => (
+          <WidgetContainer
+            key={widget.id}
+            widget={widget}
+            onDelete={handleDeleteWidget}
+            onUpdate={handleUpdateWidget}
+            isEditMode={editMode}
+          />
+        ))}
+
         {columns.map(column => {
             const isSelected = selectedColumn?.id === column.id;
             const displayColumn = isSelected && resizing ? selectedColumn : column;
@@ -2651,6 +2746,10 @@ const Board = () => {
             <Button onClick={handleAddColumn} size="sm" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
               {t('board.addColumn')}
+            </Button>
+            <Button onClick={() => handleAddWidget('chat')} size="sm" variant="outline" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              AI Chat Widget
             </Button>
           </div>
         </div>}
