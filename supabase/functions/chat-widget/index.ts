@@ -30,7 +30,7 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { widgetId, message } = await req.json();
+    const { widgetId, message, userName } = await req.json();
 
     if (!widgetId || !message) {
       throw new Error('Missing widgetId or message');
@@ -75,6 +75,7 @@ serve(async (req) => {
     // Store user message
     await supabase.from('widget_chat_messages').insert({
       widget_id: widgetId,
+      user_id: user.id,
       role: 'user',
       content: message,
     });
@@ -84,7 +85,7 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Call Lovable AI
+    // Call Lovable AI with user context
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -96,12 +97,12 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Je bent een behulpzame assistent voor LinqBoard. Help gebruikers met hun taken, planning en vragen over het board. Antwoord altijd in het Nederlands en wees vriendelijk en professioneel.',
+            content: 'Je bent een behulpzame assistent voor LinqBoard. Help gebruikers met hun taken, planning en vragen over het board. Antwoord altijd in het Nederlands en wees vriendelijk en professioneel. Wanneer je een bericht van een gebruiker ontvangt, begin je reactie met het noemen van hun naam.',
           },
           ...(messages || []),
           {
             role: 'user',
-            content: message,
+            content: `${userName}: ${message}`,
           },
         ],
       }),

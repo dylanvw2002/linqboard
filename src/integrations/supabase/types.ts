@@ -819,6 +819,7 @@ export type Database = {
           created_at: string | null
           id: string
           role: string
+          user_id: string | null
           widget_id: string
         }
         Insert: {
@@ -826,6 +827,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           role: string
+          user_id?: string | null
           widget_id: string
         }
         Update: {
@@ -833,6 +835,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: string
+          user_id?: string | null
           widget_id?: string
         }
         Relationships: [
@@ -851,6 +854,7 @@ export type Database = {
           created_at: string | null
           height: number
           id: string
+          mode: string | null
           settings: Json | null
           updated_at: string | null
           widget_type: string
@@ -863,6 +867,7 @@ export type Database = {
           created_at?: string | null
           height?: number
           id?: string
+          mode?: string | null
           settings?: Json | null
           updated_at?: string | null
           widget_type: string
@@ -875,6 +880,7 @@ export type Database = {
           created_at?: string | null
           height?: number
           id?: string
+          mode?: string | null
           settings?: Json | null
           updated_at?: string | null
           widget_type?: string

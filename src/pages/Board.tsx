@@ -989,6 +989,27 @@ const Board = () => {
       console.error('Error updating widget:', error);
     }
   };
+
+  const handleWidgetModeChange = async (widgetId: string, mode: 'general' | 'private') => {
+    if (isDemo) {
+      toast.info('Widgets uitgeschakeld in demo mode');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('widgets')
+        .update({ mode })
+        .eq('id', widgetId);
+
+      if (error) throw error;
+
+      setWidgets(widgets.map(w => w.id === widgetId ? { ...w, mode } : w));
+      toast.success(`Modus gewijzigd naar ${mode === 'general' ? 'Algemeen' : 'Privé'}`);
+    } catch (error: any) {
+      toast.error('Fout bij wijzigen modus: ' + error.message);
+    }
+  };
   
   const handleWidgetDragStart = (e: React.DragEvent, widget: any) => {
     setDraggedWidget(widget);
@@ -2454,6 +2475,7 @@ const Board = () => {
             onDragStart={handleWidgetDragStart}
             onDragEnd={handleWidgetDragEnd}
             onResizeMouseDown={startWidgetResize}
+            onModeChange={handleWidgetModeChange}
             resizeHandle={widgetResizeHandle}
             isEditMode={editMode}
             isDragging={draggedWidget?.id === widget.id}
