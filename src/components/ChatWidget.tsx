@@ -106,13 +106,13 @@ export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-card/50 backdrop-blur-sm rounded-lg">
-      <div className="flex items-center gap-2 p-3 border-b border-border bg-primary/5">
+    <div className="flex flex-col h-full relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] shadow-[0_8px_24px_rgba(2,6,23,0.08)] before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+      <div className="flex items-center gap-2 p-3 border-b border-white/30 dark:border-white/20 bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-[26px] relative z-10">
         <Bot className="w-5 h-5 text-primary" />
         <h3 className="font-semibold text-sm">{boardName} Assistent</h3>
       </div>
 
-      <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+      <ScrollArea className="flex-1 p-4 relative z-10" ref={scrollRef}>
         <div className="space-y-4">
           {messages.length === 0 && (
             <div className="text-center text-muted-foreground text-sm py-8">
@@ -164,7 +164,7 @@ export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
         </div>
       </ScrollArea>
 
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-white/30 dark:border-white/20 relative z-10 rounded-b-[26px]">
         <form
           onSubmit={(e) => {
             e.preventDefault();
