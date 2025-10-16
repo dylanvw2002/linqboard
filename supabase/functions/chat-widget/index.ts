@@ -36,27 +36,40 @@ serve(async (req) => {
       throw new Error('Missing widgetId or message');
     }
 
-    // Verify user has access to this widget through board membership
+    // Get widget and verify it exists
     const { data: widget, error: widgetError } = await supabase
       .from('widgets')
-      .select('id, board_id, boards!inner(id, organization_id)')
+      .select('id, board_id')
       .eq('id', widgetId)
       .single();
 
     if (widgetError || !widget) {
-      console.error('Widget access error:', widgetError);
+      console.error('Widget not found:', widgetError);
       throw new Error('Widget not found');
     }
 
-    // Check if user has access to the organization
-    const { data: membership } = await supabase
+    // Get board and organization
+    const { data: board, error: boardError } = await supabase
+      .from('boards')
+      .select('id, organization_id')
+      .eq('id', widget.board_id)
+      .single();
+
+    if (boardError || !board) {
+      console.error('Board not found:', boardError);
+      throw new Error('Board not found');
+    }
+
+    // Check if user is member of the organization
+    const { data: membership, error: membershipError } = await supabase
       .from('memberships')
       .select('id')
       .eq('user_id', user.id)
-      .eq('organization_id', (widget as any).boards.organization_id)
+      .eq('organization_id', board.organization_id)
       .single();
 
-    if (!membership) {
+    if (membershipError || !membership) {
+      console.error('Access denied:', membershipError);
       throw new Error('Access denied');
     }
 
