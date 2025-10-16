@@ -19,20 +19,17 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     
-    // Create supabase client with user's JWT token for RLS
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: {
-        headers: {
-          Authorization: authHeader
-        }
-      }
-    });
-
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Use service role client for initial verification
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // Get user from JWT token
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('Auth error:', authError);
       throw new Error('Unauthorized');
     }
 
@@ -42,45 +39,31 @@ serve(async (req) => {
       throw new Error('Missing widgetId or message');
     }
 
-    // Get widget and verify it exists
-    const { data: widget, error: widgetError } = await supabase
+    // Verify user has access to widget (check widget -> board -> membership)
+    const { data: accessCheck, error: accessError } = await supabaseAdmin
       .from('widgets')
-      .select('id, board_id')
+      .select(`
+        id,
+        board_id,
+        boards!inner (
+          id,
+          organization_id,
+          memberships!inner (
+            user_id
+          )
+        )
+      `)
       .eq('id', widgetId)
+      .eq('boards.memberships.user_id', user.id)
       .single();
 
-    if (widgetError || !widget) {
-      console.error('Widget not found:', widgetError);
-      throw new Error('Widget not found');
-    }
-
-    // Get board and organization
-    const { data: board, error: boardError } = await supabase
-      .from('boards')
-      .select('id, organization_id')
-      .eq('id', widget.board_id)
-      .single();
-
-    if (boardError || !board) {
-      console.error('Board not found:', boardError);
-      throw new Error('Board not found');
-    }
-
-    // Check if user is member of the organization
-    const { data: membership, error: membershipError } = await supabase
-      .from('memberships')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('organization_id', board.organization_id)
-      .single();
-
-    if (membershipError || !membership) {
-      console.error('Access denied:', membershipError);
-      throw new Error('Access denied');
+    if (accessError || !accessCheck) {
+      console.error('Access denied:', accessError);
+      throw new Error('Access denied - user is not a member of this board\'s organization');
     }
 
     // Get chat history
-    const { data: messages, error: messagesError } = await supabase
+    const { data: messages, error: messagesError } = await supabaseAdmin
       .from('widget_chat_messages')
       .select('role, content')
       .eq('widget_id', widgetId)
@@ -88,16 +71,24 @@ serve(async (req) => {
       .limit(50);
 
     if (messagesError) {
+      console.error('Failed to fetch chat history:', messagesError);
       throw new Error('Failed to fetch chat history');
     }
 
     // Store user message
-    await supabase.from('widget_chat_messages').insert({
-      widget_id: widgetId,
-      user_id: user.id,
-      role: 'user',
-      content: message,
-    });
+    const { error: insertError } = await supabaseAdmin
+      .from('widget_chat_messages')
+      .insert({
+        widget_id: widgetId,
+        user_id: user.id,
+        role: 'user',
+        content: message,
+      });
+
+    if (insertError) {
+      console.error('Failed to store user message:', insertError);
+      throw new Error('Failed to store message');
+    }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -137,11 +128,17 @@ serve(async (req) => {
     const assistantMessage = data.choices[0]?.message?.content || 'Sorry, ik kon geen antwoord genereren.';
 
     // Store assistant message
-    await supabase.from('widget_chat_messages').insert({
-      widget_id: widgetId,
-      role: 'assistant',
-      content: assistantMessage,
-    });
+    const { error: assistantInsertError } = await supabaseAdmin
+      .from('widget_chat_messages')
+      .insert({
+        widget_id: widgetId,
+        role: 'assistant',
+        content: assistantMessage,
+      });
+
+    if (assistantInsertError) {
+      console.error('Failed to store assistant message:', assistantInsertError);
+    }
 
     return new Response(
       JSON.stringify({ message: assistantMessage }),
