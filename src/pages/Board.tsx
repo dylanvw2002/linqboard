@@ -597,6 +597,9 @@ const Board = () => {
     col: Column;
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
+  const [draggedWidget, setDraggedWidget] = useState<any | null>(null);
+  const [widgetDragOffset, setWidgetDragOffset] = useState({ x: 0, y: 0 });
+  const [widgetDragPreview, setWidgetDragPreview] = useState<{ x: number; y: number } | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
   const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.33 : 0.75);
@@ -983,6 +986,21 @@ const Board = () => {
     } catch (error: any) {
       console.error('Error updating widget:', error);
     }
+  };
+  
+  const handleWidgetDragStart = (e: React.DragEvent, widget: any) => {
+    setDraggedWidget(widget);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setWidgetDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+  
+  const handleWidgetDragEnd = () => {
+    setDraggedWidget(null);
+    setWidgetDragPreview(null);
+    setSnapGuides(null);
   };
   useEffect(() => {
     if (isDemo) {
@@ -2254,37 +2272,68 @@ const Board = () => {
           }
         }} onDragOver={editMode ? e => {
           e.preventDefault();
-          if (!draggedColumn) return;
           const canvas = e.currentTarget.getBoundingClientRect();
-          // Account for UI scale factor
-          const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - dragOffset.x);
-          const rawY = Math.max(0, (e.clientY - canvas.top) / SCALE_FACTOR - dragOffset.y);
-          const {
-            snappedX,
-            snappedY,
-            guides
-          } = calculateSnap(rawX, rawY);
-          setDragPreview({
-            x: snappedX,
-            y: snappedY
-          });
-          setSnapGuides(guides);
+          
+          if (draggedColumn) {
+            // Account for UI scale factor
+            const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - dragOffset.x);
+            const rawY = Math.max(0, (e.clientY - canvas.top) / SCALE_FACTOR - dragOffset.y);
+            const {
+              snappedX,
+              snappedY,
+              guides
+            } = calculateSnap(rawX, rawY);
+            setDragPreview({
+              x: snappedX,
+              y: snappedY
+            });
+            setSnapGuides(guides);
+          } else if (draggedWidget) {
+            const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - widgetDragOffset.x);
+            const rawY = Math.max(0, (e.clientY - canvas.top) / SCALE_FACTOR - widgetDragOffset.y);
+            const {
+              snappedX,
+              snappedY,
+              guides
+            } = calculateSnap(rawX, rawY);
+            setWidgetDragPreview({
+              x: snappedX,
+              y: snappedY
+            });
+            setSnapGuides(guides);
+          }
         } : undefined} onDrop={editMode ? async e => {
           e.preventDefault();
-          if (!draggedColumn || !dragPreview) return;
-          try {
-            await supabase.from('columns').update({
-              x_position: dragPreview.x,
-              y_position: dragPreview.y
-            }).eq('id', draggedColumn.id);
-            toast.success(t('board.columnMoved'));
-            await fetchBoardData();
-          } catch (error: any) {
-            toast.error(t('board.moveError') + error.message);
+          
+          if (draggedColumn && dragPreview) {
+            try {
+              await supabase.from('columns').update({
+                x_position: dragPreview.x,
+                y_position: dragPreview.y
+              }).eq('id', draggedColumn.id);
+              toast.success(t('board.columnMoved'));
+              await fetchBoardData();
+            } catch (error: any) {
+              toast.error(t('board.moveError') + error.message);
+            }
+            setDraggedColumn(null);
+            setDragPreview(null);
+            setSnapGuides(null);
+          } else if (draggedWidget && widgetDragPreview) {
+            try {
+              await supabase.from('widgets').update({
+                x_position: widgetDragPreview.x,
+                y_position: widgetDragPreview.y
+              }).eq('id', draggedWidget.id);
+              toast.success('Widget verplaatst');
+              await fetchBoardData();
+            } catch (error: any) {
+              toast.error('Fout bij verplaatsen: ' + error.message);
+            }
+            setDraggedWidget(null);
+            setWidgetDragPreview(null);
+            setSnapGuides(null);
           }
-          setDraggedColumn(null);
-          setDragPreview(null);
-          setSnapGuides(null);
         } : undefined}>
         {/* Grid overlay in edit mode */}
         {editMode && <div className="absolute inset-0 pointer-events-none" style={{
@@ -2303,7 +2352,7 @@ const Board = () => {
             top: `${snapGuides.y}px`
           }} />}
 
-        {/* Preview overlay during drag */}
+        {/* Preview overlay during drag - Column */}
         {dragPreview && draggedColumn && <>
             <div className="absolute border-4 border-dashed border-primary/50 bg-primary/10 rounded-[24px] pointer-events-none z-40" style={{
               left: `${dragPreview.x}px`,
@@ -2319,6 +2368,23 @@ const Board = () => {
               x: {dragPreview.x}px, y: {dragPreview.y}px
             </div>
           </>}
+          
+        {/* Preview overlay during drag - Widget */}
+        {widgetDragPreview && draggedWidget && <>
+            <div className="absolute border-4 border-dashed border-purple-500/50 bg-purple-500/10 rounded-lg pointer-events-none z-40" style={{
+              left: `${widgetDragPreview.x}px`,
+              top: `${widgetDragPreview.y}px`,
+              width: `${draggedWidget.width}px`,
+              height: `${draggedWidget.height}px`
+            }} />
+            {/* Position tooltip */}
+            <div className="absolute bg-purple-600 text-white border px-3 py-1.5 rounded-md text-xs font-medium pointer-events-none z-50 shadow-lg" style={{
+              left: `${widgetDragPreview.x + 10}px`,
+              top: `${widgetDragPreview.y - 35}px`
+            }}>
+              x: {widgetDragPreview.x}px, y: {widgetDragPreview.y}px
+            </div>
+          </>}
 
         {/* Widgets */}
         {widgets.map(widget => (
@@ -2326,8 +2392,10 @@ const Board = () => {
             key={widget.id}
             widget={widget}
             onDelete={handleDeleteWidget}
-            onUpdate={handleUpdateWidget}
+            onDragStart={handleWidgetDragStart}
+            onDragEnd={handleWidgetDragEnd}
             isEditMode={editMode}
+            isDragging={draggedWidget?.id === widget.id}
           />
         ))}
 
