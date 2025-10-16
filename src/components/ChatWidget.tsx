@@ -3,8 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Message {
   role: "user" | "assistant";
@@ -105,6 +116,33 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
       setMessages(messagesWithNames as Message[]);
     } catch (error) {
       console.error("Error loading messages:", error);
+    }
+  };
+
+  const clearChat = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Je moet ingelogd zijn om de chat te wissen");
+        return;
+      }
+
+      // Delete all messages from this user for this widget
+      const { error } = await supabase
+        .from('widget_chat_messages')
+        .delete()
+        .eq('widget_id', widgetId)
+        .eq('user_id', session.user.id);
+
+      if (error) throw error;
+
+      // Clear local state
+      setMessages([]);
+      
+      toast.success("Chat gewist");
+    } catch (error) {
+      console.error('Error clearing chat:', error);
+      toast.error("Kon chat niet wissen");
     }
   };
 
@@ -221,6 +259,29 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
           <h3 className="font-semibold text-sm">{boardName} Assistent</h3>
         </div>
         <div className="flex items-center gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Chat wissen?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Dit verwijdert al jouw berichten in deze chat. Deze actie kan niet ongedaan worden gemaakt.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                <AlertDialogAction onClick={clearChat}>Wissen</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <button
             onClick={() => onModeChange(widgetMode === 'general' ? 'private' : 'general')}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
