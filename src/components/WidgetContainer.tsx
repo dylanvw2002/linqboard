@@ -3,6 +3,7 @@ import { ChatWidget } from "./ChatWidget";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ResizeHandles } from "./ResizeHandles";
 
 interface Widget {
   id: string;
@@ -15,25 +16,31 @@ interface Widget {
 
 interface WidgetContainerProps {
   widget: Widget;
+  boardName: string;
   onDelete: (id: string) => void;
   onDragStart: (e: React.DragEvent, widget: Widget) => void;
   onDragEnd: () => void;
+  onResizeMouseDown: (e: React.MouseEvent, widget: Widget, handle: string) => void;
+  resizeHandle: string | null;
   isEditMode: boolean;
   isDragging: boolean;
 }
 
 export const WidgetContainer = ({
   widget,
+  boardName,
   onDelete,
   onDragStart,
   onDragEnd,
+  onResizeMouseDown,
+  resizeHandle,
   isEditMode,
   isDragging,
 }: WidgetContainerProps) => {
   const renderWidgetContent = () => {
     switch (widget.widget_type) {
       case "chat":
-        return <ChatWidget widgetId={widget.id} />;
+        return <ChatWidget widgetId={widget.id} boardName={boardName} />;
       default:
         return <div className="p-4">Widget type: {widget.widget_type}</div>;
     }
@@ -76,6 +83,14 @@ export const WidgetContainer = ({
             <X className="h-4 w-4" />
           </Button>
         </div>
+      )}
+      {isEditMode && (
+        <ResizeHandles
+          mode="column"
+          onMouseDown={(e, handle) => onResizeMouseDown(e, widget, handle)}
+          activeHandle={resizeHandle}
+          headerHeight={0}
+        />
       )}
       <div className={cn("h-full", isEditMode && "pt-8")}>
         {renderWidgetContent()}

@@ -14,9 +14,10 @@ interface Message {
 
 interface ChatWidgetProps {
   widgetId: string;
+  boardName: string;
 }
 
-export const ChatWidget = ({ widgetId }: ChatWidgetProps) => {
+export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -108,7 +109,7 @@ export const ChatWidget = ({ widgetId }: ChatWidgetProps) => {
     <div className="flex flex-col h-full bg-card/50 backdrop-blur-sm rounded-lg">
       <div className="flex items-center gap-2 p-3 border-b border-border bg-primary/5">
         <Bot className="w-5 h-5 text-primary" />
-        <h3 className="font-semibold text-sm">AI Assistent</h3>
+        <h3 className="font-semibold text-sm">{boardName} Assistent</h3>
       </div>
 
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>

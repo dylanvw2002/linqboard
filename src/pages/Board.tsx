@@ -600,6 +600,8 @@ const Board = () => {
   const [draggedWidget, setDraggedWidget] = useState<any | null>(null);
   const [widgetDragOffset, setWidgetDragOffset] = useState({ x: 0, y: 0 });
   const [widgetDragPreview, setWidgetDragPreview] = useState<{ x: number; y: number } | null>(null);
+  const [resizingWidget, setResizingWidget] = useState(false);
+  const [widgetResizeHandle, setWidgetResizeHandle] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
   const [canCustomizeBackground, setCanCustomizeBackground] = useState(false);
   const [zoomLevel, setZoomLevel] = useState<number>(isMobile ? 0.33 : 0.75);
@@ -2129,6 +2131,62 @@ const Board = () => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
+
+  const startWidgetResize = (e: React.MouseEvent, widget: any, handle: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setResizingWidget(true);
+    setWidgetResizeHandle(handle);
+    
+    const startX = e.clientX / SCALE_FACTOR;
+    const startY = e.clientY / SCALE_FACTOR;
+    let currentWidget = { ...widget };
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const deltaX = moveEvent.clientX / SCALE_FACTOR - startX;
+      const deltaY = moveEvent.clientY / SCALE_FACTOR - startY;
+      const updated = { ...widget };
+
+      if (handle === 'nw') {
+        updated.width = Math.max(300, widget.width - deltaX);
+        updated.height = Math.max(200, widget.height - deltaY);
+      } else if (handle === 'ne') {
+        updated.width = Math.max(300, widget.width + deltaX);
+        updated.height = Math.max(200, widget.height - deltaY);
+      } else if (handle === 'sw') {
+        updated.width = Math.max(300, widget.width - deltaX);
+        updated.height = Math.max(200, widget.height + deltaY);
+      } else if (handle === 'se') {
+        updated.width = Math.max(300, widget.width + deltaX);
+        updated.height = Math.max(200, widget.height + deltaY);
+      }
+
+      currentWidget = updated;
+      setWidgets(prev => prev.map(w => w.id === widget.id ? updated : w));
+    };
+
+    const handleMouseUp = async () => {
+      try {
+        await supabase.from('widgets').update({
+          width: Math.round(currentWidget.width),
+          height: Math.round(currentWidget.height)
+        }).eq('id', widget.id);
+        toast.success('Widget grootte aangepast');
+        await fetchBoardData();
+      } catch (error: any) {
+        console.error('Resize error:', error);
+        toast.error('Fout bij aanpassen grootte: ' + error.message);
+      }
+      setResizingWidget(false);
+      setWidgetResizeHandle(null);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
@@ -2391,9 +2449,12 @@ const Board = () => {
           <WidgetContainer
             key={widget.id}
             widget={widget}
+            boardName={board?.name || "Board"}
             onDelete={handleDeleteWidget}
             onDragStart={handleWidgetDragStart}
             onDragEnd={handleWidgetDragEnd}
+            onResizeMouseDown={startWidgetResize}
+            resizeHandle={widgetResizeHandle}
             isEditMode={editMode}
             isDragging={draggedWidget?.id === widget.id}
           />
