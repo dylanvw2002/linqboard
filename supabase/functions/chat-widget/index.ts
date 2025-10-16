@@ -36,14 +36,27 @@ serve(async (req) => {
       throw new Error('Missing widgetId or message');
     }
 
-    // Verify user has access to this widget
+    // Verify user has access to this widget through board membership
     const { data: widget, error: widgetError } = await supabase
       .from('widgets')
-      .select('id')
+      .select(`
+        id,
+        board_id,
+        boards!inner(
+          id,
+          organization_id,
+          organizations!inner(
+            id,
+            memberships!inner(user_id)
+          )
+        )
+      `)
       .eq('id', widgetId)
+      .eq('boards.organizations.memberships.user_id', user.id)
       .single();
 
     if (widgetError || !widget) {
+      console.error('Widget access error:', widgetError);
       throw new Error('Widget not found or access denied');
     }
 
