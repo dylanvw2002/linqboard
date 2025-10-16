@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+
 interface Plan {
   name: string;
   price: {
