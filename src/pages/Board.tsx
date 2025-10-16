@@ -2449,7 +2449,7 @@ const Board = () => {
           <WidgetContainer
             key={widget.id}
             widget={widget}
-            boardName={board?.name || "Board"}
+            boardName={organization?.name || "Board"}
             onDelete={handleDeleteWidget}
             onDragStart={handleWidgetDragStart}
             onDragEnd={handleWidgetDragEnd}
