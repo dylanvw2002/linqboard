@@ -39,27 +39,41 @@ serve(async (req) => {
       throw new Error('Missing widgetId or message');
     }
 
-    // Verify user has access to widget (check widget -> board -> membership)
-    const { data: accessCheck, error: accessError } = await supabaseAdmin
+    // Step 1: Get widget
+    const { data: widget, error: widgetError } = await supabaseAdmin
       .from('widgets')
-      .select(`
-        id,
-        board_id,
-        boards!inner (
-          id,
-          organization_id,
-          memberships!inner (
-            user_id
-          )
-        )
-      `)
+      .select('id, board_id')
       .eq('id', widgetId)
-      .eq('boards.memberships.user_id', user.id)
       .single();
 
-    if (accessError || !accessCheck) {
-      console.error('Access denied:', accessError);
-      throw new Error('Access denied - user is not a member of this board\'s organization');
+    if (widgetError || !widget) {
+      console.error('Widget not found:', widgetError);
+      throw new Error('Widget niet gevonden');
+    }
+
+    // Step 2: Get board
+    const { data: board, error: boardError } = await supabaseAdmin
+      .from('boards')
+      .select('id, organization_id')
+      .eq('id', widget.board_id)
+      .single();
+
+    if (boardError || !board) {
+      console.error('Board not found:', boardError);
+      throw new Error('Board niet gevonden');
+    }
+
+    // Step 3: Check membership
+    const { data: membership, error: membershipError } = await supabaseAdmin
+      .from('memberships')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('organization_id', board.organization_id)
+      .maybeSingle();
+
+    if (membershipError || !membership) {
+      console.error('Access denied:', membershipError, 'User:', user.id, 'Org:', board.organization_id);
+      throw new Error('Geen toegang tot dit board');
     }
 
     // Get chat history
