@@ -77,10 +77,23 @@ serve(async (req) => {
     }
 
     // Check subscription level - chat widget is only for team/business
+    // Check the ORGANIZATION OWNER's subscription, not the individual user's
+    const { data: ownerMembership, error: ownerError } = await supabaseAdmin
+      .from('memberships')
+      .select('user_id')
+      .eq('organization_id', board.organization_id)
+      .eq('role', 'owner')
+      .single();
+
+    if (ownerError || !ownerMembership) {
+      console.error('Organization owner not found:', ownerError);
+      throw new Error('Organisatie eigenaar niet gevonden');
+    }
+
     const { data: subscription, error: subError } = await supabaseAdmin
       .from('user_subscriptions')
       .select('plan')
-      .eq('user_id', user.id)
+      .eq('user_id', ownerMembership.user_id)
       .single();
 
     if (subError || !subscription) {
@@ -90,7 +103,7 @@ serve(async (req) => {
 
     if (subscription.plan !== 'team' && subscription.plan !== 'business') {
       console.error('Insufficient subscription:', subscription.plan);
-      throw new Error('AI Chat is alleen beschikbaar voor Team en Business abonnementen');
+      throw new Error('AI Chat is alleen beschikbaar voor organisaties met Team of Business abonnementen');
     }
 
     // Get chat history

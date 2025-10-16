@@ -67,10 +67,59 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
 
   const checkSubscription = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('get-subscription-status');
-      if (error) throw error;
+      // Get the board to find its organization
+      const { data: widgetData, error: widgetError } = await supabase
+        .from('widgets')
+        .select('board_id')
+        .eq('id', widgetId)
+        .single();
       
-      const plan = data?.limits?.plan || 'free';
+      if (widgetError || !widgetData) {
+        console.error("Error fetching widget:", widgetError);
+        setHasAccess(false);
+        return;
+      }
+
+      const { data: boardData, error: boardError } = await supabase
+        .from('boards')
+        .select('organization_id')
+        .eq('id', widgetData.board_id)
+        .single();
+      
+      if (boardError || !boardData) {
+        console.error("Error fetching board:", boardError);
+        setHasAccess(false);
+        return;
+      }
+
+      // Find the organization owner
+      const { data: ownerData, error: ownerError } = await supabase
+        .from('memberships')
+        .select('user_id')
+        .eq('organization_id', boardData.organization_id)
+        .eq('role', 'owner')
+        .single();
+      
+      if (ownerError || !ownerData) {
+        console.error("Error fetching owner:", ownerError);
+        setHasAccess(false);
+        return;
+      }
+
+      // Check the owner's subscription
+      const { data: subData, error: subError } = await supabase
+        .from('user_subscriptions')
+        .select('plan')
+        .eq('user_id', ownerData.user_id)
+        .single();
+      
+      if (subError || !subData) {
+        console.error("Error checking subscription:", subError);
+        setHasAccess(false);
+        return;
+      }
+      
+      const plan = subData.plan;
       setHasAccess(plan === 'team' || plan === 'business');
     } catch (error) {
       console.error("Error checking subscription:", error);
