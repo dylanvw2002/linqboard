@@ -50,3 +50,9 @@ verify_jwt = false
 
 [functions.retry-invoice-processing]
 verify_jwt = true
+
+[functions.chat-widget]
+verify_jwt = true
+
+[functions.check-widget-access]
+verify_jwt = true
