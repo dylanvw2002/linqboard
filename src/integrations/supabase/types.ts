@@ -888,7 +888,15 @@ export type Database = {
           x_position?: number
           y_position?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "widgets_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

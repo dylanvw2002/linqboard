@@ -62,24 +62,29 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
     try {
       const { data, error } = await supabase
         .from("widget_chat_messages")
-        .select(`
-          role, 
-          content, 
-          created_at,
-          user_id,
-          profiles:user_id(full_name)
-        `)
+        .select("role, content, created_at, user_id")
         .eq("widget_id", widgetId)
         .order("created_at", { ascending: true });
 
       if (error) throw error;
+      
+      // Get unique user IDs
+      const userIds = [...new Set(data?.map(m => m.user_id).filter(Boolean))];
+      
+      // Fetch user profiles
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, full_name")
+        .in("user_id", userIds);
+      
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p.full_name]));
       
       const messagesWithNames = (data || []).map((msg: any) => ({
         role: msg.role,
         content: msg.content,
         created_at: msg.created_at,
         user_id: msg.user_id,
-        user_name: msg.profiles?.full_name || 'Gebruiker'
+        user_name: msg.user_id ? profileMap.get(msg.user_id) || 'Gebruiker' : undefined
       }));
       
       setMessages(messagesWithNames as Message[]);

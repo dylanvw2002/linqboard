@@ -39,25 +39,25 @@ serve(async (req) => {
     // Verify user has access to this widget through board membership
     const { data: widget, error: widgetError } = await supabase
       .from('widgets')
-      .select(`
-        id,
-        board_id,
-        boards!inner(
-          id,
-          organization_id,
-          organizations!inner(
-            id,
-            memberships!inner(user_id)
-          )
-        )
-      `)
+      .select('id, board_id, boards!inner(id, organization_id)')
       .eq('id', widgetId)
-      .eq('boards.organizations.memberships.user_id', user.id)
       .single();
 
     if (widgetError || !widget) {
       console.error('Widget access error:', widgetError);
-      throw new Error('Widget not found or access denied');
+      throw new Error('Widget not found');
+    }
+
+    // Check if user has access to the organization
+    const { data: membership } = await supabase
+      .from('memberships')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('organization_id', (widget as any).boards.organization_id)
+      .single();
+
+    if (!membership) {
+      throw new Error('Access denied');
     }
 
     // Get chat history
