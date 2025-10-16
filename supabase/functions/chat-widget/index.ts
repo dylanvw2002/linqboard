@@ -76,6 +76,23 @@ serve(async (req) => {
       throw new Error('Geen toegang tot dit board');
     }
 
+    // Check subscription level - chat widget is only for team/business
+    const { data: subscription, error: subError } = await supabaseAdmin
+      .from('user_subscriptions')
+      .select('plan')
+      .eq('user_id', user.id)
+      .single();
+
+    if (subError || !subscription) {
+      console.error('Subscription check failed:', subError);
+      throw new Error('Geen geldig abonnement gevonden');
+    }
+
+    if (subscription.plan !== 'team' && subscription.plan !== 'business') {
+      console.error('Insufficient subscription:', subscription.plan);
+      throw new Error('AI Chat is alleen beschikbaar voor Team en Business abonnementen');
+    }
+
     // Get chat history
     const { data: messages, error: messagesError } = await supabaseAdmin
       .from('widget_chat_messages')

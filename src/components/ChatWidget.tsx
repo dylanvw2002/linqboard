@@ -25,9 +25,11 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    checkSubscription();
     loadMessages();
 
     // Set up realtime subscription for chat messages
@@ -51,6 +53,19 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
       supabase.removeChannel(channel);
     };
   }, [widgetId]);
+
+  const checkSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-subscription-status');
+      if (error) throw error;
+      
+      const plan = data?.limits?.plan || 'free';
+      setHasAccess(plan === 'team' || plan === 'business');
+    } catch (error) {
+      console.error("Error checking subscription:", error);
+      setHasAccess(false);
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -161,6 +176,42 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
       setIsLoading(false);
     }
   };
+
+  if (hasAccess === null) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-pulse text-muted-foreground">Laden...</div>
+      </div>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="flex flex-col h-full relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] shadow-[0_8px_24px_rgba(2,6,23,0.08)]">
+        <div className="flex items-center justify-between p-3 border-b border-white/30 dark:border-white/20 bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-[26px] relative z-10">
+          <div className="flex items-center gap-2">
+            <Bot className="w-5 h-5 text-primary" />
+            <h3 className="font-semibold text-sm">{boardName} Assistent</h3>
+          </div>
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center relative z-10">
+          <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center mb-4">
+            <Bot className="w-8 h-8 text-yellow-500" />
+          </div>
+          <h3 className="font-semibold text-lg mb-2">AI Chat Assistent</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Deze functie is alleen beschikbaar voor Team en Business abonnementen.
+          </p>
+          <Button 
+            onClick={() => window.location.href = '/pricing'}
+            className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+          >
+            Upgrade naar Team of Business
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] shadow-[0_8px_24px_rgba(2,6,23,0.08)] before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
