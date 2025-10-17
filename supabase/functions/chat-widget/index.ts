@@ -54,7 +54,7 @@ serve(async (req) => {
     // Step 2: Get board
     const { data: board, error: boardError } = await supabaseAdmin
       .from('boards')
-      .select('id, organization_id')
+      .select('id, organization_id, name')
       .eq('id', widget.board_id)
       .single();
 
@@ -106,13 +106,13 @@ serve(async (req) => {
       throw new Error('AI Chat is alleen beschikbaar voor organisaties met Team of Business abonnementen');
     }
 
-    // Get chat history
+    // Get chat history (limit to 20 for faster responses)
     const { data: messages, error: messagesError } = await supabaseAdmin
       .from('widget_chat_messages')
       .select('role, content')
       .eq('widget_id', widgetId)
       .order('created_at', { ascending: true })
-      .limit(50);
+      .limit(20);
 
     if (messagesError) {
       console.error('Failed to fetch chat history:', messagesError);
@@ -139,7 +139,29 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Call Lovable AI with user context
+    // Get board context for AI
+    const { data: columns } = await supabaseAdmin
+      .from('columns')
+      .select('name, column_type')
+      .eq('board_id', widget.board_id);
+
+    const { data: teamMembers } = await supabaseAdmin
+      .from('profiles')
+      .select('full_name, user_id')
+      .in('user_id', 
+        await supabaseAdmin
+          .from('memberships')
+          .select('user_id')
+          .eq('organization_id', board.organization_id)
+          .then(res => res.data?.map(m => m.user_id) || [])
+      );
+
+    const boardContext = `
+Board: "${board.name || 'Onbekend'}"
+Kolommen: ${columns?.map(c => `${c.name} (${c.column_type})`).join(', ') || 'geen'}
+Teamleden: ${teamMembers?.map(t => t.full_name).join(', ') || 'geen'}`;
+
+    // Call Lovable AI with streaming
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -147,11 +169,24 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5-mini',
+        model: 'google/gemini-2.5-flash-lite',
+        max_completion_tokens: 150,
+        stream: true,
         messages: [
           {
             role: 'system',
-            content: 'Je bent Linq, de slimme AI-assistent binnen LinqBoard. Je geeft korte, duidelijke en directe antwoorden. Je helpt gebruikers met zoeken, organiseren en beslissen. Je kunt ook fungeren als zoekmachine — geef feitelijke informatie, actuele data en praktische oplossingen. Stijl: professioneel maar menselijk, efficiënt en zonder overbodige uitleg. Doel: snel helpen, precies wat nodig is — niet meer, niet minder. Antwoord altijd in het Nederlands.',
+            content: `Je bent Linq. MAX 2-3 zinnen. Geen uitleg tenzij gevraagd. Geen vragen aan het eind.
+
+Format:
+✓ Directe actie/antwoord
+- Feitelijk
+- Nul opvulling
+
+${boardContext}
+
+Voorbeelden:
+❌ "Natuurlijk! Ik kan je daarmee helpen..."
+✅ "✓ Dean toegevoegd aan Ziek."`,
           },
           ...(messages || []),
           {
@@ -165,11 +200,53 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Lovable AI error:', response.status, errorText);
-      throw new Error('Failed to get AI response');
+      
+      if (response.status === 429) {
+        throw new Error('Te veel verzoeken, probeer het later opnieuw');
+      }
+      if (response.status === 402) {
+        throw new Error('Betaling vereist voor AI-gebruik');
+      }
+      throw new Error('AI antwoord mislukt');
     }
 
-    const data = await response.json();
-    const assistantMessage = data.choices[0]?.message?.content || 'Sorry, ik kon geen antwoord genereren.';
+    // Stream response and collect full message
+    let fullMessage = '';
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+
+    if (!reader) {
+      throw new Error('No response stream');
+    }
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+      const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '[DONE]') continue;
+          
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullMessage += content;
+            }
+          } catch (e) {
+            // Skip invalid JSON
+          }
+        }
+      }
+    }
+
+    if (!fullMessage) {
+      fullMessage = 'Sorry, ik kon geen antwoord genereren.';
+    }
 
     // Store assistant message
     const { error: assistantInsertError } = await supabaseAdmin
@@ -177,7 +254,7 @@ serve(async (req) => {
       .insert({
         widget_id: widgetId,
         role: 'assistant',
-        content: assistantMessage,
+        content: fullMessage,
       });
 
     if (assistantInsertError) {
@@ -185,7 +262,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ message: assistantMessage }),
+      JSON.stringify({ message: fullMessage }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
