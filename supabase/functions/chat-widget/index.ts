@@ -197,11 +197,22 @@ Teamleden: ${teamMembers?.map(t => t.full_name).join(', ') || 'geen'}`;
         messages: [
           {
             role: 'system',
-            content: `Je bent Linq. MAX 2-3 zinnen. Gebruik tools om acties uit te voeren.
+            content: `Je bent Linq, een AI assistent voor taakbeheer.
 
 ${boardContext}
 
-Als je een taak moet aanmaken, gebruik dan create_task met de juiste kolom_name uit de lijst hierboven.`,
+BELANGRIJKE REGELS:
+1. Als gebruiker zegt "voeg [naam] toe aan [kolom]" → gebruik ALTIJD create_task tool met:
+   - title: [naam]
+   - column_name: [kolom] (zoek in bovenstaande lijst)
+   
+2. Gebruik create_task voor ALLE verzoeken om taken/personen toe te voegen
+3. Antwoord alleen met "✓ [naam] toegevoegd aan [kolom]." na succesvolle tool call
+4. Bij errors, leg uit wat er mis ging
+
+Voorbeelden:
+- "voeg dean toe aan ziek" → create_task(title="Dean", column_name="Ziek")
+- "voeg sarah toe aan verlof" → create_task(title="Sarah", column_name="Verlof")`,
           },
           ...(messages || []),
           {
