@@ -161,7 +161,28 @@ Board: "${board.name || 'Onbekend'}"
 Kolommen: ${columns?.map(c => `${c.name} (${c.column_type})`).join(', ') || 'geen'}
 Teamleden: ${teamMembers?.map(t => t.full_name).join(', ') || 'geen'}`;
 
-    // Call Lovable AI with streaming
+    // Define tools for AI to use
+    const tools = [
+      {
+        type: "function",
+        function: {
+          name: "create_task",
+          description: "Maak een nieuwe taak aan in een kolom",
+          parameters: {
+            type: "object",
+            properties: {
+              title: { type: "string", description: "Titel van de taak" },
+              column_name: { type: "string", description: "Naam van de kolom" },
+              assignee_name: { type: "string", description: "Naam van toegewezen persoon (optioneel)" },
+              description: { type: "string", description: "Beschrijving (optioneel)" },
+            },
+            required: ["title", "column_name"],
+          },
+        },
+      },
+    ];
+
+    // Call Lovable AI without streaming (needed for function calling)
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -169,24 +190,18 @@ Teamleden: ${teamMembers?.map(t => t.full_name).join(', ') || 'geen'}`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-lite',
+        model: 'google/gemini-2.5-flash',
         max_completion_tokens: 150,
-        stream: true,
+        tools: tools,
+        tool_choice: "auto",
         messages: [
           {
             role: 'system',
-            content: `Je bent Linq. MAX 2-3 zinnen. Geen uitleg tenzij gevraagd. Geen vragen aan het eind.
-
-Format:
-✓ Directe actie/antwoord
-- Feitelijk
-- Nul opvulling
+            content: `Je bent Linq. MAX 2-3 zinnen. Gebruik tools om acties uit te voeren.
 
 ${boardContext}
 
-Voorbeelden:
-❌ "Natuurlijk! Ik kan je daarmee helpen..."
-✅ "✓ Dean toegevoegd aan Ziek."`,
+Als je een taak moet aanmaken, gebruik dan create_task met de juiste kolom_name uit de lijst hierboven.`,
           },
           ...(messages || []),
           {
@@ -210,38 +225,85 @@ Voorbeelden:
       throw new Error('AI antwoord mislukt');
     }
 
-    // Stream response and collect full message
+    const aiResponse = await response.json();
+    const choice = aiResponse.choices?.[0];
+    
     let fullMessage = '';
-    const reader = response.body?.getReader();
-    const decoder = new TextDecoder();
 
-    if (!reader) {
-      throw new Error('No response stream');
-    }
+    // Check if AI wants to call a function
+    if (choice?.message?.tool_calls && choice.message.tool_calls.length > 0) {
+      const toolCall = choice.message.tool_calls[0];
+      const functionName = toolCall.function.name;
+      const functionArgs = JSON.parse(toolCall.function.arguments);
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+      console.log('AI tool call:', functionName, functionArgs);
 
-      const chunk = decoder.decode(value);
-      const lines = chunk.split('\n').filter(line => line.trim() !== '');
+      // Execute the function
+      if (functionName === 'create_task') {
+        try {
+          // Find column by name
+          const targetColumn = columns?.find(c => 
+            c.name.toLowerCase() === functionArgs.column_name.toLowerCase()
+          );
 
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const data = line.slice(6);
-          if (data === '[DONE]') continue;
-          
-          try {
-            const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              fullMessage += content;
+          if (!targetColumn) {
+            fullMessage = `❌ Kolom "${functionArgs.column_name}" niet gevonden.`;
+          } else {
+            // Find column ID
+            const { data: columnData } = await supabaseAdmin
+              .from('columns')
+              .select('id')
+              .eq('board_id', widget.board_id)
+              .eq('name', targetColumn.name)
+              .single();
+
+            if (!columnData) {
+              fullMessage = `❌ Kolom niet gevonden.`;
+            } else {
+              // Create task
+              const { data: taskData, error: taskError } = await supabaseAdmin
+                .from('tasks')
+                .insert({
+                  column_id: columnData.id,
+                  title: functionArgs.title,
+                  description: functionArgs.description || null,
+                  position: 0,
+                })
+                .select()
+                .single();
+
+              if (taskError) {
+                console.error('Task creation error:', taskError);
+                fullMessage = `❌ Kon taak niet aanmaken: ${taskError.message}`;
+              } else {
+                // If assignee specified, try to assign
+                if (functionArgs.assignee_name && taskData) {
+                  const assignee = teamMembers?.find(m => 
+                    m.full_name.toLowerCase().includes(functionArgs.assignee_name.toLowerCase())
+                  );
+
+                  if (assignee) {
+                    await supabaseAdmin
+                      .from('task_assignees')
+                      .insert({
+                        task_id: taskData.id,
+                        user_id: assignee.user_id,
+                      });
+                  }
+                }
+
+                fullMessage = `✓ "${functionArgs.title}" toegevoegd aan ${targetColumn.name}.`;
+              }
             }
-          } catch (e) {
-            // Skip invalid JSON
           }
+        } catch (error) {
+          console.error('Function execution error:', error);
+          fullMessage = `❌ Fout bij uitvoeren actie.`;
         }
       }
+    } else {
+      // No tool call, use regular message
+      fullMessage = choice?.message?.content || 'Sorry, ik kon geen antwoord genereren.';
     }
 
     if (!fullMessage) {
