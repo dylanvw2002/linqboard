@@ -1107,12 +1107,12 @@ const Board = () => {
     }
   };
   useEffect(() => {
-    if (!board?.id || isDemo) return;
+    if (!board?.id || isDemo || columns.length === 0) return;
     const cleanup = setupRealtimeSubscriptions();
     return () => {
       if (cleanup) cleanup();
     };
-  }, [board?.id, isDemo]);
+  }, [board?.id, isDemo, columns, tasks, orgMembers]);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -1419,36 +1419,74 @@ const Board = () => {
     }
   };
   const setupRealtimeSubscriptions = () => {
-    if (isDemo) return; // Disable realtime for demo
+    if (isDemo || !board?.id) return; // Disable realtime for demo
 
-    const channel = supabase.channel(`board-changes-${organizationId}`).on("postgres_changes", {
-      event: "*",
-      schema: "public",
-      table: "tasks"
-    }, () => {
-      fetchBoardData();
-    }).on("postgres_changes", {
-      event: "*",
-      schema: "public",
-      table: "columns"
-    }, () => {
-      fetchBoardData();
-    }).on("postgres_changes", {
-      event: "*",
-      schema: "public",
-      table: "widgets"
-    }, () => {
-      fetchBoardData();
-    }).on("postgres_changes", {
-      event: "*",
-      schema: "public",
-      table: "profiles"
-    }, () => {
-      // Refresh both org members and tasks to update all avatars
-      fetchOrgMembers();
-      fetchBoardData();
-    }).subscribe();
+    const channel = supabase
+      .channel(`board-changes-${board.id}`)
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "columns",
+        filter: `board_id=eq.${board.id}`
+      }, (payload) => {
+        console.log('Column change detected:', payload);
+        fetchBoardData();
+      })
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "tasks"
+      }, (payload) => {
+        console.log('Task change detected:', payload);
+        // Check if this task belongs to a column on this board
+        const belongsToThisBoard = columns.some(col => 
+          col.id === (payload.new as any)?.column_id || 
+          col.id === (payload.old as any)?.column_id
+        );
+        if (belongsToThisBoard) {
+          fetchBoardData();
+        }
+      })
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "widgets",
+        filter: `board_id=eq.${board.id}`
+      }, (payload) => {
+        console.log('Widget change detected:', payload);
+        fetchBoardData();
+      })
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "task_assignees"
+      }, (payload) => {
+        console.log('Task assignee change detected:', payload);
+        // Check if this assignee change belongs to a task on this board
+        const taskId = (payload.new as any)?.task_id || (payload.old as any)?.task_id;
+        if (tasks.some(t => t.id === taskId)) {
+          fetchBoardData();
+        }
+      })
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "profiles"
+      }, (payload) => {
+        console.log('Profile change detected:', payload);
+        // Only refresh if this profile is an org member
+        const userId = (payload.new as any)?.user_id || (payload.old as any)?.user_id;
+        if (orgMembers.some(m => m.user_id === userId)) {
+          fetchOrgMembers();
+          fetchBoardData();
+        }
+      })
+      .subscribe((status) => {
+        console.log('Realtime subscription status:', status);
+      });
+
     return () => {
+      console.log('Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   };
