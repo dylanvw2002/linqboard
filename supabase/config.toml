@@ -3,6 +3,12 @@ project_id = "jfdpljhkrcuietevzshr"
 [functions.export-task-email]
 verify_jwt = true
 
+[functions.send-deadline-reminder]
+verify_jwt = false
+
+[functions.check-deadline-reminders]
+verify_jwt = false
+
 [functions.create_org]
 verify_jwt = true
 

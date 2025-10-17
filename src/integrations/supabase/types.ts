@@ -633,6 +633,38 @@ export type Database = {
           },
         ]
       }
+      task_deadline_reminders: {
+        Row: {
+          id: string
+          recipients: Json
+          reminder_type: string
+          sent_at: string
+          task_id: string
+        }
+        Insert: {
+          id?: string
+          recipients: Json
+          reminder_type: string
+          sent_at?: string
+          task_id: string
+        }
+        Update: {
+          id?: string
+          recipients?: Json
+          reminder_type?: string
+          sent_at?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_deadline_reminders_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_history: {
         Row: {
           action: string
