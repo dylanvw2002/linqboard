@@ -28,28 +28,39 @@ const EMAIL_TEMPLATE = `
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f5f5f5; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; }
-    .logo { max-width: 180px; height: auto; }
-    .content { padding: 40px 30px; }
-    .deadline-alert { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; }
-    .deadline-alert.overdue { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
-    .task-card { border: 2px solid #e0e0e0; border-radius: 12px; padding: 20px; margin: 20px 0; background: #fafafa; }
-    .priority-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 0; background-color: #f3f4f6; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; }
+    .header { padding: 30px; text-align: center; background-color: #ffffff; border-bottom: 1px solid #e5e7eb; }
+    .logo { max-width: 150px; height: auto; }
+    .content { padding: 30px; }
+    .priority-badge { display: inline-block; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
     .priority-high { background: #fee2e2; color: #991b1b; }
     .priority-medium { background: #fef3c7; color: #92400e; }
     .priority-low { background: #dbeafe; color: #1e40af; }
-    .task-title { font-size: 24px; font-weight: bold; margin: 10px 0; color: #1f2937; }
-    .task-description { color: #6b7280; margin: 15px 0; line-height: 1.8; }
-    .assignees { margin: 20px 0; }
-    .assignee-item { display: inline-flex; align-items: center; margin-right: 15px; margin-bottom: 10px; }
-    .avatar { width: 32px; height: 32px; border-radius: 50%; margin-right: 8px; }
-    .cta-button { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
-    .footer { background: #f9fafb; padding: 30px; text-align: center; color: #6b7280; font-size: 14px; }
-    .meta-info { background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0; }
-    .meta-row { display: flex; justify-content: space-between; margin: 8px 0; }
-    @media only screen and (max-width: 600px) { .content { padding: 20px 15px; } .task-title { font-size: 20px; } }
+    .task-title { font-size: 24px; font-weight: 600; margin: 16px 0; color: #111827; }
+    .task-description { color: #6b7280; font-style: italic; padding: 16px; background: #f9fafb; border-left: 3px solid #e5e7eb; margin: 16px 0; }
+    .section { border: 2px solid; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .section-violet { border-color: #8b5cf6; }
+    .section-orange { border-color: #f97316; }
+    .section-blue { border-color: #3b82f6; }
+    .section-title { font-weight: 600; font-size: 14px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .assignees { display: flex; flex-wrap: wrap; gap: 16px; }
+    .assignee-item { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .meta-info { margin: 16px 0; padding: 16px; background: #f9fafb; border-radius: 6px; }
+    .meta-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
+    .meta-label { font-weight: 600; color: #374151; }
+    .meta-value { color: #6b7280; }
+    .personal-message { font-size: 15px; line-height: 1.8; color: #374151; }
+    .signature { margin-top: 16px; font-size: 14px; color: #6b7280; }
+    .cta-button { display: inline-flex; align-items: center; gap: 8px; background: white; color: #8b5cf6; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 20px 0; border: 2px solid #8b5cf6; transition: all 0.2s; }
+    .cta-button:hover { background: #8b5cf6; color: white; }
+    .footer { padding: 24px; text-align: center; color: #9ca3af; font-size: 13px; background: #f9fafb; border-top: 1px solid #e5e7eb; }
+    @media only screen and (max-width: 600px) { 
+      .container { margin: 0; border-radius: 0; }
+      .content { padding: 20px; }
+      .assignees { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
@@ -58,40 +69,31 @@ const EMAIL_TEMPLATE = `
       {{LOGO}}
     </div>
     <div class="content">
-      <div class="deadline-alert {{ALERT_CLASS}}">
-        <h2 style="margin: 0; font-size: 20px;">{{ALERT_TITLE}}</h2>
-        <p style="margin: 10px 0 0 0; font-size: 16px;">{{ALERT_MESSAGE}}</p>
+      {{PRIORITY_BADGE}}
+      <h1 class="task-title">{{TASK_TITLE}}</h1>
+      {{TASK_DESCRIPTION}}
+      
+      {{ASSIGNEES_SECTION}}
+      
+      {{META_INFO}}
+      
+      <div class="section section-blue">
+        <div class="section-title">📩 PERSOONLIJK BERICHT</div>
+        <div class="personal-message">
+          {{PERSONAL_MESSAGE}}
+        </div>
+        {{SIGNATURE}}
       </div>
       
-      <div class="task-card">
-        {{PRIORITY_BADGE}}
-        <h1 class="task-title">{{TASK_TITLE}}</h1>
-        <div class="task-description">{{TASK_DESCRIPTION}}</div>
-        
-        <div class="meta-info">
-          <div class="meta-row">
-            <strong>📅 Deadline:</strong>
-            <span>{{DUE_DATE}}</span>
-          </div>
-          <div class="meta-row">
-            <strong>📋 Kolom:</strong>
-            <span>{{COLUMN_NAME}}</span>
-          </div>
-        </div>
-        
-        {{ASSIGNEES_SECTION}}
-        
-        <div style="text-align: center; margin-top: 30px;">
-          <a href="{{BOARD_URL}}" class="cta-button">Bekijk in LinqBoard</a>
-        </div>
+      <div style="text-align: center;">
+        <a href="{{BOARD_URL}}" class="cta-button">
+          🔗 Bekijk in LinqBoard
+        </a>
       </div>
-      
-      {{PERSONAL_MESSAGE}}
     </div>
     
     <div class="footer">
-      <p>Dit is een automatische reminder van LinqBoard</p>
-      <p style="margin-top: 10px;">© 2024 LinqBoard. Alle rechten voorbehouden.</p>
+      <p>© 2025 LinqBoard – Samen, van to-do naar done.</p>
     </div>
   </div>
 </body>
@@ -111,33 +113,26 @@ async function generateEmailHTML(
   // Logo
   const logoHtml = logoBase64
     ? `<img src="${logoBase64}" alt="LinqBoard" class="logo" />`
-    : '<h1 style="color: white; margin: 0;">LinqBoard</h1>';
+    : '<h1 style="color: #8b5cf6; margin: 0;">LinqBoard</h1>';
   html = html.replace('{{LOGO}}', logoHtml);
-
-  // Alert section
-  if (reminderType === 'due_today') {
-    html = html.replace('{{ALERT_CLASS}}', '');
-    html = html.replace('{{ALERT_TITLE}}', '⏰ Deadline Vandaag!');
-    html = html.replace('{{ALERT_MESSAGE}}', 'Deze taak heeft vandaag als deadline');
-  } else {
-    html = html.replace('{{ALERT_CLASS}}', 'overdue');
-    html = html.replace('{{ALERT_TITLE}}', '⚠️ Deadline Overschreden!');
-    html = html.replace('{{ALERT_MESSAGE}}', 'De deadline voor deze taak is verstreken');
-  }
 
   // Priority badge
   const priorityBadges = {
-    high: '<span class="priority-badge priority-high">🔴 Hoge Prioriteit</span>',
-    medium: '<span class="priority-badge priority-medium">🟡 Gemiddelde Prioriteit</span>',
-    low: '<span class="priority-badge priority-low">🟢 Lage Prioriteit</span>',
+    high: '<span class="priority-badge priority-high">HOOG</span>',
+    medium: '<span class="priority-badge priority-medium">MIDDEL</span>',
+    low: '<span class="priority-badge priority-low">LAAG</span>',
   };
   html = html.replace('{{PRIORITY_BADGE}}', task.priority ? priorityBadges[task.priority as keyof typeof priorityBadges] || '' : '');
 
   // Task details
   html = html.replace('{{TASK_TITLE}}', task.title);
-  html = html.replace('{{TASK_DESCRIPTION}}', task.description || 'Geen beschrijving');
-  html = html.replace('{{COLUMN_NAME}}', column.name);
   
+  // Task description
+  const descriptionHtml = task.description 
+    ? `<div class="task-description">${task.description}</div>`
+    : '';
+  html = html.replace('{{TASK_DESCRIPTION}}', descriptionHtml);
+
   // Due date
   const dueDate = new Date(task.due_date);
   const dueDateStr = dueDate.toLocaleDateString('nl-NL', { 
@@ -146,25 +141,45 @@ async function generateEmailHTML(
     month: 'long', 
     day: 'numeric' 
   });
-  html = html.replace('{{DUE_DATE}}', dueDateStr);
 
-  // Assignees
+  // Meta info section
+  const metaInfoHtml = `
+    <div class="meta-info">
+      <div class="meta-row">
+        <span class="meta-label">📅 Deadline:</span>
+        <span class="meta-value">${dueDateStr}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">📋 Kolom:</span>
+        <span class="meta-value">${column.name}</span>
+      </div>
+    </div>
+  `;
+  html = html.replace('{{META_INFO}}', metaInfoHtml);
+
+  // Assignees section
   if (assignees.length > 0) {
-    let assigneesHtml = '<div class="assignees"><strong>👥 Toegewezen aan:</strong><br/>';
+    let assigneesHtml = '<div class="section section-violet"><div class="section-title">👥 TOEGEWEZEN AAN</div><div class="assignees">';
     for (const assignee of assignees) {
       const avatarHtml = assignee.avatar_url
         ? `<img src="${await imageUrlToBase64(assignee.avatar_url)}" alt="${assignee.full_name}" class="avatar" />`
         : '<div class="avatar" style="background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-weight: bold;">👤</div>';
       assigneesHtml += `<div class="assignee-item">${avatarHtml}<span>${assignee.full_name}</span></div>`;
     }
-    assigneesHtml += '</div>';
+    assigneesHtml += '</div></div>';
     html = html.replace('{{ASSIGNEES_SECTION}}', assigneesHtml);
   } else {
     html = html.replace('{{ASSIGNEES_SECTION}}', '');
   }
 
+  // Personal message
+  const personalMessage = reminderType === 'due_today'
+    ? `Beste,<br><br>Hierbij de uitnodiging om deel te nemen aan de vergadering op ${dueDateStr}. De afspraak is toegevoegd aan ieders planning.<br><br>Met vriendelijke groet,<br>LinqBoard`
+    : `Beste,<br><br>Dit is een automatische reminder van LinqBoard. De deadline voor deze taak is verstreken op ${dueDateStr}. Graag zo spoedig mogelijk afhandelen.<br><br>Met vriendelijke groet,<br>LinqBoard`;
+  
+  html = html.replace('{{PERSONAL_MESSAGE}}', personalMessage);
+  html = html.replace('{{SIGNATURE}}', '');
   html = html.replace('{{BOARD_URL}}', boardUrl);
-  html = html.replace('{{PERSONAL_MESSAGE}}', '');
 
   return html;
 }
@@ -184,7 +199,7 @@ serve(async (req) => {
 
     const { taskId, reminderType } = await req.json();
 
-    console.log(`[v4-INFO@LINQBOARD] Processing ${reminderType} reminder for task ${taskId}`);
+    console.log(`[v5-NEW-STYLE] Processing ${reminderType} reminder for task ${taskId}`);
 
     // Check if reminder already sent
     const { data: existingReminder } = await supabase
