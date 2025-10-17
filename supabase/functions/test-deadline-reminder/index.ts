@@ -11,22 +11,6 @@ serve(async (req) => {
   }
 
   try {
-    // Check if user is authenticated by verifying Authorization header exists
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.error('No valid authorization header');
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized - no valid auth header' }),
-        { 
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
-    }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-
     const { taskId, reminderType } = await req.json();
 
     if (!taskId || !reminderType) {
@@ -36,6 +20,9 @@ serve(async (req) => {
     if (!['due_today', 'overdue', 'both'].includes(reminderType)) {
       throw new Error('reminderType must be "due_today", "overdue", or "both"');
     }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
     console.log(`Test trigger: Sending ${reminderType} reminder(s) for task ${taskId}`);
 
