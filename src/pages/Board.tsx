@@ -24,6 +24,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import logo from "@/assets/logo-transparent.png";
 import defaultBackground from "@/assets/default-board-background.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
+import { TaskHistory } from "@/components/TaskHistory";
 import { ActiveUsers } from "@/components/ActiveUsers";
 import { ColumnManagement } from "@/components/ColumnManagement";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
@@ -2786,6 +2787,13 @@ const Board = () => {
                   </div>
                   
                   {editingTask && <TaskAttachments taskId={editingTask.id} />}
+                  
+                  {editingTask && (
+                    <div className="border-t pt-4">
+                      <Label className="mb-3 block">Geschiedenis</Label>
+                      <TaskHistory taskId={editingTask.id} columns={columns} />
+                    </div>
+                  )}
                   
                   <div className="flex gap-2 pt-4">
                     <Button onClick={handleDeleteFromDialog} variant="destructive">

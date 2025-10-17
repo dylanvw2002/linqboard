@@ -1,0 +1,224 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatDistanceToNow } from "date-fns";
+import { nl } from "date-fns/locale";
+import { History, UserPlus, UserMinus, ArrowRight, Pencil, Plus, Trash2 } from "lucide-react";
+
+interface HistoryEntry {
+  id: string;
+  task_id: string;
+  user_id: string;
+  action: string;
+  changes: any;
+  created_at: string;
+  user?: {
+    full_name: string;
+    avatar_url?: string;
+  };
+}
+
+interface TaskHistoryProps {
+  taskId: string;
+  columns: Array<{ id: string; name: string }>;
+}
+
+export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHistory();
+    
+    // Subscribe to new history entries
+    const channel = supabase
+      .channel(`task-history-${taskId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'task_history',
+          filter: `task_id=eq.${taskId}`
+        },
+        () => {
+          fetchHistory();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [taskId]);
+
+  const fetchHistory = async () => {
+    try {
+      const { data: historyData, error } = await supabase
+        .from('task_history')
+        .select('*')
+        .eq('task_id', taskId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Fetch user profiles for all history entries
+      if (historyData && historyData.length > 0) {
+        const userIds = [...new Set(historyData.map(h => h.user_id))];
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, full_name, avatar_url')
+          .in('user_id', userIds);
+
+        const historyWithUsers = historyData.map(entry => ({
+          ...entry,
+          user: profiles?.find(p => p.user_id === entry.user_id)
+        }));
+
+        setHistory(historyWithUsers);
+      }
+    } catch (error) {
+      console.error('Error fetching task history:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getColumnName = (columnId: string) => {
+    return columns.find(c => c.id === columnId)?.name || 'Onbekend';
+  };
+
+  const getActionIcon = (action: string) => {
+    switch (action) {
+      case 'created':
+        return <Plus className="h-4 w-4" />;
+      case 'updated':
+        return <Pencil className="h-4 w-4" />;
+      case 'moved':
+        return <ArrowRight className="h-4 w-4" />;
+      case 'deleted':
+        return <Trash2 className="h-4 w-4" />;
+      case 'assignee_added':
+        return <UserPlus className="h-4 w-4" />;
+      case 'assignee_removed':
+        return <UserMinus className="h-4 w-4" />;
+      default:
+        return <History className="h-4 w-4" />;
+    }
+  };
+
+  const getActionDescription = (entry: HistoryEntry) => {
+    const userName = entry.user?.full_name || 'Iemand';
+    
+    switch (entry.action) {
+      case 'created':
+        return `${userName} heeft deze taak aangemaakt`;
+      case 'updated':
+        return `${userName} heeft details bijgewerkt`;
+      case 'moved':
+        const fromCol = getColumnName(entry.changes.from_column_id);
+        const toCol = getColumnName(entry.changes.to_column_id);
+        return `${userName} heeft de taak verplaatst van "${fromCol}" naar "${toCol}"`;
+      case 'deleted':
+        return `${userName} heeft deze taak verwijderd`;
+      case 'assignee_added':
+        return `${userName} heeft ${entry.changes.user_name} toegewezen`;
+      case 'assignee_removed':
+        return `${userName} heeft ${entry.changes.user_name} verwijderd`;
+      default:
+        return `${userName} heeft een wijziging gemaakt`;
+    }
+  };
+
+  const getActionColor = (action: string) => {
+    switch (action) {
+      case 'created':
+        return 'text-green-600';
+      case 'deleted':
+        return 'text-red-600';
+      case 'moved':
+        return 'text-blue-600';
+      case 'assignee_added':
+        return 'text-purple-600';
+      case 'assignee_removed':
+        return 'text-orange-600';
+      default:
+        return 'text-gray-600';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-sm text-muted-foreground">Laden...</div>
+      </div>
+    );
+  }
+
+  if (history.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <History className="h-8 w-8 text-muted-foreground mb-2" />
+        <p className="text-sm text-muted-foreground">Nog geen geschiedenis</p>
+      </div>
+    );
+  }
+
+  return (
+    <ScrollArea className="h-[300px] pr-4">
+      <div className="space-y-4">
+        {history.map((entry) => (
+          <div key={entry.id} className="flex gap-3">
+            <Avatar className="h-8 w-8 mt-1">
+              <AvatarImage src={entry.user?.avatar_url} />
+              <AvatarFallback>
+                {entry.user?.full_name?.charAt(0) || '?'}
+              </AvatarFallback>
+            </Avatar>
+            
+            <div className="flex-1 space-y-1">
+              <div className="flex items-start gap-2">
+                <div className={`mt-1 ${getActionColor(entry.action)}`}>
+                  {getActionIcon(entry.action)}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm">
+                    {getActionDescription(entry)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(entry.created_at), {
+                      addSuffix: true,
+                      locale: nl
+                    })}
+                  </p>
+                </div>
+              </div>
+              
+              {entry.action === 'updated' && entry.changes?.old && entry.changes?.new && (
+                <div className="ml-6 mt-2 text-xs space-y-1">
+                  {entry.changes.old.title !== entry.changes.new.title && (
+                    <div className="bg-muted p-2 rounded">
+                      <span className="text-muted-foreground">Titel: </span>
+                      <span className="line-through">{entry.changes.old.title}</span>
+                      {' → '}
+                      <span className="font-medium">{entry.changes.new.title}</span>
+                    </div>
+                  )}
+                  {entry.changes.old.priority !== entry.changes.new.priority && (
+                    <div className="bg-muted p-2 rounded">
+                      <span className="text-muted-foreground">Prioriteit: </span>
+                      <span className="line-through">{entry.changes.old.priority || 'geen'}</span>
+                      {' → '}
+                      <span className="font-medium">{entry.changes.new.priority || 'geen'}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+  );
+};
