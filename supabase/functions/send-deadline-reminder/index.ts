@@ -298,7 +298,7 @@ serve(async (req) => {
       : `⚠️ Deadline Overschreden: ${task.title}`;
 
     const { error: emailError } = await resend.emails.send({
-      from: 'LinqBoard <noreply@linqboard.nl>',
+      from: 'LinqBoard <onboarding@resend.dev>',
       to: recipients,
       subject,
       html: emailHtml,
