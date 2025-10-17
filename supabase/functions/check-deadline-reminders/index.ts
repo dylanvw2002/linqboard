@@ -12,15 +12,31 @@ serve(async (req) => {
   }
 
   try {
+    // Check if current time is within business hours (8:00 - 17:00 Amsterdam time)
+    const now = new Date();
+    const amsterdamTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' }));
+    const currentHour = amsterdamTime.getHours();
+    
+    if (currentHour < 8 || currentHour >= 17) {
+      console.log(`[TIME-CHECK] Outside business hours (${currentHour}:00). Skipping check.`);
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          message: 'Outside business hours (8:00-17:00)',
+          summary: { due_today_sent: 0, overdue_sent: 0, errors: 0 }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log('Starting deadline reminder check...');
+    console.log(`[CHECK] Starting deadline reminder check at ${amsterdamTime.toISOString()}...`);
 
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const today = new Date(amsterdamTime.getFullYear(), amsterdamTime.getMonth(), amsterdamTime.getDate());
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
