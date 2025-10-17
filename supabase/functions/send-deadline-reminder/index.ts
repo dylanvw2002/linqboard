@@ -347,7 +347,8 @@ serve(async (req) => {
 
     // Generate email HTML
     const boardUrl = `https://linqboard.io/board/${task.column.board.id}`;
-    const logoBase64 = await imageUrlToBase64('https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo%27s/logo-transparent.png');
+    const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
+    const logoBase64 = await imageUrlToBase64(logoUrl);
     
     const emailHtml = await generateEmailHTML(
       task,
