@@ -225,18 +225,14 @@ serve(async (req) => {
     }
 
     // Get assignees
-    const { data: assignees } = await supabase
+    const { data: taskAssignees, error: assigneesError } = await supabase
       .from('task_assignees')
-      .select(`
-        user:profiles!task_assignees_user_id_fkey (
-          user_id,
-          full_name,
-          avatar_url
-        )
-      `)
+      .select('user_id')
       .eq('task_id', taskId);
 
-    if (!assignees || assignees.length === 0) {
+    console.log(`Found ${taskAssignees?.length || 0} assignees for task`);
+
+    if (!taskAssignees || taskAssignees.length === 0) {
       console.log('No assignees found for task');
       return new Response(
         JSON.stringify({ message: 'No assignees to notify' }),
@@ -244,8 +240,20 @@ serve(async (req) => {
       );
     }
 
-    // Get recipient emails
-    const recipientIds = assignees.map((a: any) => a.user.user_id);
+    // Get user profiles for assignees
+    const recipientIds = taskAssignees.map((a: any) => a.user_id);
+    const { data: assignees, error: profilesError } = await supabase
+      .from('profiles')
+      .select('user_id, full_name, avatar_url')
+      .in('user_id', recipientIds);
+
+    if (!assignees || assignees.length === 0) {
+      console.log('No profiles found for assignees');
+      return new Response(
+        JSON.stringify({ message: 'No profiles found' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
     const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers();
     
     if (usersError) {
@@ -268,7 +276,7 @@ serve(async (req) => {
     const emailHtml = await generateEmailHTML(
       task,
       task.column,
-      assignees.map((a: any) => a.user),
+      assignees,
       reminderType,
       boardUrl,
       logoBase64
