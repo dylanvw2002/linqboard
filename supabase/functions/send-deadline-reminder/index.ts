@@ -184,7 +184,7 @@ serve(async (req) => {
 
     const { taskId, reminderType } = await req.json();
 
-    console.log(`Processing ${reminderType} reminder for task ${taskId}`);
+    console.log(`[v2] Processing ${reminderType} reminder for task ${taskId}`);
 
     // Check if reminder already sent
     const { data: existingReminder } = await supabase
