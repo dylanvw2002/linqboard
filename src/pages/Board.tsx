@@ -26,6 +26,7 @@ import defaultBackground from "@/assets/default-board-background.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { TaskHistory } from "@/components/TaskHistory";
 import { TaskHistoryDialog } from "@/components/TaskHistoryDialog";
+import { TestDeadlineReminder } from "@/components/TestDeadlineReminder";
 import { ActiveUsers } from "@/components/ActiveUsers";
 import { ColumnManagement } from "@/components/ColumnManagement";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
@@ -2806,6 +2807,12 @@ const Board = () => {
                         <Label>Geschiedenis</Label>
                         <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
                       </div>
+                    </div>
+                  )}
+                  
+                  {editingTask && editingTask.due_date && (
+                    <div className="border-t pt-4">
+                      <TestDeadlineReminder taskId={editingTask.id} />
                     </div>
                   )}
                   
