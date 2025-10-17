@@ -230,24 +230,31 @@ Als je een taak moet aanmaken, gebruik dan create_task met de juiste kolom_name 
     
     let fullMessage = '';
 
+    console.log('AI response choice:', JSON.stringify(choice, null, 2));
+
     // Check if AI wants to call a function
     if (choice?.message?.tool_calls && choice.message.tool_calls.length > 0) {
       const toolCall = choice.message.tool_calls[0];
       const functionName = toolCall.function.name;
       const functionArgs = JSON.parse(toolCall.function.arguments);
 
-      console.log('AI tool call:', functionName, functionArgs);
+      console.log('🔧 AI tool call:', functionName, 'Args:', JSON.stringify(functionArgs));
 
       // Execute the function
       if (functionName === 'create_task') {
         try {
-          // Find column by name
+          console.log('📋 Available columns:', JSON.stringify(columns));
+          
+          // Find column by name (case-insensitive and partial match)
           const targetColumn = columns?.find(c => 
-            c.name.toLowerCase() === functionArgs.column_name.toLowerCase()
+            c.name.toLowerCase().includes(functionArgs.column_name.toLowerCase()) ||
+            functionArgs.column_name.toLowerCase().includes(c.name.toLowerCase())
           );
 
+          console.log('🎯 Target column:', targetColumn);
+
           if (!targetColumn) {
-            fullMessage = `❌ Kolom "${functionArgs.column_name}" niet gevonden.`;
+            fullMessage = `❌ Kolom "${functionArgs.column_name}" niet gevonden. Beschikbare: ${columns?.map(c => c.name).join(', ')}`;
           } else {
             // Find column ID
             const { data: columnData } = await supabaseAdmin
@@ -257,10 +264,18 @@ Als je een taak moet aanmaken, gebruik dan create_task met de juiste kolom_name 
               .eq('name', targetColumn.name)
               .single();
 
+            console.log('🆔 Column data:', columnData);
+
             if (!columnData) {
-              fullMessage = `❌ Kolom niet gevonden.`;
+              fullMessage = `❌ Kolom ID niet gevonden.`;
             } else {
               // Create task
+              console.log('✏️ Creating task:', {
+                column_id: columnData.id,
+                title: functionArgs.title,
+                description: functionArgs.description || null,
+              });
+
               const { data: taskData, error: taskError } = await supabaseAdmin
                 .from('tasks')
                 .insert({
@@ -272,23 +287,32 @@ Als je een taak moet aanmaken, gebruik dan create_task met de juiste kolom_name 
                 .select()
                 .single();
 
+              console.log('📝 Task created:', taskData, 'Error:', taskError);
+
               if (taskError) {
-                console.error('Task creation error:', taskError);
+                console.error('❌ Task creation error:', taskError);
                 fullMessage = `❌ Kon taak niet aanmaken: ${taskError.message}`;
               } else {
                 // If assignee specified, try to assign
                 if (functionArgs.assignee_name && taskData) {
+                  console.log('👤 Looking for assignee:', functionArgs.assignee_name);
+                  console.log('👥 Available team members:', JSON.stringify(teamMembers));
+                  
                   const assignee = teamMembers?.find(m => 
                     m.full_name.toLowerCase().includes(functionArgs.assignee_name.toLowerCase())
                   );
 
+                  console.log('🎯 Found assignee:', assignee);
+
                   if (assignee) {
-                    await supabaseAdmin
+                    const { error: assignError } = await supabaseAdmin
                       .from('task_assignees')
                       .insert({
                         task_id: taskData.id,
                         user_id: assignee.user_id,
                       });
+                    
+                    console.log('✅ Assigned to user, error:', assignError);
                   }
                 }
 
