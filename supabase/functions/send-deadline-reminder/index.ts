@@ -21,84 +21,121 @@ async function imageUrlToBase64(url: string): Promise<string> {
   }
 }
 
-const EMAIL_TEMPLATE = `
-<!DOCTYPE html>
-<html>
+const EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="nl">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1f2937; margin: 0; padding: 0; background-color: #f3f4f6; }
-    .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; }
-    .header { padding: 30px; text-align: center; background-color: #ffffff; border-bottom: 1px solid #e5e7eb; }
-    .logo { max-width: 150px; height: auto; }
-    .content { padding: 30px; }
-    .priority-badge { display: inline-block; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .priority-high { background: #fee2e2; color: #991b1b; }
-    .priority-medium { background: #fef3c7; color: #92400e; }
-    .priority-low { background: #dbeafe; color: #1e40af; }
-    .task-title { font-size: 24px; font-weight: 600; margin: 16px 0; color: #111827; }
-    .task-description { color: #6b7280; font-style: italic; padding: 16px; background: #f9fafb; border-left: 3px solid #e5e7eb; margin: 16px 0; }
-    .section { border: 2px solid; border-radius: 8px; padding: 20px; margin: 20px 0; }
-    .section-violet { border-color: #8b5cf6; }
-    .section-orange { border-color: #f97316; }
-    .section-blue { border-color: #3b82f6; }
-    .section-title { font-weight: 600; font-size: 14px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .assignees { display: flex; flex-wrap: wrap; gap: 16px; }
-    .assignee-item { display: flex; align-items: center; gap: 8px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-    .meta-info { margin: 16px 0; padding: 16px; background: #f9fafb; border-radius: 6px; }
-    .meta-row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
-    .meta-label { font-weight: 600; color: #374151; }
-    .meta-value { color: #6b7280; }
-    .personal-message { font-size: 15px; line-height: 1.8; color: #374151; }
-    .signature { margin-top: 16px; font-size: 14px; color: #6b7280; }
-    .cta-button { display: inline-flex; align-items: center; gap: 8px; background: white; color: #8b5cf6; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 20px 0; border: 2px solid #8b5cf6; transition: all 0.2s; }
-    .cta-button:hover { background: #8b5cf6; color: white; }
-    .footer { padding: 24px; text-align: center; color: #9ca3af; font-size: 13px; background: #f9fafb; border-top: 1px solid #e5e7eb; }
-    @media only screen and (max-width: 600px) { 
-      .container { margin: 0; border-radius: 0; }
-      .content { padding: 20px; }
-      .assignees { flex-direction: column; }
-    }
-  </style>
+  <title>LinqBoard – Deadline Reminder</title>
 </head>
-<body>
-  <div class="container">
-    <div class="header">
-      {{LOGO}}
-    </div>
-    <div class="content">
-      {{PRIORITY_BADGE}}
-      <h1 class="task-title">{{TASK_TITLE}}</h1>
-      {{TASK_DESCRIPTION}}
-      
-      {{ASSIGNEES_SECTION}}
-      
-      {{META_INFO}}
-      
-      <div class="section section-blue">
-        <div class="section-title">📩 PERSOONLIJK BERICHT</div>
-        <div class="personal-message">
-          {{PERSONAL_MESSAGE}}
+<body style="margin:0;padding:0;background:#f5f3ff;font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f3ff;">
+    <tr>
+      <td align="center" style="padding:8px;">
+        
+        <!-- Logo -->
+        <img src="{{logoBase64}}" alt="LinqBoard" width="120" height="120" style="display:block;margin:0 auto 6px;" />
+        
+        <!-- Main Container -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+          
+          <!-- Priority Badge -->
+          <tr>
+            <td align="center" style="padding:8px 12px 6px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:{{priorityBg}};color:{{priorityFg}};font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;text-transform:uppercase;">
+                    {{priorityLabel}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Title -->
+          <tr>
+            <td align="center" style="padding:0 12px 8px;">
+              <h1 style="margin:0;font-size:20px;font-weight:700;color:#1e1b4b;">{{title}}</h1>
+            </td>
+          </tr>
+          
+          <!-- Description -->
+          <tr>
+            <td style="padding:0 12px 8px;">
+              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:8px;border-radius:12px;font-size:13px;line-height:1.4;color:#334155;">
+                {{description}}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Assignees -->
+          <tr>
+            <td style="padding:0 12px 8px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#faf5ff;border-radius:16px;border:2px solid #a855f7;">
+                <tr>
+                  <td style="padding:10px;">
+                    <div style="font-size:11px;font-weight:700;color:#6b21a8;text-transform:uppercase;margin-bottom:8px;text-align:center;">
+                      👥 Toegewezen aan
+                    </div>
+                    <div style="text-align:center;">
+                      <table cellpadding="0" cellspacing="0" border="0" style="display:inline-table;">
+                        <tr>
+                          {{assigneesHtml}}
+                        </tr>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Meta Info (Deadline & Column) -->
+          <tr>
+            <td style="padding:0 12px 8px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fef9f5;border-radius:16px;border:2px solid #f97316;">
+                <tr>
+                  <td style="padding:10px;">
+                    <div style="font-size:11px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:6px;">
+                      📅 Details
+                    </div>
+                    <div style="font-size:12px;line-height:1.6;color:#451a03;">
+                      <strong>Deadline:</strong> {{dueDateStr}}<br>
+                      <strong>Kolom:</strong> {{columnName}}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- CTA Button -->
+          <tr>
+            <td align="center" style="padding:0 12px 12px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;box-shadow:0 3px 8px rgba(99,102,241,0.4);">
+                    <a href="{{taskUrl}}" style="display:block;padding:10px 28px;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;">
+                      🔗 Bekijk in LinqBoard
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+        </table>
+        
+        <!-- Footer -->
+        <div style="margin-top:8px;font-size:11px;color:#64748b;text-align:center;padding-bottom:8px;">
+          © 2025 LinqBoard – Samen, van to-do naar done.
         </div>
-        {{SIGNATURE}}
-      </div>
-      
-      <div style="text-align: center;">
-        <a href="{{BOARD_URL}}" class="cta-button">
-          🔗 Bekijk in LinqBoard
-        </a>
-      </div>
-    </div>
-    
-    <div class="footer">
-      <p>© 2025 LinqBoard – Samen, van to-do naar done.</p>
-    </div>
-  </div>
+        
+      </td>
+    </tr>
+  </table>
 </body>
-</html>
-`;
+</html>`;
 
 async function generateEmailHTML(
   task: any,
@@ -108,31 +145,67 @@ async function generateEmailHTML(
   boardUrl: string,
   logoBase64: string
 ): Promise<string> {
-  let html = EMAIL_TEMPLATE;
-
-  // Logo
-  const logoHtml = logoBase64
-    ? `<img src="${logoBase64}" alt="LinqBoard" class="logo" />`
-    : '<h1 style="color: #8b5cf6; margin: 0;">LinqBoard</h1>';
-  html = html.replace('{{LOGO}}', logoHtml);
-
-  // Priority badge
-  const priorityBadges = {
-    high: '<span class="priority-badge priority-high">HOOG</span>',
-    medium: '<span class="priority-badge priority-medium">MIDDEL</span>',
-    low: '<span class="priority-badge priority-low">LAAG</span>',
+  // Priority configuration
+  const priorityConfig = {
+    high: { bg: '#fecaca', fg: '#991b1b', label: 'Hoog' },
+    medium: { bg: '#fef08a', fg: '#854d0e', label: 'Middel' },
+    low: { bg: '#bbf7d0', fg: '#166534', label: 'Laag' }
   };
-  html = html.replace('{{PRIORITY_BADGE}}', task.priority ? priorityBadges[task.priority as keyof typeof priorityBadges] || '' : '');
-
-  // Task details
-  html = html.replace('{{TASK_TITLE}}', task.title);
   
-  // Task description
-  const descriptionHtml = task.description 
-    ? `<div class="task-description">${task.description}</div>`
-    : '';
-  html = html.replace('{{TASK_DESCRIPTION}}', descriptionHtml);
-
+  const priority = task.priority || 'low';
+  const priorityData = priorityConfig[priority as keyof typeof priorityConfig];
+  
+  // Format description
+  const description = task.description 
+    ? task.description.replace(/\n/g, '<br>')
+    : '<span style="color:#999;font-style:italic;">Geen beschrijving</span>';
+  
+  // Helper function for initials
+  const getInitials = (name: string): string => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+  
+  // Convert assignee avatars to base64 and generate HTML
+  const assigneesWithBase64 = await Promise.all(
+    assignees.map(async (a) => {
+      if (a.avatar_url) {
+        const avatarBase64 = await imageUrlToBase64(a.avatar_url);
+        return { ...a, avatar_base64: avatarBase64 };
+      }
+      return a;
+    })
+  );
+  
+  const assigneesHtml = assigneesWithBase64.length > 0 
+    ? assigneesWithBase64.map(a => {
+        const avatarContent = a.avatar_base64
+          ? `<img src="${a.avatar_base64}" alt="${a.full_name}" width="44" height="44" style="display:block;width:44px;height:44px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);" />`
+          : `<div style="width:44px;height:44px;line-height:44px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);text-align:center;">${getInitials(a.full_name)}</div>`;
+        
+        return `
+        <td align="center" style="padding:0 6px;">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center" valign="middle">
+                ${avatarContent}
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="padding-top:4px;font-size:11px;color:#4c1d95;font-weight:600;">
+                ${a.full_name}
+              </td>
+            </tr>
+          </table>
+        </td>
+      `;
+      }).join('')
+    : '<td align="center" style="color:#9ca3af;font-style:italic;font-size:12px;">Niet toegewezen</td>';
+  
   // Due date
   const dueDate = new Date(task.due_date);
   const dueDateStr = dueDate.toLocaleDateString('nl-NL', { 
@@ -142,45 +215,19 @@ async function generateEmailHTML(
     day: 'numeric' 
   });
 
-  // Meta info section
-  const metaInfoHtml = `
-    <div class="meta-info">
-      <div class="meta-row">
-        <span class="meta-label">📅 Deadline:</span>
-        <span class="meta-value">${dueDateStr}</span>
-      </div>
-      <div class="meta-row">
-        <span class="meta-label">📋 Kolom:</span>
-        <span class="meta-value">${column.name}</span>
-      </div>
-    </div>
-  `;
-  html = html.replace('{{META_INFO}}', metaInfoHtml);
-
-  // Assignees section
-  if (assignees.length > 0) {
-    let assigneesHtml = '<div class="section section-violet"><div class="section-title">👥 TOEGEWEZEN AAN</div><div class="assignees">';
-    for (const assignee of assignees) {
-      const avatarHtml = assignee.avatar_url
-        ? `<img src="${await imageUrlToBase64(assignee.avatar_url)}" alt="${assignee.full_name}" class="avatar" />`
-        : '<div class="avatar" style="background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-weight: bold;">👤</div>';
-      assigneesHtml += `<div class="assignee-item">${avatarHtml}<span>${assignee.full_name}</span></div>`;
-    }
-    assigneesHtml += '</div></div>';
-    html = html.replace('{{ASSIGNEES_SECTION}}', assigneesHtml);
-  } else {
-    html = html.replace('{{ASSIGNEES_SECTION}}', '');
-  }
-
-  // Personal message
-  const personalMessage = reminderType === 'due_today'
-    ? `Beste,<br><br>Hierbij de uitnodiging om deel te nemen aan de vergadering op ${dueDateStr}. De afspraak is toegevoegd aan ieders planning.<br><br>Met vriendelijke groet,<br>LinqBoard`
-    : `Beste,<br><br>Dit is een automatische reminder van LinqBoard. De deadline voor deze taak is verstreken op ${dueDateStr}. Graag zo spoedig mogelijk afhandelen.<br><br>Met vriendelijke groet,<br>LinqBoard`;
+  // Replace all placeholders
+  let html = EMAIL_TEMPLATE
+    .replace(/{{logoBase64}}/g, logoBase64 || '')
+    .replace(/{{priorityBg}}/g, priorityData.bg)
+    .replace(/{{priorityFg}}/g, priorityData.fg)
+    .replace(/{{priorityLabel}}/g, priorityData.label)
+    .replace(/{{title}}/g, task.title)
+    .replace(/{{description}}/g, description)
+    .replace(/{{assigneesHtml}}/g, assigneesHtml)
+    .replace(/{{dueDateStr}}/g, dueDateStr)
+    .replace(/{{columnName}}/g, column.name)
+    .replace(/{{taskUrl}}/g, boardUrl);
   
-  html = html.replace('{{PERSONAL_MESSAGE}}', personalMessage);
-  html = html.replace('{{SIGNATURE}}', '');
-  html = html.replace('{{BOARD_URL}}', boardUrl);
-
   return html;
 }
 
@@ -299,8 +346,8 @@ serve(async (req) => {
     }
 
     // Generate email HTML
-    const boardUrl = `https://linqboard.nl/board/${task.column.board.id}`;
-    const logoBase64 = await imageUrlToBase64('https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/board-backgrounds/logo-linqboard.png');
+    const boardUrl = `https://linqboard.io/board/${task.column.board.id}`;
+    const logoBase64 = await imageUrlToBase64('https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png');
     
     const emailHtml = await generateEmailHTML(
       task,
