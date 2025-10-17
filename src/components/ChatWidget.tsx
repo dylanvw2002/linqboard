@@ -183,14 +183,6 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
       };
       setMessages((prev) => [...prev, tempUserMessage]);
 
-      // Add empty assistant message that will be updated as tokens arrive
-      const assistantMessageIndex = messages.length + 1;
-      setMessages((prev) => [...prev, {
-        role: "assistant",
-        content: "",
-        created_at: new Date().toISOString(),
-      }]);
-
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-widget`,
         {
@@ -208,26 +200,21 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to send message");
+        throw new Error("Failed to send message");
       }
 
       const data = await response.json();
 
-      // Update with full message
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        newMessages[assistantMessageIndex] = {
-          role: "assistant",
-          content: data.message,
-          created_at: new Date().toISOString(),
-        };
-        return newMessages;
-      });
+      // Add assistant message
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.message,
+        created_at: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
-      const errorMessage = error instanceof Error ? error.message : "Kon bericht niet verzenden";
-      toast.error(errorMessage);
+      toast.error("Kon bericht niet verzenden");
       // Reload messages to get correct state
       loadMessages();
     } finally {

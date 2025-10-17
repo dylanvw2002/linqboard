@@ -54,7 +54,7 @@ serve(async (req) => {
     // Step 2: Get board
     const { data: board, error: boardError } = await supabaseAdmin
       .from('boards')
-      .select('id, organization_id, name')
+      .select('id, organization_id')
       .eq('id', widget.board_id)
       .single();
 
@@ -106,13 +106,13 @@ serve(async (req) => {
       throw new Error('AI Chat is alleen beschikbaar voor organisaties met Team of Business abonnementen');
     }
 
-    // Get chat history (limit to 20 for faster responses)
+    // Get chat history
     const { data: messages, error: messagesError } = await supabaseAdmin
       .from('widget_chat_messages')
       .select('role, content')
       .eq('widget_id', widgetId)
       .order('created_at', { ascending: true })
-      .limit(20);
+      .limit(50);
 
     if (messagesError) {
       console.error('Failed to fetch chat history:', messagesError);
@@ -139,50 +139,7 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Get board context for AI
-    const { data: columns } = await supabaseAdmin
-      .from('columns')
-      .select('name, column_type')
-      .eq('board_id', widget.board_id);
-
-    const { data: teamMembers } = await supabaseAdmin
-      .from('profiles')
-      .select('full_name, user_id')
-      .in('user_id', 
-        await supabaseAdmin
-          .from('memberships')
-          .select('user_id')
-          .eq('organization_id', board.organization_id)
-          .then(res => res.data?.map(m => m.user_id) || [])
-      );
-
-    const boardContext = `
-Board: "${board.name || 'Onbekend'}"
-Kolommen: ${columns?.map(c => `${c.name} (${c.column_type})`).join(', ') || 'geen'}
-Teamleden: ${teamMembers?.map(t => t.full_name).join(', ') || 'geen'}`;
-
-    // Define tools for AI to use
-    const tools = [
-      {
-        type: "function",
-        function: {
-          name: "create_task",
-          description: "Maak een nieuwe taak aan in een kolom",
-          parameters: {
-            type: "object",
-            properties: {
-              title: { type: "string", description: "Titel van de taak" },
-              column_name: { type: "string", description: "Naam van de kolom" },
-              assignee_name: { type: "string", description: "Naam van toegewezen persoon (optioneel)" },
-              description: { type: "string", description: "Beschrijving (optioneel)" },
-            },
-            required: ["title", "column_name"],
-          },
-        },
-      },
-    ];
-
-    // Call Lovable AI without streaming (needed for function calling)
+    // Call Lovable AI with user context
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -190,29 +147,11 @@ Teamleden: ${teamMembers?.map(t => t.full_name).join(', ') || 'geen'}`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        max_completion_tokens: 150,
-        tools: tools,
-        tool_choice: "auto",
+        model: 'openai/gpt-5-mini',
         messages: [
           {
             role: 'system',
-            content: `Je bent Linq, een AI assistent voor taakbeheer.
-
-${boardContext}
-
-BELANGRIJKE REGELS:
-1. Als gebruiker zegt "voeg [naam] toe aan [kolom]" → gebruik ALTIJD create_task tool met:
-   - title: [naam]
-   - column_name: [kolom] (zoek in bovenstaande lijst)
-   
-2. Gebruik create_task voor ALLE verzoeken om taken/personen toe te voegen
-3. Antwoord alleen met "✓ [naam] toegevoegd aan [kolom]." na succesvolle tool call
-4. Bij errors, leg uit wat er mis ging
-
-Voorbeelden:
-- "voeg dean toe aan ziek" → create_task(title="Dean", column_name="Ziek")
-- "voeg sarah toe aan verlof" → create_task(title="Sarah", column_name="Verlof")`,
+            content: 'Je bent Linq, de slimme AI-assistent binnen LinqBoard. Je geeft korte, duidelijke en directe antwoorden. Je helpt gebruikers met zoeken, organiseren en beslissen. Je kunt ook fungeren als zoekmachine — geef feitelijke informatie, actuele data en praktische oplossingen. Stijl: professioneel maar menselijk, efficiënt en zonder overbodige uitleg. Doel: snel helpen, precies wat nodig is — niet meer, niet minder. Antwoord altijd in het Nederlands.',
           },
           ...(messages || []),
           {
@@ -226,124 +165,11 @@ Voorbeelden:
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Lovable AI error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        throw new Error('Te veel verzoeken, probeer het later opnieuw');
-      }
-      if (response.status === 402) {
-        throw new Error('Betaling vereist voor AI-gebruik');
-      }
-      throw new Error('AI antwoord mislukt');
+      throw new Error('Failed to get AI response');
     }
 
-    const aiResponse = await response.json();
-    const choice = aiResponse.choices?.[0];
-    
-    let fullMessage = '';
-
-    console.log('AI response choice:', JSON.stringify(choice, null, 2));
-
-    // Check if AI wants to call a function
-    if (choice?.message?.tool_calls && choice.message.tool_calls.length > 0) {
-      const toolCall = choice.message.tool_calls[0];
-      const functionName = toolCall.function.name;
-      const functionArgs = JSON.parse(toolCall.function.arguments);
-
-      console.log('🔧 AI tool call:', functionName, 'Args:', JSON.stringify(functionArgs));
-
-      // Execute the function
-      if (functionName === 'create_task') {
-        try {
-          console.log('📋 Available columns:', JSON.stringify(columns));
-          
-          // Find column by name (case-insensitive and partial match)
-          const targetColumn = columns?.find(c => 
-            c.name.toLowerCase().includes(functionArgs.column_name.toLowerCase()) ||
-            functionArgs.column_name.toLowerCase().includes(c.name.toLowerCase())
-          );
-
-          console.log('🎯 Target column:', targetColumn);
-
-          if (!targetColumn) {
-            fullMessage = `❌ Kolom "${functionArgs.column_name}" niet gevonden. Beschikbare: ${columns?.map(c => c.name).join(', ')}`;
-          } else {
-            // Find column ID
-            const { data: columnData } = await supabaseAdmin
-              .from('columns')
-              .select('id')
-              .eq('board_id', widget.board_id)
-              .eq('name', targetColumn.name)
-              .single();
-
-            console.log('🆔 Column data:', columnData);
-
-            if (!columnData) {
-              fullMessage = `❌ Kolom ID niet gevonden.`;
-            } else {
-              // Create task
-              console.log('✏️ Creating task:', {
-                column_id: columnData.id,
-                title: functionArgs.title,
-                description: functionArgs.description || null,
-              });
-
-              const { data: taskData, error: taskError } = await supabaseAdmin
-                .from('tasks')
-                .insert({
-                  column_id: columnData.id,
-                  title: functionArgs.title,
-                  description: functionArgs.description || null,
-                  position: 0,
-                })
-                .select()
-                .single();
-
-              console.log('📝 Task created:', taskData, 'Error:', taskError);
-
-              if (taskError) {
-                console.error('❌ Task creation error:', taskError);
-                fullMessage = `❌ Kon taak niet aanmaken: ${taskError.message}`;
-              } else {
-                // If assignee specified, try to assign
-                if (functionArgs.assignee_name && taskData) {
-                  console.log('👤 Looking for assignee:', functionArgs.assignee_name);
-                  console.log('👥 Available team members:', JSON.stringify(teamMembers));
-                  
-                  const assignee = teamMembers?.find(m => 
-                    m.full_name.toLowerCase().includes(functionArgs.assignee_name.toLowerCase())
-                  );
-
-                  console.log('🎯 Found assignee:', assignee);
-
-                  if (assignee) {
-                    const { error: assignError } = await supabaseAdmin
-                      .from('task_assignees')
-                      .insert({
-                        task_id: taskData.id,
-                        user_id: assignee.user_id,
-                      });
-                    
-                    console.log('✅ Assigned to user, error:', assignError);
-                  }
-                }
-
-                fullMessage = `✓ "${functionArgs.title}" toegevoegd aan ${targetColumn.name}.`;
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Function execution error:', error);
-          fullMessage = `❌ Fout bij uitvoeren actie.`;
-        }
-      }
-    } else {
-      // No tool call, use regular message
-      fullMessage = choice?.message?.content || 'Sorry, ik kon geen antwoord genereren.';
-    }
-
-    if (!fullMessage) {
-      fullMessage = 'Sorry, ik kon geen antwoord genereren.';
-    }
+    const data = await response.json();
+    const assistantMessage = data.choices[0]?.message?.content || 'Sorry, ik kon geen antwoord genereren.';
 
     // Store assistant message
     const { error: assistantInsertError } = await supabaseAdmin
@@ -351,7 +177,7 @@ Voorbeelden:
       .insert({
         widget_id: widgetId,
         role: 'assistant',
-        content: fullMessage,
+        content: assistantMessage,
       });
 
     if (assistantInsertError) {
@@ -359,7 +185,7 @@ Voorbeelden:
     }
 
     return new Response(
-      JSON.stringify({ message: fullMessage }),
+      JSON.stringify({ message: assistantMessage }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
