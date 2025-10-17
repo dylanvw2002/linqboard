@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { TaskHistoryDialog } from "./TaskHistoryDialog";
 
 const getDateLocale = (language: string) => {
   const locales: Record<string, Locale> = { nl, en: enUS, es, de };
@@ -25,6 +26,8 @@ interface SimpleTaskCardProps {
   glowShadow?: string;
   assignees?: Assignee[];
   glowGradient?: string;
+  taskId?: string;
+  columns?: Array<{ id: string; name: string }>;
 }
 
 export const SimpleTaskCard = ({
@@ -34,7 +37,9 @@ export const SimpleTaskCard = ({
   onClick,
   glowShadow = "shadow-[0_8px_24px_rgba(2,6,23,0.08)] hover:shadow-[0_12px_36px_rgba(2,6,23,0.15)]",
   assignees = [],
-  glowGradient = ""
+  glowGradient = "",
+  taskId,
+  columns = []
 }: SimpleTaskCardProps) => {
   const { t, i18n } = useTranslation();
   
@@ -53,7 +58,13 @@ export const SimpleTaskCard = ({
         isOverdue && "animate-overdue-glow"
       )}
     >
-      <h4 className="font-semibold text-sm text-foreground mb-1 leading-snug relative z-10">
+      {taskId && columns.length > 0 && (
+        <div className="absolute top-2 right-2 z-20">
+          <TaskHistoryDialog taskId={taskId} columns={columns} />
+        </div>
+      )}
+      
+      <h4 className="font-semibold text-sm text-foreground mb-1 leading-snug relative z-10 pr-8">
         {title}
       </h4>
       
