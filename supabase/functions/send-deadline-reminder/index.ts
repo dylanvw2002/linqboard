@@ -184,7 +184,7 @@ serve(async (req) => {
 
     const { taskId, reminderType } = await req.json();
 
-    console.log(`[v2] Processing ${reminderType} reminder for task ${taskId}`);
+    console.log(`[v3-RESEND-FIX] Processing ${reminderType} reminder for task ${taskId}`);
 
     // Check if reminder already sent
     const { data: existingReminder } = await supabase
@@ -235,7 +235,7 @@ serve(async (req) => {
 
     console.log(`[v2] Query result - taskAssignees:`, taskAssignees);
     console.log(`[v2] Query error - assigneesError:`, assigneesError);
-    console.log(`[v2] Found ${taskAssignees?.length || 0} assignees for task`);
+    console.log(`[v3] Found ${taskAssignees?.length || 0} assignees for task`);
 
     if (!taskAssignees || taskAssignees.length === 0) {
       console.log('[v2] No assignees found for task - returning early');
