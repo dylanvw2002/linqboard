@@ -114,7 +114,7 @@ const EMAIL_TEMPLATE = `<!DOCTYPE html>
             <td align="center" style="padding:0 12px 12px;">
               <table cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td align="center" style="background:#ffffff;border:2px solid #a855f7;border-radius:16px;box-shadow:0 3px 8px rgba(168,85,247,0.2);">
+                  <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;box-shadow:0 3px 8px rgba(99,102,241,0.4);">
                     <a href="{{taskUrl}}" style="display:block;padding:10px 28px;font-size:14px;font-weight:700;color:#a855f7;text-decoration:none;font-family:Arial,sans-serif;">
                       🔗 Bekijk in LinqBoard
                     </a>
