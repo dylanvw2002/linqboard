@@ -184,7 +184,7 @@ serve(async (req) => {
 
     const { taskId, reminderType } = await req.json();
 
-    console.log(`[v3-RESEND-FIX] Processing ${reminderType} reminder for task ${taskId}`);
+    console.log(`[v4-INFO@LINQBOARD] Processing ${reminderType} reminder for task ${taskId}`);
 
     // Check if reminder already sent
     const { data: existingReminder } = await supabase
@@ -298,7 +298,7 @@ serve(async (req) => {
       : `⚠️ Deadline Overschreden: ${task.title}`;
 
     const { error: emailError } = await resend.emails.send({
-      from: 'LinqBoard <onboarding@resend.dev>',
+      from: 'LinqBoard <info@linqboard.io>',
       to: recipients,
       subject,
       html: emailHtml,
