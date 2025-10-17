@@ -197,24 +197,28 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const resend = new Resend(resendApiKey);
 
-    const { taskId, reminderType } = await req.json();
+    const { taskId, reminderType, skipDuplicateCheck } = await req.json();
 
-    console.log(`[v5-NEW-STYLE] Processing ${reminderType} reminder for task ${taskId}`);
+    console.log(`[v6-SKIP-CHECK] Processing ${reminderType} reminder for task ${taskId}, skipDuplicateCheck: ${skipDuplicateCheck}`);
 
-    // Check if reminder already sent
-    const { data: existingReminder } = await supabase
-      .from('task_deadline_reminders')
-      .select('id')
-      .eq('task_id', taskId)
-      .eq('reminder_type', reminderType)
-      .single();
+    // Check if reminder already sent (skip for test mode)
+    if (!skipDuplicateCheck) {
+      const { data: existingReminder } = await supabase
+        .from('task_deadline_reminders')
+        .select('id')
+        .eq('task_id', taskId)
+        .eq('reminder_type', reminderType)
+        .single();
 
-    if (existingReminder) {
-      console.log(`[v2] Reminder already sent for task ${taskId}`);
-      return new Response(
-        JSON.stringify({ message: 'Reminder already sent' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      if (existingReminder) {
+        console.log(`[v2] Reminder already sent for task ${taskId}`);
+        return new Response(
+          JSON.stringify({ message: 'Reminder already sent' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } else {
+      console.log('[TEST MODE] Skipping duplicate check');
     }
 
     // Get task with column and board info

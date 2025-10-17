@@ -24,7 +24,7 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    console.log(`Test trigger: Sending ${reminderType} reminder(s) for task ${taskId}`);
+    console.log(`Test trigger [FORCE-SEND]: Sending ${reminderType} reminder(s) for task ${taskId}`);
 
     const results = [];
 
@@ -40,7 +40,8 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             taskId,
-            reminderType: 'due_today'
+            reminderType: 'due_today',
+            skipDuplicateCheck: true  // Skip the "already sent" check for testing
           })
         }
       );
@@ -65,7 +66,8 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             taskId,
-            reminderType: 'overdue'
+            reminderType: 'overdue',
+            skipDuplicateCheck: true  // Skip the "already sent" check for testing
           })
         }
       );
@@ -81,7 +83,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Test reminders sent',
+        message: 'Test reminders sent (duplicate check bypassed)',
         results
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
