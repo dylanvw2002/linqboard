@@ -195,7 +195,7 @@ serve(async (req) => {
       .single();
 
     if (existingReminder) {
-      console.log(`Reminder already sent for task ${taskId}`);
+      console.log(`[v2] Reminder already sent for task ${taskId}`);
       return new Response(
         JSON.stringify({ message: 'Reminder already sent' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -221,19 +221,24 @@ serve(async (req) => {
       .single();
 
     if (taskError || !task) {
+      console.error('[v2] Task error:', taskError);
       throw new Error(`Task not found: ${taskError?.message}`);
     }
 
-    // Get assignees
+    console.log('[v2] Task found:', task.title);
+
+    // Get assignees - SIMPLIFIED QUERY
     const { data: taskAssignees, error: assigneesError } = await supabase
       .from('task_assignees')
       .select('user_id')
       .eq('task_id', taskId);
 
-    console.log(`Found ${taskAssignees?.length || 0} assignees for task`);
+    console.log(`[v2] Query result - taskAssignees:`, taskAssignees);
+    console.log(`[v2] Query error - assigneesError:`, assigneesError);
+    console.log(`[v2] Found ${taskAssignees?.length || 0} assignees for task`);
 
     if (!taskAssignees || taskAssignees.length === 0) {
-      console.log('No assignees found for task');
+      console.log('[v2] No assignees found for task - returning early');
       return new Response(
         JSON.stringify({ message: 'No assignees to notify' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -242,13 +247,18 @@ serve(async (req) => {
 
     // Get user profiles for assignees
     const recipientIds = taskAssignees.map((a: any) => a.user_id);
+    console.log('[v2] Recipient IDs:', recipientIds);
+    
     const { data: assignees, error: profilesError } = await supabase
       .from('profiles')
       .select('user_id, full_name, avatar_url')
       .in('user_id', recipientIds);
 
+    console.log('[v2] Profiles found:', assignees);
+    console.log('[v2] Profiles error:', profilesError);
+
     if (!assignees || assignees.length === 0) {
-      console.log('No profiles found for assignees');
+      console.log('[v2] No profiles found for assignees');
       return new Response(
         JSON.stringify({ message: 'No profiles found' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
