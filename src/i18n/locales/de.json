@@ -294,6 +294,7 @@
     "typeSickLeave": "Krankenstand",
     "typeVacation": "Urlaub",
     "typeAnnouncement": "Wichtige Ankündigungen",
+    "typeCompleted": "Abgeschlossen",
     "glowDefault": "Standard",
     "glowRed": "Rot",
     "glowGreen": "Grün",

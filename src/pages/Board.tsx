@@ -2003,7 +2003,8 @@ const Board = () => {
       const updatedTasks = tasks.map(t => t.id === draggedTask.id ? {
         ...t,
         column_id: targetColumn.id,
-        position: maxPosition + 1
+        position: maxPosition + 1,
+        due_date: targetColumn.column_type === 'completed' ? null : t.due_date
       } : t);
       setTasks(updatedTasks);
       toast.success(t('board.taskMoved', {
@@ -2016,12 +2017,20 @@ const Board = () => {
     }
     try {
       const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
-      const {
-        error
-      } = await supabase.from("tasks").update({
+      
+      // Clear deadline if moving to a completed column
+      const updateData: any = {
         column_id: targetColumn.id,
         position: maxPosition + 1
-      }).eq("id", draggedTask.id);
+      };
+      
+      if (targetColumn.column_type === 'completed') {
+        updateData.due_date = null;
+      }
+      
+      const {
+        error
+      } = await supabase.from("tasks").update(updateData).eq("id", draggedTask.id);
       if (error) throw error;
       toast.success(t('board.taskMoved', {
         column: targetColumn.name

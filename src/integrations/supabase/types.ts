@@ -1041,7 +1041,12 @@ export type Database = {
         | "yellow"
         | "purple"
         | "orange"
-      column_type: "regular" | "sick_leave" | "vacation" | "announcement"
+      column_type:
+        | "regular"
+        | "sick_leave"
+        | "vacation"
+        | "announcement"
+        | "completed"
       subscription_plan: "free" | "pro" | "team" | "business"
       subscription_status:
         | "active"
@@ -1189,7 +1194,13 @@ export const Constants = {
         "purple",
         "orange",
       ],
-      column_type: ["regular", "sick_leave", "vacation", "announcement"],
+      column_type: [
+        "regular",
+        "sick_leave",
+        "vacation",
+        "announcement",
+        "completed",
+      ],
       subscription_plan: ["free", "pro", "team", "business"],
       subscription_status: [
         "active",
