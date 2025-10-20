@@ -31,17 +31,21 @@ export const TaskStack = ({
       let totalHeight = 0;
       let visibleTaskCount = 0;
       
-      // Reserve 100px for stack preview (80px stack + 20px badge space)
+      // Reserve 100px for stack preview if we're going to need it
       const stackPreviewHeight = 100;
       
       for (let i = 0; i < taskElements.length; i++) {
         const taskHeight = taskElements[i].clientHeight;
         const gap = 12; // gap-3 = 12px
         
-        // Check if this task would fit, considering we need space for stack preview
-        const spaceNeeded = totalHeight + taskHeight + (i < taskElements.length - 1 ? stackPreviewHeight : 0);
+        // Check if we have more tasks after this one
+        const hasMoreTasks = i < taskElements.length - 1;
         
-        if (spaceNeeded > containerHeight) {
+        // If we have more tasks, we need to reserve space for the stack preview
+        const requiredSpace = hasMoreTasks ? stackPreviewHeight : 0;
+        
+        // Check if this task would fit with the required reserved space
+        if (totalHeight + taskHeight + requiredSpace > containerHeight) {
           break;
         }
         
