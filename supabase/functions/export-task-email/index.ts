@@ -3,25 +3,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@4.0.0";
 import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
-// Helper function to convert image URL to base64
-async function imageUrlToBase64(url: string): Promise<string> {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch image');
-    const arrayBuffer = await response.arrayBuffer();
-    const base64 = base64Encode(arrayBuffer);
-    
-    // Determine MIME type from URL
-    const ext = url.split('.').pop()?.toLowerCase();
-    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
-    
-    return `data:${mimeType};base64,${base64}`;
-  } catch (error) {
-    console.error('Error converting image to base64:', error);
-    return ''; // Return empty string on error
-  }
-}
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -336,7 +317,7 @@ serve(async (req) => {
       language 
     }: TaskExportRequest = await req.json();
 
-    console.log('Exporting task:', { taskId, recipientEmails, memberUserIds, language });
+    console.log('Exporting task (v2 - direct URLs):', { taskId, recipientEmails, memberUserIds, language });
 
     // Validate input
     if (!taskId) {

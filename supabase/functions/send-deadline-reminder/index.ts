@@ -8,24 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-async function imageUrlToBase64(url: string): Promise<string> {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Failed to fetch image');
-    const arrayBuffer = await response.arrayBuffer();
-    const base64 = base64Encode(arrayBuffer);
-    
-    // Determine MIME type from URL
-    const ext = url.split('.').pop()?.toLowerCase();
-    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
-    
-    return `data:${mimeType};base64,${base64}`;
-  } catch (error) {
-    console.error('Error converting image to base64:', error);
-    return '';
-  }
-}
-
 const EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="nl">
 <head>
