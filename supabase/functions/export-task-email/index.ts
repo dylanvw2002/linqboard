@@ -204,7 +204,7 @@ async function generateEmailHTML(
   boardId: string,
   language: string,
   personalMessage?: string,
-  logoBase64?: string
+  logoUrl?: string
 ): Promise<string> {
   // Priority configuration
   const priorityConfig = {
@@ -231,21 +231,11 @@ async function generateEmailHTML(
       .substring(0, 2);
   };
   
-  // Generate assignees HTML - simplified for email compatibility
-  // Convert avatar URLs to base64 for embedded display
-  const assigneesWithBase64 = await Promise.all(
-    assignees.map(async (a) => {
-      if (a.avatar_url && a.avatar_base64) {
-        return { ...a, avatar_base64: a.avatar_base64 };
-      }
-      return a;
-    })
-  );
-  
-  const assigneesHtml = assigneesWithBase64.length > 0 
-    ? assigneesWithBase64.map(a => {
-        const avatarContent = a.avatar_base64
-          ? `<img src="${a.avatar_base64}" alt="${a.full_name}" width="44" height="44" style="display:block;width:44px;height:44px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);" />`
+  // Generate assignees HTML - using direct URLs instead of base64
+  const assigneesHtml = assignees.length > 0 
+    ? assignees.map(a => {
+        const avatarContent = a.avatar_url
+          ? `<img src="${a.avatar_url}" alt="${a.full_name}" width="44" height="44" style="display:block;width:44px;height:44px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);" />`
           : `<div style="width:44px;height:44px;line-height:44px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);text-align:center;">${getInitials(a.full_name)}</div>`;
         
         return `
@@ -302,7 +292,7 @@ async function generateEmailHTML(
   
   // Replace all placeholders
   let html = EMAIL_TEMPLATE
-    .replace(/{{logoBase64}}/g, logoBase64 || '')
+    .replace(/{{logoBase64}}/g, logoUrl || '')
     .replace(/{{priorityBg}}/g, priorityData.bg)
     .replace(/{{priorityFg}}/g, priorityData.fg)
     .replace(/{{priorityLabel}}/g, priorityData.label)
@@ -450,20 +440,14 @@ serve(async (req) => {
 
     console.log('Final assignees:', JSON.stringify(assignees, null, 2));
 
-    // Convert logo to base64 for embedding
+    // Use direct public URLs instead of base64 to reduce email size
     const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
-    const logoBase64 = await imageUrlToBase64(logoUrl);
-
-    // Convert assignee avatars to base64
-    const assigneesWithBase64Avatars = await Promise.all(
-      assignees.map(async (assignee) => {
-        if (assignee.avatar_url) {
-          const avatarBase64 = await imageUrlToBase64(assignee.avatar_url);
-          return { ...assignee, avatar_base64: avatarBase64 };
-        }
-        return assignee;
-      })
-    );
+    
+    // Use avatar URLs directly (they're already public)
+    const assigneesWithAvatars = assignees.map((assignee) => ({
+      ...assignee,
+      avatar_url: assignee.avatar_url || 'https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/default-avatar.png'
+    }));
 
     // Fetch comments
     const { data: commentsData } = await supabaseClient
@@ -491,16 +475,16 @@ serve(async (req) => {
     const attachments = attachmentsData || [];
 
     // Generate email HTML
-    console.log('Generating email with assignees:', assigneesWithBase64Avatars);
+    console.log('Generating email with assignees:', assigneesWithAvatars);
     const emailHtml = await generateEmailHTML(
       task,
       task.columns,
-      assigneesWithBase64Avatars,
+      assigneesWithAvatars,
       attachments,
       task.columns.board_id,
       language,
       personalMessage,
-      logoBase64
+      logoUrl
     );
     console.log('Email HTML length:', emailHtml.length);
 
