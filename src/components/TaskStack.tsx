@@ -31,14 +31,17 @@ export const TaskStack = ({
       let totalHeight = 0;
       let visibleTaskCount = 0;
       
-      // Reserve only 20px for the bottom padding instead of 80px
-      const reservedSpace = 20;
+      // Reserve 100px for stack preview (80px stack + 20px badge space)
+      const stackPreviewHeight = 100;
       
       for (let i = 0; i < taskElements.length; i++) {
         const taskHeight = taskElements[i].clientHeight;
         const gap = 12; // gap-3 = 12px
         
-        if (totalHeight + taskHeight > containerHeight - reservedSpace) {
+        // Check if this task would fit, considering we need space for stack preview
+        const spaceNeeded = totalHeight + taskHeight + (i < taskElements.length - 1 ? stackPreviewHeight : 0);
+        
+        if (spaceNeeded > containerHeight) {
           break;
         }
         
