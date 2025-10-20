@@ -2024,9 +2024,14 @@ const Board = () => {
         position: maxPosition + 1
       };
       
+      console.log('Moving to column:', targetColumn.name, 'Type:', targetColumn.column_type, 'Task due_date before:', draggedTask.due_date);
+      
       if (targetColumn.column_type === 'completed') {
         updateData.due_date = null;
+        console.log('Clearing due_date because column type is completed');
       }
+      
+      console.log('Update data:', updateData);
       
       const {
         error
