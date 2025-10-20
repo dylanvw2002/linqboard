@@ -31,6 +31,7 @@ import { ColumnManagement } from "@/components/ColumnManagement";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
+import { TaskStack } from "@/components/TaskStack";
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
 import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
@@ -2665,7 +2666,7 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <div className="space-y-2.5">
+              <TaskStack maxVisibleTasks={4} stackOffset={5}>
                 {getColumnTasks(column.id).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
@@ -2723,7 +2724,7 @@ const Board = () => {
                     </div>
                   </article>;
                   })}
-              </div>
+              </TaskStack>
             </div>
           </section>;
           })}
