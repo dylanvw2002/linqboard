@@ -8,6 +8,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+async function imageUrlToBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch image');
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = base64Encode(arrayBuffer);
+    
+    // Determine MIME type from URL
+    const ext = url.split('.').pop()?.toLowerCase();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+    
+    return `data:${mimeType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return '';
+  }
+}
+
 const EMAIL_TEMPLATE = `<!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -130,7 +148,7 @@ async function generateEmailHTML(
   assignees: any[],
   reminderType: 'due_today' | 'overdue',
   boardUrl: string,
-  logoUrl: string
+  logoBase64: string
 ): Promise<string> {
   // Priority configuration
   const priorityConfig = {
@@ -157,11 +175,21 @@ async function generateEmailHTML(
       .substring(0, 2);
   };
   
-  // Generate assignees HTML - using direct URLs instead of base64
-  const assigneesHtml = assignees.length > 0 
-    ? assignees.map(a => {
-        const avatarContent = a.avatar_url
-          ? `<img src="${a.avatar_url}" alt="${a.full_name}" width="44" height="44" style="display:block;width:44px;height:44px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);" />`
+  // Convert assignee avatars to base64 and generate HTML
+  const assigneesWithBase64 = await Promise.all(
+    assignees.map(async (a) => {
+      if (a.avatar_url) {
+        const avatarBase64 = await imageUrlToBase64(a.avatar_url);
+        return { ...a, avatar_base64: avatarBase64 };
+      }
+      return a;
+    })
+  );
+  
+  const assigneesHtml = assigneesWithBase64.length > 0 
+    ? assigneesWithBase64.map(a => {
+        const avatarContent = a.avatar_base64
+          ? `<img src="${a.avatar_base64}" alt="${a.full_name}" width="44" height="44" style="display:block;width:44px;height:44px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);" />`
           : `<div style="width:44px;height:44px;line-height:44px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#c4b5fd);color:#fff;font-weight:700;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(139,92,246,0.3);text-align:center;">${getInitials(a.full_name)}</div>`;
         
         return `
@@ -194,7 +222,7 @@ async function generateEmailHTML(
 
   // Replace all placeholders
   let html = EMAIL_TEMPLATE
-    .replace(/{{logoBase64}}/g, logoUrl || '')
+    .replace(/{{logoBase64}}/g, logoBase64 || '')
     .replace(/{{priorityBg}}/g, priorityData.bg)
     .replace(/{{priorityFg}}/g, priorityData.fg)
     .replace(/{{priorityLabel}}/g, priorityData.label)
@@ -334,6 +362,7 @@ serve(async (req) => {
     // Generate email HTML
     const boardUrl = `https://linqboard.io/board/${task.column.board.id}`;
     const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
+    const logoBase64 = await imageUrlToBase64(logoUrl);
     
     const emailHtml = await generateEmailHTML(
       task,
@@ -341,7 +370,7 @@ serve(async (req) => {
       assignees,
       reminderType,
       boardUrl,
-      logoUrl
+      logoBase64
     );
 
     // Send email

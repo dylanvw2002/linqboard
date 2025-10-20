@@ -46,12 +46,18 @@ serve(async (req) => {
     console.log('Checking for tasks due today:', todayISO);
     console.log('Checking for overdue tasks from:', yesterdayISO);
 
-    // Find all tasks due today (reminders will be sent every 2 hours)
+    // Find tasks due today that haven't been reminded
     const { data: dueTodayTasks, error: dueTodayError } = await supabase
       .from('tasks')
       .select('id, title, due_date')
       .gte('due_date', todayISO)
-      .lt('due_date', new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString());
+      .lt('due_date', new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString())
+      .not('id', 'in', 
+        supabase
+          .from('task_deadline_reminders')
+          .select('task_id')
+          .eq('reminder_type', 'due_today')
+      );
 
     if (dueTodayError) {
       console.error('Error fetching due today tasks:', dueTodayError);
@@ -59,11 +65,18 @@ serve(async (req) => {
       console.log(`Found ${dueTodayTasks?.length || 0} tasks due today`);
     }
 
-    // Find all overdue tasks (any task with due_date before today)
+    // Find tasks overdue from yesterday that haven't been reminded
     const { data: overdueTasks, error: overdueError } = await supabase
       .from('tasks')
       .select('id, title, due_date')
-      .lt('due_date', todayISO);
+      .gte('due_date', yesterdayISO)
+      .lt('due_date', todayISO)
+      .not('id', 'in',
+        supabase
+          .from('task_deadline_reminders')
+          .select('task_id')
+          .eq('reminder_type', 'overdue')
+      );
 
     if (overdueError) {
       console.error('Error fetching overdue tasks:', overdueError);
