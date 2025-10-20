@@ -317,7 +317,7 @@ serve(async (req) => {
       language 
     }: TaskExportRequest = await req.json();
 
-    console.log('Exporting task (v2 - direct URLs):', { taskId, recipientEmails, memberUserIds, language });
+    console.log('[V3-DIRECT-URLS] Exporting task:', { taskId, recipientEmails, memberUserIds, language });
 
     // Validate input
     if (!taskId) {
