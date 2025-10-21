@@ -26,6 +26,10 @@ export const TaskStack = ({
       if (!containerRef.current) return;
       
       const container = containerRef.current;
+      
+      // Force a layout reflow to ensure we get updated dimensions
+      void container.offsetHeight;
+      
       const containerHeight = availableHeight || container.clientHeight;
       
       // Calculate how many tasks fit in the visible area
@@ -42,7 +46,10 @@ export const TaskStack = ({
       
       // Bereken hoeveel taken passen in de beschikbare ruimte
       for (let i = 0; i < taskElements.length; i++) {
-        const taskHeight = taskElements[i].clientHeight;
+        const element = taskElements[i] as HTMLElement;
+        // Force reflow for each task element
+        void element.offsetHeight;
+        const taskHeight = element.clientHeight;
         const gap = 12; // gap-3 = 12px
         
         // Check if adding this task would exceed available height
@@ -58,15 +65,21 @@ export const TaskStack = ({
       setIsOverflowing(visibleTaskCount < taskElements.length && visibleTaskCount > 0);
     };
 
-    // Add small delay to allow DOM to update after availableHeight change
+    // Use double requestAnimationFrame to ensure browser has finished layout
     const timeoutId = setTimeout(() => {
-      checkOverflow();
-    }, 50);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          checkOverflow();
+        });
+      });
+    }, 100);
     
     window.addEventListener('resize', checkOverflow);
     
     // Use ResizeObserver for better detection
-    const resizeObserver = new ResizeObserver(checkOverflow);
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(() => checkOverflow());
+    });
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
