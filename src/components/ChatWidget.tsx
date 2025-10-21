@@ -41,29 +41,51 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
 
   useEffect(() => {
     checkSubscription();
-    loadMessages();
-
-    // Set up realtime subscription for chat messages
-    const channel = supabase
-      .channel(`widget-chat-${widgetId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'widget_chat_messages',
-          filter: `widget_id=eq.${widgetId}`,
-        },
-        () => {
-          loadMessages();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [widgetId]);
+
+  useEffect(() => {
+    const setupRealtimeAndLoadMessages = async () => {
+      loadMessages();
+
+      // Set up realtime subscription for chat messages
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Create filter based on mode
+      let filter = `widget_id=eq.${widgetId}`;
+      if (widgetMode === 'private') {
+        filter += `,is_private=eq.true,user_id=eq.${session.user.id}`;
+      } else {
+        filter += `,is_private=eq.false`;
+      }
+
+      const channel = supabase
+        .channel(`widget-chat-${widgetId}-${widgetMode}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'widget_chat_messages',
+            filter,
+          },
+          () => {
+            loadMessages();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    };
+
+    const cleanup = setupRealtimeAndLoadMessages();
+    
+    return () => {
+      cleanup.then(cleanupFn => cleanupFn?.());
+    };
+  }, [widgetId, widgetMode]);
 
   const checkSubscription = async () => {
     try {
@@ -93,11 +115,24 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
 
   const loadMessages = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      let query = supabase
         .from("widget_chat_messages")
         .select("role, content, created_at, user_id")
-        .eq("widget_id", widgetId)
-        .order("created_at", { ascending: true });
+        .eq("widget_id", widgetId);
+      
+      // Filter based on mode
+      if (widgetMode === 'private') {
+        query = query.eq('is_private', true).eq('user_id', session.user.id);
+      } else {
+        query = query.eq('is_private', false);
+      }
+      
+      query = query.order("created_at", { ascending: true });
+      
+      const { data, error } = await query;
 
       if (error) throw error;
       
@@ -134,12 +169,21 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
         return;
       }
 
-      // Delete all messages from this user for this widget
-      const { error } = await supabase
+      // Delete messages based on mode
+      let deleteQuery = supabase
         .from('widget_chat_messages')
         .delete()
-        .eq('widget_id', widgetId)
-        .eq('user_id', session.user.id);
+        .eq('widget_id', widgetId);
+      
+      if (widgetMode === 'private') {
+        // Only delete own private messages
+        deleteQuery = deleteQuery.eq('user_id', session.user.id).eq('is_private', true);
+      } else {
+        // Only delete own general messages
+        deleteQuery = deleteQuery.eq('user_id', session.user.id).eq('is_private', false);
+      }
+      
+      const { error } = await deleteQuery;
 
       if (error) throw error;
 
@@ -194,7 +238,8 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
           body: JSON.stringify({
             widgetId,
             message: userMessage,
-            userName
+            userName,
+            isPrivate: widgetMode === 'private'
           }),
         }
       );

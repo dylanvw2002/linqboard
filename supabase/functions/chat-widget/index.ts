@@ -33,7 +33,7 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { widgetId, message, userName } = await req.json();
+    const { widgetId, message, userName, isPrivate = false } = await req.json();
 
     if (!widgetId || !message) {
       throw new Error('Missing widgetId or message');
@@ -106,11 +106,20 @@ serve(async (req) => {
       throw new Error('AI Chat is alleen beschikbaar voor organisaties met Team of Business abonnementen');
     }
 
-    // Get chat history
-    const { data: messages, error: messagesError } = await supabaseAdmin
+    // Get chat history - filter by privacy mode
+    let historyQuery = supabaseAdmin
       .from('widget_chat_messages')
       .select('role, content')
-      .eq('widget_id', widgetId)
+      .eq('widget_id', widgetId);
+    
+    // For private mode, only get user's own messages
+    if (isPrivate) {
+      historyQuery = historyQuery.eq('user_id', user.id).eq('is_private', true);
+    } else {
+      historyQuery = historyQuery.eq('is_private', false);
+    }
+    
+    const { data: messages, error: messagesError } = await historyQuery
       .order('created_at', { ascending: true })
       .limit(50);
 
@@ -127,6 +136,7 @@ serve(async (req) => {
         user_id: user.id,
         role: 'user',
         content: message,
+        is_private: isPrivate,
       });
 
     if (insertError) {
@@ -176,8 +186,10 @@ serve(async (req) => {
       .from('widget_chat_messages')
       .insert({
         widget_id: widgetId,
+        user_id: isPrivate ? user.id : null,
         role: 'assistant',
         content: assistantMessage,
+        is_private: isPrivate,
       });
 
     if (assistantInsertError) {

@@ -877,6 +877,7 @@ export type Database = {
           content: string
           created_at: string | null
           id: string
+          is_private: boolean
           role: string
           user_id: string | null
           widget_id: string
@@ -885,6 +886,7 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: string
+          is_private?: boolean
           role: string
           user_id?: string | null
           widget_id: string
@@ -893,6 +895,7 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: string
+          is_private?: boolean
           role?: string
           user_id?: string | null
           widget_id?: string
