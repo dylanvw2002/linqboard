@@ -188,7 +188,7 @@ export const TaskStack = ({
 
       {/* Dialog voor expanded view */}
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col bg-transparent border-none shadow-none">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
