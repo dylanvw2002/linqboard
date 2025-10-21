@@ -266,21 +266,8 @@ serve(async (req) => {
 
     console.log(`[REMINDER] Processing ${reminderType} reminder for task ${taskId}`);
 
-    // Check if reminder already sent
-    const { data: existingReminder } = await supabase
-      .from('task_deadline_reminders')
-      .select('id')
-      .eq('task_id', taskId)
-      .eq('reminder_type', reminderType)
-      .single();
-
-    if (existingReminder) {
-      console.log(`[REMINDER] Reminder already sent for task ${taskId}`);
-      return new Response(
-        JSON.stringify({ message: 'Reminder already sent' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Note: No duplicate check - reminders are sent every 2 hours regardless of previous sends
+    // This is intentional per user requirements
 
     // Get task with column and board info
     const { data: task, error: taskError } = await supabase
