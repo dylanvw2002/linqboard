@@ -1430,8 +1430,19 @@ const Board = () => {
 
     console.log('🔌 Setting up realtime subscriptions for board:', board.id);
 
+    // Get the current session and set auth for realtime
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.access_token) {
+        console.log('🔐 Setting realtime auth token');
+        supabase.realtime.setAuth(session.access_token);
+      }
+    });
+
+    // Use a unique channel name with timestamp to avoid conflicts
+    const channelName = `board-changes-${board.id}-${Date.now()}`;
+    
     const channel = supabase
-      .channel(`board-changes-${board.id}`)
+      .channel(channelName)
       .on("postgres_changes", {
         event: "*",
         schema: "public",
@@ -1464,28 +1475,28 @@ const Board = () => {
         schema: "public",
         table: "task_assignees"
       }, (payload) => {
-        console.log('Task assignee change detected:', payload);
-        // Check if this assignee change belongs to a task on this board
-        const taskId = (payload.new as any)?.task_id || (payload.old as any)?.task_id;
-        if (tasks.some(t => t.id === taskId)) {
-          fetchBoardData();
-        }
+        console.log('🔔 Task assignee change detected:', payload.eventType);
+        // Always refresh - the query will filter correctly
+        fetchBoardData();
       })
       .on("postgres_changes", {
         event: "*",
         schema: "public",
         table: "profiles"
       }, (payload) => {
-        console.log('Profile change detected:', payload);
-        // Only refresh if this profile is an org member
-        const userId = (payload.new as any)?.user_id || (payload.old as any)?.user_id;
-        if (orgMembers.some(m => m.user_id === userId)) {
-          fetchOrgMembers();
-          fetchBoardData();
-        }
+        console.log('🔔 Profile change detected:', payload.eventType);
+        // Always refresh both - they're cheap queries
+        fetchOrgMembers();
+        fetchBoardData();
       })
-      .subscribe((status) => {
-        console.log('Realtime subscription status:', status);
+      .subscribe((status, err) => {
+        console.log('🔌 Realtime subscription status:', status);
+        if (err) {
+          console.error('🔌 Realtime subscription error:', err);
+        }
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Successfully subscribed to realtime updates');
+        }
       });
 
     return () => {
