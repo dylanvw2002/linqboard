@@ -2671,9 +2671,7 @@ const Board = () => {
                 stackOffset={5}
                 availableHeight={
                   displayColumn.height - 
-                  (displayColumn.header_height || 60) - 
-                  (displayColumn.content_padding_top || 0) - 
-                  (displayColumn.content_padding_bottom || 0)
+                  (displayColumn.header_height || 60)
                 }
               >
                 {getColumnTasks(column.id).map(task => {
