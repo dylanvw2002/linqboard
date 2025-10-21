@@ -1111,11 +1111,15 @@ const Board = () => {
   };
   useEffect(() => {
     if (!board?.id || isDemo || columns.length === 0) return;
+    
+    console.log('Realtime subscription effect triggered, columns:', columns.length);
     const cleanup = setupRealtimeSubscriptions();
+    
     return () => {
+      console.log('Cleaning up realtime subscription');
       if (cleanup) cleanup();
     };
-  }, [board?.id, isDemo, columns.length]);
+  }, [board?.id, isDemo, columns]);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -1424,6 +1428,8 @@ const Board = () => {
   const setupRealtimeSubscriptions = () => {
     if (isDemo || !board?.id) return; // Disable realtime for demo
 
+    console.log('Setting up realtime subscriptions for board:', board.id, 'with columns:', columns.map(c => c.id));
+
     const channel = supabase
       .channel(`board-changes-${board.id}`)
       .on("postgres_changes", {
@@ -1440,17 +1446,22 @@ const Board = () => {
         schema: "public",
         table: "tasks"
       }, (payload) => {
-        console.log('Task change detected:', payload);
+        console.log('Task change detected, event type:', payload.eventType);
+        console.log('Task payload:', payload);
         
         // For DELETE events, check payload.old, for INSERT/UPDATE check payload.new
         const taskColumnId = (payload.new as any)?.column_id || (payload.old as any)?.column_id;
+        console.log('Task column_id:', taskColumnId);
+        console.log('Available columns:', columns.map(c => c.id));
+        
         const belongsToThisBoard = columns.some(col => col.id === taskColumnId);
+        console.log('Belongs to this board?', belongsToThisBoard);
         
         if (belongsToThisBoard) {
-          console.log('Task belongs to this board, refreshing...');
+          console.log('✓ Task belongs to this board, refreshing data...');
           fetchBoardData();
         } else {
-          console.log('Task does not belong to this board, column_id:', taskColumnId);
+          console.log('✗ Task does NOT belong to this board');
         }
       })
       .on("postgres_changes", {
