@@ -173,6 +173,8 @@ export const TaskStack = ({
             const reverseIndex = stackedTasks.length - 1 - index;
             const offset = reverseIndex * stackOffset;
             const scale = 1 - (reverseIndex * 0.02);
+            const isTopCard = reverseIndex === stackedTasks.length - 1;
+            const opacity = isTopCard ? 1 : 1 - (reverseIndex * 0.15);
             
             return (
               <div
@@ -183,7 +185,7 @@ export const TaskStack = ({
                 )}
                 style={{
                   transform: `translateY(-${offset}px) scale(${scale})`,
-                  opacity: 1,
+                  opacity,
                   zIndex: 10 + reverseIndex,
                   transformOrigin: 'bottom center',
                 }}
