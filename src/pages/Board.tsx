@@ -1119,7 +1119,7 @@ const Board = () => {
       console.log('🔌 Cleaning up realtime subscription');
       if (cleanup) cleanup();
     };
-  }, [board?.id, isDemo]);
+  }, [board?.id, isDemo, columns]);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
