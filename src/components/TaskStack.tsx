@@ -155,7 +155,7 @@ export const TaskStack = ({
       className="flex-1 pt-3.5 pb-1 relative"
     >
       {/* Visible tasks */}
-      <div className="grid gap-3 content-start pb-[20px]">
+      <div className="grid gap-3 content-start pb-[40px]">
         {visibleTasks.map((child, index) => (
           <div key={index} data-task-item>
             {child}
@@ -168,7 +168,7 @@ export const TaskStack = ({
         className="absolute bottom-1 left-0 right-0 cursor-pointer"
         onClick={handleStackClick}
       >
-        <div className="relative h-[80px]">
+        <div className="relative h-[100px]">
           {stackedTasks.map((child, index) => {
             const reverseIndex = stackedTasks.length - 1 - index;
             const offset = reverseIndex * stackOffset;
