@@ -1110,16 +1110,16 @@ const Board = () => {
     }
   };
   useEffect(() => {
-    if (!board?.id || isDemo || columns.length === 0) return;
+    if (!board?.id || isDemo) return;
     
-    console.log('Realtime subscription effect triggered, columns:', columns.length);
+    console.log('🔌 Setting up realtime subscription for board:', board.id);
     const cleanup = setupRealtimeSubscriptions();
     
     return () => {
-      console.log('Cleaning up realtime subscription');
+      console.log('🔌 Cleaning up realtime subscription');
       if (cleanup) cleanup();
     };
-  }, [board?.id, isDemo, columns]);
+  }, [board?.id, isDemo]);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -1426,9 +1426,9 @@ const Board = () => {
     }
   };
   const setupRealtimeSubscriptions = () => {
-    if (isDemo || !board?.id) return; // Disable realtime for demo
+    if (isDemo || !board?.id) return;
 
-    console.log('Setting up realtime subscriptions for board:', board.id, 'with columns:', columns.map(c => c.id));
+    console.log('🔌 Setting up realtime subscriptions for board:', board.id);
 
     const channel = supabase
       .channel(`board-changes-${board.id}`)
@@ -1438,7 +1438,7 @@ const Board = () => {
         table: "columns",
         filter: `board_id=eq.${board.id}`
       }, (payload) => {
-        console.log('Column change detected:', payload);
+        console.log('🔔 Column change detected:', payload.eventType);
         fetchBoardData();
       })
       .on("postgres_changes", {
@@ -1446,14 +1446,8 @@ const Board = () => {
         schema: "public",
         table: "tasks"
       }, (payload) => {
-        console.log('🔔 Task change detected!', {
-          event: payload.eventType,
-          new: payload.new,
-          old: payload.old
-        });
-        
-        // Temporarily: always refresh to test if DELETE events are received
-        console.log('🔄 Refreshing board data...');
+        console.log('🔔 Task change detected:', payload.eventType);
+        // Always refresh - fetchBoardData will only fetch tasks for this board's columns
         fetchBoardData();
       })
       .on("postgres_changes", {
