@@ -2666,7 +2666,16 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <TaskStack maxVisibleTasks={4} stackOffset={5}>
+              <TaskStack 
+                maxVisibleTasks={4} 
+                stackOffset={5}
+                availableHeight={
+                  displayColumn.height - 
+                  (displayColumn.header_height || 60) - 
+                  (displayColumn.content_padding_top || 0) - 
+                  (displayColumn.content_padding_bottom || 0)
+                }
+              >
                 {getColumnTasks(column.id).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;

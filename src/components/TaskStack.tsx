@@ -6,13 +6,15 @@ interface TaskStackProps {
   maxVisibleTasks?: number;
   stackOffset?: number;
   onTaskClick?: (index: number) => void;
+  availableHeight?: number;
 }
 
 export const TaskStack = ({ 
   children, 
   maxVisibleTasks = 4, 
   stackOffset = 5,
-  onTaskClick 
+  onTaskClick,
+  availableHeight
 }: TaskStackProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -24,7 +26,7 @@ export const TaskStack = ({
       if (!containerRef.current) return;
       
       const container = containerRef.current;
-      const containerHeight = container.clientHeight;
+      const containerHeight = availableHeight || container.clientHeight;
       
       // Calculate how many tasks fit in the visible area
       const taskElements = container.querySelectorAll('[data-task-item]');
