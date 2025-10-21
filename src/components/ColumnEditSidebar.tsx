@@ -53,7 +53,6 @@ export const ColumnEditSidebar = ({
         height: editedColumn.height,
         header_height: editedColumn.header_height,
         header_width: editedColumn.header_width,
-        content_padding_top: editedColumn.content_padding_top,
         content_padding_right: editedColumn.content_padding_right,
         content_padding_bottom: editedColumn.content_padding_bottom,
         content_padding_left: editedColumn.content_padding_left,

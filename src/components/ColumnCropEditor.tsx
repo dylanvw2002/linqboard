@@ -22,7 +22,6 @@ interface ColumnCropEditorProps {
 
 export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditorProps) => {
   const [headerHeight, setHeaderHeight] = useState(column.header_height || 60);
-  const [paddingTop, setPaddingTop] = useState(column.content_padding_top || 0);
   const [paddingRight, setPaddingRight] = useState(column.content_padding_right || 0);
   const [paddingBottom, setPaddingBottom] = useState(column.content_padding_bottom || 0);
   const [paddingLeft, setPaddingLeft] = useState(column.content_padding_left || 0);
@@ -37,7 +36,6 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
     const startY = e.clientY;
     const startX = e.clientX;
     const startHeaderHeight = headerHeight;
-    const startPaddingTop = paddingTop;
     const startPaddingRight = paddingRight;
     const startPaddingBottom = paddingBottom;
     const startPaddingLeft = paddingLeft;
@@ -49,9 +47,6 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
       switch (handle) {
         case 'header':
           setHeaderHeight(Math.max(40, Math.min(200, startHeaderHeight + deltaY)));
-          break;
-        case 'padding-top':
-          setPaddingTop(Math.max(0, Math.min(100, startPaddingTop + deltaY)));
           break;
         case 'padding-bottom':
           setPaddingBottom(Math.max(0, Math.min(100, startPaddingBottom - deltaY)));
@@ -78,7 +73,7 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
   const handleApply = () => {
     onChange({
       header_height: headerHeight,
-      content_padding_top: paddingTop,
+      content_padding_top: 0,
       content_padding_right: paddingRight,
       content_padding_bottom: paddingBottom,
       content_padding_left: paddingLeft,
@@ -86,7 +81,7 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
     onClose();
   };
 
-  const contentTop = headerHeight + paddingTop;
+  const contentTop = headerHeight;
   const contentBottom = column.height - paddingBottom;
   const contentLeft = paddingLeft;
   const contentRight = column.width - paddingRight;
@@ -138,31 +133,8 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
                 <div className="w-8 h-1 bg-yellow-700 rounded-full"></div>
               </div>
 
-            {/* Top padding area (red) */}
-            {paddingTop > 0 && (
-              <div 
-                className="absolute bg-red-500/10 border border-red-500/30"
-                style={{
-                  top: `${headerHeight}px`,
-                  height: `${paddingTop}px`,
-                  left: 0,
-                  right: 0
-                }}
-              />
-            )}
-
-              {/* Top padding resize handle */}
-              <div 
-                className={`absolute left-0 right-0 h-3 bg-green-500/50 hover:bg-green-500 cursor-ns-resize transition-colors z-10 flex items-center justify-center ${activeHandle === 'padding-top' ? 'bg-green-500 h-4' : ''}`}
-                style={{ top: `${contentTop - 6}px` }}
-                onMouseDown={(e) => startResize('padding-top', e)}
-                title="Sleep om boven padding aan te passen"
-              >
-                <div className="w-8 h-1 bg-green-700 rounded-full"></div>
-              </div>
-
               {/* Active content area (green) */}
-              <div 
+              <div
                 className="absolute bg-green-500/20 border-2 border-green-500 flex items-center justify-center text-green-700 dark:text-green-500 font-semibold text-center text-xs pointer-events-none"
                 style={{
                   top: `${contentTop}px`,
@@ -254,10 +226,6 @@ export const ColumnCropEditor = ({ column, onClose, onChange }: ColumnCropEditor
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Header:</span>
                   <span className="font-mono">{headerHeight}px</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Padding Boven:</span>
-                  <span className="font-mono">{paddingTop}px</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Padding Rechts:</span>
