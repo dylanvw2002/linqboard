@@ -30,6 +30,13 @@ export const TaskStack = ({
       
       // Calculate how many tasks fit in the visible area
       const taskElements = container.querySelectorAll('[data-task-item]');
+      
+      // Wait for DOM to update if not all task elements are present yet
+      if (taskElements.length === 0 || taskElements.length < children.length) {
+        requestAnimationFrame(() => checkOverflow());
+        return;
+      }
+      
       let totalHeight = 0;
       let visibleTaskCount = 0;
       
@@ -59,7 +66,11 @@ export const TaskStack = ({
       setIsOverflowing(children.length > visibleTaskCount && children.length > 3);
     };
 
-    checkOverflow();
+    // Add small delay to allow DOM to update after availableHeight change
+    const timeoutId = setTimeout(() => {
+      checkOverflow();
+    }, 50);
+    
     window.addEventListener('resize', checkOverflow);
     
     // Use ResizeObserver for better detection
@@ -69,6 +80,7 @@ export const TaskStack = ({
     }
     
     return () => {
+      clearTimeout(timeoutId);
       window.removeEventListener('resize', checkOverflow);
       resizeObserver.disconnect();
     };
@@ -106,8 +118,12 @@ export const TaskStack = ({
         ref={containerRef}
         className={cn(
           "flex-1 pt-3.5 pb-1 grid gap-3 content-start transition-all duration-300",
-          isExpanded && "overflow-y-auto list"
+          isExpanded && "overflow-y-scroll px-2 -mx-2"
         )}
+        style={isExpanded ? {
+          overflowClipMargin: '20px',
+          scrollbarWidth: 'thin'
+        } : undefined}
       >
         {children.map((child, index) => (
           <div 
