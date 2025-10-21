@@ -40,19 +40,13 @@ export const TaskStack = ({
       let totalHeight = 0;
       let visibleTaskCount = 0;
       
-      // Reserve minimal space at bottom for stack preview
-      const stackPreviewReserve = 100;
-      
+      // Stap 1: Bereken hoeveel taken passen zonder stack preview
       for (let i = 0; i < taskElements.length; i++) {
         const taskHeight = taskElements[i].clientHeight;
         const gap = 12; // gap-3 = 12px
         
         // Check if adding this task would exceed available height
-        // Reserve space for stack preview only if there are more tasks after this
-        const hasMoreTasks = i < taskElements.length - 1;
-        const availableSpace = hasMoreTasks ? containerHeight - stackPreviewReserve : containerHeight;
-        
-        if (totalHeight + taskHeight > availableSpace) {
+        if (totalHeight + taskHeight > containerHeight) {
           break;
         }
         
@@ -60,8 +54,22 @@ export const TaskStack = ({
         visibleTaskCount++;
       }
       
+      // Stap 2: Als niet alle taken passen, check ruimte voor stack preview
+      // De stack preview is 80px hoog (regel 164) + wat extra ruimte (totaal ~100px)
+      const needsStacking = visibleTaskCount < taskElements.length;
+      
+      if (needsStacking) {
+        const stackPreviewHeight = 100;
+        
+        // Als de laatste visible task geen ruimte laat voor stack preview, 
+        // verwijder deze en voeg hem toe aan de stack
+        if (totalHeight > containerHeight - stackPreviewHeight) {
+          visibleTaskCount = Math.max(0, visibleTaskCount - 1);
+        }
+      }
+      
       setVisibleCount(visibleTaskCount);
-      setIsOverflowing(children.length > visibleTaskCount && visibleTaskCount < children.length);
+      setIsOverflowing(visibleTaskCount < taskElements.length && visibleTaskCount > 0);
     };
 
     // Add small delay to allow DOM to update after availableHeight change
