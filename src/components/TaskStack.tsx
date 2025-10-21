@@ -188,12 +188,12 @@ export const TaskStack = ({
 
       {/* Dialog voor expanded view */}
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-visible flex flex-col">
           <DialogHeader>
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto flex-1 px-2 -mx-2" style={{ scrollbarWidth: 'thin' }}>
-            <div className="grid gap-3 pb-2">
+          <div className="overflow-y-auto flex-1 px-6 -mx-6" style={{ scrollbarWidth: 'thin' }}>
+            <div className="grid gap-3 pb-2 px-4">
               {children.map((child, index) => (
                 <div 
                   key={index} 
