@@ -192,8 +192,8 @@ export const TaskStack = ({
           <DialogHeader>
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto flex-1 px-6 -mx-6" style={{ scrollbarWidth: 'thin' }}>
-            <div className="grid gap-3 pb-2 px-4">
+          <div className="overflow-y-auto flex-1 px-6 -mx-6 py-4" style={{ scrollbarWidth: 'thin' }}>
+            <div className="grid gap-3 py-2 px-4">
               {children.map((child, index) => (
                 <div 
                   key={index} 
