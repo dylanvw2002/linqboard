@@ -122,8 +122,8 @@ export const TaskStack = ({
       <div 
         ref={containerRef}
         className={cn(
-          "flex-1 pt-3.5 pb-1 grid gap-3 content-start transition-all duration-300",
-          isExpanded && "overflow-y-scroll px-2 -mx-2"
+          "flex-1 pt-3.5 grid gap-3 content-start transition-all duration-300",
+          isExpanded ? "overflow-y-scroll px-2 -mx-2 pb-6" : "pb-1"
         )}
         style={isExpanded ? {
           overflowClipMargin: '20px',
