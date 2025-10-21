@@ -1115,7 +1115,7 @@ const Board = () => {
     return () => {
       if (cleanup) cleanup();
     };
-  }, [board?.id, isDemo, columns, tasks, orgMembers]);
+  }, [board?.id, isDemo, columns.length]);
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -1441,13 +1441,16 @@ const Board = () => {
         table: "tasks"
       }, (payload) => {
         console.log('Task change detected:', payload);
-        // Check if this task belongs to a column on this board
-        const belongsToThisBoard = columns.some(col => 
-          col.id === (payload.new as any)?.column_id || 
-          col.id === (payload.old as any)?.column_id
-        );
+        
+        // For DELETE events, check payload.old, for INSERT/UPDATE check payload.new
+        const taskColumnId = (payload.new as any)?.column_id || (payload.old as any)?.column_id;
+        const belongsToThisBoard = columns.some(col => col.id === taskColumnId);
+        
         if (belongsToThisBoard) {
+          console.log('Task belongs to this board, refreshing...');
           fetchBoardData();
+        } else {
+          console.log('Task does not belong to this board, column_id:', taskColumnId);
         }
       })
       .on("postgres_changes", {
