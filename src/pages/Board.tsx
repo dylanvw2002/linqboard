@@ -1446,23 +1446,15 @@ const Board = () => {
         schema: "public",
         table: "tasks"
       }, (payload) => {
-        console.log('Task change detected, event type:', payload.eventType);
-        console.log('Task payload:', payload);
+        console.log('🔔 Task change detected!', {
+          event: payload.eventType,
+          new: payload.new,
+          old: payload.old
+        });
         
-        // For DELETE events, check payload.old, for INSERT/UPDATE check payload.new
-        const taskColumnId = (payload.new as any)?.column_id || (payload.old as any)?.column_id;
-        console.log('Task column_id:', taskColumnId);
-        console.log('Available columns:', columns.map(c => c.id));
-        
-        const belongsToThisBoard = columns.some(col => col.id === taskColumnId);
-        console.log('Belongs to this board?', belongsToThisBoard);
-        
-        if (belongsToThisBoard) {
-          console.log('✓ Task belongs to this board, refreshing data...');
-          fetchBoardData();
-        } else {
-          console.log('✗ Task does NOT belong to this board');
-        }
+        // Temporarily: always refresh to test if DELETE events are received
+        console.log('🔄 Refreshing board data...');
+        fetchBoardData();
       })
       .on("postgres_changes", {
         event: "*",
