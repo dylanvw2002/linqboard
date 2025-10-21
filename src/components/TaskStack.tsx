@@ -72,7 +72,7 @@ export const TaskStack = ({
       window.removeEventListener('resize', checkOverflow);
       resizeObserver.disconnect();
     };
-  }, [children.length]);
+  }, [children.length, availableHeight]);
 
   const handleStackClick = (e: React.MouseEvent) => {
     e.stopPropagation();
