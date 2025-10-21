@@ -49,7 +49,7 @@ export const SimpleTaskCard = ({
     <div
       onClick={onClick}
       className={cn(
-        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-3.5 cursor-pointer transition-transform duration-200 will-change-transform hover:-translate-y-2 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-200 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-3.5 cursor-pointer transition-transform duration-150 will-change-transform hover:-translate-y-2 transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
         glowGradient,
         glowShadow,
         isOverdue && "animate-overdue-glow"
@@ -80,7 +80,7 @@ export const SimpleTaskCard = ({
             return (
               <Tooltip key={assignee.user_id} delayDuration={200}>
                 <TooltipTrigger asChild>
-                  <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-transform duration-150 will-change-transform shadow-lg" style={{ marginLeft: idx > 0 ? '-14px' : '0' }}>
+                  <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: idx > 0 ? '-14px' : '0' }}>
                     <AvatarImage src={assignee.avatar_url || undefined} />
                     <AvatarFallback className="text-base font-black bg-gradient-to-br from-primary to-primary/70 text-white">
                       {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
@@ -96,7 +96,7 @@ export const SimpleTaskCard = ({
           {assignees.length > 3 && (
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-base font-black text-white cursor-pointer hover:scale-110 transition-transform duration-150 will-change-transform shadow-lg" style={{ marginLeft: '-14px' }}>
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-base font-black text-white cursor-pointer hover:scale-110 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: '-14px' }}>
                   +{assignees.length - 3}
                 </div>
               </TooltipTrigger>
