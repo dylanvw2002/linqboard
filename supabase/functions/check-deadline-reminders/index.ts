@@ -43,17 +43,19 @@ serve(async (req) => {
 
     console.log(`[CHECK] Starting deadline reminder check at ${amsterdamTime.toISOString()}...`);
 
-    const today = new Date(amsterdamTime.getFullYear(), amsterdamTime.getMonth(), amsterdamTime.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+    // Create dates in Amsterdam timezone, properly formatted
+    const todayStart = new Date(amsterdamTime.getFullYear(), amsterdamTime.getMonth(), amsterdamTime.getDate());
+    const todayEnd = new Date(todayStart);
+    todayEnd.setDate(todayEnd.getDate() + 1);
+    
+    const todayStartISO = todayStart.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const todayEndISO = todayEnd.toISOString().split('T')[0];
 
-    const todayISO = today.toISOString();
-    const yesterdayISO = yesterday.toISOString();
+    console.log(`[QUERY] Checking for tasks due on ${todayStartISO} (Amsterdam date)`);
+    console.log(`[QUERY] Date range: ${todayStartISO} to ${todayEndISO}`);
 
-    console.log('Checking for tasks due today:', todayISO);
-    console.log('Checking for overdue tasks from:', yesterdayISO);
-
-    // Find all tasks due today (reminders will be sent every 2 hours) - excluding completed tasks
+    // Find all tasks due TODAY (reminders will be sent every 2 hours) - excluding completed tasks
+    // Note: We use date comparison (YYYY-MM-DD) to match tasks where due_date falls on today's date
     const { data: dueTodayTasks, error: dueTodayError } = await supabase
       .from('tasks')
       .select(`
@@ -64,14 +66,14 @@ serve(async (req) => {
           column_type
         )
       `)
-      .gte('due_date', todayISO)
-      .lt('due_date', new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString())
+      .gte('due_date', todayStartISO)
+      .lt('due_date', todayEndISO)
       .neq('columns.column_type', 'completed');
 
     if (dueTodayError) {
-      console.error('Error fetching due today tasks:', dueTodayError);
+      console.error('[ERROR] Error fetching due today tasks:', dueTodayError);
     } else {
-      console.log(`Found ${dueTodayTasks?.length || 0} active tasks due today (excluding completed)`);
+      console.log(`[RESULT] Found ${dueTodayTasks?.length || 0} active tasks due TODAY (${todayStartISO})`);
     }
 
     // Find all overdue tasks (any task with due_date before today) - excluding completed tasks
@@ -85,13 +87,13 @@ serve(async (req) => {
           column_type
         )
       `)
-      .lt('due_date', todayISO)
+      .lt('due_date', todayStartISO)
       .neq('columns.column_type', 'completed');
 
     if (overdueError) {
-      console.error('Error fetching overdue tasks:', overdueError);
+      console.error('[ERROR] Error fetching overdue tasks:', overdueError);
     } else {
-      console.log(`Found ${overdueTasks?.length || 0} active overdue tasks (excluding completed)`);
+      console.log(`[RESULT] Found ${overdueTasks?.length || 0} active overdue tasks (before ${todayStartISO})`);
     }
 
     const results = {
