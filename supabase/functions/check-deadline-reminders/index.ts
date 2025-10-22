@@ -12,12 +12,22 @@ serve(async (req) => {
   }
 
   try {
-    // Check if current time is within business hours (8:00 - 17:00 Amsterdam time)
+    console.log(`[INIT] Function started at ${new Date().toISOString()}`);
+    
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    console.log(`[ENV] SUPABASE_URL: ${supabaseUrl ? '✓' : '✗ MISSING'}`);
+    console.log(`[ENV] SERVICE_KEY: ${supabaseServiceKey ? '✓' : '✗ MISSING'}`);
+    
+    // Check if current time is within business hours (8:00 - 18:00 Amsterdam time)
     const now = new Date();
     const amsterdamTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' }));
     const currentHour = amsterdamTime.getHours();
     
-    if (currentHour < 8 || currentHour >= 17) {
+    console.log(`[TIME] Amsterdam time: ${amsterdamTime.toISOString()}, Hour: ${currentHour}`);
+    
+    if (currentHour < 8 || currentHour >= 18) {
       console.log(`[TIME-CHECK] Outside business hours (${currentHour}:00). Skipping check.`);
       return new Response(
         JSON.stringify({ 
@@ -28,9 +38,6 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -46,29 +53,45 @@ serve(async (req) => {
     console.log('Checking for tasks due today:', todayISO);
     console.log('Checking for overdue tasks from:', yesterdayISO);
 
-    // Find all tasks due today (reminders will be sent every 2 hours)
+    // Find all tasks due today (reminders will be sent every 2 hours) - excluding completed tasks
     const { data: dueTodayTasks, error: dueTodayError } = await supabase
       .from('tasks')
-      .select('id, title, due_date')
+      .select(`
+        id, 
+        title, 
+        due_date,
+        columns!inner (
+          column_type
+        )
+      `)
       .gte('due_date', todayISO)
-      .lt('due_date', new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString());
+      .lt('due_date', new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString())
+      .neq('columns.column_type', 'completed');
 
     if (dueTodayError) {
       console.error('Error fetching due today tasks:', dueTodayError);
     } else {
-      console.log(`Found ${dueTodayTasks?.length || 0} tasks due today`);
+      console.log(`Found ${dueTodayTasks?.length || 0} active tasks due today (excluding completed)`);
     }
 
-    // Find all overdue tasks (any task with due_date before today)
+    // Find all overdue tasks (any task with due_date before today) - excluding completed tasks
     const { data: overdueTasks, error: overdueError } = await supabase
       .from('tasks')
-      .select('id, title, due_date')
-      .lt('due_date', todayISO);
+      .select(`
+        id, 
+        title, 
+        due_date,
+        columns!inner (
+          column_type
+        )
+      `)
+      .lt('due_date', todayISO)
+      .neq('columns.column_type', 'completed');
 
     if (overdueError) {
       console.error('Error fetching overdue tasks:', overdueError);
     } else {
-      console.log(`Found ${overdueTasks?.length || 0} overdue tasks`);
+      console.log(`Found ${overdueTasks?.length || 0} active overdue tasks (excluding completed)`);
     }
 
     const results = {
@@ -148,9 +171,12 @@ serve(async (req) => {
     }
 
     console.log('Deadline reminder check completed');
+    console.log(`- Active tasks due today found: ${dueTodayTasks?.length || 0}`);
+    console.log(`- Active overdue tasks found: ${overdueTasks?.length || 0}`);
     console.log(`- Due today reminders sent: ${results.due_today.length}`);
     console.log(`- Overdue reminders sent: ${results.overdue.length}`);
     console.log(`- Errors: ${results.errors.length}`);
+    console.log(`- Note: Tasks without assignees are skipped by send-deadline-reminder`);
 
     return new Response(
       JSON.stringify({ 

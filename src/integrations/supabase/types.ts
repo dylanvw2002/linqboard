@@ -1024,6 +1024,10 @@ export type Database = {
         Args: { _operation: string }
         Returns: undefined
       }
+      trigger_deadline_reminders_manual: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       user_can_view_membership: {
         Args: { _membership_id: string; _user_id: string }
         Returns: boolean
