@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import aiChatBot from "@/assets/ai-chat-bot.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -292,13 +293,16 @@ export const ChatWidget = ({ widgetId, boardName, onSizeChange }: ChatWidgetProp
   if (isCollapsed) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Button 
+        <button 
           onClick={() => toggleCollapsed(false)}
-          size="lg"
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-90 hover:scale-110 transition-all shadow-lg"
+          className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-r from-primary to-accent hover:scale-110 transition-all shadow-lg cursor-pointer border-0 p-0"
         >
-          <MessageSquare className="h-6 w-6" />
-        </Button>
+          <img 
+            src={aiChatBot} 
+            alt="AI Chat" 
+            className="w-full h-full object-cover"
+          />
+        </button>
       </div>
     );
   }
