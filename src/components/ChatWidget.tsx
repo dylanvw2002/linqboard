@@ -28,15 +28,24 @@ interface Message {
 interface ChatWidgetProps {
   widgetId: string;
   boardName: string;
+  onSizeChange?: (width: number, height: number) => void;
 }
 
-export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
+export const ChatWidget = ({ widgetId, boardName, onSizeChange }: ChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const toggleCollapsed = (collapsed: boolean) => {
+    setIsCollapsed(collapsed);
+    if (onSizeChange) {
+      // Collapsed: 80x80, Expanded: 400x500
+      onSizeChange(collapsed ? 80 : 400, collapsed ? 80 : 500);
+    }
+  };
 
   useEffect(() => {
     checkSubscription();
@@ -284,7 +293,7 @@ export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
     return (
       <div className="flex items-center justify-center h-full">
         <Button 
-          onClick={() => setIsCollapsed(false)}
+          onClick={() => toggleCollapsed(false)}
           size="lg"
           className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-90 hover:scale-110 transition-all shadow-lg"
         >
@@ -330,7 +339,7 @@ export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
             variant="ghost"
             size="icon"
             className="h-8 w-8"
-            onClick={() => setIsCollapsed(true)}
+            onClick={() => toggleCollapsed(true)}
           >
             <Minimize2 className="h-4 w-4" />
           </Button>

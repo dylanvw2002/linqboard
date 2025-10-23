@@ -24,6 +24,7 @@ interface WidgetContainerProps {
   resizeHandle: string | null;
   isEditMode: boolean;
   isDragging: boolean;
+  onSizeChange?: (widgetId: string, width: number, height: number) => void;
 }
 
 export const WidgetContainer = ({
@@ -36,6 +37,7 @@ export const WidgetContainer = ({
   resizeHandle,
   isEditMode,
   isDragging,
+  onSizeChange,
 }: WidgetContainerProps) => {
   const renderWidgetContent = () => {
     switch (widget.widget_type) {
@@ -44,6 +46,11 @@ export const WidgetContainer = ({
           <ChatWidget 
             widgetId={widget.id} 
             boardName={boardName}
+            onSizeChange={(width, height) => {
+              if (onSizeChange) {
+                onSizeChange(widget.id, width, height);
+              }
+            }}
           />
         );
       default:

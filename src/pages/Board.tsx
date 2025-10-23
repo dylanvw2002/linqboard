@@ -940,8 +940,8 @@ const Board = () => {
           widget_type: widgetType,
           x_position: 100,
           y_position: 100,
-          width: 400,
-          height: 500,
+          width: widgetType === 'chat' ? 80 : 400,
+          height: widgetType === 'chat' ? 80 : 500,
         })
         .select()
         .single();
@@ -2522,6 +2522,9 @@ const Board = () => {
             onResizeMouseDown={startWidgetResize}
             resizeHandle={widgetResizeHandle}
             isEditMode={editMode}
+            onSizeChange={(widgetId, width, height) => {
+              handleUpdateWidget(widgetId, { width, height });
+            }}
             isDragging={draggedWidget?.id === widget.id}
           />
         ))}
