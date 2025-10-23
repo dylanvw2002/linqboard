@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, Trash2 } from "lucide-react";
+import { Send, Bot, User, Trash2, MessageSquare, Minimize2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -28,15 +28,14 @@ interface Message {
 interface ChatWidgetProps {
   widgetId: string;
   boardName: string;
-  widgetMode: 'general' | 'private';
-  onModeChange: (mode: 'general' | 'private') => void;
 }
 
-export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: ChatWidgetProps) => {
+export const ChatWidget = ({ widgetId, boardName }: ChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,20 +46,14 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
     const setupRealtimeAndLoadMessages = async () => {
       loadMessages();
 
-      // Set up realtime subscription for chat messages
+      // Set up realtime subscription for chat messages (always private)
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Create filter based on mode
-      let filter = `widget_id=eq.${widgetId}`;
-      if (widgetMode === 'private') {
-        filter += `,is_private=eq.true,user_id=eq.${session.user.id}`;
-      } else {
-        filter += `,is_private=eq.false`;
-      }
+      const filter = `widget_id=eq.${widgetId},is_private=eq.true,user_id=eq.${session.user.id}`;
 
       const channel = supabase
-        .channel(`widget-chat-${widgetId}-${widgetMode}`)
+        .channel(`widget-chat-${widgetId}-private`)
         .on(
           'postgres_changes',
           {
@@ -85,7 +78,7 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
     return () => {
       cleanup.then(cleanupFn => cleanupFn?.());
     };
-  }, [widgetId, widgetMode]);
+  }, [widgetId]);
 
   const checkSubscription = async () => {
     try {
@@ -118,19 +111,14 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      let query = supabase
+      // Always load private messages
+      const query = supabase
         .from("widget_chat_messages")
         .select("role, content, created_at, user_id")
-        .eq("widget_id", widgetId);
-      
-      // Filter based on mode
-      if (widgetMode === 'private') {
-        query = query.eq('is_private', true).eq('user_id', session.user.id);
-      } else {
-        query = query.eq('is_private', false);
-      }
-      
-      query = query.order("created_at", { ascending: true });
+        .eq("widget_id", widgetId)
+        .eq('is_private', true)
+        .eq('user_id', session.user.id)
+        .order("created_at", { ascending: true });
       
       const { data, error } = await query;
 
@@ -169,21 +157,13 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
         return;
       }
 
-      // Delete messages based on mode
-      let deleteQuery = supabase
+      // Always delete only own private messages
+      const { error } = await supabase
         .from('widget_chat_messages')
         .delete()
-        .eq('widget_id', widgetId);
-      
-      if (widgetMode === 'private') {
-        // Only delete own private messages
-        deleteQuery = deleteQuery.eq('user_id', session.user.id).eq('is_private', true);
-      } else {
-        // Only delete own general messages
-        deleteQuery = deleteQuery.eq('user_id', session.user.id).eq('is_private', false);
-      }
-      
-      const { error } = await deleteQuery;
+        .eq('widget_id', widgetId)
+        .eq('user_id', session.user.id)
+        .eq('is_private', true);
 
       if (error) throw error;
 
@@ -239,7 +219,7 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
             widgetId,
             message: userMessage,
             userName,
-            isPrivate: widgetMode === 'private'
+            isPrivate: true
           }),
         }
       );
@@ -277,21 +257,17 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
 
   if (!hasAccess) {
     return (
-      <div className="flex flex-col h-full relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] shadow-[0_8px_24px_rgba(2,6,23,0.08)]">
-        <div className="flex items-center justify-between p-3 border-b border-white/30 dark:border-white/20 bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-[26px] relative z-10">
-          <div className="flex items-center gap-2">
-            <Bot className="w-5 h-5 text-primary" />
-            <h3 className="font-semibold text-sm">{boardName} Assistent</h3>
-          </div>
-        </div>
-        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center relative z-10">
-          <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center mb-4">
+      <div className="flex items-center justify-center h-full">
+        <div className="flex flex-col items-center gap-4 text-center p-6">
+          <div className="w-16 h-16 rounded-full bg-yellow-500/10 flex items-center justify-center">
             <Bot className="w-8 h-8 text-yellow-500" />
           </div>
-          <h3 className="font-semibold text-lg mb-2">AI Chat Assistent</h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            Deze functie is alleen beschikbaar voor Team en Business abonnementen.
-          </p>
+          <div>
+            <h3 className="font-semibold text-lg mb-2">AI Chat Assistent</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Deze functie is alleen beschikbaar voor Team en Business abonnementen.
+            </p>
+          </div>
           <Button 
             onClick={() => window.location.href = '/pricing'}
             className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
@@ -303,12 +279,28 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
     );
   }
 
+  // Collapsed state - show only button
+  if (isCollapsed) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Button 
+          onClick={() => setIsCollapsed(false)}
+          size="lg"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-accent hover:opacity-90 hover:scale-110 transition-all shadow-lg"
+        >
+          <MessageSquare className="h-6 w-6" />
+        </Button>
+      </div>
+    );
+  }
+
+  // Expanded state - full chat interface
   return (
     <div className="flex flex-col h-full relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] shadow-[0_8px_24px_rgba(2,6,23,0.08)] before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
       <div className="flex items-center justify-between p-3 border-b border-white/30 dark:border-white/20 bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-[26px] relative z-10">
         <div className="flex items-center gap-2">
           <Bot className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-sm">{boardName} Assistent</h3>
+          <h3 className="font-semibold text-sm">🔒 AI Chat Assistent</h3>
         </div>
         <div className="flex items-center gap-2">
           <AlertDialog>
@@ -325,7 +317,7 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
               <AlertDialogHeader>
                 <AlertDialogTitle>Chat wissen?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Dit verwijdert al jouw berichten in deze chat. Deze actie kan niet ongedaan worden gemaakt.
+                  Dit verwijdert al jouw privé berichten in deze chat. Deze actie kan niet ongedaan worden gemaakt.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -334,16 +326,14 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <button
-            onClick={() => onModeChange(widgetMode === 'general' ? 'private' : 'general')}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-              widgetMode === 'general'
-                ? 'bg-primary/20 text-primary border border-primary/30'
-                : 'bg-muted text-muted-foreground border border-border'
-            }`}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setIsCollapsed(true)}
           >
-            {widgetMode === 'general' ? '👥 Algemeen' : '🔒 Privé'}
-          </button>
+            <Minimize2 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -351,7 +341,7 @@ export const ChatWidget = ({ widgetId, boardName, widgetMode, onModeChange }: Ch
         <div className="space-y-4">
           {messages.length === 0 && (
             <div className="text-center text-muted-foreground text-sm py-8">
-              Start een gesprek met de AI assistent!
+              Start een privé gesprek met de AI assistent!
             </div>
           )}
           {messages.map((message, index) => (

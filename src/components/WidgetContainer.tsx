@@ -21,7 +21,6 @@ interface WidgetContainerProps {
   onDragStart: (e: React.DragEvent, widget: Widget) => void;
   onDragEnd: () => void;
   onResizeMouseDown: (e: React.MouseEvent, widget: Widget, handle: string) => void;
-  onModeChange: (widgetId: string, mode: 'general' | 'private') => void;
   resizeHandle: string | null;
   isEditMode: boolean;
   isDragging: boolean;
@@ -34,7 +33,6 @@ export const WidgetContainer = ({
   onDragStart,
   onDragEnd,
   onResizeMouseDown,
-  onModeChange,
   resizeHandle,
   isEditMode,
   isDragging,
@@ -46,8 +44,6 @@ export const WidgetContainer = ({
           <ChatWidget 
             widgetId={widget.id} 
             boardName={boardName}
-            widgetMode={(widget as any).mode || 'private'}
-            onModeChange={(mode) => onModeChange(widget.id, mode)}
           />
         );
       default:
