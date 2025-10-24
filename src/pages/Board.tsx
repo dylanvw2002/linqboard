@@ -2523,7 +2523,18 @@ const Board = () => {
             resizeHandle={widgetResizeHandle}
             isEditMode={editMode}
             onSizeChange={(widgetId, width, height, x, y) => {
-              handleUpdateWidget(widgetId, { width, height, x_position: x, y_position: y });
+              // Check if this is a chat widget collapse/expand (don't save to DB, only update local state)
+              const isChatCollapseExpand = (width === 56 && height === 56) || (width === 400 && height === 500);
+              
+              if (isChatCollapseExpand) {
+                // Only update local state, don't save to database
+                setWidgets(widgets.map(w => 
+                  w.id === widgetId ? { ...w, width, height, x_position: x, y_position: y } : w
+                ));
+              } else {
+                // Normal widget resize, save to database
+                handleUpdateWidget(widgetId, { width, height, x_position: x, y_position: y });
+              }
             }}
             isDragging={draggedWidget?.id === widget.id}
           />

@@ -39,11 +39,22 @@ export const ChatWidget = ({ widgetId, boardName, x, y, onSizeChange }: ChatWidg
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Get initial collapsed state from localStorage (per user, per widget)
+  const getStorageKey = () => `chat-widget-collapsed-${widgetId}`;
+  
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const stored = localStorage.getItem(getStorageKey());
+    return stored ? JSON.parse(stored) : true;
+  });
 
   const toggleCollapsed = (collapsed: boolean) => {
     setIsCollapsed(collapsed);
+    // Store in localStorage instead of updating database
+    localStorage.setItem(getStorageKey(), JSON.stringify(collapsed));
+    
+    // Still notify parent of size change for UI positioning
     if (onSizeChange) {
       if (collapsed) {
         // Collapsing: 400x500 -> 56x56, move right and down
