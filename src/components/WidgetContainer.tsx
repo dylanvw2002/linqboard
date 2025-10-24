@@ -58,20 +58,14 @@ export const WidgetContainer = ({
     }
   };
 
-  // Check if this is a collapsed chat widget (56x56px)
-  const isCollapsedChat = widget.widget_type === "chat" && widget.width === 56 && widget.height === 56;
-
   return (
     <div
       className={cn(
-        "absolute transition-all",
-        // Only apply container styling when NOT collapsed chat
-        !isCollapsedChat && "shadow-2xl rounded-lg border-2 bg-card border-border",
-        isCollapsedChat && "overflow-visible", // Let the button handle its own styling
-        !isCollapsedChat && "overflow-hidden",
+        "absolute shadow-2xl rounded-lg overflow-hidden border-2 transition-all",
         isDragging && "opacity-50",
         isEditMode && !isDragging && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl",
-        !isEditMode && "cursor-default"
+        !isEditMode && "cursor-default",
+        "bg-card border-border"
       )}
       style={{
         left: `${widget.x_position}px`,
@@ -83,7 +77,7 @@ export const WidgetContainer = ({
       onDragStart={(e) => isEditMode && onDragStart(e, widget)}
       onDragEnd={onDragEnd}
     >
-      {isEditMode && !isCollapsedChat && (
+      {isEditMode && (
         <div className="absolute top-0 left-0 right-0 h-8 bg-primary/10 backdrop-blur-sm flex items-center justify-between px-2 z-10">
           <div className="text-xs font-medium text-muted-foreground cursor-grab active:cursor-grabbing">
             ⋮⋮ Widget slepen
@@ -102,7 +96,7 @@ export const WidgetContainer = ({
           </Button>
         </div>
       )}
-      {isEditMode && !isCollapsedChat && (
+      {isEditMode && (
         <ResizeHandles
           mode="column"
           onMouseDown={(e, handle) => onResizeMouseDown(e, widget, handle)}
@@ -110,7 +104,7 @@ export const WidgetContainer = ({
           headerHeight={0}
         />
       )}
-      <div className={cn("h-full", isEditMode && !isCollapsedChat && "pt-8")}>
+      <div className={cn("h-full", isEditMode && "pt-8")}>
         {renderWidgetContent()}
       </div>
     </div>

@@ -43,8 +43,8 @@ export const ChatWidget = ({ widgetId, boardName, onSizeChange }: ChatWidgetProp
   const toggleCollapsed = (collapsed: boolean) => {
     setIsCollapsed(collapsed);
     if (onSizeChange) {
-      // Collapsed: 56x56 (exact button size), Expanded: 400x500
-      onSizeChange(collapsed ? 56 : 400, collapsed ? 56 : 500);
+      // Collapsed: 80x80, Expanded: 400x500
+      onSizeChange(collapsed ? 80 : 400, collapsed ? 80 : 500);
     }
   };
 
@@ -289,19 +289,21 @@ export const ChatWidget = ({ widgetId, boardName, onSizeChange }: ChatWidgetProp
     );
   }
 
-  // Collapsed state - widget IS the button (56x56px)
+  // Collapsed state - show only button
   if (isCollapsed) {
     return (
-      <button 
-        onClick={() => toggleCollapsed(false)}
-        className="w-full h-full rounded-full overflow-hidden bg-gradient-to-r from-primary to-accent hover:scale-110 transition-all shadow-lg cursor-pointer border-0 p-0"
-      >
-        <img 
-          src={aiChatBot} 
-          alt="AI Chat" 
-          className="w-full h-full object-cover"
-        />
-      </button>
+      <div className="flex items-center justify-center h-full">
+        <button 
+          onClick={() => toggleCollapsed(false)}
+          className="w-14 h-14 rounded-full overflow-hidden bg-gradient-to-r from-primary to-accent hover:scale-110 transition-all shadow-lg cursor-pointer border-0 p-0"
+        >
+          <img 
+            src={aiChatBot} 
+            alt="AI Chat" 
+            className="w-full h-full object-cover"
+          />
+        </button>
+      </div>
     );
   }
 
