@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
@@ -926,11 +927,27 @@ const Board = () => {
     }
   };
   
-  const handleAddWidget = async (widgetType: 'chat' | 'notes' | 'calculator' | 'timer') => {
+  const handleAddWidget = async (
+    widgetType: "chat" | "notes" | "timer" | "weather" | "calculator" | "quick-links" | "team-status" | "spotify"
+  ) => {
     if (isDemo) {
       toast.info('Widgets uitgeschakeld in demo mode');
       return;
     }
+    
+    // Default afmetingen per widget type
+    const defaultSizes = {
+      chat: { width: 56, height: 56 },
+      notes: { width: 300, height: 400 },
+      timer: { width: 250, height: 250 },
+      weather: { width: 300, height: 200 },
+      calculator: { width: 250, height: 350 },
+      'quick-links': { width: 300, height: 400 },
+      'team-status': { width: 280, height: 350 },
+      spotify: { width: 300, height: 380 },
+    };
+    
+    const size = defaultSizes[widgetType];
     
     try {
       const { data, error } = await supabase
@@ -940,8 +957,9 @@ const Board = () => {
           widget_type: widgetType,
           x_position: 100,
           y_position: 100,
-          width: widgetType === 'chat' ? 56 : 400,
-          height: widgetType === 'chat' ? 56 : 500,
+          width: size.width,
+          height: size.height,
+          settings: {},
         })
         .select()
         .single();
