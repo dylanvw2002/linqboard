@@ -29,10 +29,12 @@ interface Message {
 interface ChatWidgetProps {
   widgetId: string;
   boardName: string;
-  onSizeChange?: (width: number, height: number) => void;
+  x: number;
+  y: number;
+  onSizeChange?: (width: number, height: number, x: number, y: number) => void;
 }
 
-export const ChatWidget = ({ widgetId, boardName, onSizeChange }: ChatWidgetProps) => {
+export const ChatWidget = ({ widgetId, boardName, x, y, onSizeChange }: ChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -43,8 +45,13 @@ export const ChatWidget = ({ widgetId, boardName, onSizeChange }: ChatWidgetProp
   const toggleCollapsed = (collapsed: boolean) => {
     setIsCollapsed(collapsed);
     if (onSizeChange) {
-      // Collapsed: 56x56, Expanded: 400x500
-      onSizeChange(collapsed ? 56 : 400, collapsed ? 56 : 500);
+      if (collapsed) {
+        // Collapsing: 400x500 -> 56x56, move right and down
+        onSizeChange(56, 56, x + 344, y + 444);
+      } else {
+        // Expanding: 56x56 -> 400x500, move left and up
+        onSizeChange(400, 500, x - 344, y - 444);
+      }
     }
   };
 

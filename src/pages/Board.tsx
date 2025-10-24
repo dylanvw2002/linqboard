@@ -2522,8 +2522,8 @@ const Board = () => {
             onResizeMouseDown={startWidgetResize}
             resizeHandle={widgetResizeHandle}
             isEditMode={editMode}
-            onSizeChange={(widgetId, width, height) => {
-              handleUpdateWidget(widgetId, { width, height });
+            onSizeChange={(widgetId, width, height, x, y) => {
+              handleUpdateWidget(widgetId, { width, height, x_position: x, y_position: y });
             }}
             isDragging={draggedWidget?.id === widget.id}
           />
