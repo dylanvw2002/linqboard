@@ -66,7 +66,7 @@ export const WidgetContainer = ({
   return (
     <div
       className={cn(
-        "absolute transition-all",
+        "absolute transition-all z-20",
         !isCollapsedChat && "shadow-2xl rounded-lg border-2 bg-card border-border",
         isCollapsedChat ? "overflow-visible" : "overflow-hidden",
         isDragging && "opacity-50",
