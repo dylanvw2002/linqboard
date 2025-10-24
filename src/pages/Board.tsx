@@ -2982,10 +2982,59 @@ const Board = () => {
               <Plus className="h-4 w-4" />
               {t('board.addColumn')}
             </Button>
-            <Button onClick={() => handleAddWidget('chat')} size="sm" variant="outline" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              AI Chat Widget
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline" className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Widget toevoegen
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Widgets</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('chat')}>
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  AI Chat Assistent
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('notes')}>
+                  <StickyNote className="mr-2 h-4 w-4" />
+                  Notitieblok
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('timer')}>
+                  <Clock className="mr-2 h-4 w-4" />
+                  Timer
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('weather')}>
+                  <Cloud className="mr-2 h-4 w-4" />
+                  Weer
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('calculator')}>
+                  <Calculator className="mr-2 h-4 w-4" />
+                  Rekenmachine
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('quick-links')}>
+                  <Link className="mr-2 h-4 w-4" />
+                  Snelkoppelingen
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('team-status')}>
+                  <Users className="mr-2 h-4 w-4" />
+                  Team Status
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('spotify')}>
+                  <Music className="mr-2 h-4 w-4" />
+                  Spotify Player
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>}
 

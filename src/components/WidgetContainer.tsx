@@ -1,5 +1,12 @@
 import React from "react";
 import { ChatWidget } from "./ChatWidget";
+import { NotesWidget } from "./widgets/NotesWidget";
+import { TimerWidget } from "./widgets/TimerWidget";
+import { WeatherWidget } from "./widgets/WeatherWidget";
+import { CalculatorWidget } from "./widgets/CalculatorWidget";
+import { QuickLinksWidget } from "./widgets/QuickLinksWidget";
+import { TeamStatusWidget } from "./widgets/TeamStatusWidget";
+import { SpotifyWidget } from "./widgets/SpotifyWidget";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -7,11 +14,13 @@ import { ResizeHandles } from "./ResizeHandles";
 
 interface Widget {
   id: string;
-  widget_type: "chat" | "notes" | "calculator" | "timer";
+  widget_type: "chat" | "notes" | "timer" | "weather" | "calculator" | "quick-links" | "team-status" | "spotify";
   x_position: number;
   y_position: number;
   width: number;
   height: number;
+  board_id: string;
+  settings?: any;
 }
 
 interface WidgetContainerProps {
@@ -55,6 +64,20 @@ export const WidgetContainer = ({
             }}
           />
         );
+      case "notes":
+        return <NotesWidget widgetId={widget.id} settings={widget.settings} />;
+      case "timer":
+        return <TimerWidget widgetId={widget.id} settings={widget.settings} />;
+      case "weather":
+        return <WeatherWidget widgetId={widget.id} settings={widget.settings} />;
+      case "calculator":
+        return <CalculatorWidget widgetId={widget.id} />;
+      case "quick-links":
+        return <QuickLinksWidget widgetId={widget.id} settings={widget.settings} />;
+      case "team-status":
+        return <TeamStatusWidget widgetId={widget.id} boardId={widget.board_id} />;
+      case "spotify":
+        return <SpotifyWidget widgetId={widget.id} settings={widget.settings} />;
       default:
         return <div className="p-4">Widget type: {widget.widget_type}</div>;
     }

@@ -965,14 +965,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      check_member_limit: {
-        Args: { _org_id: string }
-        Returns: boolean
-      }
-      check_organization_limit: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
+      check_member_limit: { Args: { _org_id: string }; Returns: boolean }
+      check_organization_limit: { Args: { _user_id: string }; Returns: boolean }
       check_rate_limit: {
         Args: {
           _max_requests: number
@@ -982,14 +976,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      generate_invite_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_invoice_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      generate_invite_code: { Args: never; Returns: string }
+      generate_invoice_number: { Args: never; Returns: string }
       get_org_member_emails: {
         Args: { _org_id: string }
         Returns: {
@@ -1024,10 +1012,7 @@ export type Database = {
         Args: { _operation: string }
         Returns: undefined
       }
-      trigger_deadline_reminders_manual: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
+      trigger_deadline_reminders_manual: { Args: never; Returns: Json }
       user_can_view_membership: {
         Args: { _membership_id: string; _user_id: string }
         Returns: boolean
