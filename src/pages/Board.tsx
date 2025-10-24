@@ -940,8 +940,8 @@ const Board = () => {
           widget_type: widgetType,
           x_position: 100,
           y_position: 100,
-          width: widgetType === 'chat' ? 80 : 400,
-          height: widgetType === 'chat' ? 80 : 500,
+          width: widgetType === 'chat' ? 56 : 400,
+          height: widgetType === 'chat' ? 56 : 500,
         })
         .select()
         .single();
