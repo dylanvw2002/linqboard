@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
@@ -38,7 +38,7 @@ import { ColumnType } from "@/lib/columnTypes";
 import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
 import { TeamMemberSelect } from "@/components/TeamMemberSelect";
 import { WidgetContainer } from "@/components/WidgetContainer";
-import { MessageSquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 interface Column {
   id: string;
   name: string;
@@ -622,6 +622,13 @@ const Board = () => {
     email: string;
   }>>([]);
   const [isLandscape, setIsLandscape] = useState<boolean>(window.innerWidth > window.innerHeight);
+  
+  // Filter state
+  const [filterAssignee, setFilterAssignee] = useState<string | null>(null);
+  const [filterPriority, setFilterPriority] = useState<"low" | "medium" | "high" | null>(null);
+  const [filterDeadline, setFilterDeadline] = useState<"overdue" | "today" | "this-week" | "no-deadline" | null>(null);
+  const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+  
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -641,6 +648,48 @@ const Board = () => {
         return nl;
     }
   };
+  
+  // Filter tasks function
+  const filterTasks = (tasks: Task[]) => {
+    return tasks.filter(task => {
+      if (filterAssignee) {
+        if (filterAssignee === "unassigned") {
+          if (task.assignees && task.assignees.length > 0) return false;
+        } else {
+          const hasAssignee = task.assignees?.some(a => a.user_id === filterAssignee);
+          if (!hasAssignee) return false;
+        }
+      }
+      
+      if (filterPriority && task.priority !== filterPriority) {
+        return false;
+      }
+      
+      if (filterDeadline) {
+        const today = new Date();
+        const dueDate = task.due_date ? new Date(task.due_date) : null;
+        
+        if (filterDeadline === "no-deadline" && task.due_date) return false;
+        if (filterDeadline === "overdue" && (!dueDate || !isBefore(dueDate, today))) return false;
+        if (filterDeadline === "today" && (!dueDate || dueDate.toDateString() !== today.toDateString())) return false;
+        if (filterDeadline === "this-week") {
+          const weekEnd = addDays(today, 7);
+          if (!dueDate || dueDate < today || dueDate > weekEnd) return false;
+        }
+      }
+      
+      return true;
+    });
+  };
+  
+  // Update active filters count
+  useEffect(() => {
+    let count = 0;
+    if (filterAssignee) count++;
+    if (filterPriority) count++;
+    if (filterDeadline) count++;
+    setActiveFiltersCount(count);
+  }, [filterAssignee, filterPriority, filterDeadline]);
   const handleAddColumn = async () => {
     if (isDemo) {
       const visibleColumns = columns.filter(c => c.x_position < 1500);
@@ -928,7 +977,7 @@ const Board = () => {
   };
   
   const handleAddWidget = async (
-    widgetType: "chat" | "notes" | "timer" | "weather" | "calculator" | "quick-links" | "team-status" | "spotify"
+    widgetType: "chat" | "notes" | "timer" | "weather" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements"
   ) => {
     if (isDemo) {
       toast.info('Widgets uitgeschakeld in demo mode');
@@ -943,8 +992,9 @@ const Board = () => {
       weather: { width: 300, height: 200 },
       calculator: { width: 250, height: 350 },
       'quick-links': { width: 300, height: 400 },
-      'team-status': { width: 280, height: 350 },
-      spotify: { width: 300, height: 380 },
+      calendar: { width: 320, height: 400 },
+      notifications: { width: 300, height: 450 },
+      achievements: { width: 300, height: 350 },
     };
     
     const size = defaultSizes[widgetType];
@@ -3019,37 +3069,42 @@ const Board = () => {
                 
                 <DropdownMenuItem onClick={() => handleAddWidget('notes')}>
                   <StickyNote className="mr-2 h-4 w-4" />
-                  Notitieblok
+                  📝 Notities
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem onClick={() => handleAddWidget('timer')}>
                   <Clock className="mr-2 h-4 w-4" />
-                  Timer
+                  ⏱️ Timer
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={() => handleAddWidget('weather')}>
-                  <Cloud className="mr-2 h-4 w-4" />
-                  Weer
+                <DropdownMenuItem onClick={() => handleAddWidget('calendar')}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  📅 Kalender
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem onClick={() => handleAddWidget('calculator')}>
                   <Calculator className="mr-2 h-4 w-4" />
-                  Rekenmachine
+                  🧮 Rekenmachine
+                </DropdownMenuItem>
+                
+                <DropdownMenuItem onClick={() => handleAddWidget('achievements')}>
+                  <Trophy className="mr-2 h-4 w-4" />
+                  🏆 Achievement Badges
                 </DropdownMenuItem>
                 
                 <DropdownMenuItem onClick={() => handleAddWidget('quick-links')}>
                   <Link className="mr-2 h-4 w-4" />
-                  Snelkoppelingen
+                  🔗 Snelkoppelingen
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={() => handleAddWidget('team-status')}>
-                  <Users className="mr-2 h-4 w-4" />
-                  Team Status
+                <DropdownMenuItem onClick={() => handleAddWidget('notifications')}>
+                  <Bell className="mr-2 h-4 w-4" />
+                  🔔 Notificaties
                 </DropdownMenuItem>
                 
-                <DropdownMenuItem onClick={() => handleAddWidget('spotify')}>
-                  <Music className="mr-2 h-4 w-4" />
-                  Spotify Player
+                <DropdownMenuItem onClick={() => handleAddWidget('weather')}>
+                  <Cloud className="mr-2 h-4 w-4" />
+                  🌤️ Weer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
