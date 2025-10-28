@@ -81,7 +81,13 @@ const Pricing = () => {
     },
     plan_id: 'pro',
     popular: true,
-    features: [t('pricing.pro.feature1'), t('pricing.pro.feature2'), t('pricing.pro.feature3'), '❌ Geen AI Chat']
+    features: [
+      t('pricing.pro.feature1'), 
+      t('pricing.pro.feature2'), 
+      t('pricing.pro.feature3'),
+      t('pricing.pro.feature4'),
+      t('pricing.pro.feature5')
+    ]
   }, {
     name: t('pricing.team.name'),
     price: {
@@ -89,7 +95,14 @@ const Pricing = () => {
       yearly: 199.00
     },
     plan_id: 'team',
-    features: [t('pricing.team.feature1'), t('pricing.team.feature2'), t('pricing.team.feature3'), t('pricing.team.feature4'), '🤖 AI Chat Assistent']
+    features: [
+      t('pricing.team.feature1'), 
+      t('pricing.team.feature2'), 
+      t('pricing.team.feature3'), 
+      t('pricing.team.feature4'),
+      t('pricing.team.feature5'),
+      t('pricing.team.feature6')
+    ]
   }, {
     name: t('pricing.business.name'),
     price: {
@@ -97,7 +110,14 @@ const Pricing = () => {
       yearly: 390.00
     },
     plan_id: 'business',
-    features: [t('pricing.business.feature1'), t('pricing.business.feature2'), t('pricing.business.feature3'), t('pricing.business.feature4'), '🤖 AI Chat Assistent']
+    features: [
+      t('pricing.business.feature1'), 
+      t('pricing.business.feature2'), 
+      t('pricing.business.feature3'), 
+      t('pricing.business.feature4'),
+      t('pricing.business.feature5'),
+      t('pricing.business.feature6')
+    ]
   }];
   const handleSubscribe = async (plan: Plan) => {
     if (!user) {

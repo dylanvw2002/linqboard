@@ -501,21 +501,27 @@
       "name": "Pro",
       "feature1": "Tot 3 organisaties",
       "feature2": "Tot 8 teamleden per organisatie",
-      "feature3": "Real-time samenwerking"
+      "feature3": "Real-time samenwerking",
+      "feature4": "📝 Notities, ⏱️ Timer, 🧮 Calculator",
+      "feature5": "❌ Geen AI Chat"
     },
     "team": {
       "name": "Team",
       "feature1": "Tot 8 organisaties",
       "feature2": "Tot 20 teamleden per organisatie",
       "feature3": "Real-time samenwerking",
-      "feature4": "Achtergrond aanpassen"
+      "feature4": "Achtergrond aanpassen",
+      "feature5": "🤖 AI Chat + Alle Widgets",
+      "feature6": "📅 Kalender, 🔔 Notificaties, 🏆 Achievements"
     },
     "business": {
       "name": "Business",
       "feature1": "Onbeperkte organisaties",
       "feature2": "Onbeperkte teamleden",
       "feature3": "Real-time samenwerking",
-      "feature4": "Achtergrond aanpassen"
+      "feature4": "Achtergrond aanpassen",
+      "feature5": "🤖 AI Chat + Alle Widgets",
+      "feature6": "📅 Kalender, 🔔 Notificaties, 🏆 Achievements"
     }
   },
   "subscription": {

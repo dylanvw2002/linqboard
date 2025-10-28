@@ -499,21 +499,27 @@
       "name": "Pro",
       "feature1": "Up to 3 organizations",
       "feature2": "Up to 8 team members per organization",
-      "feature3": "Real-time collaboration"
+      "feature3": "Real-time collaboration",
+      "feature4": "📝 Notes, ⏱️ Timer, 🧮 Calculator",
+      "feature5": "❌ No AI Chat"
     },
     "team": {
       "name": "Team",
       "feature1": "Up to 8 organizations",
       "feature2": "Up to 20 team members per organization",
       "feature3": "Real-time collaboration",
-      "feature4": "Custom backgrounds"
+      "feature4": "Custom backgrounds",
+      "feature5": "🤖 AI Chat + All Widgets",
+      "feature6": "📅 Calendar, 🔔 Notifications, 🏆 Achievements"
     },
     "business": {
       "name": "Business",
       "feature1": "Unlimited organizations",
       "feature2": "Unlimited team members",
       "feature3": "Real-time collaboration",
-      "feature4": "Custom backgrounds"
+      "feature4": "Custom backgrounds",
+      "feature5": "🤖 AI Chat + All Widgets",
+      "feature6": "📅 Calendar, 🔔 Notifications, 🏆 Achievements"
     }
   },
   "subscription": {

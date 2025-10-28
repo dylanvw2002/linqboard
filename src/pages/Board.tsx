@@ -977,7 +977,7 @@ const Board = () => {
   };
   
   const handleAddWidget = async (
-    widgetType: "chat" | "notes" | "timer" | "weather" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements"
+    widgetType: "chat" | "notes" | "timer" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements"
   ) => {
     if (isDemo) {
       toast.info('Widgets uitgeschakeld in demo mode');
@@ -989,7 +989,6 @@ const Board = () => {
       chat: { width: 56, height: 56 },
       notes: { width: 300, height: 400 },
       timer: { width: 250, height: 250 },
-      weather: { width: 300, height: 200 },
       calculator: { width: 250, height: 350 },
       'quick-links': { width: 300, height: 400 },
       calendar: { width: 320, height: 400 },
@@ -3208,11 +3207,6 @@ const Board = () => {
                 <DropdownMenuItem onClick={() => handleAddWidget('notifications')}>
                   <Bell className="mr-2 h-4 w-4" />
                   🔔 Notificaties
-                </DropdownMenuItem>
-                
-                <DropdownMenuItem onClick={() => handleAddWidget('weather')}>
-                  <Cloud className="mr-2 h-4 w-4" />
-                  🌤️ Weer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

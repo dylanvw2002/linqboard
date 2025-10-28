@@ -499,21 +499,27 @@
       "name": "Pro",
       "feature1": "Bis zu 3 Organisationen",
       "feature2": "Bis zu 8 Teammitglieder pro Organisation",
-      "feature3": "Echtzeit-Zusammenarbeit"
+      "feature3": "Echtzeit-Zusammenarbeit",
+      "feature4": "📝 Notizen, ⏱️ Timer, 🧮 Rechner",
+      "feature5": "❌ Kein AI Chat"
     },
     "team": {
       "name": "Team",
       "feature1": "Bis zu 8 Organisationen",
       "feature2": "Bis zu 20 Teammitglieder pro Organisation",
       "feature3": "Echtzeit-Zusammenarbeit",
-      "feature4": "Anpassbare Hintergründe"
+      "feature4": "Anpassbare Hintergründe",
+      "feature5": "🤖 AI Chat + Alle Widgets",
+      "feature6": "📅 Kalender, 🔔 Benachrichtigungen, 🏆 Erfolge"
     },
     "business": {
       "name": "Business",
       "feature1": "Unbegrenzte Organisationen",
       "feature2": "Unbegrenzte Teammitglieder",
       "feature3": "Echtzeit-Zusammenarbeit",
-      "feature4": "Anpassbare Hintergründe"
+      "feature4": "Anpassbare Hintergründe",
+      "feature5": "🤖 AI Chat + Alle Widgets",
+      "feature6": "📅 Kalender, 🔔 Benachrichtigungen, 🏆 Erfolge"
     }
   },
   "subscription": {
