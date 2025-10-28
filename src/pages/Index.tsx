@@ -216,12 +216,12 @@ const Index = () => {
           </button>
 
           <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
-            <div className="flex touch-pan-y select-none">
+            <div className="flex touch-pan-y select-none will-change-transform">
               {[...features, ...features, ...features].map((feature, index) => {
               const Icon = feature.icon;
               return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_80%] md:flex-[0_0_340px] min-w-0 pl-2 pr-2 sm:pl-3 sm:pr-3 md:pl-4 md:pr-4 py-3 sm:py-4">
-                    <article className={`h-full p-4 sm:p-5 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl bg-card border border-border shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] active:shadow-[0_4px_16px_rgb(0,0,0,0.08)] transition-all duration-300 relative overflow-hidden touch-manipulation ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{
-                  transitionDelay: `${index * 100}ms`
+                    <article className={`h-full p-4 sm:p-5 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl bg-card border border-border shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] transition-shadow duration-300 relative overflow-hidden touch-manipulation animate-fade-in`} style={{
+                  animationDelay: `${(index % features.length) * 100}ms`
                 }}>
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
