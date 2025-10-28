@@ -85,11 +85,6 @@ const Index = () => {
                 <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-                <Link to="/pricing" className="hidden sm:block">
-                  <Button variant="ghost" size="default" className="text-sm sm:text-base">
-                    {t('pricing.title')}
-                  </Button>
-                </Link>
                 <LanguageSwitcher />
                 <Link to="/auth">
                   <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-1 sm:gap-2">
