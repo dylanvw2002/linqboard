@@ -85,18 +85,8 @@ const Index = () => {
                 <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-                <Link to="/pricing" className="hidden sm:block">
-                  <Button variant="ghost" size="default" className="text-sm sm:text-base">
-                    {t('pricing.title')}
-                  </Button>
-                </Link>
                 <LanguageSwitcher />
-                <Link to="/auth">
-                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-1 sm:gap-2">
-                    <LogIn className="h-4 w-4" />
-                    {t('auth.login')}
-                  </Button>
-                </Link>
+                
               </div>
             </nav>
           </div>
@@ -204,19 +194,11 @@ const Index = () => {
           <div className="hidden sm:block absolute right-0 top-[50px] bottom-0 w-20 lg:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
           
           {/* Navigation Arrows - Better mobile positioning */}
-          <button 
-            onClick={() => emblaApi?.scrollPrev()} 
-            className="absolute left-2 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" 
-            aria-label="Previous"
-          >
+          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-2 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" aria-label="Previous">
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
           
-          <button 
-            onClick={() => emblaApi?.scrollNext()} 
-            className="absolute right-2 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" 
-            aria-label="Next"
-          >
+          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-2 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" aria-label="Next">
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
 
@@ -226,7 +208,7 @@ const Index = () => {
               const Icon = feature.icon;
               return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_80%] md:flex-[0_0_340px] min-w-0 pl-2 pr-2 sm:pl-3 sm:pr-3 md:pl-4 md:pr-4 py-3 sm:py-4">
                     <article className={`h-full p-4 sm:p-5 md:p-6 lg:p-8 rounded-lg sm:rounded-xl md:rounded-2xl bg-card border border-border shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] transition-shadow duration-300 relative overflow-hidden touch-manipulation animate-fade-in`} style={{
-                  animationDelay: `${(index % features.length) * 100}ms`
+                  animationDelay: `${index % features.length * 100}ms`
                 }}>
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
@@ -279,26 +261,6 @@ const Index = () => {
               <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] col-span-2 md:col-span-1">
                 <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing CTA Section */}
-        <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
-          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-xl sm:shadow-2xl">
-            <div className="bg-card rounded-xl sm:rounded-2xl lg:rounded-3xl p-8 sm:p-12 md:p-16 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 md:mb-10 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight pb-2">
-                Klaar om te beginnen?
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
-                Kies het plan dat bij jouw team past. Van gratis tot enterprise.
-              </p>
-              <Link to="/pricing">
-                <Button size="lg" className="text-base sm:text-lg px-8 py-6 sm:px-10 sm:py-7 shadow-lg hover:shadow-xl transition-all">
-                  Bekijk prijzen
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
             </div>
           </div>
         </section>
