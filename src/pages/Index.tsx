@@ -85,6 +85,11 @@ const Index = () => {
                 <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
+                <Link to="/pricing" className="hidden sm:block">
+                  <Button variant="ghost" size="default" className="text-sm sm:text-base">
+                    {t('pricing.title')}
+                  </Button>
+                </Link>
                 <LanguageSwitcher />
                 <Link to="/auth">
                   <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-1 sm:gap-2">
@@ -274,6 +279,26 @@ const Index = () => {
               <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] col-span-2 md:col-span-1">
                 <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing CTA Section */}
+        <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
+          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-xl sm:shadow-2xl">
+            <div className="bg-card rounded-xl sm:rounded-2xl lg:rounded-3xl p-8 sm:p-12 md:p-16 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Klaar om te beginnen?
+              </h2>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
+                Kies het plan dat bij jouw team past. Van gratis tot enterprise.
+              </p>
+              <Link to="/pricing">
+                <Button size="lg" className="text-base sm:text-lg px-8 py-6 sm:px-10 sm:py-7 shadow-lg hover:shadow-xl transition-all">
+                  Bekijk prijzen
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
