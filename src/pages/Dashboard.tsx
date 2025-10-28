@@ -462,34 +462,34 @@ const Dashboard = () => {
 
       {/* Header */}
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
-        <div className="container mx-auto px-4 sm:px-6 py-0">
-          <div className="flex items-center justify-between gap-1 -my-[40px] sm:-my-[60px]">
-            <img src={logo} alt="LinqBoard Logo" className="h-32 sm:h-48 w-auto cursor-pointer" onClick={() => navigate("/")} />
-            <div className="flex items-center gap-2 sm:gap-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 max-w-7xl">
+          <div className="flex items-center justify-between gap-1 -my-[40px] sm:-my-[60px] lg:-my-[70px]">
+            <img src={logo} alt="LinqBoard Logo" className="h-32 sm:h-48 lg:h-56 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-5">
               <AdminVatReportLink />
               <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-full">
-                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                  <Button variant="ghost" size="icon" className="relative h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 rounded-full">
+                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 border-2 border-primary/20 hover:border-primary/50 transition-colors">
                       <AvatarImage src={avatarUrl || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-base sm:text-lg">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-base sm:text-lg lg:text-xl">
                         {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
-                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
+                <DropdownMenuContent align="end" className="w-56 lg:w-64 z-[100] bg-card">
+                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer lg:py-3 lg:text-base">
+                    <User className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
                     <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
-                  {subscriptionLimits?.plan !== 'free' && <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
-                      <FileText className="mr-2 h-4 w-4" />
+                  {subscriptionLimits?.plan !== 'free' && <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer lg:py-3 lg:text-base">
+                      <FileText className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
                       <span>Bekijk facturen</span>
                     </DropdownMenuItem>}
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive lg:py-3 lg:text-base">
+                    <LogOut className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
                     <span>{t('auth.logout')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -499,27 +499,27 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl">
         {/* Welcome Section */}
-        <div className="mb-8 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+        <div className="mb-8 sm:mb-12 lg:mb-16">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 sm:mb-4 lg:mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline-block pb-2 sm:pb-3 leading-tight">
               {t('dashboard.hello')} {userName || t('dashboard.hello')}
             </span>
-            <PartyPopper className="text-accent" size={40} />
+            <PartyPopper className="text-accent" size={48} />
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground">
             {t('dashboard.welcomeBack')}
           </p>
         </div>
 
         {/* Subscription Status Card */}
-        {subscriptionLimits && <Card className="mb-6 sm:mb-8 p-4 sm:p-6 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        {subscriptionLimits && <Card className="mb-6 sm:mb-8 lg:mb-12 p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-6">
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                  <h3 className="text-lg sm:text-xl font-bold">
+                <div className="flex items-center gap-2 lg:gap-3 mb-2 lg:mb-3">
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-bold">
                     {t('subscription.yourPlan')}: <span className="text-primary capitalize">{subscriptionLimits.plan}</span>
                   </h3>
                 </div>
@@ -568,90 +568,90 @@ const Dashboard = () => {
           </Card>}
 
         {/* Organizations */}
-        <div className="mb-8 sm:mb-12">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-2">
-            <h2 className="text-2xl sm:text-3xl font-bold">
+        <div className="mb-8 sm:mb-12 lg:mb-16">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 lg:mb-8 gap-2">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold">
               {t('dashboard.yourOrganizations')}
-              {subscriptionLimits && <span className="text-muted-foreground text-base sm:text-xl ml-2 sm:ml-3">
+              {subscriptionLimits && <span className="text-muted-foreground text-base sm:text-xl lg:text-2xl ml-2 sm:ml-3">
                   ({subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations})
                 </span>}
             </h2>
           </div>
           
-          {organizations.length === 0 ? <Card className="p-12 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
-              <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-6">
-                  <Plus className="h-10 w-10 text-primary" />
+          {organizations.length === 0 ? <Card className="p-12 lg:p-16 xl:p-20 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
+              <div className="max-w-md lg:max-w-lg mx-auto">
+                <div className="w-20 h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-6 lg:mb-8">
+                  <Plus className="h-10 w-10 lg:h-12 lg:w-12 text-primary" />
                 </div>
-                <p className="text-lg text-muted-foreground mb-6">
+                <p className="text-lg lg:text-xl text-muted-foreground mb-6 lg:mb-8">
                   {t('dashboard.noOrganizations')}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button size="lg" onClick={() => navigate("/create-organization")} className="shadow-lg hover:shadow-xl transition-all">
-                    <Plus className="mr-2 h-5 w-5" />
+                <div className="flex flex-col sm:flex-row gap-4 lg:gap-5 justify-center">
+                  <Button size="lg" onClick={() => navigate("/create-organization")} className="shadow-lg hover:shadow-xl transition-all lg:text-lg lg:h-14 lg:px-8">
+                    <Plus className="mr-2 h-5 w-5 lg:h-6 lg:w-6" />
                     {t('dashboard.createOrganization')}
                   </Button>
-                  <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
+                  <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2 lg:text-lg lg:h-14 lg:px-8">
                     {t('dashboard.joinOrganization')}
                   </Button>
                 </div>
               </div>
-            </Card> : <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {organizations.map(org => <Card key={org.id} className="p-8 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
+            </Card> : <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+              {organizations.map(org => <Card key={org.id} className="p-8 lg:p-10 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
-                    <Button variant="ghost" size="icon" className="absolute top-4 right-28 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-28 lg:top-5 lg:right-32 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 lg:h-10 lg:w-10" onClick={e => {
                       e.stopPropagation();
                       setEditBoardId(org.id);
                       setEditBoardName(org.name);
                       setEditBoardDialogOpen(true);
                     }}>
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4 lg:h-5 lg:w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="absolute top-4 right-16 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-16 lg:top-5 lg:right-20 text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 lg:h-10 lg:w-10" onClick={e => {
                       e.stopPropagation();
                       handleViewMembers(org.id, org.name);
                     }}>
-                      <Users className="h-4 w-4" />
+                      <Users className="h-4 w-4 lg:h-5 lg:w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-destructive hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-4 right-4 lg:top-5 lg:right-5 text-destructive hover:text-destructive hover:bg-destructive/10 z-10 lg:h-10 lg:w-10" onClick={e => {
               e.stopPropagation();
               setDeleteOrgId(org.id);
             }}>
-                      <Trash2 className="h-5 w-5" />
+                      <Trash2 className="h-5 w-5 lg:h-6 lg:w-6" />
                     </Button>
-                  </> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10" onClick={e => {
+                  </> : <Button variant="ghost" size="sm" className="absolute top-4 right-4 lg:top-5 lg:right-5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10 lg:text-base" onClick={e => {
               e.stopPropagation();
               setLeaveOrgId(org.id);
             }}>
                       {t('dashboard.leave')}
                     </Button>}
                   <div className="cursor-pointer" onClick={() => handleOpenBoard(org.id)}>
-                    <div className="mb-6">
-                      <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="mb-6 lg:mb-8">
+                      <h3 className="text-2xl lg:text-3xl font-bold mb-3 lg:mb-4 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
+                      <div className="flex items-center gap-2 text-sm lg:text-base text-muted-foreground">
                         <span>{t('common.code')}:</span>
-                        <span className="font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-lg">
+                        <span className="font-mono font-bold text-primary bg-primary/10 px-3 py-1 lg:px-4 lg:py-1.5 rounded-lg text-sm lg:text-base">
                           {org.invite_code}
                         </span>
                         {org.role === 'owner' && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 lg:h-9 lg:w-9 p-0"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleShareInviteLink(org.invite_code);
                             }}
                             title={t('dashboard.shareInviteLink')}
                           >
-                            <Share2 className="h-4 w-4" />
+                            <Share2 className="h-4 w-4 lg:h-5 lg:w-5" />
                           </Button>
                         )}
                       </div>
                     </div>
-                    <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105">
+                    <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105 lg:text-lg lg:h-12">
                       {t('dashboard.openBoard')}
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5" />
                     </Button>
                   </div>
                 </Card>)}
@@ -659,17 +659,17 @@ const Dashboard = () => {
         </div>
 
         {/* Quick actions */}
-        <div className="border-t border-border/50 py-10 my-[10px]">
-            <h3 className="text-xl font-semibold mb-4 text-muted-foreground">{t('dashboard.quickActions')}</h3>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
-                <Plus className="mr-2 h-5 w-5" />
+        <div className="border-t border-border/50 py-10 lg:py-14 my-[10px]">
+            <h3 className="text-xl lg:text-2xl font-semibold mb-4 lg:mb-6 text-muted-foreground">{t('dashboard.quickActions')}</h3>
+            <div className="flex flex-col sm:flex-row gap-4 lg:gap-5">
+              <Button size="lg" variant="outline" onClick={() => navigate("/create-organization")} className="border-2 lg:text-lg lg:h-14 lg:px-8" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
+                <Plus className="mr-2 h-5 w-5 lg:h-6 lg:w-6" />
                 {t('dashboard.newOrganization')}
               </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
+              <Button size="lg" variant="outline" onClick={() => navigate("/join-organization")} className="border-2 lg:text-lg lg:h-14 lg:px-8">
                 {t('dashboard.joinTeam')}
               </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2">
+              <Button size="lg" variant="outline" onClick={() => navigate("/pricing")} className="border-2 lg:text-lg lg:h-14 lg:px-8">
                 {t('subscription.viewPlans')}
               </Button>
             </div>

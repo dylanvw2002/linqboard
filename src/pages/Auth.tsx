@@ -129,7 +129,7 @@ const Auth = () => {
       setLoading(false);
     }
   };
-  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4 relative overflow-hidden">
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4 lg:p-6 relative overflow-hidden">
       {/* Subtle animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {confettiDots.map((dot) => (
@@ -144,7 +144,7 @@ const Auth = () => {
             }}
           >
             <div 
-              className="w-2 h-2 rounded-full"
+              className="w-2 h-2 lg:w-3 lg:h-3 rounded-full"
               style={{
                 backgroundColor: dot.color,
                 opacity: 0.4
@@ -155,39 +155,39 @@ const Auth = () => {
       </div>
 
       {/* Logo linksonder */}
-      <div className="absolute -bottom-8 left-2 sm:left-6 z-10">
-        <img src={logo} alt="LinqBoard" className="h-[100px] sm:h-[150px] w-auto opacity-80" />
+      <div className="absolute -bottom-8 left-2 sm:left-6 lg:left-10 z-10">
+        <img src={logo} alt="LinqBoard" className="h-[100px] sm:h-[150px] lg:h-[180px] w-auto opacity-80" />
       </div>
 
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-4 right-4 lg:top-6 lg:right-6 z-10">
         <LanguageSwitcher />
       </div>
-      <Card className="w-full max-w-md mx-4 sm:mx-0 shadow-xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
-        <div className="flex justify-center pt-6 sm:pt-8 pb-3 sm:pb-4">
-          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-56 w-auto" />
+      <Card className="w-full max-w-md lg:max-w-lg mx-4 sm:mx-0 shadow-xl lg:shadow-2xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
+        <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 pb-3 sm:pb-4 lg:pb-5">
+          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-56 lg:h-64 w-auto" />
         </div>
-        <CardHeader className="space-y-2 pt-2 px-4 sm:px-6">
-          <CardTitle className="text-2xl sm:text-3xl font-bold text-center">
+        <CardHeader className="space-y-2 lg:space-y-3 pt-2 px-4 sm:px-6 lg:px-8">
+          <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center">
             {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcome') : t('auth.createAccount')}
           </CardTitle>
-          <CardDescription className="text-center text-sm sm:text-base">
+          <CardDescription className="text-center text-sm sm:text-base lg:text-lg">
             {isForgotPassword ? t('auth.resetPasswordDescription') : isLogin ? t('auth.loginDescription') : t('auth.signupDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-4 sm:px-6">
-          <form onSubmit={handleAuth} className="space-y-3 sm:space-y-4">
+        <CardContent className="px-4 sm:px-6 lg:px-8">
+          <form onSubmit={handleAuth} className="space-y-3 sm:space-y-4 lg:space-y-5">
             {!isLogin && !isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="fullName">{t('auth.fullName')}</Label>
-                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} />
+                <Label htmlFor="fullName" className="lg:text-base">{t('auth.fullName')}</Label>
+                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} className="lg:h-12 lg:text-base" />
               </div>}
             
             <div className="space-y-2">
-              <Label htmlFor="email">{t('auth.email')}</Label>
-              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} />
+              <Label htmlFor="email" className="lg:text-base">{t('auth.email')}</Label>
+              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} className="lg:h-12 lg:text-base" />
             </div>
             
             {!isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="password">{t('auth.password')}</Label>
+                <Label htmlFor="password" className="lg:text-base">{t('auth.password')}</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -198,52 +198,52 @@ const Auth = () => {
                     required 
                     minLength={6} 
                     disabled={loading}
-                    className="pr-10"
+                    className="pr-10 lg:h-12 lg:text-base"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent lg:h-12"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={loading}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4 lg:h-5 lg:w-5 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
+                      <Eye className="h-4 w-4 lg:h-5 lg:w-5 text-muted-foreground" />
                     )}
                   </Button>
                 </div>
-                {!isLogin && <p className="text-xs text-muted-foreground">
+                {!isLogin && <p className="text-xs lg:text-sm text-muted-foreground">
                     {t('auth.minPasswordLength')}
                   </p>}
               </div>}
             
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full lg:h-12 lg:text-lg" disabled={loading}>
               {loading ? <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 lg:h-5 lg:w-5 animate-spin" />
                   {t('auth.busy')}
                 </> : isForgotPassword ? t('auth.sendResetLink') : isLogin ? t('auth.login') : t('auth.signup')}
             </Button>
           </form>
           
-          <div className="mt-6 text-center space-y-2">
-            {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm text-primary hover:underline block w-full" disabled={loading}>
+          <div className="mt-6 lg:mt-8 text-center space-y-2 lg:space-y-3">
+            {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm lg:text-base text-primary hover:underline block w-full" disabled={loading}>
                 {isLogin ? t('auth.noAccount') : t('auth.alreadyAccount')}
               </button>}
             
             {isLogin && !isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(true);
             setPassword("");
-          }} className="text-sm text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
+          }} className="text-sm lg:text-base text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
                 {t('auth.forgotPassword')}
               </button>}
             
             {isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(false);
             setEmail("");
-          }} className="text-sm text-primary hover:underline block w-full" disabled={loading}>
+          }} className="text-sm lg:text-base text-primary hover:underline block w-full" disabled={loading}>
                 {t('auth.backToLogin')}
               </button>}
           </div>
