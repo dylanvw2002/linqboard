@@ -82,13 +82,13 @@ const Index = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
               <div className="flex items-center gap-8">
-                <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-40 lg:h-48 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
+                <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-36 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
                 <LanguageSwitcher />
                 <Link to="/auth">
-                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base lg:text-lg gap-1 sm:gap-2 h-10 lg:h-12 px-4 lg:px-6">
-                    <LogIn className="h-4 w-4 lg:h-5 lg:w-5" />
+                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-1 sm:gap-2 h-10 px-4">
+                    <LogIn className="h-4 w-4" />
                     {t('auth.login')}
                   </Button>
                 </Link>
@@ -102,24 +102,24 @@ const Index = () => {
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center animate-fade-in w-full">
             {/* Left Content */}
             <article className="space-y-4 sm:space-y-6 lg:space-y-8 xl:space-y-10">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                 {t('landing.hero')}
               </h1>
               
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-xl lg:max-w-2xl leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl lg:text-xl text-muted-foreground max-w-xl lg:max-w-2xl leading-relaxed">
                 {t('landing.tagline')}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 pt-2 lg:pt-4">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
-                  <Button size="lg" className="text-base sm:text-lg lg:text-xl px-8 py-6 lg:px-10 lg:py-7 shadow-lg hover:shadow-xl transition-all w-full h-14 lg:h-16">
+                  <Button size="lg" className="text-base sm:text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
-                    <ArrowRight className="ml-2 h-5 w-5 lg:h-6 lg:w-6" />
+                    <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth?mode=join" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="text-base sm:text-lg lg:text-xl px-8 py-6 lg:px-10 lg:py-7 border-2 w-full h-14 lg:h-16">
+                  <Button size="lg" variant="outline" className="text-base sm:text-lg px-8 py-6 border-2 w-full">
                     {t('landing.haveCode')}
                   </Button>
                 </Link>
@@ -149,10 +149,10 @@ const Index = () => {
 
                   {/* Right: Content */}
                   <div className={`space-y-4 sm:space-y-6 lg:space-y-8 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
                       {t('landing.demoTitle')}
                     </h2>
-                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted-foreground leading-relaxed">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-xl text-muted-foreground leading-relaxed">
                       {t('landing.demoSubtitle')}
                     </p>
                     
@@ -178,9 +178,9 @@ const Index = () => {
                     </div>
 
                     <Link to="/board/demo" className="block pt-2 lg:pt-4">
-                      <Button size="lg" className="text-base sm:text-lg lg:text-xl px-8 lg:px-10 shadow-lg hover:shadow-xl transition-all h-14 lg:h-16 w-full sm:w-auto">
+                      <Button size="lg" className="text-base sm:text-lg px-8 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
                         {t('landing.demoButton')}
-                        <ArrowRight className="ml-2 w-5 h-5 lg:w-6 lg:h-6" />
+                        <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
                     </Link>
                   </div>

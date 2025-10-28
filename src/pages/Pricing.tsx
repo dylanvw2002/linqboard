@@ -308,8 +308,8 @@ const Pricing = () => {
       {/* Header with back button and language switcher */}
       <header className="container mx-auto px-4 sm:px-6 lg:px-8 py-2 lg:py-4 max-w-7xl">
         <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => navigate(-1)} size="sm" className="text-xs sm:text-sm lg:text-base lg:h-12">
-            <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+          <Button variant="ghost" onClick={() => navigate(-1)} size="sm" className="text-xs sm:text-sm">
+            <ArrowLeft className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
             {t('common.back')}
           </Button>
           <LanguageSwitcher />
@@ -319,20 +319,20 @@ const Pricing = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8 max-w-7xl">
 
         <div className="text-center mb-4 sm:mb-6 lg:mb-12">
-          <h1 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-bold mb-2 lg:mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 lg:mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent my-px py-[10px]">
             {t('pricing.title')}
           </h1>
-          <p className="text-sm sm:text-base lg:text-xl text-muted-foreground mb-3 sm:mb-4 lg:mb-8 px-4 max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base lg:text-lg text-muted-foreground mb-3 sm:mb-4 lg:mb-8 px-4 max-w-3xl mx-auto">
             {t('pricing.subtitle')}
           </p>
 
           <div className="flex flex-col items-center justify-center gap-2 lg:gap-4 mb-3 sm:mb-4 lg:mb-6">
             <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
-              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold text-xs sm:text-sm lg:text-lg' : 'text-xs sm:text-sm lg:text-lg'}>
+              <Label htmlFor="billing-toggle" className={!isYearly ? 'font-bold text-xs sm:text-sm' : 'text-xs sm:text-sm'}>
                 {t('pricing.monthly')}
               </Label>
-              <Switch id="billing-toggle" checked={isYearly} onCheckedChange={setIsYearly} className="lg:scale-125" />
-              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold text-xs sm:text-sm lg:text-lg' : 'text-xs sm:text-sm lg:text-lg'}>
+              <Switch id="billing-toggle" checked={isYearly} onCheckedChange={setIsYearly} />
+              <Label htmlFor="billing-toggle" className={isYearly ? 'font-bold text-xs sm:text-sm' : 'text-xs sm:text-sm'}>
                 {t('pricing.yearly')}
               </Label>
             </div>
@@ -369,18 +369,18 @@ const Pricing = () => {
             >
               {getPlanBadge(plan)}
               
-              <CardHeader className="pb-3 lg:pb-4">
-                <CardTitle className="text-xl lg:text-2xl">{plan.name}</CardTitle>
-                <div className="mt-2 lg:mt-3">
-                  <span className="text-2xl lg:text-4xl font-bold text-foreground">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-xl">{plan.name}</CardTitle>
+                <div className="mt-2">
+                  <span className="text-2xl lg:text-3xl font-bold text-foreground">
                     €{isYearly ? plan.price.yearly.toFixed(2) : plan.price.monthly.toFixed(2)}
                   </span>
-                  <span className="text-sm lg:text-base text-muted-foreground ml-1">
+                  <span className="text-sm text-muted-foreground ml-1">
                     /{isYearly ? t('pricing.year') : t('pricing.month')}
                   </span>
                   {getYearlySavings(plan) && (
-                    <div className="mt-1 lg:mt-2">
-                      <Badge variant="secondary" className="text-xs lg:text-sm bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                    <div className="mt-1">
+                      <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
                         {t('pricing.saveAmount').replace('{amount}', getYearlySavings(plan) || '')}
                       </Badge>
                     </div>
@@ -388,19 +388,19 @@ const Pricing = () => {
                 </div>
               </CardHeader>
 
-              <CardContent className="pb-3 lg:pb-4">
-                <ul className="space-y-2 lg:space-y-3">
-                  {plan.features.map((feature, index) => <li key={index} className="flex items-start gap-2 lg:gap-3">
-                      <Check className="h-4 w-4 lg:h-5 lg:w-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-xs lg:text-sm">{feature}</span>
+              <CardContent className="pb-3">
+                <ul className="space-y-2">
+                  {plan.features.map((feature, index) => <li key={index} className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                      <span className="text-xs">{feature}</span>
                     </li>)}
                 </ul>
               </CardContent>
 
               <CardFooter>
-                <Button onClick={() => handleSubscribe(plan)} disabled={isButtonDisabled(plan)} className="w-full lg:h-12 lg:text-base" size="sm" variant={plan.popular ? 'default' : 'outline'}>
+                <Button onClick={() => handleSubscribe(plan)} disabled={isButtonDisabled(plan)} className="w-full" size="sm" variant={plan.popular ? 'default' : 'outline'}>
                   {loading === plan.plan_id ? <>
-                      <Loader2 className="mr-2 h-3 w-3 lg:h-4 lg:w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                       {t('common.loading')}
                     </> : getButtonText(plan)}
                 </Button>

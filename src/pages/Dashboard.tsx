@@ -464,32 +464,32 @@ const Dashboard = () => {
       <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 max-w-7xl">
           <div className="flex items-center justify-between gap-1 -my-[40px] sm:-my-[60px] lg:-my-[70px]">
-            <img src={logo} alt="LinqBoard Logo" className="h-32 sm:h-48 lg:h-56 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
+            <img src={logo} alt="LinqBoard Logo" className="h-32 sm:h-40 lg:h-48 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
             <div className="flex items-center gap-2 sm:gap-4 lg:gap-5">
               <AdminVatReportLink />
               <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 rounded-full">
-                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 lg:h-14 lg:w-14 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                  <Button variant="ghost" size="icon" className="relative h-10 w-10 sm:h-12 sm:w-12 rounded-full">
+                    <Avatar className="h-10 w-10 sm:h-12 sm:w-12 border-2 border-primary/20 hover:border-primary/50 transition-colors">
                       <AvatarImage src={avatarUrl || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-base sm:text-lg lg:text-xl">
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-base sm:text-lg">
                         {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 lg:w-64 z-[100] bg-card">
-                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer lg:py-3 lg:text-base">
-                    <User className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                <DropdownMenuContent align="end" className="w-56 z-[100] bg-card">
+                  <DropdownMenuItem onClick={() => setProfileDialogOpen(true)} className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
                     <span>{t('dashboard.profile')}</span>
                   </DropdownMenuItem>
-                  {subscriptionLimits?.plan !== 'free' && <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer lg:py-3 lg:text-base">
-                      <FileText className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                  {subscriptionLimits?.plan !== 'free' && <DropdownMenuItem onClick={() => navigate('/invoices')} className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
                       <span>Bekijk facturen</span>
                     </DropdownMenuItem>}
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive lg:py-3 lg:text-base">
-                    <LogOut className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
                     <span>{t('auth.logout')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
