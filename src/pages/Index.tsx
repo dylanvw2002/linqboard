@@ -287,7 +287,7 @@ const Index = () => {
         <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16">
           <div className="relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-3xl bg-gradient-to-br from-primary to-accent p-1 shadow-xl sm:shadow-2xl">
             <div className="bg-card rounded-xl sm:rounded-2xl lg:rounded-3xl p-8 sm:p-12 md:p-16 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 md:mb-10 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 md:mb-10 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight pb-2">
                 Klaar om te beginnen?
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
