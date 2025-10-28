@@ -1827,6 +1827,15 @@ const Board = () => {
     }
   };
   const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
+  
+  // Update active filters count
+  useEffect(() => {
+    let count = 0;
+    if (filterAssignee) count++;
+    if (filterPriority) count++;
+    if (filterDeadline) count++;
+    setActiveFiltersCount(count);
+  }, [filterAssignee, filterPriority, filterDeadline]);
   const handleClearCompleted = async () => {
     const completedColumn = columns.find(col => col.name === t('board.completedColumn'));
     if (!completedColumn) return;
@@ -2441,6 +2450,105 @@ const Board = () => {
               <ZoomIn className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
             </button>
           </div>
+          {!isMobile && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className={cn("backdrop-blur-[60px] text-foreground border-2 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none flex items-center gap-2", activeFiltersCount > 0 ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")}>
+                  <Filter className="w-4 h-4" />
+                  Filters
+                  {activeFiltersCount > 0 && (
+                    <Badge variant="destructive" className="ml-1 rounded-full w-5 h-5 flex items-center justify-center p-0 text-xs">
+                      {activeFiltersCount}
+                    </Badge>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 bg-background/95 backdrop-blur-sm z-50">
+                <DropdownMenuLabel>Filter taken</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                
+                {/* Filter op Persoon */}
+                <div className="px-2 py-2">
+                  <Label className="text-xs text-muted-foreground mb-2">Toegewezen aan</Label>
+                  <Select value={filterAssignee || "all"} onValueChange={(v) => setFilterAssignee(v === "all" ? null : v)}>
+                    <SelectTrigger className="bg-background">
+                      <span className="text-sm">{filterAssignee === "unassigned" ? "Niet toegewezen" : filterAssignee ? orgMembers.find(m => m.user_id === filterAssignee)?.full_name : "Alle personen"}</span>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/95 backdrop-blur-sm z-[100]">
+                      <SelectItem value="all">Alle personen</SelectItem>
+                      <SelectItem value="unassigned">Niet toegewezen</SelectItem>
+                      {orgMembers.map(member => (
+                        <SelectItem key={member.user_id} value={member.user_id}>
+                          {member.full_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <DropdownMenuSeparator />
+                
+                {/* Filter op Prioriteit */}
+                <div className="px-2 py-2">
+                  <Label className="text-xs text-muted-foreground mb-2">Prioriteit</Label>
+                  <Select value={filterPriority || "all"} onValueChange={(v) => setFilterPriority(v === "all" ? null : v as any)}>
+                    <SelectTrigger className="bg-background">
+                      <span className="text-sm">
+                        {filterPriority === "low" ? "🟢 Laag" : filterPriority === "medium" ? "🟡 Gemiddeld" : filterPriority === "high" ? "🔴 Hoog" : "Alle prioriteiten"}
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/95 backdrop-blur-sm z-[100]">
+                      <SelectItem value="all">Alle prioriteiten</SelectItem>
+                      <SelectItem value="low">🟢 Laag</SelectItem>
+                      <SelectItem value="medium">🟡 Gemiddeld</SelectItem>
+                      <SelectItem value="high">🔴 Hoog</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <DropdownMenuSeparator />
+                
+                {/* Filter op Deadline */}
+                <div className="px-2 py-2">
+                  <Label className="text-xs text-muted-foreground mb-2">Deadline</Label>
+                  <Select value={filterDeadline || "all"} onValueChange={(v) => setFilterDeadline(v === "all" ? null : v as any)}>
+                    <SelectTrigger className="bg-background">
+                      <span className="text-sm">
+                        {filterDeadline === "overdue" ? "⚠️ Verlopen" : filterDeadline === "today" ? "📅 Vandaag" : filterDeadline === "this-week" ? "📆 Deze week" : filterDeadline === "no-deadline" ? "➖ Geen deadline" : "Alle deadlines"}
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background/95 backdrop-blur-sm z-[100]">
+                      <SelectItem value="all">Alle deadlines</SelectItem>
+                      <SelectItem value="overdue">⚠️ Verlopen</SelectItem>
+                      <SelectItem value="today">📅 Vandaag</SelectItem>
+                      <SelectItem value="this-week">📆 Deze week</SelectItem>
+                      <SelectItem value="no-deadline">➖ Geen deadline</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <DropdownMenuSeparator />
+                
+                {/* Reset knop */}
+                <div className="px-2 py-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => {
+                      setFilterAssignee(null);
+                      setFilterPriority(null);
+                      setFilterDeadline(null);
+                    }}
+                    disabled={activeFiltersCount === 0}
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Reset filters
+                  </Button>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           {!isMobile && <button onClick={handleFullscreen} className={cn("text-foreground px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 text-[clamp(12px,1.4vw,16px)] relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none")}>
             ⛶ {t('board.fullscreen')}
           </button>}
@@ -2744,7 +2852,7 @@ const Board = () => {
                   (displayColumn.header_height || 60)
                 }
               >
-                {getColumnTasks(column.id).map(task => {
+                {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
                     if (isSimpleColumn) {
