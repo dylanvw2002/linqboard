@@ -2,7 +2,6 @@ import React from "react";
 import { ChatWidget } from "./ChatWidget";
 import { NotesWidget } from "./widgets/NotesWidget";
 import { TimerWidget } from "./widgets/TimerWidget";
-import { WeatherWidget } from "./widgets/WeatherWidget";
 import { CalculatorWidget } from "./widgets/CalculatorWidget";
 import { QuickLinksWidget } from "./widgets/QuickLinksWidget";
 import { CalendarWidget } from "./widgets/CalendarWidget";
@@ -15,7 +14,7 @@ import { ResizeHandles } from "./ResizeHandles";
 
 interface Widget {
   id: string;
-  widget_type: "chat" | "notes" | "timer" | "weather" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements";
+  widget_type: "chat" | "notes" | "timer" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements";
   x_position: number;
   y_position: number;
   width: number;
@@ -69,8 +68,6 @@ export const WidgetContainer = ({
         return <NotesWidget widgetId={widget.id} settings={widget.settings} />;
       case "timer":
         return <TimerWidget widgetId={widget.id} settings={widget.settings} />;
-      case "weather":
-        return <WeatherWidget widgetId={widget.id} settings={widget.settings} />;
       case "calculator":
         return <CalculatorWidget widgetId={widget.id} />;
       case "quick-links":
