@@ -25,15 +25,16 @@ const Index = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: 'start',
-    dragFree: true,
-    containScroll: 'trimSnaps'
+    containScroll: 'trimSnaps',
+    skipSnaps: false,
+    duration: 20
   });
   useEffect(() => {
     if (!emblaApi) return;
     const play = () => {
       emblaApi.scrollNext();
     };
-    const intervalId = setInterval(play, 3000);
+    const intervalId = setInterval(play, 5000);
     return () => clearInterval(intervalId);
   }, [emblaApi]);
   const features = [{
