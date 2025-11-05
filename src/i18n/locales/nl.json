@@ -56,6 +56,16 @@
     "loginError": "Er is iets misgegaan",
     "busy": "Bezig..."
   },
+  "resetPassword": {
+    "title": "Nieuw wachtwoord instellen",
+    "description": "Voer je nieuwe wachtwoord in",
+    "newPassword": "Nieuw wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "passwordMismatch": "Wachtwoorden komen niet overeen",
+    "success": "Wachtwoord succesvol gewijzigd!",
+    "error": "Fout bij wijzigen wachtwoord",
+    "submit": "Wachtwoord instellen"
+  },
   "dashboard": {
     "title": "Dashboard laden...",
     "hello": "Hoi",

@@ -56,6 +56,16 @@
     "loginError": "Something went wrong",
     "busy": "Loading..."
   },
+  "resetPassword": {
+    "title": "Set new password",
+    "description": "Enter your new password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
+    "success": "Password successfully changed!",
+    "error": "Error changing password",
+    "submit": "Set password"
+  },
   "dashboard": {
     "title": "Loading dashboard...",
     "hello": "Hi",

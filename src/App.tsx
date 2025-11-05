@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import CreateOrganization from "./pages/CreateOrganization";
 import JoinOrganization from "./pages/JoinOrganization";
 import Dashboard from "./pages/Dashboard";
@@ -40,6 +41,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/create-organization" element={<CreateOrganization />} />
             <Route path="/join-organization" element={<JoinOrganization />} />
             <Route path="/dashboard" element={<Dashboard />} />
