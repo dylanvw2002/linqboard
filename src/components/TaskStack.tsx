@@ -199,6 +199,7 @@ export const TaskStack = ({
                   key={index} 
                   className="animate-fade-in"
                   style={{ animationDelay: `${index * 0.03}s` }}
+                  onDragStart={() => setIsExpanded(false)}
                 >
                   {child}
                 </div>
