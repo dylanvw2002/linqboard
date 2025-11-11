@@ -2073,13 +2073,22 @@ const Board = () => {
       return;
     }
     if (isDemo) {
-      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
-      const updatedTasks = tasks.map(t => t.id === draggedTask.id ? {
-        ...t,
-        column_id: targetColumn.id,
-        position: maxPosition + 1,
-        due_date: targetColumn.column_type === 'completed' ? null : t.due_date
-      } : t);
+      // Place task at position 0 (top of stack) and increment others
+      const updatedTasks = tasks.map(t => {
+        if (t.id === draggedTask.id) {
+          return {
+            ...t,
+            column_id: targetColumn.id,
+            position: 0,
+            due_date: targetColumn.column_type === 'completed' ? null : t.due_date
+          };
+        }
+        // Increment position of existing tasks in target column
+        if (t.column_id === targetColumn.id) {
+          return { ...t, position: t.position + 1 };
+        }
+        return t;
+      });
       setTasks(updatedTasks);
       toast.success(t('board.taskMoved', {
         column: targetColumn.name
@@ -2090,12 +2099,23 @@ const Board = () => {
       return;
     }
     try {
-      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
+      // First, increment positions of all tasks in target column
+      const tasksInTargetColumn = tasks.filter(t => t.column_id === targetColumn.id);
+      
+      if (tasksInTargetColumn.length > 0) {
+        // Increment each task's position
+        for (const task of tasksInTargetColumn) {
+          await supabase
+            .from("tasks")
+            .update({ position: task.position + 1 })
+            .eq('id', task.id);
+        }
+      }
       
       // Clear deadline if moving to a completed column
       const updateData: any = {
         column_id: targetColumn.id,
-        position: maxPosition + 1
+        position: 0  // Place at top of stack
       };
       
       console.log('Moving to column:', targetColumn.name, 'Type:', targetColumn.column_type, 'Task due_date before:', draggedTask.due_date);
