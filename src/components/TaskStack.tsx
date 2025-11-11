@@ -10,7 +10,6 @@ interface TaskStackProps {
   availableHeight?: number;
   onDragStart?: (e: React.DragEvent, index: number) => void;
   onDragEnd?: () => void;
-  onReorder?: (fromIndex: number, toIndex: number) => void;
 }
 
 export const TaskStack = ({ 
@@ -20,17 +19,12 @@ export const TaskStack = ({
   onTaskClick,
   availableHeight,
   onDragStart,
-  onDragEnd,
-  onReorder
+  onDragEnd
 }: TaskStackProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [visibleCount, setVisibleCount] = useState(0);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
-  const [isDraggingOutside, setIsDraggingOutside] = useState(false);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -135,9 +129,6 @@ export const TaskStack = ({
   const stackedTasks = children.slice(visibleCount, visibleCount + maxVisibleTasks);
   const hiddenCount = children.length - visibleCount;
 
-  // Reverse stacked tasks so highest position (newest) is shown on top
-  const reversedStackedTasks = [...stackedTasks].reverse();
-
   return (
     <>
       <div 
@@ -159,16 +150,16 @@ export const TaskStack = ({
           onClick={handleStackClick}
         >
           <div className="relative h-[100px]">
-            {reversedStackedTasks.map((child, reverseIndex) => {
+            {stackedTasks.map((child, index) => {
+              const reverseIndex = stackedTasks.length - 1 - index;
               const offset = reverseIndex * stackOffset;
               const scale = 1 - (reverseIndex * 0.02);
-              const isTopCard = reverseIndex === reversedStackedTasks.length - 1;
+              const isTopCard = reverseIndex === stackedTasks.length - 1;
               const opacity = isTopCard ? 1 : 1 - (reverseIndex * 0.15);
-              const originalIndex = visibleCount + (stackedTasks.length - 1 - reverseIndex);
               
               return (
                 <div
-                  key={originalIndex}
+                  key={visibleCount + index}
                   className={cn(
                     "absolute inset-x-0 bottom-0 transition-all duration-300 ease-out",
                     "hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
@@ -201,10 +192,7 @@ export const TaskStack = ({
 
       {/* Dialog voor expanded view */}
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent 
-          ref={dialogRef}
-          className="max-w-3xl max-h-[85vh] overflow-visible flex flex-col"
-        >
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-visible flex flex-col">
           <DialogHeader>
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
@@ -213,75 +201,17 @@ export const TaskStack = ({
               {children.map((child, index) => (
                 <div 
                   key={index} 
-                  className={cn(
-                    "animate-fade-in transition-all",
-                    draggedIndex === index && "opacity-30",
-                    dropTargetIndex === index && "border-t-4 border-primary"
-                  )}
+                  className="animate-fade-in"
                   style={{ animationDelay: `${index * 0.03}s` }}
-                  draggable={!!onReorder || !!onDragStart}
+                  draggable={!!onDragStart}
                   onDragStart={(e) => {
-                    setDraggedIndex(index);
-                    setIsDraggingOutside(false);
-                    
-                    if (onReorder) {
-                      e.dataTransfer.effectAllowed = 'move';
-                    }
                     if (onDragStart) {
                       onDragStart(e, index);
-                    }
-                    
-                    // Track mouse position to detect when leaving dialog
-                    const handleDragMove = (dragEvent: DragEvent) => {
-                      if (!dialogRef.current) return;
-                      
-                      const rect = dialogRef.current.getBoundingClientRect();
-                      const isOutside = (
-                        dragEvent.clientX < rect.left ||
-                        dragEvent.clientX > rect.right ||
-                        dragEvent.clientY < rect.top ||
-                        dragEvent.clientY > rect.bottom
-                      );
-                      
-                      if (isOutside && !isDraggingOutside) {
-                        setIsDraggingOutside(true);
-                        setIsExpanded(false);
-                      }
-                    };
-                    
-                    document.addEventListener('drag', handleDragMove);
-                    e.dataTransfer.setData('cleanup', 'true');
-                    
-                    setTimeout(() => {
-                      document.removeEventListener('drag', handleDragMove);
-                    }, 100);
-                  }}
-                  onDragOver={(e) => {
-                    if (onReorder && draggedIndex !== null && !isDraggingOutside) {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = 'move';
-                      setDropTargetIndex(index);
+                      // Kleine vertraging om ervoor te zorgen dat drag state is ingesteld voordat dialog sluit
+                      setTimeout(() => setIsExpanded(false), 0);
                     }
                   }}
-                  onDragLeave={() => {
-                    if (onReorder && !isDraggingOutside) {
-                      setDropTargetIndex(null);
-                    }
-                  }}
-                  onDrop={(e) => {
-                    if (onReorder && draggedIndex !== null && draggedIndex !== index && !isDraggingOutside) {
-                      e.preventDefault();
-                      onReorder(draggedIndex, index);
-                    }
-                  }}
-                  onDragEnd={() => {
-                    setDraggedIndex(null);
-                    setDropTargetIndex(null);
-                    setIsDraggingOutside(false);
-                    if (onDragEnd) {
-                      onDragEnd();
-                    }
-                  }}
+                  onDragEnd={onDragEnd}
                 >
                   {child}
                 </div>

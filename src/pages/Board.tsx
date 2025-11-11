@@ -1832,9 +1832,7 @@ const Board = () => {
       setExportingTask(false);
     }
   };
-  const getColumnTasks = (columnId: string) => tasks
-    .filter(task => task.column_id === columnId)
-    .sort((a, b) => a.position - b.position); // Position 0 = oudste, hogere numbers = nieuwer
+  const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
   
   // Update active filters count
   useEffect(() => {
@@ -2075,21 +2073,13 @@ const Board = () => {
       return;
     }
     if (isDemo) {
-      // Place task at highest position (bottom of list, but will be front of stack)
-      const updatedTasks = tasks.map(t => {
-        if (t.id === draggedTask.id) {
-          const maxPosition = tasks
-            .filter(task => task.column_id === targetColumn.id)
-            .reduce((max, t) => Math.max(max, t.position), -1);
-          return {
-            ...t,
-            column_id: targetColumn.id,
-            position: maxPosition + 1,
-            due_date: targetColumn.column_type === 'completed' ? null : t.due_date
-          };
-        }
-        return t;
-      });
+      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const updatedTasks = tasks.map(t => t.id === draggedTask.id ? {
+        ...t,
+        column_id: targetColumn.id,
+        position: maxPosition + 1,
+        due_date: targetColumn.column_type === 'completed' ? null : t.due_date
+      } : t);
       setTasks(updatedTasks);
       toast.success(t('board.taskMoved', {
         column: targetColumn.name
@@ -2100,15 +2090,12 @@ const Board = () => {
       return;
     }
     try {
-      // Get max position in target column
-      const maxPosition = tasks
-        .filter(t => t.column_id === targetColumn.id)
-        .reduce((max, t) => Math.max(max, t.position), -1);
+      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
       
       // Clear deadline if moving to a completed column
       const updateData: any = {
         column_id: targetColumn.id,
-        position: maxPosition + 1  // Add at bottom (will be front of stack visually)
+        position: maxPosition + 1
       };
       
       console.log('Moving to column:', targetColumn.name, 'Type:', targetColumn.column_type, 'Task due_date before:', draggedTask.due_date);
@@ -2878,49 +2865,6 @@ const Board = () => {
                   }
                 }}
                 onDragEnd={handleDragEnd}
-                onReorder={async (fromIndex: number, toIndex: number) => {
-                  const columnTasks = filterTasks(getColumnTasks(column.id));
-                  if (fromIndex === toIndex) return;
-                  
-                  if (isDemo) {
-                    // Update task positions in demo mode
-                    const taskToMove = columnTasks[fromIndex];
-                    const reorderedTasks = [...columnTasks];
-                    reorderedTasks.splice(fromIndex, 1);
-                    reorderedTasks.splice(toIndex, 0, taskToMove);
-                    
-                    const updatedTasks = tasks.map(t => {
-                      const newIndex = reorderedTasks.findIndex(rt => rt.id === t.id);
-                      if (newIndex !== -1) {
-                        return { ...t, position: newIndex };
-                      }
-                      return t;
-                    });
-                    setTasks(updatedTasks);
-                    toast.success('Taak verplaatst (demo)');
-                  } else {
-                    // Update task positions in database
-                    try {
-                      const taskToMove = columnTasks[fromIndex];
-                      const reorderedTasks = [...columnTasks];
-                      reorderedTasks.splice(fromIndex, 1);
-                      reorderedTasks.splice(toIndex, 0, taskToMove);
-                      
-                      // Update positions in database
-                      for (let i = 0; i < reorderedTasks.length; i++) {
-                        await supabase
-                          .from("tasks")
-                          .update({ position: i })
-                          .eq('id', reorderedTasks[i].id);
-                      }
-                      
-                      await fetchBoardData();
-                      toast.success('Taak verplaatst');
-                    } catch (error: any) {
-                      toast.error('Fout bij verplaatsen: ' + error.message);
-                    }
-                  }
-                }}
               >
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
