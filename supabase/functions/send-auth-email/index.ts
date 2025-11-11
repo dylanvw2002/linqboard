@@ -27,7 +27,7 @@ function createPasswordResetEmail(resetUrl: string, token: string): string {
           <tr>
             <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
               <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); padding: 20px 30px; border-radius: 16px; backdrop-filter: blur(10px);">
-                <img src="https://linqboard.lovable.app/logo-transparent.png" alt="LinqBoard" style="max-width: 200px; height: auto; display: block;">
+                <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/linqboard-assets/logo-transparent.png" alt="LinqBoard" style="max-width: 200px; height: auto; display: block;">
               </div>
               <h2 style="color: #ffffff; font-size: 20px; font-weight: 600; margin: 24px 0 0 0; letter-spacing: 0.5px;">
                 Wachtwoord Herstel
@@ -39,8 +39,8 @@ function createPasswordResetEmail(resetUrl: string, token: string): string {
           <tr>
             <td style="padding: 50px 40px;">
               <div style="text-align: center; margin-bottom: 32px;">
-                <div style="display: inline-block; width: 80px; height: 80px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
-                  <span style="font-size: 40px;">🔐</span>
+                <div style="display: inline-block; width: 80px; height: 80px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 50%; line-height: 80px; margin-bottom: 24px;">
+                  <span style="font-size: 40px; vertical-align: middle;">🔐</span>
                 </div>
                 <h1 style="color: #1a202c; font-size: 32px; font-weight: bold; margin: 0 0 12px 0;">
                   Reset je wachtwoord
@@ -82,7 +82,7 @@ function createPasswordResetEmail(resetUrl: string, token: string): string {
                 </div>
                 
                 <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 16px; border-radius: 8px; margin-top: 24px;">
-                  <p style="color: #856404; font-size: 14px; margin: 0; display: flex; align-items: center; justify-content: center;">
+                  <p style="color: #856404; font-size: 14px; margin: 0;">
                     <span style="font-size: 18px; margin-right: 8px;">⏱️</span>
                     <strong>Let op:</strong>&nbsp;Deze link is 1 uur geldig
                   </p>
@@ -152,7 +152,7 @@ function createConfirmationEmail(confirmationUrl: string, token: string): string
           <!-- Header with Logo -->
           <tr>
             <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 16px 0 0;">
-              <img src="https://linqboard.lovable.app/logo-transparent.png" alt="LinqBoard" style="max-width: 180px; height: auto; margin-bottom: 10px;">
+              <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/linqboard-assets/logo-transparent.png" alt="LinqBoard" style="max-width: 180px; height: auto; margin-bottom: 10px;">
             </td>
           </tr>
           
