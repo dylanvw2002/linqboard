@@ -37,7 +37,7 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
           <tr>
             <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
               <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); padding: 20px 30px; border-radius: 16px; backdrop-filter: blur(10px);">
-                <img src="https://linqboard.io/logo-linqboard.png" alt="LinqBoard" style="max-width: 120px; height: auto; display: block;">
+                <img src="https://linqboard.io/logo-linqboard.png" alt="LinqBoard" style="max-width: 80px; height: auto; display: block;">
               </div>
               <h2 style="color: #ffffff; font-size: 20px; font-weight: 600; margin: 24px 0 0 0; letter-spacing: 0.5px;">
                 Wachtwoord Herstel
@@ -67,16 +67,12 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
               </div>
               
               <!-- CTA Button -->
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 40px 0;">
-                <tr>
-                  <td align="center">
-                    <a href="${resetUrl}" 
-                       style="display: inline-block; padding: 18px 56px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff !important; text-decoration: none; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);">
-                      Wachtwoord Resetten →
-                    </a>
-                  </td>
-                </tr>
-              </table>
+              <div style="text-align: center; margin: 40px 0;">
+                <a href="${resetUrl}" 
+                   style="display: inline-block; padding: 18px 56px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff !important; text-decoration: none; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35); mso-hide: none;">
+                  <span style="color: #ffffff !important;">Wachtwoord Resetten →</span>
+                </a>
+              </div>
               
               <!-- Divider -->
               <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%); margin: 40px 0;"></div>
