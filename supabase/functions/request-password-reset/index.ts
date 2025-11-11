@@ -37,7 +37,7 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
           <tr>
             <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
               <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); padding: 20px 30px; border-radius: 16px; backdrop-filter: blur(10px);">
-                <img src="https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/linqboard-assets/logo-transparent.png" alt="LinqBoard" style="max-width: 200px; height: auto; display: block;">
+                <img src="https://linqboard.io/logo-linqboard.png" alt="LinqBoard" style="max-width: 200px; height: auto; display: block;">
               </div>
               <h2 style="color: #ffffff; font-size: 20px; font-weight: 600; margin: 24px 0 0 0; letter-spacing: 0.5px;">
                 Wachtwoord Herstel
@@ -69,9 +69,9 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
               <!-- CTA Button -->
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 40px 0;">
                 <tr>
-                  <td align="center">
+                  <td align="center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);">
                     <a href="${resetUrl}" 
-                       style="display: inline-block; padding: 18px 56px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 12px; font-size: 17px; font-weight: 600; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);">
+                       style="display: inline-block; padding: 18px 56px; color: #ffffff !important; text-decoration: none; font-size: 17px; font-weight: 600;">
                       Wachtwoord Resetten →
                     </a>
                   </td>
@@ -81,17 +81,9 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
               <!-- Divider -->
               <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%); margin: 40px 0;"></div>
               
-              <!-- Alternative Method -->
+              <!-- Validity Notice -->
               <div style="text-align: center;">
-                <p style="color: #718096; font-size: 14px; margin: 0 0 16px 0; font-weight: 500;">
-                  Werkt de knop niet? Gebruik deze verificatiecode:
-                </p>
-                
-                <div style="padding: 20px; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-radius: 12px; border: 2px dashed #cbd5e0; text-align: center; margin-bottom: 24px;">
-                  <code style="color: #667eea; font-size: 22px; font-weight: 700; letter-spacing: 3px; font-family: 'Courier New', monospace;">${token}</code>
-                </div>
-                
-                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 16px; border-radius: 8px; margin-top: 24px;">
+                <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 16px; border-radius: 8px;">
                   <p style="color: #856404; font-size: 14px; margin: 0;">
                     <span style="font-size: 18px; margin-right: 8px;">⏱️</span>
                     <strong>Let op:</strong>&nbsp;Deze link is 1 uur geldig
