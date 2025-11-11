@@ -36,10 +36,7 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
           <!-- Header with Logo and Brand -->
           <tr>
             <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative;">
-              <div style="display: inline-block; background: rgba(255, 255, 255, 0.15); padding: 20px 30px; border-radius: 16px; backdrop-filter: blur(10px);">
-                <img src="https://linqboard.io/logo-linqboard.png" alt="LinqBoard" style="max-width: 80px; height: auto; display: block;">
-              </div>
-              <h2 style="color: #ffffff; font-size: 20px; font-weight: 600; margin: 24px 0 0 0; letter-spacing: 0.5px;">
+              <h2 style="color: #ffffff; font-size: 20px; font-weight: 600; margin: 0; letter-spacing: 0.5px;">
                 Wachtwoord Herstel
               </h2>
             </td>
@@ -49,8 +46,8 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
           <tr>
             <td style="padding: 50px 40px;">
               <div style="text-align: center; margin-bottom: 32px;">
-                <div style="display: inline-block; width: 80px; height: 80px; background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); border-radius: 50%; line-height: 80px; margin-bottom: 24px;">
-                  <span style="font-size: 40px; vertical-align: middle;">🔐</span>
+                <div style="display: inline-block; width: 80px; height: 80px; background: #ffffff; border-radius: 50%; padding: 12px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                  <img src="https://linqboard.io/logo-linqboard.png" alt="LinqBoard" style="width: 100%; height: 100%; display: block;">
                 </div>
                 <h1 style="color: #1a202c; font-size: 32px; font-weight: bold; margin: 0 0 12px 0;">
                   Hallo ${userName}!
@@ -67,12 +64,27 @@ function createPasswordResetEmail(resetUrl: string, token: string, userName: str
               </div>
               
               <!-- CTA Button -->
-              <div style="text-align: center; margin: 40px 0;">
-                <a href="${resetUrl}" 
-                   style="display: inline-block; padding: 18px 56px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff !important; text-decoration: none; font-size: 17px; font-weight: 600; border-radius: 12px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35); mso-hide: none;">
-                  <span style="color: #ffffff !important;">Wachtwoord Resetten →</span>
-                </a>
-              </div>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 40px 0;">
+                <tr>
+                  <td align="center">
+                    <table border="0" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td align="center" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                          <a href="${resetUrl}" target="_blank" style="font-size: 17px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 12px; padding: 18px 56px; display: inline-block; mso-padding-alt: 0; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.35);">
+                            <!--[if mso]>
+                            <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+                            <![endif]-->
+                            <span style="mso-text-raise: 15pt; color: #ffffff;">Wachtwoord Resetten →</span>
+                            <!--[if mso]>
+                            <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+                            <![endif]-->
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
               
               <!-- Divider -->
               <div style="height: 1px; background: linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%); margin: 40px 0;"></div>
