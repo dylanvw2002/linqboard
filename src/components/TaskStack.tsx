@@ -8,6 +8,8 @@ interface TaskStackProps {
   stackOffset?: number;
   onTaskClick?: (index: number) => void;
   availableHeight?: number;
+  onDragStart?: (e: React.DragEvent, index: number) => void;
+  onDragEnd?: () => void;
 }
 
 export const TaskStack = ({ 
@@ -15,7 +17,9 @@ export const TaskStack = ({
   maxVisibleTasks = 4, 
   stackOffset = 5,
   onTaskClick,
-  availableHeight
+  availableHeight,
+  onDragStart,
+  onDragEnd
 }: TaskStackProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -199,7 +203,15 @@ export const TaskStack = ({
                   key={index} 
                   className="animate-fade-in"
                   style={{ animationDelay: `${index * 0.03}s` }}
-                  onDragStart={() => setIsExpanded(false)}
+                  draggable={!!onDragStart}
+                  onDragStart={(e) => {
+                    if (onDragStart) {
+                      onDragStart(e, index);
+                      // Kleine vertraging om ervoor te zorgen dat drag state is ingesteld voordat dialog sluit
+                      setTimeout(() => setIsExpanded(false), 0);
+                    }
+                  }}
+                  onDragEnd={onDragEnd}
                 >
                   {child}
                 </div>

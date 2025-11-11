@@ -2850,6 +2850,14 @@ const Board = () => {
                   displayColumn.height - 
                   (displayColumn.header_height || 60)
                 }
+                onDragStart={(e, index) => {
+                  const columnTasks = filterTasks(getColumnTasks(column.id));
+                  const task = columnTasks[index];
+                  if (task) {
+                    handleDragStart(e, task);
+                  }
+                }}
+                onDragEnd={handleDragEnd}
               >
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
