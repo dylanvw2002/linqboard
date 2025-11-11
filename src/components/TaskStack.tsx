@@ -24,11 +24,13 @@ export const TaskStack = ({
   onReorder
 }: TaskStackProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [visibleCount, setVisibleCount] = useState(0);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+  const [isDraggingOutside, setIsDraggingOutside] = useState(false);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -199,7 +201,10 @@ export const TaskStack = ({
 
       {/* Dialog voor expanded view */}
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-visible flex flex-col">
+        <DialogContent 
+          ref={dialogRef}
+          className="max-w-3xl max-h-[85vh] overflow-visible flex flex-col"
+        >
           <DialogHeader>
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
@@ -214,30 +219,57 @@ export const TaskStack = ({
                     dropTargetIndex === index && "border-t-4 border-primary"
                   )}
                   style={{ animationDelay: `${index * 0.03}s` }}
-                  draggable={!!onReorder}
+                  draggable={!!onReorder || !!onDragStart}
                   onDragStart={(e) => {
+                    setDraggedIndex(index);
+                    setIsDraggingOutside(false);
+                    
                     if (onReorder) {
-                      setDraggedIndex(index);
                       e.dataTransfer.effectAllowed = 'move';
-                    } else if (onDragStart) {
-                      onDragStart(e, index);
-                      setTimeout(() => setIsExpanded(false), 0);
                     }
+                    if (onDragStart) {
+                      onDragStart(e, index);
+                    }
+                    
+                    // Track mouse position to detect when leaving dialog
+                    const handleDragMove = (dragEvent: DragEvent) => {
+                      if (!dialogRef.current) return;
+                      
+                      const rect = dialogRef.current.getBoundingClientRect();
+                      const isOutside = (
+                        dragEvent.clientX < rect.left ||
+                        dragEvent.clientX > rect.right ||
+                        dragEvent.clientY < rect.top ||
+                        dragEvent.clientY > rect.bottom
+                      );
+                      
+                      if (isOutside && !isDraggingOutside) {
+                        setIsDraggingOutside(true);
+                        setIsExpanded(false);
+                      }
+                    };
+                    
+                    document.addEventListener('drag', handleDragMove);
+                    e.dataTransfer.setData('cleanup', 'true');
+                    
+                    setTimeout(() => {
+                      document.removeEventListener('drag', handleDragMove);
+                    }, 100);
                   }}
                   onDragOver={(e) => {
-                    if (onReorder && draggedIndex !== null) {
+                    if (onReorder && draggedIndex !== null && !isDraggingOutside) {
                       e.preventDefault();
                       e.dataTransfer.dropEffect = 'move';
                       setDropTargetIndex(index);
                     }
                   }}
                   onDragLeave={() => {
-                    if (onReorder) {
+                    if (onReorder && !isDraggingOutside) {
                       setDropTargetIndex(null);
                     }
                   }}
                   onDrop={(e) => {
-                    if (onReorder && draggedIndex !== null && draggedIndex !== index) {
+                    if (onReorder && draggedIndex !== null && draggedIndex !== index && !isDraggingOutside) {
                       e.preventDefault();
                       onReorder(draggedIndex, index);
                     }
@@ -245,6 +277,7 @@ export const TaskStack = ({
                   onDragEnd={() => {
                     setDraggedIndex(null);
                     setDropTargetIndex(null);
+                    setIsDraggingOutside(false);
                     if (onDragEnd) {
                       onDragEnd();
                     }
