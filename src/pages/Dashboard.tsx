@@ -129,12 +129,19 @@ const Dashboard = () => {
       }
 
       // Fetch subscription limits
-      const {
-        data: limits
-      } = await supabase.functions.invoke('get-subscription-status');
-      if (limits) {
-        setSubscriptionLimits(limits.limits);
-        setSubscription(limits.subscription);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const {
+          data: limits
+        } = await supabase.functions.invoke('get-subscription-status', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          }
+        });
+        if (limits) {
+          setSubscriptionLimits(limits.limits);
+          setSubscription(limits.subscription);
+        }
       }
     } catch (error) {
       console.error('Error fetching user data:', error);

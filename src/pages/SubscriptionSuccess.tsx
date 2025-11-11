@@ -26,7 +26,11 @@ const SubscriptionSuccess = () => {
         // Give webhook time to process (wait 2 seconds before checking)
         await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const { data } = await supabase.functions.invoke('get-subscription-status');
+        const { data } = await supabase.functions.invoke('get-subscription-status', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`
+          }
+        });
         
         console.log('Subscription data:', data);
         

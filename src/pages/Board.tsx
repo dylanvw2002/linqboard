@@ -1123,10 +1123,17 @@ const Board = () => {
   };
   const fetchUserPlan = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
       const {
         data,
         error
-      } = await supabase.functions.invoke('get-subscription-status');
+      } = await supabase.functions.invoke('get-subscription-status', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
       if (error) throw error;
       if (data?.limits?.plan) {
         setUserPlan(data.limits.plan);

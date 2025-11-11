@@ -52,7 +52,11 @@ const Pricing = () => {
           });
           const {
             data: limits
-          } = await supabase.functions.invoke('get-subscription-status');
+          } = await supabase.functions.invoke('get-subscription-status', {
+            headers: {
+              Authorization: `Bearer ${session.access_token}`
+            }
+          });
           if (limits?.limits) {
             setCurrentPlan(limits.limits.plan);
           }
