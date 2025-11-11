@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,9 @@ import logo from "@/assets/logo-transparent.png";
 const ResetPassword = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const resetToken = searchParams.get('token');
+  
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,20 +59,26 @@ const ResetPassword = () => {
       return;
     }
 
+    if (!resetToken) {
+      toast.error('Geen geldige reset code gevonden');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
+      const { data, error } = await supabase.functions.invoke('reset-password-with-token', {
+        body: { token: resetToken, newPassword }
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      toast.success(t('resetPassword.success'));
+      toast.success(data?.message || t('resetPassword.success'));
       
-      // Redirect to dashboard after successful password reset
+      // Redirect to login after successful password reset
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/auth");
       }, 1500);
     } catch (error: any) {
       console.error("Reset password error:", error);

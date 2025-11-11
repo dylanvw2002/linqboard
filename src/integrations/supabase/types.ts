@@ -518,6 +518,33 @@ export type Database = {
         }
         Relationships: []
       }
+      password_reset_tokens: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          token: string
+          used: boolean | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          token: string
+          used?: boolean | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          token?: string
+          used?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -976,6 +1003,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_expired_reset_tokens: { Args: never; Returns: undefined }
       generate_invite_code: { Args: never; Returns: string }
       generate_invoice_number: { Args: never; Returns: string }
       get_org_member_emails: {
