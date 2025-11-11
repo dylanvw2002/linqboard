@@ -133,6 +133,9 @@ export const TaskStack = ({
   const stackedTasks = children.slice(visibleCount, visibleCount + maxVisibleTasks);
   const hiddenCount = children.length - visibleCount;
 
+  // Reverse stacked tasks so highest position (newest) is shown on top
+  const reversedStackedTasks = [...stackedTasks].reverse();
+
   return (
     <>
       <div 
@@ -154,16 +157,16 @@ export const TaskStack = ({
           onClick={handleStackClick}
         >
           <div className="relative h-[100px]">
-            {stackedTasks.map((child, index) => {
-              const reverseIndex = stackedTasks.length - 1 - index;
+            {reversedStackedTasks.map((child, reverseIndex) => {
               const offset = reverseIndex * stackOffset;
               const scale = 1 - (reverseIndex * 0.02);
-              const isTopCard = reverseIndex === stackedTasks.length - 1;
+              const isTopCard = reverseIndex === reversedStackedTasks.length - 1;
               const opacity = isTopCard ? 1 : 1 - (reverseIndex * 0.15);
+              const originalIndex = visibleCount + (stackedTasks.length - 1 - reverseIndex);
               
               return (
                 <div
-                  key={visibleCount + index}
+                  key={originalIndex}
                   className={cn(
                     "absolute inset-x-0 bottom-0 transition-all duration-300 ease-out",
                     "hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)]"

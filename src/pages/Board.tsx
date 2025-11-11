@@ -1834,7 +1834,7 @@ const Board = () => {
   };
   const getColumnTasks = (columnId: string) => tasks
     .filter(task => task.column_id === columnId)
-    .sort((a, b) => a.position - b.position); // Sort by position, lowest first (top of stack)
+    .sort((a, b) => a.position - b.position); // Position 0 = oudste, hogere numbers = nieuwer
   
   // Update active filters count
   useEffect(() => {
@@ -2075,19 +2075,18 @@ const Board = () => {
       return;
     }
     if (isDemo) {
-      // Place task at position 0 (top of stack) and increment others
+      // Place task at highest position (bottom of list, but will be front of stack)
       const updatedTasks = tasks.map(t => {
         if (t.id === draggedTask.id) {
+          const maxPosition = tasks
+            .filter(task => task.column_id === targetColumn.id)
+            .reduce((max, t) => Math.max(max, t.position), -1);
           return {
             ...t,
             column_id: targetColumn.id,
-            position: 0,
+            position: maxPosition + 1,
             due_date: targetColumn.column_type === 'completed' ? null : t.due_date
           };
-        }
-        // Increment position of existing tasks in target column
-        if (t.column_id === targetColumn.id) {
-          return { ...t, position: t.position + 1 };
         }
         return t;
       });
@@ -2101,23 +2100,15 @@ const Board = () => {
       return;
     }
     try {
-      // First, increment positions of all tasks in target column
-      const tasksInTargetColumn = tasks.filter(t => t.column_id === targetColumn.id);
-      
-      if (tasksInTargetColumn.length > 0) {
-        // Increment each task's position
-        for (const task of tasksInTargetColumn) {
-          await supabase
-            .from("tasks")
-            .update({ position: task.position + 1 })
-            .eq('id', task.id);
-        }
-      }
+      // Get max position in target column
+      const maxPosition = tasks
+        .filter(t => t.column_id === targetColumn.id)
+        .reduce((max, t) => Math.max(max, t.position), -1);
       
       // Clear deadline if moving to a completed column
       const updateData: any = {
         column_id: targetColumn.id,
-        position: 0  // Place at top of stack
+        position: maxPosition + 1  // Add at bottom (will be front of stack visually)
       };
       
       console.log('Moving to column:', targetColumn.name, 'Type:', targetColumn.column_type, 'Task due_date before:', draggedTask.due_date);
