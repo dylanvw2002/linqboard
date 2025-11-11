@@ -1832,7 +1832,9 @@ const Board = () => {
       setExportingTask(false);
     }
   };
-  const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
+  const getColumnTasks = (columnId: string) => tasks
+    .filter(task => task.column_id === columnId)
+    .sort((a, b) => a.position - b.position); // Sort by position, lowest first (top of stack)
   
   // Update active filters count
   useEffect(() => {
@@ -2885,6 +2887,49 @@ const Board = () => {
                   }
                 }}
                 onDragEnd={handleDragEnd}
+                onReorder={async (fromIndex: number, toIndex: number) => {
+                  const columnTasks = filterTasks(getColumnTasks(column.id));
+                  if (fromIndex === toIndex) return;
+                  
+                  if (isDemo) {
+                    // Update task positions in demo mode
+                    const taskToMove = columnTasks[fromIndex];
+                    const reorderedTasks = [...columnTasks];
+                    reorderedTasks.splice(fromIndex, 1);
+                    reorderedTasks.splice(toIndex, 0, taskToMove);
+                    
+                    const updatedTasks = tasks.map(t => {
+                      const newIndex = reorderedTasks.findIndex(rt => rt.id === t.id);
+                      if (newIndex !== -1) {
+                        return { ...t, position: newIndex };
+                      }
+                      return t;
+                    });
+                    setTasks(updatedTasks);
+                    toast.success('Taak verplaatst (demo)');
+                  } else {
+                    // Update task positions in database
+                    try {
+                      const taskToMove = columnTasks[fromIndex];
+                      const reorderedTasks = [...columnTasks];
+                      reorderedTasks.splice(fromIndex, 1);
+                      reorderedTasks.splice(toIndex, 0, taskToMove);
+                      
+                      // Update positions in database
+                      for (let i = 0; i < reorderedTasks.length; i++) {
+                        await supabase
+                          .from("tasks")
+                          .update({ position: i })
+                          .eq('id', reorderedTasks[i].id);
+                      }
+                      
+                      await fetchBoardData();
+                      toast.success('Taak verplaatst');
+                    } catch (error: any) {
+                      toast.error('Fout bij verplaatsen: ' + error.message);
+                    }
+                  }
+                }}
               >
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';

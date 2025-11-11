@@ -10,6 +10,7 @@ interface TaskStackProps {
   availableHeight?: number;
   onDragStart?: (e: React.DragEvent, index: number) => void;
   onDragEnd?: () => void;
+  onReorder?: (fromIndex: number, toIndex: number) => void;
 }
 
 export const TaskStack = ({ 
@@ -19,12 +20,15 @@ export const TaskStack = ({
   onTaskClick,
   availableHeight,
   onDragStart,
-  onDragEnd
+  onDragEnd,
+  onReorder
 }: TaskStackProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [visibleCount, setVisibleCount] = useState(0);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -201,17 +205,47 @@ export const TaskStack = ({
               {children.map((child, index) => (
                 <div 
                   key={index} 
-                  className="animate-fade-in"
+                  className={cn(
+                    "animate-fade-in transition-all",
+                    draggedIndex === index && "opacity-30",
+                    dropTargetIndex === index && "border-t-4 border-primary"
+                  )}
                   style={{ animationDelay: `${index * 0.03}s` }}
-                  draggable={!!onDragStart}
+                  draggable={!!onReorder}
                   onDragStart={(e) => {
-                    if (onDragStart) {
+                    if (onReorder) {
+                      setDraggedIndex(index);
+                      e.dataTransfer.effectAllowed = 'move';
+                    } else if (onDragStart) {
                       onDragStart(e, index);
-                      // Kleine vertraging om ervoor te zorgen dat drag state is ingesteld voordat dialog sluit
                       setTimeout(() => setIsExpanded(false), 0);
                     }
                   }}
-                  onDragEnd={onDragEnd}
+                  onDragOver={(e) => {
+                    if (onReorder && draggedIndex !== null) {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = 'move';
+                      setDropTargetIndex(index);
+                    }
+                  }}
+                  onDragLeave={() => {
+                    if (onReorder) {
+                      setDropTargetIndex(null);
+                    }
+                  }}
+                  onDrop={(e) => {
+                    if (onReorder && draggedIndex !== null && draggedIndex !== index) {
+                      e.preventDefault();
+                      onReorder(draggedIndex, index);
+                    }
+                  }}
+                  onDragEnd={() => {
+                    setDraggedIndex(null);
+                    setDropTargetIndex(null);
+                    if (onDragEnd) {
+                      onDragEnd();
+                    }
+                  }}
                 >
                   {child}
                 </div>
