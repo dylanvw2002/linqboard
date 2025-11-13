@@ -64,10 +64,85 @@ const Index = () => {
   }];
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": t('seo.home.title'),
-    "description": t('seo.home.description'),
-    "url": "https://linqboard.nl"
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "name": t('seo.home.title'),
+        "description": t('seo.home.description'),
+        "url": "https://linqboard.nl",
+        "inLanguage": "nl-NL",
+        "isPartOf": {
+          "@type": "WebSite",
+          "url": "https://linqboard.nl"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "LinqBoard",
+        "url": "https://linqboard.nl",
+        "logo": "https://linqboard.nl/logo-linqboard.png",
+        "description": "LinqBoard - Het ultieme visuele projectmanagement platform voor teams",
+        "foundingDate": "2024",
+        "sameAs": [
+          "https://twitter.com/linqboard",
+          "https://linkedin.com/company/linqboard"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "email": "support@linqboard.nl"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "LinqBoard",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR"
+        },
+        "description": "Visueel projectmanagement platform met real-time samenwerking, aanpasbare kolommen en team management",
+        "featureList": [
+          "Real-time samenwerking",
+          "Team management",
+          "Aanpasbare kolommen",
+          "Deadline tracking",
+          "Bestandsbijlagen",
+          "Veilige opslag"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Wat is LinqBoard?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "LinqBoard is een visueel projectmanagement platform dat teams helpt om efficiënt samen te werken met real-time updates, aanpasbare boards en krachtige samenwerkingstools."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is LinqBoard gratis te gebruiken?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ja, LinqBoard biedt een gratis plan waarmee je kunt starten. Voor meer functies zijn er betaalde plannen beschikbaar."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Kan ik LinqBoard gebruiken voor team samenwerking?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absoluut! LinqBoard is speciaal ontworpen voor teams met real-time samenwerking, team management functies en veilige data opslag."
+            }
+          }
+        ]
+      }
+    ]
   };
   return <>
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
@@ -78,11 +153,11 @@ const Index = () => {
       
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-50 bg-white">
+        <header className="absolute top-0 left-0 right-0 z-50 bg-white" role="banner">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24">
+            <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24" role="navigation" aria-label="Main navigation">
               <div className="flex items-center gap-8">
-                <img src={logo} alt={t('seo.home.logoAlt')} className="h-32 sm:h-36 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
+                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="h-32 sm:h-36 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
                 <LanguageSwitcher />
