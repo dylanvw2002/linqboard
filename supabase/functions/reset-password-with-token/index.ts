@@ -50,7 +50,10 @@ Deno.serve(async (req) => {
     }
 
     // Update user password
-    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+    console.log('Attempting to update password for user:', tokenData.user_id);
+    console.log('New password length:', newPassword.length);
+    
+    const { data: updateData, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       tokenData.user_id,
       { password: newPassword }
     );
@@ -60,13 +63,20 @@ Deno.serve(async (req) => {
       throw updateError;
     }
 
+    console.log('Password update response:', updateData);
+
     // Mark token as used
-    await supabaseAdmin
+    const { error: tokenUpdateError } = await supabaseAdmin
       .from('password_reset_tokens')
       .update({ used: true })
       .eq('id', tokenData.id);
 
+    if (tokenUpdateError) {
+      console.error('Error marking token as used:', tokenUpdateError);
+    }
+
     console.log('Password reset successful for user:', tokenData.user_id);
+    console.log('Token marked as used:', tokenData.id);
 
     return new Response(
       JSON.stringify({ 
