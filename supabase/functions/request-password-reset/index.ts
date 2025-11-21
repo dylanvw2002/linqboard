@@ -209,7 +209,7 @@ Deno.serve(async (req) => {
     }
 
     // Create reset URL - use the production domain
-    const resetUrl = `https://linqboard.nl/reset-password?token=${token}`;
+    const resetUrl = `https://www.linqboard.io/reset-password?token=${token}`;
 
     // Send email
     const { error: emailError } = await resend.emails.send({
