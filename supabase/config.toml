@@ -62,3 +62,9 @@ verify_jwt = true
 
 [functions.check-widget-access]
 verify_jwt = true
+
+[functions.reset-password-with-token]
+verify_jwt = false
+
+[functions.request-password-reset]
+verify_jwt = false
