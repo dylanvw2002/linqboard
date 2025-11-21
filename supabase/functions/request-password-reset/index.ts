@@ -208,8 +208,8 @@ Deno.serve(async (req) => {
       throw insertError;
     }
 
-    // Create reset URL
-    const resetUrl = `${Deno.env.get('SUPABASE_URL')?.replace('.supabase.co', '.lovableproject.com') || 'https://linqboard.io'}/reset-password?token=${token}`;
+    // Create reset URL - use the production domain
+    const resetUrl = `https://linqboard.nl/reset-password?token=${token}`;
 
     // Send email
     const { error: emailError } = await resend.emails.send({
