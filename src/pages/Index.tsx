@@ -66,8 +66,8 @@ const Index = () => {
         const currentScrollTop = container.scrollTop;
         const scrollDelta = Math.abs(currentScrollTop - initialScrollTop);
         
-        // Only snap if user scrolled more than 150px
-        if (scrollDelta < 150) {
+        // Only snap if user scrolled more than 100px (reduced threshold for quicker snapping)
+        if (scrollDelta < 100) {
           isUserScrolling = false;
           return;
         }
@@ -110,7 +110,7 @@ const Index = () => {
         } else {
           isUserScrolling = false;
         }
-      }, 150);
+      }, 200);
     };
     
     container.addEventListener('scroll', handleScroll, { passive: true });
@@ -313,7 +313,7 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main ref={heroRef} className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl relative z-20">
+        <main ref={heroRef} className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-screen flex items-center max-w-7xl relative z-20">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full pl-0 ml-[110px]">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
@@ -352,7 +352,7 @@ const Index = () => {
         </main>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative z-20">
+        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center relative z-20">
           <div className="container mx-auto max-w-7xl">
             {/* Header */}
             <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -406,7 +406,7 @@ const Index = () => {
         </section>
 
         {/* Testimonial Quotes Section */}
-        <section ref={testimonialsSectionRef} className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl relative z-20">
+        <section ref={testimonialsSectionRef} className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 max-w-6xl min-h-screen flex items-center relative z-20">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
             <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
@@ -516,7 +516,7 @@ const Index = () => {
           </section>
 
         {/* Partners Section */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl relative z-20">
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 max-w-7xl min-h-screen flex items-center relative z-20">
           <div className={`bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <p className="text-center text-xs sm:text-sm lg:text-sm uppercase tracking-wider text-muted-foreground mb-5 sm:mb-6 md:mb-8 lg:mb-10 font-semibold">
               {t('landing.trustedBy')}
