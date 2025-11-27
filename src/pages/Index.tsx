@@ -526,11 +526,9 @@ const Index = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Link to="/auth" className="w-full">
-                    <Button variant="outline" className="w-full" size="sm">
-                      {t('landing.getStarted')}
-                    </Button>
-                  </Link>
+                  <Button variant="outline" className="w-full" size="sm">
+                    {t('landing.getStarted')}
+                  </Button>
                 </CardFooter>
               </Card>
 
@@ -557,11 +555,9 @@ const Index = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Link to="/pricing" className="w-full">
-                    <Button className="w-full" size="sm">
-                      {t('pricing.upgrade')}
-                    </Button>
-                  </Link>
+                  <Button className="w-full" size="sm">
+                    {t('pricing.upgrade')}
+                  </Button>
                 </CardFooter>
               </Card>
 
@@ -588,11 +584,9 @@ const Index = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Link to="/pricing" className="w-full">
-                    <Button variant="outline" className="w-full" size="sm">
-                      {t('pricing.upgrade')}
-                    </Button>
-                  </Link>
+                  <Button variant="outline" className="w-full" size="sm">
+                    {t('pricing.upgrade')}
+                  </Button>
                 </CardFooter>
               </Card>
 
@@ -619,11 +613,9 @@ const Index = () => {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Link to="/pricing" className="w-full">
-                    <Button variant="outline" className="w-full" size="sm">
-                      {t('pricing.upgrade')}
-                    </Button>
-                  </Link>
+                  <Button variant="outline" className="w-full" size="sm">
+                    {t('pricing.upgrade')}
+                  </Button>
                 </CardFooter>
               </Card>
             </div>
