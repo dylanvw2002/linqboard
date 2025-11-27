@@ -762,17 +762,11 @@ const Board = () => {
     }
     if (isDemo) {
       setSelectedBackground(gradient);
-      setBackgroundImageUrl("");
+      setBackgroundImageUrl(null);
       toast.success(t('board.backgroundUpdated') + ' (demo)');
       return;
     }
     try {
-      await supabase.from("boards").update({
-        background_gradient: gradient,
-        background_image_url: null
-      }).eq("id", board?.id);
-      setSelectedBackground(gradient);
-      setBackgroundImageUrl("");
       const {
         error
       } = await supabase.from("boards").update({
@@ -780,6 +774,8 @@ const Board = () => {
         background_image_url: null
       }).eq("id", board?.id);
       if (error) throw error;
+      setSelectedBackground(gradient);
+      setBackgroundImageUrl(null);
       toast.success(t('board.backgroundUpdated') || 'Achtergrond bijgewerkt');
     } catch (error: any) {
       toast.error("Fout bij bijwerken achtergrond: " + error.message);
@@ -824,13 +820,15 @@ const Board = () => {
         error
       } = await supabase.from("boards").update({
         background_image_url: 'default',
+        background_gradient: 'from-background via-primary/5 to-accent/5',
         background_fit_mode: 'cover',
         background_position_x: 50,
         background_position_y: 50,
         background_scale: 100
       }).eq("id", board?.id);
       if (error) throw error;
-      setBackgroundImageUrl(defaultBackground);
+      setBackgroundImageUrl(null);
+      setSelectedBackground('from-background via-primary/5 to-accent/5');
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
       setBackgroundScale(100);
@@ -846,19 +844,19 @@ const Board = () => {
         error
       } = await supabase.from("boards").update({
         background_image_url: 'default',
-        background_gradient: null,
+        background_gradient: 'from-background via-primary/5 to-accent/5',
         background_fit_mode: 'cover',
         background_position_x: 50,
         background_position_y: 50,
         background_scale: 100
       }).eq("id", board?.id);
       if (error) throw error;
-      setBackgroundImageUrl(defaultBackground);
+      setBackgroundImageUrl(null);
+      setSelectedBackground('from-background via-primary/5 to-accent/5');
       setBackgroundFitMode('cover');
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
       setBackgroundScale(100);
-      setSelectedBackground('');
       toast.success(t('board.backgroundSetDefault'));
     } catch (error: any) {
       console.error("Error setting default background:", error);
@@ -1089,10 +1087,10 @@ const Board = () => {
       setOrgMembers(demoData.DEMO_MEMBERS);
       setSelectedBackground('from-blue-50 to-blue-100');
 
-      // Load default background image
-      const defaultBg = defaultBackground;
-      setBackgroundImageUrl(defaultBg);
-      setBackgroundFitMode('scale');
+      // Load default background (landing page gradient)
+      setBackgroundImageUrl(null);
+      setSelectedBackground('from-background via-primary/5 to-accent/5');
+      setBackgroundFitMode('cover');
       setBackgroundScale(100);
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
@@ -1408,14 +1406,18 @@ const Board = () => {
 
       // Set background image from board data
       if (boardResult.data.background_image_url) {
-        // Convert 'default' marker to actual asset URL
-        const bgUrl = boardResult.data.background_image_url === 'default' ? defaultBackground : boardResult.data.background_image_url;
-        setBackgroundImageUrl(bgUrl);
-        setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
-        setBackgroundPositionY(boardResult.data.background_position_y ?? 50);
-        setBackgroundScale(boardResult.data.background_scale ?? 100);
-        const fitModeValue = boardResult.data.background_fit_mode;
-        setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'cover');
+        // Use landing page gradient for 'default' marker
+        if (boardResult.data.background_image_url === 'default') {
+          setBackgroundImageUrl(null);
+          setSelectedBackground('from-background via-primary/5 to-accent/5');
+        } else {
+          setBackgroundImageUrl(boardResult.data.background_image_url);
+          setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
+          setBackgroundPositionY(boardResult.data.background_position_y ?? 50);
+          setBackgroundScale(boardResult.data.background_scale ?? 100);
+          const fitModeValue = boardResult.data.background_fit_mode;
+          setBackgroundFitMode(fitModeValue === 'cover' || fitModeValue === 'scale' ? fitModeValue : 'cover');
+        }
       }
 
       // Fetch columns
@@ -3188,7 +3190,7 @@ const Board = () => {
           </span>
           <div className="flex items-center gap-2">
             {(userPlan === 'team' || userPlan === 'business') && <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
-                <Select value={backgroundImageUrl === defaultBackground ? 'default' : selectedBackground} onValueChange={value => {
+                <Select value={!backgroundImageUrl && selectedBackground === 'from-background via-primary/5 to-accent/5' ? 'default' : selectedBackground} onValueChange={value => {
                 if (value === 'default') {
                   handleSetDefaultBackground();
                 } else {
@@ -3211,7 +3213,7 @@ const Board = () => {
                   </SelectContent>
                 </Select>
                 
-                {backgroundImageUrl && backgroundImageUrl !== defaultBackground ? <Button size="sm" variant="destructive" onClick={handleRemoveBackgroundImage} disabled={!canCustomizeBackground} className="flex items-center gap-1">
+                {backgroundImageUrl ? <Button size="sm" variant="destructive" onClick={handleRemoveBackgroundImage} disabled={!canCustomizeBackground} className="flex items-center gap-1">
                     <X className="h-4 w-4" />
                     {t('board.removeImage')}
                   </Button> : <Button size="sm" variant="outline" disabled={uploadingBackground || !canCustomizeBackground} className="relative flex items-center gap-1">
