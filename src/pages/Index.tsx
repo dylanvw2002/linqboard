@@ -209,7 +209,7 @@ const Index = () => {
 
         {/* Hero Section */}
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-40 xl:pt-44 pb-6 sm:pb-8 lg:pb-12 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
-          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center animate-fade-in w-full">
+          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content */}
             <article className="space-y-4 sm:space-y-6 lg:space-y-8 xl:space-y-10">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
