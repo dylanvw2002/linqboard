@@ -255,7 +255,7 @@ const Index = () => {
                 <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center">
                   {/* Left: Image */}
                   <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
-                    <img src={linqboardMascotTry} alt="Linqboard Demo Preview" className="w-full h-auto" loading="lazy" width="600" height="400" />
+                    <img src={linqboardMascotTry} alt="Linqboard Demo Preview" className="w-3/4 h-auto mx-auto" loading="lazy" width="600" height="400" />
                   </div>
 
                   {/* Right: Content */}
