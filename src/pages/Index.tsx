@@ -358,9 +358,7 @@ const Index = () => {
         {/* Demo Section */}
         <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
           <div className="container mx-auto max-w-7xl">
-            <div className={`relative overflow-hidden rounded-xl sm:rounded-2xl lg:rounded-2xl bg-gradient-to-br from-primary to-accent p-1 shadow-xl sm:shadow-2xl lg:shadow-xl hover:shadow-xl transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <div className="bg-card rounded-xl sm:rounded-2xl lg:rounded-2xl p-6 sm:p-8 md:p-12 lg:p-12 xl:p-16">
-                <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center">
+            <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   {/* Left: Image */}
                   <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
                     <img alt="Linqboard Demo Preview" className="w-3/5 h-auto mx-auto" loading="lazy" width="600" height="400" src="/lovable-uploads/ac8a89e3-1a47-4607-8795-eb1ae4d6a766.png" />
@@ -402,12 +400,10 @@ const Index = () => {
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
                     </Link>
-                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
         {/* Partners Section */}
         <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl">
