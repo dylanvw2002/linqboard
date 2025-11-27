@@ -81,6 +81,14 @@ const Dashboard = () => {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
 
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 12) return "Goedemorgen";
+    if (hour >= 12 && hour < 18) return "Goedemiddag";
+    if (hour >= 18 && hour < 24) return "Goedeavond";
+    return "Goedenacht";
+  };
+
   useEffect(() => {
     const checkAccess = async () => {
       const {
@@ -575,7 +583,7 @@ const Dashboard = () => {
         <div className="mb-4">
           <h1 className="text-xl md:text-2xl font-bold mb-1.5 flex items-center gap-2">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {t('dashboard.hello')} {userName || t('dashboard.hello')}
+              {getTimeBasedGreeting()} {userName}
             </span>
             <PartyPopper className="text-accent" size={24} />
           </h1>
