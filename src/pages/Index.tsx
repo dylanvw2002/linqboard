@@ -249,12 +249,7 @@ const Index = () => {
                   
                   {/* Attribution */}
                   <div className="flex items-center gap-3 pt-3 border-t border-border/50">
-                    <img 
-                      src={nrgTotaalLogo} 
-                      alt="NRG Totaal logo" 
-                      className="h-8 w-auto opacity-80"
-                      loading="lazy"
-                    />
+                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-8 w-auto opacity-80" loading="lazy" />
                     <div>
                       <p className="font-semibold text-sm text-foreground">NRG Totaal</p>
                       <p className="text-xs text-muted-foreground">Technische Installaties</p>
@@ -280,14 +275,9 @@ const Index = () => {
                   
                   {/* Attribution */}
                   <div className="flex items-center gap-3 pt-3 border-t border-border/50">
-                    <img 
-                      src={zorgeloosVastgoedLogo} 
-                      alt="Zorgeloos Vastgoed logo" 
-                      className="h-8 w-auto opacity-80"
-                      loading="lazy"
-                    />
+                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed logo" className="h-8 w-auto opacity-80" loading="lazy" />
                     <div>
-                      <p className="font-semibold text-sm text-foreground">Zorgeloos Vastgoed</p>
+                      
                       <p className="text-xs text-muted-foreground">Vastgoedbeheer</p>
                     </div>
                   </div>
@@ -370,17 +360,10 @@ const Index = () => {
             {/* Features Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {features.map((feature, index) => {
-                const Icon = feature.icon;
-                return (
-                  <article
-                    key={index}
-                    className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${
-                      featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    }`}
-                    style={{
-                      animationDelay: `${index * 100}ms`
-                    }}
-                  >
+              const Icon = feature.icon;
+              return <article key={index} className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
+                animationDelay: `${index * 100}ms`
+              }}>
                     {/* Gradient Background on Hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
@@ -406,9 +389,8 @@ const Index = () => {
 
                     {/* Corner Accent */}
                     <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </article>
-                );
-              })}
+                  </article>;
+            })}
             </div>
           </div>
         </section>
