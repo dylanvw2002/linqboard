@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil, Share2, Users } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -464,11 +464,65 @@ const Dashboard = () => {
       </div>;
   }
   return <div className="relative min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+      {/* Background Icons Pattern */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Desktop icons */}
+        <div className="hidden md:block">
+          <Calendar className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
+          <Clipboard className="absolute top-[5%] left-[30%] w-10 h-10 text-primary opacity-5" />
+          <FileText className="absolute top-[5%] left-[55%] w-10 h-10 text-primary opacity-5" />
+          <Target className="absolute top-[5%] left-[80%] w-10 h-10 text-primary opacity-5" />
+          
+          <Clock className="absolute top-[20%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <CheckSquare className="absolute top-[20%] left-[35%] w-10 h-10 text-primary opacity-5" />
+          <Archive className="absolute top-[20%] left-[60%] w-10 h-10 text-primary opacity-5" />
+          <CheckCircle2 className="absolute top-[20%] left-[85%] w-10 h-10 text-primary opacity-5" />
+          
+          <Zap className="absolute top-[35%] left-[5%] w-10 h-10 text-primary opacity-5" />
+          <Paperclip className="absolute top-[35%] left-[30%] w-10 h-10 text-primary opacity-5" />
+          <Layout className="absolute top-[35%] left-[55%] w-10 h-10 text-primary opacity-5" />
+          <Calendar className="absolute top-[35%] left-[80%] w-10 h-10 text-primary opacity-5" />
+          
+          <Clipboard className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <FileText className="absolute top-[50%] left-[35%] w-10 h-10 text-primary opacity-5" />
+          <Target className="absolute top-[50%] left-[60%] w-10 h-10 text-primary opacity-5" />
+          <Clock className="absolute top-[50%] left-[85%] w-10 h-10 text-primary opacity-5" />
+          
+          <CheckSquare className="absolute top-[65%] left-[5%] w-10 h-10 text-primary opacity-5" />
+          <Archive className="absolute top-[65%] left-[30%] w-10 h-10 text-primary opacity-5" />
+          <CheckCircle2 className="absolute top-[65%] left-[55%] w-10 h-10 text-primary opacity-5" />
+          <Zap className="absolute top-[65%] left-[80%] w-10 h-10 text-primary opacity-5" />
+          
+          <Paperclip className="absolute top-[80%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <Layout className="absolute top-[80%] left-[35%] w-10 h-10 text-primary opacity-5" />
+          <Calendar className="absolute top-[80%] left-[60%] w-10 h-10 text-primary opacity-5" />
+          <Clipboard className="absolute top-[80%] left-[85%] w-10 h-10 text-primary opacity-5" />
+        </div>
+        
+        {/* Mobile icons */}
+        <div className="block md:hidden">
+          <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-primary opacity-5" />
+          
+          <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-primary opacity-5" />
+          
+          <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-primary opacity-5" />
+          
+          <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <Clipboard className="absolute top-[70%] right-[10%] w-10 h-10 text-primary opacity-5" />
+          
+          <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-primary opacity-5" />
+          <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-primary opacity-5" />
+        </div>
+      </div>
+
       {/* Onboarding Guide */}
       <OnboardingGuide open={showOnboarding} onOpenChange={setShowOnboarding} />
 
       {/* Header */}
-      <header className="border-b border-border/50 backdrop-blur-sm bg-card/30">
+      <header className="border-b border-border/30 backdrop-blur-sm bg-card/10 relative z-10">
         <div className="container mx-auto px-4 py-0 max-w-6xl">
           <div className="flex items-center justify-between gap-1 -my-[20px]">
             <img src={logo} alt="LinqBoard Logo" className="h-20 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
