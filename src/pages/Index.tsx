@@ -28,10 +28,10 @@ const Index = () => {
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
-  
-  const autoplayPlugin = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false })
-  );
+  const autoplayPlugin = useRef(Autoplay({
+    delay: 3000,
+    stopOnInteraction: false
+  }));
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
@@ -403,14 +403,10 @@ const Index = () => {
               {t('landing.trustedBy')}
             </p>
             
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[autoplayPlugin.current]}
-              className="w-full max-w-6xl mx-auto"
-            >
+            <Carousel opts={{
+            align: "start",
+            loop: true
+          }} plugins={[autoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
               <CarouselContent>
                 {/* NRG Totaal */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
@@ -491,7 +487,7 @@ const Index = () => {
         <section className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent py-0">
                 {t('pricing.title')}
               </h2>
               <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
@@ -541,12 +537,10 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="pb-3">
                   <ul className="space-y-2">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {[1, 2, 3, 4, 5].map(i => <li key={i} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                         <span className="text-xs">{t(`pricing.pro.feature${i}`)}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -565,12 +559,10 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="pb-3">
                   <ul className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {[1, 2, 3, 4, 5, 6].map(i => <li key={i} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                         <span className="text-xs">{t(`pricing.team.feature${i}`)}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
@@ -589,12 +581,10 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="pb-3">
                   <ul className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {[1, 2, 3, 4, 5, 6].map(i => <li key={i} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                         <span className="text-xs">{t(`pricing.business.feature${i}`)}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </CardContent>
               </Card>
