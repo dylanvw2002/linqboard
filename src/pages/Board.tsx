@@ -2781,8 +2781,7 @@ const Board = () => {
                   </div>
                   
                   {/* Tasks */}
-                  <div className="space-y-2 min-h-[100px]">
-                    {filterTasks(getColumnTasks(column.id)).map(task => {
+                  <div className="space-y-3">{filterTasks(getColumnTasks(column.id)).map(task => {
                       const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                       const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
                       
