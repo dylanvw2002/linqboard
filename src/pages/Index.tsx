@@ -433,7 +433,7 @@ const Index = () => {
                 {/* ODÉA Vastgoed Service */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-28 sm:h-32 w-auto transition-all" loading="lazy" width="120" height="112" />
+                    <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" />
                   </div>
                 </CarouselItem>
                 
