@@ -19,7 +19,7 @@ import SupportButton from "@/components/SupportButton";
 import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useTranslation } from "react-i18next";
-import logo from "@/assets/logo-transparent.png";
+import logo from "@/assets/linqboard-logo-new.png";
 
 interface Organization {
   id: string;
