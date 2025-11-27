@@ -16,6 +16,8 @@ import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
 import fleatureLogo from "@/assets/partners/fleature.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
 const Index = () => {
   const {
     t
@@ -23,6 +25,10 @@ const Index = () => {
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
+  
+  const autoplayPlugin = useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: false })
+  );
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
@@ -399,6 +405,7 @@ const Index = () => {
                 align: "start",
                 loop: true,
               }}
+              plugins={[autoplayPlugin.current]}
               className="w-full max-w-6xl mx-auto"
             >
               <CarouselContent>
