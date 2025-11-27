@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 import type { Locale } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import logo from "@/assets/logo-transparent.png";
+import logo from "@/assets/linqboard-logo-board.png";
 import defaultBackground from "@/assets/default-board-background.png";
 import { TaskAttachments, AttachmentCount } from "@/components/TaskAttachments";
 import { TaskHistory } from "@/components/TaskHistory";
