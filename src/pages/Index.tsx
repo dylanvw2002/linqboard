@@ -6,6 +6,7 @@ import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import linqboardMascot from "@/assets/linqboard-mascot-new.png";
 import collaborationIllustration from "@/assets/collaboration-illustration.png";
+import linqboardMascotTry from "@/assets/linqboard-mascot-try.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
 import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
@@ -254,7 +255,7 @@ const Index = () => {
                 <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center">
                   {/* Left: Image */}
                   <div className={`rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-border/50 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
-                    <img src={collaborationIllustration} alt="Linqboard Demo Preview" className="w-full h-auto" loading="lazy" width="600" height="400" />
+                    <img src={linqboardMascotTry} alt="Linqboard Demo Preview" className="w-full h-auto" loading="lazy" width="600" height="400" />
                   </div>
 
                   {/* Right: Content */}
