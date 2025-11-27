@@ -208,7 +208,7 @@ const Index = () => {
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold leading-tight">
-                {t('landing.hero')}
+                Teamwerk, <span className="text-primary">moeiteloos georganiseerd</span>
               </h1>
               
               <p className="text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-2xl text-muted-foreground max-w-xl lg:max-w-xl leading-relaxed">
