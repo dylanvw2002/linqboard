@@ -113,6 +113,7 @@ export type Database = {
           header_width: number | null
           height: number | null
           id: string
+          mobile_position: number | null
           name: string
           position: number
           width: number | null
@@ -133,6 +134,7 @@ export type Database = {
           header_width?: number | null
           height?: number | null
           id?: string
+          mobile_position?: number | null
           name: string
           position: number
           width?: number | null
@@ -153,6 +155,7 @@ export type Database = {
           header_width?: number | null
           height?: number | null
           id?: string
+          mobile_position?: number | null
           name?: string
           position?: number
           width?: number | null
