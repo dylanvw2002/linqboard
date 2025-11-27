@@ -20,7 +20,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 const Index = () => {
   const {
     t
@@ -32,6 +32,90 @@ const Index = () => {
     delay: 3000,
     stopOnInteraction: false
   }));
+  
+  // Scroll container and section refs
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const testimonialsSectionRef = useRef<HTMLElement>(null);
+  const pricingSectionRef = useRef<HTMLElement>(null);
+  
+  // State for scroll effects
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [overlayOpacity, setOverlayOpacity] = useState(1);
+  
+  // Section snapping effect
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    let scrollTimeout: NodeJS.Timeout;
+    let lastScrollTop = 0;
+    
+    const handleScroll = () => {
+      if (isScrolling) return;
+      
+      const scrollTop = container.scrollTop;
+      const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
+      lastScrollTop = scrollTop;
+      
+      clearTimeout(scrollTimeout);
+      
+      scrollTimeout = setTimeout(() => {
+        if (Math.abs(scrollTop - lastScrollTop) < 150) return;
+        
+        const sections = [
+          heroRef.current,
+          featuresSection.ref.current,
+          testimonialsSectionRef.current,
+          demoSection.ref.current,
+          partnersSection.ref.current,
+          pricingSectionRef.current,
+        ].filter(Boolean) as HTMLElement[];
+        
+        let targetSection: HTMLElement | null = null;
+        
+        if (scrollDirection === 'down') {
+          targetSection = sections.find(section => {
+            const rect = section.getBoundingClientRect();
+            return rect.top > 100;
+          }) || null;
+        } else {
+          targetSection = [...sections].reverse().find(section => {
+            const rect = section.getBoundingClientRect();
+            return rect.top < -100;
+          }) || null;
+        }
+        
+        if (targetSection) {
+          setIsScrolling(true);
+          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => setIsScrolling(false), 800);
+        }
+      }, 100);
+    };
+    
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, [isScrolling]);
+  
+  // Hero overlay fade-out effect
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    const handleScroll = () => {
+      const scrollTop = container.scrollTop;
+      const viewportHeight = window.innerHeight;
+      const opacity = Math.max(0, 1 - (scrollTop / viewportHeight));
+      setOverlayOpacity(opacity);
+    };
+    
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
@@ -127,7 +211,14 @@ const Index = () => {
       <link rel="preload" as="image" href={logo} />
       <link rel="preload" as="image" href={linqboardMascot} />
       
+      <div ref={scrollContainerRef} className="h-screen overflow-y-scroll scroll-smooth">
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+        {/* Hero Overlay Gradient - Fades out on scroll */}
+        <div 
+          className="fixed inset-0 bg-gradient-to-b from-background/80 via-background/40 to-transparent pointer-events-none z-10 transition-opacity duration-300"
+          style={{ opacity: overlayOpacity }}
+        />
+        
         {/* Background Icons Pattern - Carefully spaced to prevent any overlap */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           {/* Desktop icons - hidden on mobile */}
@@ -183,7 +274,7 @@ const Index = () => {
         </div>
         
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-50" role="banner">
+        <header className="absolute top-0 left-0 right-0 z-50 relative" role="banner">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24" role="navigation" aria-label="Main navigation">
               <div className="flex items-center gap-8">
@@ -203,7 +294,7 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
+        <main ref={heroRef} className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl relative z-20">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full pl-0 ml-[110px]">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
@@ -242,7 +333,7 @@ const Index = () => {
         </main>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative z-20">
           <div className="container mx-auto max-w-7xl">
             {/* Header */}
             <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -296,7 +387,7 @@ const Index = () => {
         </section>
 
         {/* Testimonial Quotes Section */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl">
+        <section ref={testimonialsSectionRef} className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl relative z-20">
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
             <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
@@ -356,7 +447,7 @@ const Index = () => {
         </section>
 
         {/* Demo Section */}
-        <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
+        <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center relative z-20">
           <div className="container mx-auto max-w-7xl">
             <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   {/* Left: Image */}
@@ -406,7 +497,7 @@ const Index = () => {
           </section>
 
         {/* Partners Section */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl">
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl relative z-20">
           <div className={`bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <p className="text-center text-xs sm:text-sm lg:text-sm uppercase tracking-wider text-muted-foreground mb-5 sm:mb-6 md:mb-8 lg:mb-10 font-semibold">
               {t('landing.trustedBy')}
@@ -466,7 +557,7 @@ const Index = () => {
         </section>
 
         {/* Pricing Section */}
-        <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+        <section ref={pricingSectionRef} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative z-20">
           <div className="container mx-auto max-w-7xl">
             {/* Header */}
             <div className="text-center mb-12 sm:mb-16 lg:mb-20">
@@ -645,7 +736,7 @@ const Index = () => {
         </section>
 
         {/* SoloLinq CTA Section */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl relative z-20">
           <div className="mt-8 md:mt-12 bg-primary/5 backdrop-blur-sm rounded-2xl border border-primary/20 hover:border-primary/40 transition-all duration-300 p-6 md:p-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="flex-shrink-0">
@@ -677,6 +768,7 @@ const Index = () => {
             <p>{t('landing.footerText')}</p>
           </div>
         </footer>
+      </div>
       </div>
     </>;
 };
