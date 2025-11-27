@@ -121,7 +121,8 @@ Deno.serve(async (req) => {
       .insert({
         organization_id: org.id,
         name: 'Hoofd Board',
-        background_image_url: 'default',
+        background_gradient: 'from-background via-primary/5 to-accent/5',
+        background_image_url: null,
         background_fit_mode: 'cover',
         background_scale: 100,
         background_position_x: 50,

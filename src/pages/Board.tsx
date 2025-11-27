@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter, Calendar as CalendarLucide, Clipboard as ClipboardIcon, FileText, Target, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
@@ -85,8 +85,8 @@ const getDemoData = (t: any) => {
   const DEMO_BOARD = {
     id: 'demo-board',
     name: t('demo.boardName'),
-    background_gradient: null,
-    background_image_url: 'default',
+    background_gradient: 'from-background via-primary/5 to-accent/5',
+    background_image_url: null,
     background_fit_mode: 'cover',
     background_position_x: 50,
     background_position_y: 50,
@@ -2373,6 +2373,62 @@ const Board = () => {
         backgroundRepeat: 'no-repeat'
       })
     }} />
+
+      {/* Background Icons Pattern - only show when using gradient background */}
+      {!backgroundImageUrl && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+          {/* Desktop icons */}
+          <div className="hidden md:block">
+            <CalendarLucide className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
+            <ClipboardIcon className="absolute top-[5%] left-[30%] w-10 h-10 text-primary opacity-5" />
+            <FileText className="absolute top-[5%] left-[55%] w-10 h-10 text-primary opacity-5" />
+            <Target className="absolute top-[5%] left-[80%] w-10 h-10 text-primary opacity-5" />
+            
+            <Clock className="absolute top-[20%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <CheckSquare className="absolute top-[20%] left-[35%] w-10 h-10 text-primary opacity-5" />
+            <Archive className="absolute top-[20%] left-[60%] w-10 h-10 text-primary opacity-5" />
+            <CheckCircle2 className="absolute top-[20%] left-[85%] w-10 h-10 text-primary opacity-5" />
+            
+            <Zap className="absolute top-[35%] left-[5%] w-10 h-10 text-primary opacity-5" />
+            <Paperclip className="absolute top-[35%] left-[30%] w-10 h-10 text-primary opacity-5" />
+            <Layout className="absolute top-[35%] left-[55%] w-10 h-10 text-primary opacity-5" />
+            <CalendarLucide className="absolute top-[35%] left-[80%] w-10 h-10 text-primary opacity-5" />
+            
+            <ClipboardIcon className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <FileText className="absolute top-[50%] left-[35%] w-10 h-10 text-primary opacity-5" />
+            <Target className="absolute top-[50%] left-[60%] w-10 h-10 text-primary opacity-5" />
+            <Clock className="absolute top-[50%] left-[85%] w-10 h-10 text-primary opacity-5" />
+            
+            <CheckSquare className="absolute top-[65%] left-[5%] w-10 h-10 text-primary opacity-5" />
+            <Archive className="absolute top-[65%] left-[30%] w-10 h-10 text-primary opacity-5" />
+            <CheckCircle2 className="absolute top-[65%] left-[55%] w-10 h-10 text-primary opacity-5" />
+            <Zap className="absolute top-[65%] left-[80%] w-10 h-10 text-primary opacity-5" />
+            
+            <Paperclip className="absolute top-[80%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <Layout className="absolute top-[80%] left-[35%] w-10 h-10 text-primary opacity-5" />
+            <CalendarLucide className="absolute top-[80%] left-[60%] w-10 h-10 text-primary opacity-5" />
+            <ClipboardIcon className="absolute top-[80%] left-[85%] w-10 h-10 text-primary opacity-5" />
+          </div>
+          
+          {/* Mobile icons */}
+          <div className="block md:hidden">
+            <CalendarLucide className="absolute top-[10%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-primary opacity-5" />
+            
+            <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-primary opacity-5" />
+            
+            <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-primary opacity-5" />
+            
+            <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <ClipboardIcon className="absolute top-[70%] right-[10%] w-10 h-10 text-primary opacity-5" />
+            
+            <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-primary opacity-5" />
+            <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-primary opacity-5" />
+          </div>
+        </div>
+      )}
 
       
       {/* Canvas layer with touch gestures */}
