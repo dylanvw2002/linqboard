@@ -236,15 +236,10 @@ const Index = () => {
             {/* Quote 1 - NRG Totaal */}
             <div className="relative">
               <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg">
-                {/* Quote Icon */}
-                <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-md">
-                  <CheckCircle2 className="w-6 h-6 text-white" />
-                </div>
-                
                 {/* Quote Content */}
                 <div className="space-y-4">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
-                    LinqBoard is voor ons de perfecte vervanging van het traditionele whiteboard. Eindelijk kunnen we alle projecten digitaal en overzichtelijk beheren, zonder dat we nog met markers hoeven te werken!
+                    <span className="text-purple-500 text-2xl font-serif mr-1">"</span>LinqBoard is voor ons de perfecte vervanging van het traditionele whiteboard. Eindelijk kunnen we alle projecten digitaal en overzichtelijk beheren, zonder dat we nog met markers hoeven te werken!<span className="text-purple-500 text-2xl font-serif ml-1">"</span>
                   </blockquote>
                   
                   {/* Attribution */}
@@ -262,15 +257,10 @@ const Index = () => {
             {/* Quote 2 - Zorgeloos Vastgoed */}
             <div className="relative">
               <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg">
-                {/* Quote Icon */}
-                <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center shadow-md">
-                  <CheckCircle2 className="w-6 h-6 text-white" />
-                </div>
-                
                 {/* Quote Content */}
                 <div className="space-y-4">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
-                    Met de slimme reminder-functie en deadline tracking van LinqBoard vergeten we nooit meer een belangrijke taak. Alle vastgoedprojecten lopen nu soepel en op tijd!
+                    <span className="text-purple-500 text-2xl font-serif mr-1">"</span>Met de slimme reminder-functie en deadline tracking van LinqBoard vergeten we nooit meer een belangrijke taak. Alle vastgoedprojecten lopen nu soepel en op tijd!<span className="text-purple-500 text-2xl font-serif ml-1">"</span>
                   </blockquote>
                   
                   {/* Attribution */}
