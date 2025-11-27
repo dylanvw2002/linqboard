@@ -259,9 +259,6 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-              
-              {/* Decorative Element */}
-              <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-xl" />
             </div>
           </div>
         </section>
