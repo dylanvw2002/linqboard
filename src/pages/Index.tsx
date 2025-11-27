@@ -570,14 +570,7 @@ const Index = () => {
               </article>
 
               {/* Team Plan */}
-              <article className="group relative bg-gradient-to-b from-blue-500/5 via-card to-purple-500/5 rounded-2xl p-6 border-2 border-blue-500/30 hover:border-blue-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
-                {/* Badge */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-semibold shadow-lg">
-                    {t('pricing.badges.forTeams')}
-                  </span>
-                </div>
-
+              <article className="group relative bg-gradient-to-b from-card via-card to-muted/20 rounded-2xl p-6 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
                 {/* Header */}
                 <div className="mb-4">
                   <h3 className="text-lg font-bold mb-1">{t('pricing.team.name')}</h3>
@@ -588,14 +581,14 @@ const Index = () => {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mb-4" />
+                <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
 
                 {/* Features */}
                 <ul className="space-y-2">
                   {[1, 2, 3].map(i => (
                     <li key={i} className="flex items-start gap-2">
-                      <div className="mt-0.5 w-4 h-4 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="h-2.5 w-2.5 text-blue-500" />
+                      <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-2.5 w-2.5 text-primary" />
                       </div>
                       <span className="text-xs leading-relaxed">{t(`pricing.team.feature${i}`)}</span>
                     </li>
@@ -603,18 +596,11 @@ const Index = () => {
                 </ul>
 
                 {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </article>
 
               {/* Business Plan */}
-              <article className="group relative bg-gradient-to-b from-yellow-500/5 via-card to-yellow-600/5 rounded-2xl p-6 border-2 border-yellow-500/30 hover:border-yellow-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
-                {/* Badge */}
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-500 text-white text-xs font-semibold shadow-lg">
-                    {t('pricing.badges.enterprise')}
-                  </span>
-                </div>
-
+              <article className="group relative bg-gradient-to-b from-card via-card to-muted/20 rounded-2xl p-6 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
                 {/* Header */}
                 <div className="mb-4">
                   <h3 className="text-lg font-bold mb-1">{t('pricing.business.name')}</h3>
@@ -625,14 +611,14 @@ const Index = () => {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-4" />
+                <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
 
                 {/* Features */}
                 <ul className="space-y-2">
                   {[1, 2, 3].map(i => (
                     <li key={i} className="flex items-start gap-2">
-                      <div className="mt-0.5 w-4 h-4 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="h-2.5 w-2.5 text-yellow-600" />
+                      <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-2.5 w-2.5 text-primary" />
                       </div>
                       <span className="text-xs leading-relaxed">{t(`pricing.business.feature${i}`)}</span>
                     </li>
@@ -640,7 +626,7 @@ const Index = () => {
                 </ul>
 
                 {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-yellow-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </article>
             </div>
 
