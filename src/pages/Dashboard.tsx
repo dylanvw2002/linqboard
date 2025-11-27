@@ -550,7 +550,7 @@ const Dashboard = () => {
         <img src={logo} alt="LinqBoard Logo" className="h-24 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
       </div>
 
-      <div className="container mx-auto px-4 py-4 max-w-6xl">
+      <div className="container mx-auto px-4 py-4 pb-8 max-w-6xl">
         {/* Welcome Section */}
         <div className="mb-4">
           <h1 className="text-xl md:text-2xl font-bold mb-1.5 flex items-center gap-2">
@@ -702,7 +702,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick actions */}
-        <div className="border-t border-border/50 py-4 mt-2">
+        <div className="border-t border-border/50 pt-4 pb-0">
             <h3 className="text-sm font-semibold mb-2 text-muted-foreground">{t('dashboard.quickActions')}</h3>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="outline" onClick={() => navigate("/create-organization")} className="border-2 text-xs" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
