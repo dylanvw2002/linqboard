@@ -152,32 +152,32 @@ const Auth = () => {
       <div className="absolute top-4 right-4 lg:top-6 lg:right-6 z-10">
         <LanguageSwitcher />
       </div>
-      <Card className="w-full max-w-md lg:max-w-lg mx-4 sm:mx-0 shadow-xl lg:shadow-2xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
-        <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 pb-3 sm:pb-4 lg:pb-5">
-          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-56 lg:h-60 w-auto" />
+      <Card className="w-full max-w-sm mx-4 sm:mx-0 shadow-lg bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
+        <div className="flex justify-center pt-4 pb-2">
+          <img src={authIllustration} alt="LinqBoard Authentication" className="h-32 sm:h-40 w-auto" />
         </div>
-        <CardHeader className="space-y-2 lg:space-y-3 pt-2 px-4 sm:px-6 lg:px-8">
-          <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center">
+        <CardHeader className="space-y-1 pt-1 px-4 sm:px-5">
+          <CardTitle className="text-xl sm:text-2xl font-bold text-center">
             {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcome') : t('auth.createAccount')}
           </CardTitle>
-          <CardDescription className="text-center text-sm sm:text-base lg:text-lg">
+          <CardDescription className="text-center text-xs sm:text-sm">
             {isForgotPassword ? t('auth.resetPasswordDescription') : isLogin ? t('auth.loginDescription') : t('auth.signupDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-4 sm:px-6 lg:px-8 pb-8 lg:pb-10">
-          <form onSubmit={handleAuth} className="space-y-3 sm:space-y-4 lg:space-y-5">
-            {!isLogin && !isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="fullName" className="lg:text-base">{t('auth.fullName')}</Label>
-                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} className="lg:h-11 lg:text-base" />
+        <CardContent className="px-4 sm:px-5 pb-6">
+          <form onSubmit={handleAuth} className="space-y-3">
+            {!isLogin && !isForgotPassword && <div className="space-y-1.5">
+                <Label htmlFor="fullName" className="text-sm">{t('auth.fullName')}</Label>
+                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} className="h-9 text-sm" />
               </div>}
             
-            <div className="space-y-2">
-              <Label htmlFor="email" className="lg:text-base">{t('auth.email')}</Label>
-              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} className="lg:h-11 lg:text-base" />
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-sm">{t('auth.email')}</Label>
+              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} className="h-9 text-sm" />
             </div>
             
-            {!isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="password" className="lg:text-base">{t('auth.password')}</Label>
+            {!isForgotPassword && <div className="space-y-1.5">
+                <Label htmlFor="password" className="text-sm">{t('auth.password')}</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -188,52 +188,52 @@ const Auth = () => {
                     required 
                     minLength={6} 
                     disabled={loading}
-                    className="pr-10 lg:h-11 lg:text-base"
+                    className="pr-10 h-9 text-sm"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent lg:h-11"
+                    className="absolute right-0 top-0 h-full px-2 py-1 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={loading}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 lg:h-5 lg:w-5 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 lg:h-5 lg:w-5 text-muted-foreground" />
+                      <Eye className="h-4 w-4 text-muted-foreground" />
                     )}
                   </Button>
                 </div>
-                {!isLogin && <p className="text-xs lg:text-sm text-muted-foreground">
+                {!isLogin && <p className="text-xs text-muted-foreground">
                     {t('auth.minPasswordLength')}
                   </p>}
               </div>}
             
-            <Button type="submit" className="w-full lg:h-11 lg:text-base font-semibold" disabled={loading}>
+            <Button type="submit" className="w-full h-9 text-sm font-semibold" disabled={loading}>
               {loading ? <>
-                  <Loader2 className="mr-2 h-4 w-4 lg:h-5 lg:w-5 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   {t('auth.busy')}
                 </> : isForgotPassword ? t('auth.sendResetLink') : isLogin ? t('auth.login') : t('auth.signup')}
             </Button>
           </form>
           
-          <div className="mt-6 lg:mt-7 text-center space-y-2 lg:space-y-3">
-            {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm lg:text-base text-primary hover:underline block w-full" disabled={loading}>
+          <div className="mt-4 text-center space-y-1.5">
+            {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-xs sm:text-sm text-primary hover:underline block w-full" disabled={loading}>
                 {isLogin ? t('auth.noAccount') : t('auth.alreadyAccount')}
               </button>}
             
             {isLogin && !isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(true);
             setPassword("");
-          }} className="text-sm lg:text-base text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
+          }} className="text-xs sm:text-sm text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
                 {t('auth.forgotPassword')}
               </button>}
             
             {isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(false);
             setEmail("");
-          }} className="text-sm lg:text-base text-primary hover:underline block w-full" disabled={loading}>
+          }} className="text-xs sm:text-sm text-primary hover:underline block w-full" disabled={loading}>
                 {t('auth.backToLogin')}
               </button>}
           </div>
