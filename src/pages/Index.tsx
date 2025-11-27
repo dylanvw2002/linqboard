@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
-import linqboardMascot from "@/assets/linqboard-mascot-new.png";
+import linqboardMascot from "@/assets/linqboard-mascot-new-2.png";
 import collaborationIllustration from "@/assets/collaboration-illustration.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
