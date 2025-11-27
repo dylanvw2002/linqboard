@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Eye, EyeOff } from "lucide-react";
+import { Loader2, Eye, EyeOff, Shield, Users, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import authIllustration from "@/assets/auth-illustration.png";
@@ -24,18 +24,6 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  // Memorize confetti dots so they don't regenerate on every render
-  const confettiDots = useMemo(() => {
-    return Array.from({ length: 15 }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 4 + Math.random() * 4,
-      color: ['#8B5CF6', '#3B82F6'][Math.floor(Math.random() * 2)]
-    }));
-  }, []);
   useEffect(() => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({
@@ -130,29 +118,30 @@ const Auth = () => {
       setLoading(false);
     }
   };
-  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4 lg:p-6 relative overflow-hidden">
-      {/* Subtle animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {confettiDots.map((dot) => (
-          <div
-            key={dot.id}
-            className="absolute animate-float"
-            style={{
-              left: `${dot.left}%`,
-              top: `${dot.top}%`,
-              animationDelay: `${dot.delay}s`,
-              animationDuration: `${dot.duration}s`
-            }}
-          >
-            <div 
-              className="w-2 h-2 lg:w-3 lg:h-3 rounded-full"
-              style={{
-                backgroundColor: dot.color,
-                opacity: 0.4
-              }}
-            />
-          </div>
-        ))}
+  return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5 p-4 lg:p-6 relative overflow-hidden">
+      {/* Background pattern with icons */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="hidden md:block">
+          <Eye className="absolute top-[10%] left-[8%] w-10 h-10 text-primary opacity-5" />
+          <Shield className="absolute top-[10%] right-[8%] w-10 h-10 text-primary opacity-5" />
+          
+          <Users className="absolute top-[30%] left-[12%] w-10 h-10 text-primary opacity-5" />
+          <Zap className="absolute top-[30%] right-[12%] w-10 h-10 text-primary opacity-5" />
+          
+          <Eye className="absolute bottom-[30%] left-[8%] w-10 h-10 text-primary opacity-5" />
+          <Shield className="absolute bottom-[30%] right-[8%] w-10 h-10 text-primary opacity-5" />
+          
+          <Users className="absolute bottom-[10%] left-[12%] w-10 h-10 text-primary opacity-5" />
+          <Zap className="absolute bottom-[10%] right-[12%] w-10 h-10 text-primary opacity-5" />
+        </div>
+        
+        <div className="block md:hidden">
+          <Eye className="absolute top-[15%] left-[5%] w-10 h-10 text-primary opacity-5" />
+          <Shield className="absolute top-[15%] right-[5%] w-10 h-10 text-primary opacity-5" />
+          
+          <Users className="absolute bottom-[15%] left-[5%] w-10 h-10 text-primary opacity-5" />
+          <Zap className="absolute bottom-[15%] right-[5%] w-10 h-10 text-primary opacity-5" />
+        </div>
       </div>
 
       {/* Logo linksonder */}
@@ -251,21 +240,6 @@ const Auth = () => {
         </CardContent>
       </Card>
 
-      <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 0.3;
-          }
-          50% {
-            transform: translateY(-20px) rotate(180deg);
-            opacity: 0.8;
-          }
-        }
-        .animate-float {
-          animation: float 4s ease-in-out infinite;
-        }
-      `}</style>
     </div>;
 };
 export default Auth;
