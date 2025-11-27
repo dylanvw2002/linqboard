@@ -43,6 +43,7 @@ interface Column {
   id: string;
   name: string;
   position: number;
+  mobile_position?: number;
   width_ratio: number;
   board_id: string;
   x_position: number;
@@ -1424,7 +1425,18 @@ const Board = () => {
       const {
         data: columnsData
       } = await supabase.from("columns").select("*").eq("board_id", boardResult.data.id).order("position");
-      setColumns(columnsData || []);
+      
+      // Sort columns based on mobile_position for mobile view, position for desktop
+      const sortedColumns = columnsData 
+        ? columnsData.sort((a, b) => {
+            // For mobile, use mobile_position if available, otherwise fall back to position
+            const posA = a.mobile_position ?? a.position;
+            const posB = b.mobile_position ?? b.position;
+            return posA - posB;
+          })
+        : [];
+      
+      setColumns(sortedColumns);
       
       // Fetch widgets
       const { data: widgetsData } = await supabase
@@ -2626,10 +2638,288 @@ const Board = () => {
         </div>
       </header>
 
-      {/* Canvas Board */}
-      <main className="relative flex-1 min-h-0 overflow-auto" style={{
-          minWidth: isMobile ? '6000px' : '3000px',
-          minHeight: isMobile ? '4000px' : '2000px'
+      {/* Canvas Board / Mobile Layout */}
+      {isMobile ? (
+        // Mobile: Vertical scrolling layout with columns stacked
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4">
+          <div className="flex flex-col gap-4">
+            {columns.map((column, index) => {
+              const isFirst = index === 0;
+              const isLast = index === columns.length - 1;
+              
+              return (
+                <section key={column.id} className="flex flex-col w-full">
+                  <div className={cn(
+                    "flex items-center justify-between px-3.5 py-3 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
+                    getGlowStyles(column.glow_type).header,
+                    "border-white/40 dark:border-white/20"
+                  )}>
+                    <div className="text-lg font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2">
+                      {column.name}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      {/* Move up/down buttons */}
+                      {!isFirst && (
+                        <button 
+                          onClick={async () => {
+                            if (isDemo) {
+                              // Demo mode - just reorder in state
+                              const newColumns = [...columns];
+                              const currentIndex = newColumns.findIndex(c => c.id === column.id);
+                              if (currentIndex > 0) {
+                                [newColumns[currentIndex], newColumns[currentIndex - 1]] = 
+                                [newColumns[currentIndex - 1], newColumns[currentIndex]];
+                                setColumns(newColumns);
+                              }
+                              return;
+                            }
+                            
+                            // Find current and target indices
+                            const currentIndex = columns.findIndex(c => c.id === column.id);
+                            if (currentIndex <= 0) return;
+                            
+                            const targetIndex = currentIndex - 1;
+                            
+                            // Re-number all columns
+                            const updates = columns.map((col, idx) => {
+                              let newPosition;
+                              if (col.id === column.id) {
+                                newPosition = targetIndex;
+                              } else if (idx === targetIndex) {
+                                newPosition = currentIndex;
+                              } else {
+                                newPosition = idx;
+                              }
+                              
+                              return supabase
+                                .from('columns')
+                                .update({ mobile_position: newPosition })
+                                .eq('id', col.id);
+                            });
+                            
+                            await Promise.all(updates);
+                            await fetchBoardData();
+                          }}
+                          className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m18 15-6-6-6 6"/>
+                          </svg>
+                        </button>
+                      )}
+                      
+                      {!isLast && (
+                        <button 
+                          onClick={async () => {
+                            if (isDemo) {
+                              // Demo mode - just reorder in state
+                              const newColumns = [...columns];
+                              const currentIndex = newColumns.findIndex(c => c.id === column.id);
+                              if (currentIndex < newColumns.length - 1) {
+                                [newColumns[currentIndex], newColumns[currentIndex + 1]] = 
+                                [newColumns[currentIndex + 1], newColumns[currentIndex]];
+                                setColumns(newColumns);
+                              }
+                              return;
+                            }
+                            
+                            // Find current and target indices
+                            const currentIndex = columns.findIndex(c => c.id === column.id);
+                            if (currentIndex >= columns.length - 1) return;
+                            
+                            const targetIndex = currentIndex + 1;
+                            
+                            // Re-number all columns
+                            const updates = columns.map((col, idx) => {
+                              let newPosition;
+                              if (col.id === column.id) {
+                                newPosition = targetIndex;
+                              } else if (idx === targetIndex) {
+                                newPosition = currentIndex;
+                              } else {
+                                newPosition = idx;
+                              }
+                              
+                              return supabase
+                                .from('columns')
+                                .update({ mobile_position: newPosition })
+                                .eq('id', col.id);
+                            });
+                            
+                            await Promise.all(updates);
+                            await fetchBoardData();
+                          }}
+                          className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
+                          </svg>
+                        </button>
+                      )}
+                      
+                      {/* Add task button */}
+                      <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
+                        <DialogTrigger asChild>
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                            +
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
+                              <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                            </div>
+                            <div>
+                              <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
+                              <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                            </div>
+                            <div>
+                              <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {newTaskDueDate ? format(newTaskDueDate, "PPP", {
+                                        locale: getDateLocale()
+                                      }) : t('board.selectDate')}
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
+                                  {newTaskDueDate && <div className="p-3 border-t">
+                                      <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
+                                        {t('board.removeDate')}
+                                      </Button>
+                                    </div>}
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                              <Label>{t('board.priority')}</Label>
+                              <div className="flex gap-2">
+                                <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
+                                  {t('board.priorityNone')}
+                                </Button>
+                                <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
+                                  {t('board.priorityLow')}
+                                </Button>
+                                <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
+                                  {t('board.priorityMedium')}
+                                </Button>
+                                <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
+                                  {t('board.priorityHigh')}
+                                </Button>
+                              </div>
+                            </div>}
+                            <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
+                              {t('common.add')}
+                            </button>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </div>
+                  
+                  {/* Tasks */}
+                  <div className="space-y-2 min-h-[100px]">
+                    {filterTasks(getColumnTasks(column.id)).map(task => {
+                      const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
+                      const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
+                      
+                      if (isSimpleColumn) {
+                        return <SimpleTaskCard 
+                          key={task.id} 
+                          taskId={task.id}
+                          title={task.title} 
+                          description={task.description} 
+                          dueDate={task.due_date} 
+                          onClick={() => openEditDialog(task)} 
+                          glowShadow={getGlowStyles(column.glow_type).cardShadow} 
+                          assignees={task.assignees} 
+                          glowGradient={getGlowStyles(column.glow_type).cardGradient}
+                          columns={columns}
+                        />;
+                      }
+                      
+                      return (
+                        <article 
+                          key={task.id}
+                          onClick={() => openEditDialog(task)} 
+                          className={cn(
+                            "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-pointer hover:-translate-y-1 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                            "border-white/40 dark:border-white/20",
+                            getGlowStyles(column.glow_type).cardGradient,
+                            getGlowStyles(column.glow_type).cardShadow,
+                            isOverdue && "animate-overdue-glow"
+                          )}
+                        >
+                          <div className="flex gap-2 items-start">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
+                                <AttachmentCount taskId={task.id} />
+                                {task.due_date && (
+                                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                                    📅 {format(new Date(task.due_date), "d MMM", {
+                                      locale: getDateLocale()
+                                    })}
+                                  </span>
+                                )}
+                                {task.priority && getPriorityBadge(task.priority) && (
+                                  <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                                    {getPriorityBadge(task.priority)!.label}
+                                  </span>
+                                )}
+                              </div>
+                              <h4 className="font-extrabold text-base mb-1 text-foreground relative z-10">
+                                {task.title}
+                              </h4>
+                              {task.description && (
+                                <p className="text-muted-foreground text-sm relative z-10 line-clamp-2">
+                                  {task.description}
+                                </p>
+                              )}
+                            </div>
+                            {task.assignees && task.assignees.length > 0 && (
+                              <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
+                                {task.assignees.slice(0, 3).map((assignee, idx) => (
+                                  <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{
+                                    marginLeft: idx > 0 ? '-6px' : '0'
+                                  }}>
+                                    <AvatarImage src={assignee.avatar_url || undefined} />
+                                    <AvatarFallback className="text-xs bg-primary/10">
+                                      {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                ))}
+                                {task.assignees.length > 3 && (
+                                  <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{
+                                    marginLeft: '-6px'
+                                  }}>
+                                    +{task.assignees.length - 3}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </main>
+      ) : (
+        // Desktop: Canvas-based layout with absolute positioning
+        <main className="relative flex-1 min-h-0 overflow-auto" style={{
+          minWidth: '3000px',
+          minHeight: '2000px'
         }} onClick={e => {
           if (editMode && selectedColumn && e.target === e.currentTarget) {
             setSelectedColumn(null);
@@ -2986,6 +3276,7 @@ const Board = () => {
           </section>;
           })}
       </main>
+      )}
 
       {/* Edit Task Dialog */}
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
