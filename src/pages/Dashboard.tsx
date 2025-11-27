@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, PartyPopper, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -20,14 +20,12 @@ import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/linqboard-logo-new.png";
-
 interface Organization {
   id: string;
   name: string;
   invite_code: string;
   role: string;
 }
-
 interface OrganizationMember {
   id: string;
   user_id: string;
@@ -35,7 +33,6 @@ interface OrganizationMember {
   full_name: string;
   avatar_url: string | null;
 }
-
 interface SubscriptionLimits {
   plan: string;
   max_organizations: number;
@@ -50,7 +47,6 @@ interface Subscription {
   mollie_customer_id?: string;
   mollie_subscription_id?: string;
 }
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const {
@@ -80,7 +76,6 @@ const Dashboard = () => {
   const [orgMembers, setOrgMembers] = useState<OrganizationMember[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
-
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour < 12) return "Goedemorgen";
@@ -88,7 +83,6 @@ const Dashboard = () => {
     if (hour >= 18 && hour < 24) return "Goedeavond";
     return "Goedenacht";
   };
-
   useEffect(() => {
     const checkAccess = async () => {
       const {
@@ -121,7 +115,6 @@ const Dashboard = () => {
     };
     checkAccess();
   }, [navigate]);
-
   const fetchUserData = async (userId: string) => {
     try {
       setUserId(userId);
@@ -137,7 +130,11 @@ const Dashboard = () => {
       }
 
       // Fetch subscription limits
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (session) {
         const {
           data: limits
@@ -155,7 +152,6 @@ const Dashboard = () => {
       console.error('Error fetching user data:', error);
     }
   };
-
   const handleAvatarUpload = async (blob: Blob) => {
     try {
       // Delete old avatar if exists
@@ -195,7 +191,6 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-
   const handleUpdateProfile = async () => {
     if (!editName.trim()) {
       toast.error(t('dashboard.nameRequired'));
@@ -216,29 +211,26 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-
   const handleUpdateBoardName = async () => {
     if (!editBoardId) return;
-    
     const trimmedName = editBoardName.trim();
     if (!trimmedName) {
       toast.error(t('dashboard.nameRequired'));
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from('organizations')
-        .update({ name: trimmedName })
-        .eq('id', editBoardId);
-
+      const {
+        error
+      } = await supabase.from('organizations').update({
+        name: trimmedName
+      }).eq('id', editBoardId);
       if (error) throw error;
 
       // Update local state
-      setOrganizations(organizations.map(org => 
-        org.id === editBoardId ? { ...org, name: trimmedName } : org
-      ));
-
+      setOrganizations(organizations.map(org => org.id === editBoardId ? {
+        ...org,
+        name: trimmedName
+      } : org));
       setEditBoardDialogOpen(false);
       setEditBoardId(null);
       setEditBoardName("");
@@ -248,10 +240,9 @@ const Dashboard = () => {
       console.error(error);
     }
   };
-
   const handleShareInviteLink = async (inviteCode: string) => {
     const inviteLink = `${window.location.origin}/join-organization?code=${inviteCode}`;
-    
+
     // Check if Web Share API is available
     if (navigator.share) {
       try {
@@ -273,7 +264,6 @@ const Dashboard = () => {
       await copyToClipboard(inviteLink);
     }
   };
-
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -283,33 +273,29 @@ const Dashboard = () => {
       toast.error('Failed to copy link');
     }
   };
-
   const handleViewMembers = async (orgId: string, orgName: string) => {
     setSelectedOrgId(orgId);
     setSelectedOrgName(orgName);
     setMembersDialogOpen(true);
     setLoadingMembers(true);
-
     try {
       // First get memberships
-      const { data: memberships, error: membershipsError } = await supabase
-        .from('memberships')
-        .select('id, user_id, role')
-        .eq('organization_id', orgId);
-
+      const {
+        data: memberships,
+        error: membershipsError
+      } = await supabase.from('memberships').select('id, user_id, role').eq('organization_id', orgId);
       if (membershipsError) throw membershipsError;
 
       // Then get profiles for those users
       const userIds = memberships?.map(m => m.user_id) || [];
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('user_id, full_name, avatar_url')
-        .in('user_id', userIds);
-
+      const {
+        data: profiles,
+        error: profilesError
+      } = await supabase.from('profiles').select('user_id, full_name, avatar_url').in('user_id', userIds);
       if (profilesError) throw profilesError;
 
       // Combine the data
-      const members: OrganizationMember[] = (memberships || []).map((m) => {
+      const members: OrganizationMember[] = (memberships || []).map(m => {
         const profile = profiles?.find(p => p.user_id === m.user_id);
         return {
           id: m.id,
@@ -319,7 +305,6 @@ const Dashboard = () => {
           avatar_url: profile?.avatar_url || null
         };
       });
-
       setOrgMembers(members);
     } catch (error: any) {
       console.error(error);
@@ -328,17 +313,12 @@ const Dashboard = () => {
       setLoadingMembers(false);
     }
   };
-
-
   const handleRemoveMember = async () => {
     if (!removeMemberId) return;
-
     try {
-      const { error } = await supabase
-        .from('memberships')
-        .delete()
-        .eq('id', removeMemberId);
-
+      const {
+        error
+      } = await supabase.from('memberships').delete().eq('id', removeMemberId);
       if (error) throw error;
 
       // Update local state
@@ -350,7 +330,6 @@ const Dashboard = () => {
       toast.error(t('dashboard.removeMemberError'));
     }
   };
-
   const handleCancelSubscription = async () => {
     setCancelling(true);
     try {
@@ -408,9 +387,7 @@ const Dashboard = () => {
       const orgs = memberships?.map((m: any) => ({
         ...m.organizations,
         role: m.role
-      })).filter((org: any) => 
-        org.id && 
-        org.id !== '00000000-0000-0000-0000-000000000000' // Filter demo org uit
+      })).filter((org: any) => org.id && org.id !== '00000000-0000-0000-0000-000000000000' // Filter demo org uit
       ) || [];
       setOrganizations(orgs);
     } catch (error: any) {
@@ -570,12 +547,7 @@ const Dashboard = () => {
 
       {/* Logo linksonder */}
       <div className="fixed bottom-4 left-4 z-20">
-        <img 
-          src={logo} 
-          alt="LinqBoard Logo" 
-          className="h-24 w-auto cursor-pointer hover:scale-105 transition-transform" 
-          onClick={() => navigate("/")} 
-        />
+        <img src={logo} alt="LinqBoard Logo" className="h-24 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
       </div>
 
       <div className="container mx-auto px-4 py-4 max-w-6xl">
@@ -585,7 +557,7 @@ const Dashboard = () => {
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {getTimeBasedGreeting()} {userName}
             </span>
-            <PartyPopper className="text-accent" size={24} />
+            
           </h1>
           <p className="text-sm text-muted-foreground">
             {t('dashboard.welcomeBack')}
@@ -679,23 +651,23 @@ const Dashboard = () => {
               {organizations.map(org => <Card key={org.id} className="p-3 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-[72px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-7 w-7" onClick={e => {
-                      e.stopPropagation();
-                      setEditBoardId(org.id);
-                      setEditBoardName(org.name);
-                      setEditBoardDialogOpen(true);
-                    }}>
+                e.stopPropagation();
+                setEditBoardId(org.id);
+                setEditBoardName(org.name);
+                setEditBoardDialogOpen(true);
+              }}>
                       <Pencil className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-[40px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-7 w-7" onClick={e => {
-                      e.stopPropagation();
-                      handleViewMembers(org.id, org.name);
-                    }}>
+                e.stopPropagation();
+                handleViewMembers(org.id, org.name);
+              }}>
                       <Users className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive hover:bg-destructive/10 z-10 h-7 w-7" onClick={e => {
-              e.stopPropagation();
-              setDeleteOrgId(org.id);
-            }}>
+                e.stopPropagation();
+                setDeleteOrgId(org.id);
+              }}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </> : <Button variant="ghost" size="sm" className="absolute top-2 right-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10 text-xs px-2 h-7" onClick={e => {
@@ -712,20 +684,12 @@ const Dashboard = () => {
                         <span className="font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-xs">
                           {org.invite_code}
                         </span>
-                        {org.role === 'owner' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleShareInviteLink(org.invite_code);
-                            }}
-                            title={t('dashboard.shareInviteLink')}
-                          >
+                        {org.role === 'owner' && <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={e => {
+                    e.stopPropagation();
+                    handleShareInviteLink(org.invite_code);
+                  }} title={t('dashboard.shareInviteLink')}>
                             <Share2 className="h-3 w-3" />
-                          </Button>
-                        )}
+                          </Button>}
                       </div>
                     </div>
                     <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105 text-xs h-8">
@@ -863,19 +827,14 @@ const Dashboard = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="boardName">{t('dashboard.boardNameLabel')}</Label>
-              <Input 
-                id="boardName" 
-                value={editBoardName} 
-                onChange={e => setEditBoardName(e.target.value)} 
-                placeholder={t('dashboard.boardNamePlaceholder')} 
-              />
+              <Input id="boardName" value={editBoardName} onChange={e => setEditBoardName(e.target.value)} placeholder={t('dashboard.boardNamePlaceholder')} />
             </div>
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => {
-                setEditBoardDialogOpen(false);
-                setEditBoardId(null);
-                setEditBoardName("");
-              }}>
+              setEditBoardDialogOpen(false);
+              setEditBoardId(null);
+              setEditBoardName("");
+            }}>
                 {t('common.cancel')}
               </Button>
               <Button onClick={handleUpdateBoardName}>
@@ -893,18 +852,12 @@ const Dashboard = () => {
             <DialogTitle>{t('dashboard.members')} - {selectedOrgName}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {loadingMembers ? (
-              <div className="flex items-center justify-center py-8">
+            {loadingMembers ? <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : orgMembers.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
+              </div> : orgMembers.length === 0 ? <p className="text-center text-muted-foreground py-8">
                 {t('dashboard.noOrganizations')}
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {orgMembers.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
+              </p> : <div className="space-y-2">
+                {orgMembers.map(member => <div key={member.id} className="flex items-center justify-between p-3 rounded-lg border bg-card">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={member.avatar_url || undefined} />
@@ -919,26 +872,17 @@ const Dashboard = () => {
                         </p>
                       </div>
                     </div>
-                    {member.role !== 'owner' && member.user_id !== userId && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => setRemoveMemberId(member.id)}
-                      >
+                    {member.role !== 'owner' && member.user_id !== userId && <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setRemoveMemberId(member.id)}>
                         <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+                      </Button>}
+                  </div>)}
+              </div>}
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Remove Member Confirmation Dialog */}
-      <AlertDialog open={!!removeMemberId} onOpenChange={(open) => !open && setRemoveMemberId(null)}>
+      <AlertDialog open={!!removeMemberId} onOpenChange={open => !open && setRemoveMemberId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('dashboard.removeMemberTitle')}</AlertDialogTitle>
@@ -948,10 +892,7 @@ const Dashboard = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleRemoveMember}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={handleRemoveMember} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               {t('dashboard.removeMember')}
             </AlertDialogAction>
           </AlertDialogFooter>
