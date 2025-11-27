@@ -630,6 +630,16 @@ const Index = () => {
               </article>
             </div>
 
+            {/* Register Button */}
+            <div className="mt-12 text-center">
+              <Link to="/auth?mode=create">
+                <Button size="lg" className="text-base px-8 py-6 shadow-lg hover:shadow-xl transition-all">
+                  Registreren
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+
             <div className="mt-8 text-center">
               <p className="text-sm text-muted-foreground">
                 {t('pricing.footer')}
