@@ -202,8 +202,8 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup */}
-            <div className="relative scale-100 lg:scale-105 xl:scale-110 mt-6 lg:mt-0">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-full h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+            <div className="relative mt-6 lg:mt-0 flex justify-center lg:justify-end">
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-3/4 lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               <div className="absolute -top-3 sm:-top-4 lg:-top-8 -right-3 sm:-right-4 lg:-right-8 w-12 h-12 sm:w-16 sm:h-16 lg:w-32 lg:h-32 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
