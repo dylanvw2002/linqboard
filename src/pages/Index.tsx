@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
-import todoBoardIllustration from "@/assets/todo-board-illustration.png";
+import linqboardMascot from "@/assets/linqboard-mascot.png";
 import collaborationIllustration from "@/assets/collaboration-illustration.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
@@ -149,7 +149,7 @@ const Index = () => {
       
       {/* Preload critical images */}
       <link rel="preload" as="image" href={logo} />
-      <link rel="preload" as="image" href={todoBoardIllustration} />
+      <link rel="preload" as="image" href={linqboardMascot} />
       
       <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
         {/* Header */}
@@ -203,7 +203,7 @@ const Index = () => {
 
             {/* Right Visual Mockup */}
             <div className="relative scale-100 lg:scale-105 xl:scale-110 mt-6 lg:mt-0">
-              <img src={todoBoardIllustration} alt={t('seo.home.heroImageAlt')} className="w-full h-auto rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-xl sm:shadow-2xl lg:shadow-[0_20px_50px_rgba(0,0,0,0.15)]" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-full h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               <div className="absolute -top-3 sm:-top-4 lg:-top-8 -right-3 sm:-right-4 lg:-right-8 w-12 h-12 sm:w-16 sm:h-16 lg:w-32 lg:h-32 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
