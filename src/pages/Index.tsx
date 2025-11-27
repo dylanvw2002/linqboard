@@ -183,7 +183,7 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup */}
-            <div className="relative mt-6 lg:mt-0 flex justify-center lg:flex lg:items-start lg:justify-start mr-0 ml-0 pr-[110px]">
+            <div className="relative mt-6 lg:mt-0 flex justify-start lg:flex lg:items-start mr-0 ml-0 pr-[110px]">
               <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-3/4 lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
