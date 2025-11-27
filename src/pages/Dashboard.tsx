@@ -522,7 +522,7 @@ const Dashboard = () => {
       <OnboardingGuide open={showOnboarding} onOpenChange={setShowOnboarding} />
 
       {/* Header */}
-      <header className="border-b border-border/30 backdrop-blur-sm relative z-10">
+      <header className="relative z-10">
         <div className="container mx-auto px-4 py-0 max-w-6xl">
           <div className="flex items-center justify-between gap-1 -my-[20px]">
             <img src={logo} alt="LinqBoard Logo" className="h-20 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
