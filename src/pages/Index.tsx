@@ -49,19 +49,30 @@ const Index = () => {
     if (!container) return;
     
     let scrollTimeout: NodeJS.Timeout;
-    let lastScrollTop = 0;
+    let initialScrollTop = 0;
+    let isUserScrolling = false;
     
     const handleScroll = () => {
       if (isScrolling) return;
       
-      const scrollTop = container.scrollTop;
-      const scrollDirection = scrollTop > lastScrollTop ? 'down' : 'up';
-      lastScrollTop = scrollTop;
+      if (!isUserScrolling) {
+        initialScrollTop = container.scrollTop;
+        isUserScrolling = true;
+      }
       
       clearTimeout(scrollTimeout);
       
       scrollTimeout = setTimeout(() => {
-        if (Math.abs(scrollTop - lastScrollTop) < 150) return;
+        const currentScrollTop = container.scrollTop;
+        const scrollDelta = Math.abs(currentScrollTop - initialScrollTop);
+        
+        // Only snap if user scrolled more than 150px
+        if (scrollDelta < 150) {
+          isUserScrolling = false;
+          return;
+        }
+        
+        const scrollDirection = currentScrollTop > initialScrollTop ? 'down' : 'up';
         
         const sections = [
           heroRef.current,
@@ -73,33 +84,41 @@ const Index = () => {
         ].filter(Boolean) as HTMLElement[];
         
         let targetSection: HTMLElement | null = null;
+        const viewportCenter = window.innerHeight / 2;
         
         if (scrollDirection === 'down') {
+          // Find next section below the viewport center
           targetSection = sections.find(section => {
             const rect = section.getBoundingClientRect();
-            return rect.top > 100;
+            return rect.top > viewportCenter;
           }) || null;
         } else {
+          // Find previous section above the viewport center
           targetSection = [...sections].reverse().find(section => {
             const rect = section.getBoundingClientRect();
-            return rect.top < -100;
+            return rect.top < viewportCenter - 100;
           }) || null;
         }
         
         if (targetSection) {
           setIsScrolling(true);
           targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          setTimeout(() => setIsScrolling(false), 800);
+          setTimeout(() => {
+            setIsScrolling(false);
+            isUserScrolling = false;
+          }, 800);
+        } else {
+          isUserScrolling = false;
         }
-      }, 100);
+      }, 150);
     };
     
-    container.addEventListener('scroll', handleScroll);
+    container.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       container.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
-  }, [isScrolling]);
+  }, [isScrolling, featuresSection.ref, demoSection.ref, partnersSection.ref]);
   
   // Hero overlay fade-out effect
   useEffect(() => {
