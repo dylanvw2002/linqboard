@@ -254,7 +254,7 @@ const Index = () => {
               <div className="bg-card rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 xl:p-20">
                 <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center">
                   {/* Left: Image */}
-                  <div className={`rounded-xl lg:rounded-2xl overflow-hidden shadow-2xl border border-border/50 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
+                  <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
                     <img src={linqboardMascotTry} alt="Linqboard Demo Preview" className="w-full h-auto" loading="lazy" width="600" height="400" />
                   </div>
 
