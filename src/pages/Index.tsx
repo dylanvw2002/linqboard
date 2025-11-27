@@ -238,7 +238,7 @@ const Index = () => {
               <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg">
                 {/* Quote Icon */}
                 <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-md">
-                  <span className="text-3xl text-white font-serif">"</span>
+                  <CheckCircle2 className="w-6 h-6 text-white" />
                 </div>
                 
                 {/* Quote Content */}
@@ -264,7 +264,7 @@ const Index = () => {
               <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg">
                 {/* Quote Icon */}
                 <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center shadow-md">
-                  <span className="text-3xl text-white font-serif">"</span>
+                  <CheckCircle2 className="w-6 h-6 text-white" />
                 </div>
                 
                 {/* Quote Content */}
