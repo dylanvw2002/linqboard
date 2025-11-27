@@ -11,9 +11,10 @@ import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import authIllustration from "@/assets/auth-illustration.png";
 import logo from "@/assets/logo-transparent.png";
-
 const Auth = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const mode = searchParams.get("mode") || "login";
@@ -41,13 +42,16 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isForgotPassword) {
-        const { data, error } = await supabase.functions.invoke('request-password-reset', {
-          body: { email }
+        const {
+          data,
+          error
+        } = await supabase.functions.invoke('request-password-reset', {
+          body: {
+            email
+          }
         });
-        
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
-        
         toast.success(data?.message || t('auth.checkEmailReset'));
         setIsForgotPassword(false);
         setEmail("");
@@ -91,7 +95,7 @@ const Auth = () => {
           }
         });
         if (error) throw error;
-        
+
         // Send welcome email
         try {
           await supabase.functions.invoke('send-welcome-email', {
@@ -104,7 +108,7 @@ const Auth = () => {
           console.error('Failed to send welcome email:', emailError);
           // Don't block signup if email fails
         }
-        
+
         // Show success message and switch back to login
         toast.success(t('auth.accountCreatedConfirmEmail'));
         setIsLogin(true);
@@ -146,7 +150,7 @@ const Auth = () => {
 
       {/* Logo linksonder */}
       <div className="absolute -bottom-8 left-2 sm:left-6 lg:left-10 z-10">
-        <img src={logo} alt="LinqBoard" className="h-[100px] sm:h-[150px] lg:h-[180px] w-auto opacity-80" />
+        
       </div>
 
       <div className="absolute top-4 right-4 lg:top-6 lg:right-6 z-10">
@@ -179,30 +183,9 @@ const Auth = () => {
             {!isForgotPassword && <div className="space-y-1.5">
                 <Label htmlFor="password" className="text-sm">{t('auth.password')}</Label>
                 <div className="relative">
-                  <Input 
-                    id="password" 
-                    type={showPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)} 
-                    required 
-                    minLength={6} 
-                    disabled={loading}
-                    className="pr-10 h-9 text-sm"
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-2 py-1 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={loading}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                  <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} disabled={loading} className="pr-10 h-9 text-sm" />
+                  <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-2 py-1 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} disabled={loading}>
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
                 {!isLogin && <p className="text-xs text-muted-foreground">
