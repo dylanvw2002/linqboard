@@ -525,11 +525,6 @@ const Index = () => {
                     </li>
                   </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full" size="sm">
-                    {t('landing.getStarted')}
-                  </Button>
-                </CardFooter>
               </Card>
 
               {/* Pro Plan */}
@@ -554,11 +549,6 @@ const Index = () => {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button className="w-full" size="sm">
-                    {t('pricing.upgrade')}
-                  </Button>
-                </CardFooter>
               </Card>
 
               {/* Team Plan */}
@@ -583,11 +573,6 @@ const Index = () => {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full" size="sm">
-                    {t('pricing.upgrade')}
-                  </Button>
-                </CardFooter>
               </Card>
 
               {/* Business Plan */}
@@ -612,11 +597,6 @@ const Index = () => {
                     ))}
                   </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full" size="sm">
-                    {t('pricing.upgrade')}
-                  </Button>
-                </CardFooter>
               </Card>
             </div>
 
