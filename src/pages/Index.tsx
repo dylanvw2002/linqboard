@@ -244,7 +244,7 @@ const Index = () => {
                 {/* Quote Content */}
                 <div className="space-y-4">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
-                    LinqBoard heeft onze projecten naar een hoger niveau getild. De visuele aanpak en real-time samenwerking maken het eindelijk mogelijk om overzicht te houden, zelfs bij complexe installaties.
+                    LinqBoard is voor ons de perfecte vervanging van het traditionele whiteboard. Eindelijk kunnen we alle projecten digitaal en overzichtelijk beheren, zonder dat we nog met markers hoeven te werken!
                   </blockquote>
                   
                   {/* Attribution */}
@@ -270,7 +270,7 @@ const Index = () => {
                 {/* Quote Content */}
                 <div className="space-y-4">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
-                    Dankzij LinqBoard kunnen we al onze vastgoedprojecten efficiënt beheren. De duidelijke visualisatie en taakbeheer functies zorgen ervoor dat niets tussen wal en schip valt.
+                    Met de slimme reminder-functie en deadline tracking van LinqBoard vergeten we nooit meer een belangrijke taak. Alle vastgoedprojecten lopen nu soepel en op tijd!
                   </blockquote>
                   
                   {/* Attribution */}
