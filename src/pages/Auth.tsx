@@ -158,7 +158,7 @@ const Auth = () => {
       </div>
       <Card className="w-full max-w-sm mx-4 sm:mx-0 shadow-lg bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
         <div className="flex justify-center pt-4 pb-2">
-          <img src={authIllustration} alt="LinqBoard Authentication" className="h-32 sm:h-40 w-auto" />
+          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-48 w-auto" />
         </div>
         <CardHeader className="space-y-1 pt-1 px-4 sm:px-5">
           <CardTitle className="text-xl sm:text-2xl font-bold text-center">
