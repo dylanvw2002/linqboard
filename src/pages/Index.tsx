@@ -459,29 +459,27 @@ const Index = () => {
         </section>
 
         {/* SoloLinq CTA Section */}
-        <section className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto max-w-5xl">
-            <div className="bg-muted/30 rounded-xl sm:rounded-2xl p-8 sm:p-10 lg:p-12">
-              <div className="flex flex-col md:flex-row items-center gap-6">
-                <div className="flex-shrink-0">
-                  <img src={sololinqLogo} alt="SoloLinq Logo" className="h-20 sm:h-24 w-auto" loading="lazy" />
-                </div>
-                <div className="flex-1 text-center md:text-left">
-                  <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-                    Werk je solo? Ontdek SoloLinq!
-                  </h2>
-                  <p className="text-muted-foreground text-sm sm:text-base">
-                    Persoonlijke to-do manager voor wie alleen werkt. Simpel, snel en overzichtelijk.
-                  </p>
-                </div>
-                <div className="flex-shrink-0">
-                  <a href="https://sololinq.lovable.app" target="_blank" rel="noopener noreferrer">
-                    <Button size="lg" variant="outline" className="text-base px-6 py-6 border-2">
-                      Bekijk SoloLinq
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </a>
-                </div>
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+          <div className="mt-8 md:mt-12 bg-primary/5 backdrop-blur-sm rounded-2xl border border-primary/20 hover:border-primary/40 transition-all duration-300 p-6 md:p-8">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="flex-shrink-0">
+                <img src={sololinqLogo} alt="SoloLinq Logo" className="h-20 sm:h-24 w-auto" loading="lazy" />
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                  Werk je solo? Ontdek SoloLinq!
+                </h2>
+                <p className="text-muted-foreground text-sm sm:text-base">
+                  Persoonlijke to-do manager voor wie alleen werkt. Simpel, snel en overzichtelijk.
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <a href="https://sololinq.lovable.app" target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" variant="outline" className="text-base px-6 py-6 border-2">
+                    Bekijk SoloLinq
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </a>
               </div>
             </div>
           </div>
