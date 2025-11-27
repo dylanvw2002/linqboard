@@ -303,7 +303,7 @@ const Index = () => {
               TESTIMONIALS
             </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Wat onze gebruikers over ons zeggen
+              Wat onze gebruikers <span className="text-primary">over ons</span> zeggen
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               Ontdek waarom teams voor LinqBoard kiezen
