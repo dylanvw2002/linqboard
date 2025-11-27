@@ -230,6 +230,42 @@ const Index = () => {
           </section>
         </main>
 
+        {/* Testimonial Quote Section */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-5xl">
+          <div className="relative">
+            <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-2xl sm:rounded-3xl p-8 sm:p-10 lg:p-12 border border-border shadow-xl">
+              {/* Quote Icon */}
+              <div className="absolute -top-4 -left-4 w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-4xl text-white font-serif">"</span>
+              </div>
+              
+              {/* Quote Content */}
+              <div className="space-y-6">
+                <blockquote className="text-xl sm:text-2xl lg:text-3xl font-medium text-foreground leading-relaxed italic">
+                  LinqBoard heeft onze projecten naar een hoger niveau getild. De visuele aanpak en real-time samenwerking maken het eindelijk mogelijk om overzicht te houden, zelfs bij complexe installaties.
+                </blockquote>
+                
+                {/* Attribution */}
+                <div className="flex items-center gap-4 pt-4 border-t border-border/50">
+                  <img 
+                    src={nrgTotaalLogo} 
+                    alt="NRG Totaal logo" 
+                    className="h-10 sm:h-12 w-auto opacity-80"
+                    loading="lazy"
+                  />
+                  <div>
+                    <p className="font-semibold text-foreground">NRG Totaal</p>
+                    <p className="text-sm text-muted-foreground">Technische Installaties</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Decorative Element */}
+              <div className="absolute -bottom-2 -right-2 w-20 h-20 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-2xl" />
+            </div>
+          </div>
+        </section>
+
         {/* Demo Section */}
         <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
           <div className="container mx-auto max-w-7xl">
