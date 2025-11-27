@@ -485,162 +485,162 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
               {/* Free Plan */}
-              <article className="group relative bg-gradient-to-b from-card via-card to-muted/20 rounded-3xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
+              <article className="group relative bg-gradient-to-b from-card via-card to-muted/20 rounded-2xl p-6 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
                 {/* Header */}
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold mb-2">{t('pricing.free.name')}</h3>
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold mb-1">{t('pricing.free.name')}</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-bold">€0</span>
-                    <span className="text-muted-foreground">/{t('pricing.month')}</span>
+                    <span className="text-3xl font-bold">€0</span>
+                    <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
                   </div>
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-6" />
+                <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
 
                 {/* Features */}
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-start gap-3">
-                    <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3 w-3 text-primary" />
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="h-2.5 w-2.5 text-primary" />
                     </div>
-                    <span className="text-sm leading-relaxed">{t('pricing.free.feature1')}</span>
+                    <span className="text-xs leading-relaxed">{t('pricing.free.feature1')}</span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3 w-3 text-primary" />
+                  <li className="flex items-start gap-2">
+                    <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="h-2.5 w-2.5 text-primary" />
                     </div>
-                    <span className="text-sm leading-relaxed">{t('pricing.free.feature2')}</span>
+                    <span className="text-xs leading-relaxed">{t('pricing.free.feature2')}</span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <div className="mt-1 w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Check className="h-3 w-3 text-primary" />
+                  <li className="flex items-start gap-2">
+                    <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="h-2.5 w-2.5 text-primary" />
                     </div>
-                    <span className="text-sm leading-relaxed">{t('pricing.free.feature3')}</span>
+                    <span className="text-xs leading-relaxed">{t('pricing.free.feature3')}</span>
                   </li>
                 </ul>
 
                 {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </article>
 
               {/* Pro Plan */}
-              <article className="group relative bg-gradient-to-b from-primary/10 via-card to-accent/10 rounded-3xl p-8 border-2 border-primary shadow-2xl scale-105 hover:scale-110 hover:shadow-3xl transition-all duration-500 z-10">
+              <article className="group relative bg-gradient-to-b from-primary/10 via-card to-accent/10 rounded-2xl p-6 border-2 border-primary shadow-xl scale-105 hover:scale-[1.03] hover:shadow-2xl transition-all duration-500 z-10">
                 {/* Badge */}
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                  <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold shadow-lg">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-lg">
                     {t('pricing.badges.bestValue')}
                   </span>
                 </div>
 
                 {/* Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 rounded-3xl blur-xl opacity-50" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 rounded-2xl blur-xl opacity-50" />
 
                 {/* Content */}
                 <div className="relative z-10">
                   {/* Header */}
-                  <div className="mb-6">
-                    <h3 className="text-2xl font-bold mb-2">{t('pricing.pro.name')}</h3>
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold mb-1">{t('pricing.pro.name')}</h3>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">€7.99</span>
-                      <span className="text-muted-foreground">/{t('pricing.month')}</span>
+                      <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">€7.99</span>
+                      <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="h-px bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 mb-6" />
+                  <div className="h-px bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 mb-4" />
 
                   {/* Features */}
-                  <ul className="space-y-4 mb-8">
+                  <ul className="space-y-2">
                     {[1, 2, 3, 4, 5].map(i => (
-                      <li key={i} className="flex items-start gap-3">
-                        <div className="mt-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                          <Check className="h-3 w-3 text-primary-foreground" />
+                      <li key={i} className="flex items-start gap-2">
+                        <div className="mt-0.5 w-4 h-4 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                          <Check className="h-2.5 w-2.5 text-primary-foreground" />
                         </div>
-                        <span className="text-sm leading-relaxed font-medium">{t(`pricing.pro.feature${i}`)}</span>
+                        <span className="text-xs leading-relaxed font-medium">{t(`pricing.pro.feature${i}`)}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 {/* Corner Decoration */}
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-accent/10 to-transparent rounded-tr-full" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/10 to-transparent rounded-tr-full" />
               </article>
 
               {/* Team Plan */}
-              <article className="group relative bg-gradient-to-b from-blue-500/5 via-card to-purple-500/5 rounded-3xl p-8 border-2 border-blue-500/30 hover:border-blue-500/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+              <article className="group relative bg-gradient-to-b from-blue-500/5 via-card to-purple-500/5 rounded-2xl p-6 border-2 border-blue-500/30 hover:border-blue-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                 {/* Badge */}
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                  <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-blue-500 text-white text-sm font-semibold shadow-lg">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-semibold shadow-lg">
                     {t('pricing.badges.forTeams')}
                   </span>
                 </div>
 
                 {/* Header */}
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold mb-2">{t('pricing.team.name')}</h3>
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold mb-1">{t('pricing.team.name')}</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-bold">€19.99</span>
-                    <span className="text-muted-foreground">/{t('pricing.month')}</span>
+                    <span className="text-3xl font-bold">€19.99</span>
+                    <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
                   </div>
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mb-6" />
+                <div className="h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent mb-4" />
 
                 {/* Features */}
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-2">
                   {[1, 2, 3, 4, 5, 6].map(i => (
-                    <li key={i} className="flex items-start gap-3">
-                      <div className="mt-1 w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="h-3 w-3 text-blue-500" />
+                    <li key={i} className="flex items-start gap-2">
+                      <div className="mt-0.5 w-4 h-4 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-2.5 w-2.5 text-blue-500" />
                       </div>
-                      <span className="text-sm leading-relaxed">{t(`pricing.team.feature${i}`)}</span>
+                      <span className="text-xs leading-relaxed">{t(`pricing.team.feature${i}`)}</span>
                     </li>
                   ))}
                 </ul>
 
                 {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </article>
 
               {/* Business Plan */}
-              <article className="group relative bg-gradient-to-b from-yellow-500/5 via-card to-yellow-600/5 rounded-3xl p-8 border-2 border-yellow-500/30 hover:border-yellow-500/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
+              <article className="group relative bg-gradient-to-b from-yellow-500/5 via-card to-yellow-600/5 rounded-2xl p-6 border-2 border-yellow-500/30 hover:border-yellow-500/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-500">
                 {/* Badge */}
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                  <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-yellow-500 text-white text-sm font-semibold shadow-lg">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-500 text-white text-xs font-semibold shadow-lg">
                     {t('pricing.badges.enterprise')}
                   </span>
                 </div>
 
                 {/* Header */}
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold mb-2">{t('pricing.business.name')}</h3>
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold mb-1">{t('pricing.business.name')}</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-bold">€39.00</span>
-                    <span className="text-muted-foreground">/{t('pricing.month')}</span>
+                    <span className="text-3xl font-bold">€39.00</span>
+                    <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
                   </div>
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-6" />
+                <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent mb-4" />
 
                 {/* Features */}
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-2">
                   {[1, 2, 3, 4, 5, 6].map(i => (
-                    <li key={i} className="flex items-start gap-3">
-                      <div className="mt-1 w-5 h-5 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
-                        <Check className="h-3 w-3 text-yellow-600" />
+                    <li key={i} className="flex items-start gap-2">
+                      <div className="mt-0.5 w-4 h-4 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-2.5 w-2.5 text-yellow-600" />
                       </div>
-                      <span className="text-sm leading-relaxed">{t(`pricing.business.feature${i}`)}</span>
+                      <span className="text-xs leading-relaxed">{t(`pricing.business.feature${i}`)}</span>
                     </li>
                   ))}
                 </ul>
 
                 {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-yellow-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-yellow-500/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </article>
             </div>
 
