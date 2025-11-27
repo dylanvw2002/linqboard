@@ -554,7 +554,7 @@ const Index = () => {
 
                   {/* Features */}
                   <ul className="space-y-2">
-                    {[1, 2, 3, 4, 5].map(i => (
+                    {[1, 2, 3].map(i => (
                       <li key={i} className="flex items-start gap-2">
                         <div className="mt-0.5 w-4 h-4 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                           <Check className="h-2.5 w-2.5 text-primary-foreground" />
@@ -592,7 +592,7 @@ const Index = () => {
 
                 {/* Features */}
                 <ul className="space-y-2">
-                  {[1, 2, 3, 4, 5, 6].map(i => (
+                  {[1, 2, 3].map(i => (
                     <li key={i} className="flex items-start gap-2">
                       <div className="mt-0.5 w-4 h-4 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
                         <Check className="h-2.5 w-2.5 text-blue-500" />
@@ -629,7 +629,7 @@ const Index = () => {
 
                 {/* Features */}
                 <ul className="space-y-2">
-                  {[1, 2, 3, 4, 5, 6].map(i => (
+                  {[1, 2, 3].map(i => (
                     <li key={i} className="flex items-start gap-2">
                       <div className="mt-0.5 w-4 h-4 rounded-full bg-yellow-500/10 flex items-center justify-center flex-shrink-0">
                         <Check className="h-2.5 w-2.5 text-yellow-600" />
