@@ -470,20 +470,24 @@ const Index = () => {
         </section>
 
         {/* Pricing Section */}
-        <section className="py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
+        <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
           <div className="container mx-auto max-w-7xl">
-            <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent py-0">
-                {t('pricing.title')}
+            {/* Header */}
+            <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+              <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+                PRIJZEN
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                Kies jouw <span className="text-primary">plan</span>
               </h2>
-              <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto">
-                {t('pricing.subtitle')}
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Groei met ons mee - van starter tot enterprise
               </p>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {/* Free Plan */}
-              <Card className="relative border-border/50 hover:[transform:perspective(1000px)_rotateX(2deg)] transition-all duration-300">
+              <Card className="relative bg-card rounded-2xl border border-border hover:border-primary/30 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-xl">{t('pricing.free.name')}</CardTitle>
                   <div className="mt-2">
@@ -510,18 +514,19 @@ const Index = () => {
               </Card>
 
               {/* Pro Plan */}
-              <Card className="relative border-2 border-primary shadow-xl scale-105 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300">
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Card className="relative bg-card rounded-2xl border-2 border-primary shadow-xl scale-105 hover:scale-[1.07] hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-accent/5 rounded-2xl" />
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground hover:bg-primary/90 z-10">
                   {t('pricing.badges.bestValue')}
                 </Badge>
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 relative z-10">
                   <CardTitle className="text-xl">{t('pricing.pro.name')}</CardTitle>
                   <div className="mt-2">
                     <span className="text-3xl font-bold">€7.99</span>
                     <span className="text-sm text-muted-foreground">/{t('pricing.month')}</span>
                   </div>
                 </CardHeader>
-                <CardContent className="pb-3">
+                <CardContent className="pb-3 relative z-10">
                   <ul className="space-y-2">
                     {[1, 2, 3, 4, 5].map(i => <li key={i} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -532,18 +537,19 @@ const Index = () => {
               </Card>
 
               {/* Team Plan */}
-              <Card className="relative border-2 border-blue-500/30 bg-gradient-to-br from-blue-500/5 via-purple-500/10 to-blue-500/5 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300">
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white hover:bg-blue-600">
+              <Card className="relative bg-card rounded-2xl border-2 border-blue-500/30 hover:border-blue-500/50 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/10 to-blue-500/5 rounded-2xl" />
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white hover:bg-blue-600 z-10">
                   {t('pricing.badges.forTeams')}
                 </Badge>
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 relative z-10">
                   <CardTitle className="text-xl">{t('pricing.team.name')}</CardTitle>
                   <div className="mt-2">
                     <span className="text-3xl font-bold">€19.99</span>
                     <span className="text-sm text-muted-foreground">/{t('pricing.month')}</span>
                   </div>
                 </CardHeader>
-                <CardContent className="pb-3">
+                <CardContent className="pb-3 relative z-10">
                   <ul className="space-y-2">
                     {[1, 2, 3, 4, 5, 6].map(i => <li key={i} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
@@ -554,18 +560,19 @@ const Index = () => {
               </Card>
 
               {/* Business Plan */}
-              <Card className="relative border-2 border-yellow-500/30 bg-gradient-to-br from-yellow-500/5 via-yellow-600/10 to-yellow-500/5 hover:scale-[1.02] hover:shadow-2xl hover:shadow-yellow-500/20 transition-all duration-300">
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-500 text-white hover:bg-yellow-600">
+              <Card className="relative bg-card rounded-2xl border-2 border-yellow-500/30 hover:border-yellow-500/50 hover:scale-[1.02] hover:shadow-2xl hover:shadow-yellow-500/20 transition-all duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-yellow-600/10 to-yellow-500/5 rounded-2xl" />
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-500 text-white hover:bg-yellow-600 z-10">
                   {t('pricing.badges.enterprise')}
                 </Badge>
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-3 relative z-10">
                   <CardTitle className="text-xl">{t('pricing.business.name')}</CardTitle>
                   <div className="mt-2">
                     <span className="text-3xl font-bold">€39.00</span>
                     <span className="text-sm text-muted-foreground">/{t('pricing.month')}</span>
                   </div>
                 </CardHeader>
-                <CardContent className="pb-3">
+                <CardContent className="pb-3 relative z-10">
                   <ul className="space-y-2">
                     {[1, 2, 3, 4, 5, 6].map(i => <li key={i} className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-primary shrink-0 mt-0.5" />
