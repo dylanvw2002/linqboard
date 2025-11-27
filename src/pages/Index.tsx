@@ -265,10 +265,10 @@ const Index = () => {
                   
                   {/* Attribution */}
                   <div className="flex items-center gap-3 pt-3 border-t border-border/50">
-                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed logo" className="h-8 w-auto opacity-80" loading="lazy" />
+                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-8 w-auto opacity-80" loading="lazy" />
                     <div>
-                      
-                      <p className="text-xs text-muted-foreground">Vastgoedbeheer</p>
+                      <p className="font-semibold text-sm text-foreground">Zorgeloos Vastgoed BV</p>
+                      <p className="text-xs text-muted-foreground">Vastgoed digitalisering</p>
                     </div>
                   </div>
                 </div>
