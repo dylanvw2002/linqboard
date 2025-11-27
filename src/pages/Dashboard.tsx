@@ -524,8 +524,8 @@ const Dashboard = () => {
       {/* Header */}
       <header className="relative z-10">
         <div className="container mx-auto px-4 py-0 max-w-6xl">
-          <div className="flex items-center justify-between gap-1">
-            <img src={logo} alt="LinqBoard Logo" className="h-16 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
+          <div className="flex items-center justify-end gap-1">
+            {/* Logo removed from header */}
             <div className="flex items-center gap-2">
               <AdminVatReportLink />
               <LanguageSwitcher />
@@ -559,6 +559,16 @@ const Dashboard = () => {
           </div>
         </div>
       </header>
+
+      {/* Logo linksonder */}
+      <div className="fixed bottom-4 left-4 z-20">
+        <img 
+          src={logo} 
+          alt="LinqBoard Logo" 
+          className="h-24 w-auto cursor-pointer hover:scale-105 transition-transform" 
+          onClick={() => navigate("/")} 
+        />
+      </div>
 
       <div className="container mx-auto px-4 py-4 max-w-6xl">
         {/* Welcome Section */}
