@@ -188,7 +188,7 @@ const Index = () => {
         </div>
         
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 z-50 bg-gradient-to-br from-background via-primary/5 to-background" role="banner">
+        <header className="absolute top-0 left-0 right-0 z-50" role="banner">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24" role="navigation" aria-label="Main navigation">
               <div className="flex items-center gap-8">
