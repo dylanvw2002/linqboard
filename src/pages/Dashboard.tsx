@@ -524,8 +524,8 @@ const Dashboard = () => {
       {/* Header */}
       <header className="relative z-10">
         <div className="container mx-auto px-4 py-0 max-w-6xl">
-          <div className="flex items-center justify-between gap-1 -my-[20px]">
-            <img src={logo} alt="LinqBoard Logo" className="h-20 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
+          <div className="flex items-center justify-between gap-1">
+            <img src={logo} alt="LinqBoard Logo" className="h-16 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
             <div className="flex items-center gap-2">
               <AdminVatReportLink />
               <LanguageSwitcher />
