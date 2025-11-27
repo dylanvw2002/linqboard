@@ -37,7 +37,7 @@ const Index = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const testimonialsSectionRef = useRef<HTMLElement>(null);
-  const pricingSectionRef = useRef<HTMLElement>(null);
+  const bottomSectionRef = useRef<HTMLDivElement>(null); // Pricing + SoloLinq + Footer combined
   
   // State for scroll effects
   const [isScrolling, setIsScrolling] = useState(false);
@@ -80,7 +80,7 @@ const Index = () => {
           testimonialsSectionRef.current,
           demoSection.ref.current,
           partnersSection.ref.current,
-          pricingSectionRef.current,
+          bottomSectionRef.current,
         ].filter(Boolean) as HTMLElement[];
         
         let targetSection: HTMLElement | null = null;
@@ -575,8 +575,10 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Bottom Section: Pricing + SoloLinq + Footer combined for snapping */}
+        <div ref={bottomSectionRef}>
         {/* Pricing Section */}
-        <section ref={pricingSectionRef} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative z-20">
+        <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 relative z-20">
           <div className="container mx-auto max-w-7xl">
             {/* Header */}
             <div className="text-center mb-12 sm:mb-16 lg:mb-20">
@@ -787,6 +789,7 @@ const Index = () => {
             <p>{t('landing.footerText')}</p>
           </div>
         </footer>
+        </div>
       </div>
       </div>
     </>;
