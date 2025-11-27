@@ -211,12 +211,12 @@ const Index = () => {
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-40 xl:pt-44 pb-6 sm:pb-8 lg:pb-12 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 xl:gap-20 items-center justify-items-center animate-fade-in w-full pl-0 ml-[110px]">
             {/* Left Content */}
-            <article className="space-y-4 sm:space-y-6 lg:space-y-8 xl:space-y-10">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            <article className="space-y-6 sm:space-y-8 lg:space-y-10 xl:space-y-12">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight">
                 {t('landing.hero')}
               </h1>
               
-              <p className="text-base sm:text-lg md:text-xl lg:text-xl text-muted-foreground max-w-xl lg:max-w-2xl leading-relaxed">
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-xl lg:max-w-2xl leading-relaxed">
                 {t('landing.tagline')}
               </p>
               
@@ -238,7 +238,7 @@ const Index = () => {
 
             {/* Right Visual Mockup */}
             <div className="relative mt-6 lg:mt-0 flex justify-start lg:flex lg:items-start mr-0 ml-0 pr-[110px]">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-3/4 lg:w-2/3 h-auto -mt-8" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-full lg:w-4/5 h-auto -mt-8" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
