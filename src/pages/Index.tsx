@@ -13,6 +13,7 @@ import zorgeloosVastgoedLogo from "@/assets/partners/zorgeloos-vastgoed.svg";
 import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png";
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
 import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
+import fleatureLogo from "@/assets/partners/fleature.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 const Index = () => {
   const {
@@ -392,7 +393,7 @@ const Index = () => {
               {t('landing.trustedBy')}
             </p>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 lg:gap-6 max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-6 lg:gap-6 max-w-7xl mx-auto">
               {/* NRG Totaal - met logo */}
               <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-5 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] lg:min-h-[110px]">
                 <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-9 sm:h-10 md:h-12 lg:h-10 w-auto transition-all" loading="lazy" width="120" height="48" />
@@ -414,8 +415,13 @@ const Index = () => {
               </div>
               
               {/* NutriBuddi - met logo */}
-              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-5 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] lg:min-h-[110px] col-span-2 md:col-span-1">
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-5 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] lg:min-h-[110px]">
                 <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-14 sm:h-20 md:h-24 lg:h-20 w-auto transition-all" loading="lazy" width="120" height="48" />
+              </div>
+              
+              {/* Fleature */}
+              <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-5 bg-card rounded-lg sm:rounded-xl border border-border hover:shadow-lg active:shadow-md transition-all duration-300 hover:scale-105 active:scale-100 min-h-[90px] sm:min-h-[100px] md:min-h-[120px] lg:min-h-[110px]">
+                <img src={fleatureLogo} alt="Fleature" className="h-10 sm:h-12 md:h-14 lg:h-12 w-auto transition-all" loading="lazy" width="120" height="48" />
               </div>
             </div>
           </div>
