@@ -241,6 +241,60 @@ const Index = () => {
           </section>
         </main>
 
+        {/* Features Section */}
+        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto max-w-7xl">
+            {/* Header */}
+            <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+                FEATURES
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                Alles wat je nodig hebt
+              </h2>
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Krachtige functies om je team productiever te maken
+              </p>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return <article key={index} className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
+                animationDelay: `${index * 100}ms`
+              }}>
+                    {/* Gradient Background on Hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      {/* Icon */}
+                      <div className="mb-6 relative">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
+                          <Icon className="w-8 h-8 text-white" aria-hidden="true" />
+                        </div>
+                        {/* Glow Effect */}
+                        <div className="absolute inset-0 w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
+                      </div>
+
+                      {/* Text */}
+                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+
+                    {/* Corner Accent */}
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </article>;
+            })}
+            </div>
+          </div>
+        </section>
+
         {/* Testimonial Quotes Section */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl">
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
@@ -338,60 +392,6 @@ const Index = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
-          <div className="container mx-auto max-w-7xl">
-            {/* Header */}
-            <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
-                FEATURES
-              </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-                Alles wat je nodig hebt
-              </h2>
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Krachtige functies om je team productiever te maken
-              </p>
-            </div>
-
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return <article key={index} className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
-                animationDelay: `${index * 100}ms`
-              }}>
-                    {/* Gradient Background on Hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {/* Content */}
-                    <div className="relative z-10">
-                      {/* Icon */}
-                      <div className="mb-6 relative">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
-                          <Icon className="w-8 h-8 text-white" aria-hidden="true" />
-                        </div>
-                        {/* Glow Effect */}
-                        <div className="absolute inset-0 w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-                      </div>
-
-                      {/* Text */}
-                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
-                        {feature.title}
-                      </h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-
-                    {/* Corner Accent */}
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </article>;
-            })}
             </div>
           </div>
         </section>
