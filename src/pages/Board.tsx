@@ -2468,17 +2468,19 @@ const Board = () => {
             <ArrowLeft className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
             {!isMobile && (isDemo ? t('demo.backToHome') : t('dashboard.title'))}
           </button>
-          <div className={cn("flex items-center rounded-2xl", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 gap-1" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2")}>
-            <button onClick={handleZoomOut} disabled={isMobile ? zoomLevel <= 0.2 : zoomLevel <= 0.5} className={cn("text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold", isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg")} title="Zoom uit (Ctrl/Cmd + -)">
-              <ZoomOut className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
-            </button>
-            <span className={cn("text-foreground font-bold text-center", isMobile ? "text-xs min-w-[2.5rem]" : "text-sm min-w-[3.5rem]")}>
-              {Math.round(zoomLevel * 100)}%
-            </span>
-            <button onClick={handleZoomIn} disabled={isMobile ? zoomLevel >= 1.0 : zoomLevel >= 1.0} className={cn("text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold", isMobile ? "hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 text-base" : "hover:bg-white/30 dark:hover:bg-card/30 text-lg")} title="Zoom in (Ctrl/Cmd + +)">
-              <ZoomIn className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
-            </button>
-          </div>
+          {!isMobile && (
+            <div className="flex items-center rounded-2xl backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2">
+              <button onClick={handleZoomOut} disabled={zoomLevel <= 0.5} className="text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold hover:bg-white/30 dark:hover:bg-card/30 text-lg" title="Zoom uit (Ctrl/Cmd + -)">
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <span className="text-foreground font-bold text-center text-sm min-w-[3.5rem]">
+                {Math.round(zoomLevel * 100)}%
+              </span>
+              <button onClick={handleZoomIn} disabled={zoomLevel >= 1.0} className="text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold hover:bg-white/30 dark:hover:bg-card/30 text-lg" title="Zoom in (Ctrl/Cmd + +)">
+                <ZoomIn className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           {!isMobile && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -2811,53 +2813,28 @@ const Board = () => {
                             isOverdue && "animate-overdue-glow"
                           )}
                         >
-                          <div className="flex gap-2 items-start">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
-                                <AttachmentCount taskId={task.id} />
-                                {task.due_date && (
-                                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                                    📅 {format(new Date(task.due_date), "d MMM", {
-                                      locale: getDateLocale()
-                                    })}
-                                  </span>
-                                )}
-                                {task.priority && getPriorityBadge(task.priority) && (
-                                  <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
-                                    {getPriorityBadge(task.priority)!.label}
-                                  </span>
-                                )}
-                              </div>
-                              <h4 className="font-extrabold text-base mb-1 text-foreground relative z-10">
-                                {task.title}
-                              </h4>
-                              {task.description && (
-                                <p className="text-muted-foreground text-sm relative z-10 line-clamp-2">
-                                  {task.description}
-                                </p>
+                          <div className="flex flex-col gap-2">
+                            {/* Badges eerst - deadline en priority */}
+                            <div className="flex items-center gap-1.5 flex-wrap relative z-10">
+                              <AttachmentCount taskId={task.id} />
+                              {task.due_date && (
+                                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                                  📅 {format(new Date(task.due_date), "d MMM", {
+                                    locale: getDateLocale()
+                                  })}
+                                </span>
+                              )}
+                              {task.priority && getPriorityBadge(task.priority) && (
+                                <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                                  {getPriorityBadge(task.priority)!.label}
+                                </span>
                               )}
                             </div>
-                            {task.assignees && task.assignees.length > 0 && (
-                              <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
-                                {task.assignees.slice(0, 3).map((assignee, idx) => (
-                                  <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{
-                                    marginLeft: idx > 0 ? '-6px' : '0'
-                                  }}>
-                                    <AvatarImage src={assignee.avatar_url || undefined} />
-                                    <AvatarFallback className="text-xs bg-primary/10">
-                                      {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                ))}
-                                {task.assignees.length > 3 && (
-                                  <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{
-                                    marginLeft: '-6px'
-                                  }}>
-                                    +{task.assignees.length - 3}
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                            
+                            {/* Titel */}
+                            <h4 className="font-extrabold text-base text-foreground relative z-10">
+                              {task.title}
+                            </h4>
                           </div>
                         </article>
                       );
