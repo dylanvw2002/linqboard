@@ -163,32 +163,32 @@ const Auth = () => {
       <div className="absolute top-4 right-4 lg:top-6 lg:right-6 z-10">
         <LanguageSwitcher />
       </div>
-      <Card className="w-full max-w-md lg:max-w-lg mx-4 sm:mx-0 shadow-xl lg:shadow-2xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
-        <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 pb-3 sm:pb-4 lg:pb-5">
-          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-56 lg:h-64 w-auto" />
+      <Card className="w-full max-w-md lg:max-w-xl xl:max-w-2xl mx-4 sm:mx-0 shadow-xl lg:shadow-2xl bg-card/95 backdrop-blur border-2 border-primary/20 relative z-10">
+        <div className="flex justify-center pt-6 sm:pt-8 lg:pt-12 xl:pt-14 pb-3 sm:pb-4 lg:pb-6">
+          <img src={authIllustration} alt="LinqBoard Authentication" className="h-40 sm:h-56 lg:h-72 xl:h-80 w-auto" />
         </div>
-        <CardHeader className="space-y-2 lg:space-y-3 pt-2 px-4 sm:px-6 lg:px-8">
-          <CardTitle className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center">
+        <CardHeader className="space-y-2 lg:space-y-4 xl:space-y-5 pt-2 px-4 sm:px-6 lg:px-10 xl:px-12">
+          <CardTitle className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-center">
             {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcome') : t('auth.createAccount')}
           </CardTitle>
-          <CardDescription className="text-center text-sm sm:text-base lg:text-lg">
+          <CardDescription className="text-center text-sm sm:text-base lg:text-lg xl:text-xl">
             {isForgotPassword ? t('auth.resetPasswordDescription') : isLogin ? t('auth.loginDescription') : t('auth.signupDescription')}
           </CardDescription>
         </CardHeader>
-        <CardContent className="px-4 sm:px-6 lg:px-8">
-          <form onSubmit={handleAuth} className="space-y-3 sm:space-y-4 lg:space-y-5">
+        <CardContent className="px-4 sm:px-6 lg:px-10 xl:px-12 pb-8 lg:pb-10 xl:pb-12">
+          <form onSubmit={handleAuth} className="space-y-3 sm:space-y-4 lg:space-y-6 xl:space-y-7">
             {!isLogin && !isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="fullName" className="lg:text-base">{t('auth.fullName')}</Label>
-                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} className="lg:h-12 lg:text-base" />
+                <Label htmlFor="fullName" className="lg:text-base xl:text-lg">{t('auth.fullName')}</Label>
+                <Input id="fullName" type="text" placeholder={t('auth.namePlaceholder')} value={fullName} onChange={e => setFullName(e.target.value)} required disabled={loading} className="lg:h-12 xl:h-14 lg:text-base xl:text-lg" />
               </div>}
             
             <div className="space-y-2">
-              <Label htmlFor="email" className="lg:text-base">{t('auth.email')}</Label>
-              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} className="lg:h-12 lg:text-base" />
+              <Label htmlFor="email" className="lg:text-base xl:text-lg">{t('auth.email')}</Label>
+              <Input id="email" type="email" placeholder={t('auth.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required disabled={loading} className="lg:h-12 xl:h-14 lg:text-base xl:text-lg" />
             </div>
             
             {!isForgotPassword && <div className="space-y-2">
-                <Label htmlFor="password" className="lg:text-base">{t('auth.password')}</Label>
+                <Label htmlFor="password" className="lg:text-base xl:text-lg">{t('auth.password')}</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
@@ -199,29 +199,29 @@ const Auth = () => {
                     required 
                     minLength={6} 
                     disabled={loading}
-                    className="pr-10 lg:h-12 lg:text-base"
+                    className="pr-10 lg:h-12 xl:h-14 lg:text-base xl:text-lg"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent lg:h-12"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent lg:h-12 xl:h-14"
                     onClick={() => setShowPassword(!showPassword)}
                     disabled={loading}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-4 w-4 lg:h-5 lg:w-5 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-muted-foreground" />
                     ) : (
-                      <Eye className="h-4 w-4 lg:h-5 lg:w-5 text-muted-foreground" />
+                      <Eye className="h-4 w-4 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-muted-foreground" />
                     )}
                   </Button>
                 </div>
-                {!isLogin && <p className="text-xs lg:text-sm text-muted-foreground">
+                {!isLogin && <p className="text-xs lg:text-sm xl:text-base text-muted-foreground">
                     {t('auth.minPasswordLength')}
                   </p>}
               </div>}
             
-            <Button type="submit" className="w-full lg:h-12 lg:text-lg" disabled={loading}>
+            <Button type="submit" className="w-full lg:h-12 xl:h-14 lg:text-lg xl:text-xl font-semibold" disabled={loading}>
               {loading ? <>
                   <Loader2 className="mr-2 h-4 w-4 lg:h-5 lg:w-5 animate-spin" />
                   {t('auth.busy')}
@@ -229,22 +229,22 @@ const Auth = () => {
             </Button>
           </form>
           
-          <div className="mt-6 lg:mt-8 text-center space-y-2 lg:space-y-3">
-            {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm lg:text-base text-primary hover:underline block w-full" disabled={loading}>
+          <div className="mt-6 lg:mt-8 xl:mt-10 text-center space-y-2 lg:space-y-3 xl:space-y-4">
+            {!isForgotPassword && <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm lg:text-base xl:text-lg text-primary hover:underline block w-full" disabled={loading}>
                 {isLogin ? t('auth.noAccount') : t('auth.alreadyAccount')}
               </button>}
             
             {isLogin && !isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(true);
             setPassword("");
-          }} className="text-sm lg:text-base text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
+          }} className="text-sm lg:text-base xl:text-lg text-muted-foreground hover:text-primary hover:underline block w-full" disabled={loading}>
                 {t('auth.forgotPassword')}
               </button>}
             
             {isForgotPassword && <button type="button" onClick={() => {
             setIsForgotPassword(false);
             setEmail("");
-          }} className="text-sm lg:text-base text-primary hover:underline block w-full" disabled={loading}>
+          }} className="text-sm lg:text-base xl:text-lg text-primary hover:underline block w-full" disabled={loading}>
                 {t('auth.backToLogin')}
               </button>}
           </div>
