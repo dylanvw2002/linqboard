@@ -238,7 +238,7 @@ const Index = () => {
 
             {/* Right Visual Mockup */}
             <div className="relative mt-6 lg:mt-0 flex justify-start mr-0 ml-0 pr-[110px] lg:flex lg:items-start lg:justify-center">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-full lg:w-4/5 h-auto -mt-8" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-full h-auto -mt-8" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
