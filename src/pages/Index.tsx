@@ -14,6 +14,7 @@ import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
 import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
 import fleatureLogo from "@/assets/partners/fleature.png";
+import sololinqLogo from "@/assets/partners/sololinq.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
@@ -463,9 +464,7 @@ const Index = () => {
             <div className="bg-muted/30 rounded-xl sm:rounded-2xl p-8 sm:p-10 lg:p-12">
               <div className="flex flex-col md:flex-row items-center gap-6">
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
-                    <CheckSquare className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-                  </div>
+                  <img src={sololinqLogo} alt="SoloLinq Logo" className="h-20 sm:h-24 w-auto" loading="lazy" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
                   <h2 className="text-2xl sm:text-3xl font-bold mb-3">
