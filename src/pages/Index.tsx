@@ -297,6 +297,19 @@ const Index = () => {
 
         {/* Testimonial Quotes Section */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl">
+          {/* Header */}
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+              TESTIMONIALS
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              Wat onze gebruikers over ons zeggen
+            </h2>
+            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Ontdek waarom teams voor LinqBoard kiezen
+            </p>
+          </div>
+          
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
             {/* Quote 1 - NRG Totaal */}
             <div className="relative">
