@@ -447,7 +447,7 @@ const Index = () => {
                 {/* Fleature */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={fleatureLogo} alt="Fleature" className="h-16 sm:h-20 w-auto transition-all" loading="lazy" width="120" height="48" />
+                    <img src={fleatureLogo} alt="Fleature" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="48" />
                   </div>
                 </CarouselItem>
               </CarouselContent>
