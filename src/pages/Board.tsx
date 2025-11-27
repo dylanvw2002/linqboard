@@ -1424,6 +1424,8 @@ const Board = () => {
         const {
           data: tasksData
         } = await supabase.from("tasks").select("*").in("column_id", columnIds).order("position");
+        console.log('📋 Opgehaalde taken:', tasksData?.length, 'taken');
+        console.log('📋 Kolom IDs:', columnIds);
         if (tasksData && tasksData.length > 0) {
           const taskIds = tasksData.map(t => t.id);
 
@@ -1818,7 +1820,11 @@ const Board = () => {
       setExportingTask(false);
     }
   };
-  const getColumnTasks = (columnId: string) => tasks.filter(task => task.column_id === columnId);
+  const getColumnTasks = (columnId: string) => {
+    const columnTasks = tasks.filter(task => task.column_id === columnId);
+    console.log(`📋 Kolom ${columnId}: ${columnTasks.length} taken`);
+    return columnTasks;
+  };
   
   // Update active filters count
   useEffect(() => {
