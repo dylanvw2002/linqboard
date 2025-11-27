@@ -2806,33 +2806,33 @@ const Board = () => {
                           key={task.id}
                           onClick={() => openEditDialog(task)} 
                           className={cn(
-                            "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-pointer hover:-translate-y-1 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                            "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-4 cursor-pointer hover:-translate-y-1 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
                             "border-white/40 dark:border-white/20",
                             getGlowStyles(column.glow_type).cardGradient,
                             getGlowStyles(column.glow_type).cardShadow,
                             isOverdue && "animate-overdue-glow"
                           )}
                         >
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-3">
                             {/* Badges eerst - deadline en priority */}
-                            <div className="flex items-center gap-1.5 flex-wrap relative z-10">
+                            <div className="flex items-center gap-2 flex-wrap relative z-10">
                               <AttachmentCount taskId={task.id} />
                               {task.due_date && (
-                                <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                                <span className={`inline-block px-2.5 py-1 rounded-full text-sm font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                                   📅 {format(new Date(task.due_date), "d MMM", {
                                     locale: getDateLocale()
                                   })}
                                 </span>
                               )}
                               {task.priority && getPriorityBadge(task.priority) && (
-                                <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                                <span className={cn("inline-block px-2.5 py-1 rounded-full text-sm font-bold border", getPriorityBadge(task.priority)!.color)}>
                                   {getPriorityBadge(task.priority)!.label}
                                 </span>
                               )}
                             </div>
                             
                             {/* Titel */}
-                            <h4 className="font-extrabold text-base text-foreground relative z-10">
+                            <h4 className="font-extrabold text-lg leading-snug text-foreground relative z-10">
                               {task.title}
                             </h4>
                           </div>
