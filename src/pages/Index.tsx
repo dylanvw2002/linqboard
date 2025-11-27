@@ -230,32 +230,66 @@ const Index = () => {
           </section>
         </main>
 
-        {/* Testimonial Quote Section */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-4xl">
-          <div className="relative">
-            <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 lg:p-8 border border-border shadow-lg">
-              {/* Quote Icon */}
-              <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-md">
-                <span className="text-3xl text-white font-serif">"</span>
-              </div>
-              
-              {/* Quote Content */}
-              <div className="space-y-4">
-                <blockquote className="text-base sm:text-lg lg:text-xl font-medium text-foreground leading-relaxed italic">
-                  LinqBoard heeft onze projecten naar een hoger niveau getild. De visuele aanpak en real-time samenwerking maken het eindelijk mogelijk om overzicht te houden, zelfs bij complexe installaties.
-                </blockquote>
+        {/* Testimonial Quotes Section */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+            {/* Quote 1 - NRG Totaal */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg">
+                {/* Quote Icon */}
+                <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center shadow-md">
+                  <span className="text-3xl text-white font-serif">"</span>
+                </div>
                 
-                {/* Attribution */}
-                <div className="flex items-center gap-3 pt-3 border-t border-border/50">
-                  <img 
-                    src={nrgTotaalLogo} 
-                    alt="NRG Totaal logo" 
-                    className="h-8 sm:h-9 w-auto opacity-80"
-                    loading="lazy"
-                  />
-                  <div>
-                    <p className="font-semibold text-sm text-foreground">NRG Totaal</p>
-                    <p className="text-xs text-muted-foreground">Technische Installaties</p>
+                {/* Quote Content */}
+                <div className="space-y-4">
+                  <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
+                    LinqBoard heeft onze projecten naar een hoger niveau getild. De visuele aanpak en real-time samenwerking maken het eindelijk mogelijk om overzicht te houden, zelfs bij complexe installaties.
+                  </blockquote>
+                  
+                  {/* Attribution */}
+                  <div className="flex items-center gap-3 pt-3 border-t border-border/50">
+                    <img 
+                      src={nrgTotaalLogo} 
+                      alt="NRG Totaal logo" 
+                      className="h-8 w-auto opacity-80"
+                      loading="lazy"
+                    />
+                    <div>
+                      <p className="font-semibold text-sm text-foreground">NRG Totaal</p>
+                      <p className="text-xs text-muted-foreground">Technische Installaties</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quote 2 - Zorgeloos Vastgoed */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg">
+                {/* Quote Icon */}
+                <div className="absolute -top-3 -left-3 w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center shadow-md">
+                  <span className="text-3xl text-white font-serif">"</span>
+                </div>
+                
+                {/* Quote Content */}
+                <div className="space-y-4">
+                  <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
+                    Dankzij LinqBoard kunnen we al onze vastgoedprojecten efficiënt beheren. De duidelijke visualisatie en taakbeheer functies zorgen ervoor dat niets tussen wal en schip valt.
+                  </blockquote>
+                  
+                  {/* Attribution */}
+                  <div className="flex items-center gap-3 pt-3 border-t border-border/50">
+                    <img 
+                      src={zorgeloosVastgoedLogo} 
+                      alt="Zorgeloos Vastgoed logo" 
+                      className="h-8 w-auto opacity-80"
+                      loading="lazy"
+                    />
+                    <div>
+                      <p className="font-semibold text-sm text-foreground">Zorgeloos Vastgoed</p>
+                      <p className="text-xs text-muted-foreground">Vastgoedbeheer</p>
+                    </div>
                   </div>
                 </div>
               </div>
