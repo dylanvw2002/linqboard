@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit, Bell, Paperclip, Layout, Calendar, ChevronLeft, ChevronRight, Clipboard, FileText, Target, Clock, CheckSquare, Archive, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Users, Zap, Shield, LogIn, Eye, Edit, Bell, Paperclip, Layout, Calendar, Clipboard, FileText, Target, Clock, CheckSquare, Archive, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
@@ -14,8 +14,6 @@ import onderhoudscontractenLogo from "@/assets/partners/onderhoudscontracten.png
 import nutribuddiLogo from "@/assets/partners/nutribuddi.png";
 import odeaVastgoedLogo from "@/assets/partners/odea-vastgoed.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import useEmblaCarousel from 'embla-carousel-react';
-import { useEffect } from 'react';
 const Index = () => {
   const {
     t
@@ -23,21 +21,6 @@ const Index = () => {
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    loop: true,
-    align: 'start',
-    containScroll: 'trimSnaps',
-    skipSnaps: false,
-    duration: 20
-  });
-  useEffect(() => {
-    if (!emblaApi) return;
-    const play = () => {
-      emblaApi.scrollNext();
-    };
-    const intervalId = setInterval(play, 5000);
-    return () => clearInterval(intervalId);
-  }, [emblaApi]);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
@@ -302,45 +285,63 @@ const Index = () => {
         </section>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-8 sm:py-12 lg:py-16 w-full overflow-hidden relative">
-          <p className="text-center text-xs sm:text-sm lg:text-sm uppercase tracking-wider text-muted-foreground mb-6 sm:mb-8 lg:mb-10 px-4 font-semibold">FEATURES</p>
-          
-          {/* Gradient Overlays - Hidden on mobile for better visibility */}
-          <div className="hidden sm:block absolute left-0 top-[50px] bottom-0 w-20 lg:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-          <div className="hidden sm:block absolute right-0 top-[50px] bottom-0 w-20 lg:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-          
-          {/* Navigation Arrows - Better mobile positioning */}
-          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-2 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" aria-label="Previous">
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-          </button>
-          
-          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-2 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" aria-label="Next">
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-          </button>
+        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+          <div className="container mx-auto max-w-7xl">
+            {/* Header */}
+            <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+                FEATURES
+              </p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                Alles wat je nodig hebt
+              </h2>
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Krachtige functies om je team productiever te maken
+              </p>
+            </div>
 
-          <div className="overflow-hidden cursor-grab active:cursor-grabbing" ref={emblaRef}>
-            <div className="flex touch-pan-y select-none will-change-transform">
-              {[...features, ...features, ...features].map((feature, index) => {
-              const Icon = feature.icon;
-              return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_80%] md:flex-[0_0_340px] lg:flex-[0_0_320px] min-w-0 pl-2 pr-2 sm:pl-3 sm:pr-3 md:pl-4 md:pr-4 py-3 sm:py-4">
-                    <article className={`h-full p-4 sm:p-5 md:p-6 lg:p-7 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-2xl bg-card border border-border shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] lg:hover:shadow-[0_10px_28px_rgb(0,0,0,0.11)] transition-all duration-300 relative overflow-hidden touch-manipulation animate-fade-in`} style={{
-                  animationDelay: `${index % features.length * 100}ms`
-                }}>
-                      {/* Subtle gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
-                      
-                      <div className="relative z-10">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-14 lg:h-14 rounded-lg sm:rounded-xl lg:rounded-xl bg-primary/60 flex items-center justify-center mb-2.5 sm:mb-3 md:mb-4 lg:mb-4 shadow-md">
-                          <Icon className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-7 lg:w-7 text-white" aria-hidden="true" />
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <article
+                    key={index}
+                    className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${
+                      featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                    }`}
+                    style={{
+                      animationDelay: `${index * 100}ms`
+                    }}
+                  >
+                    {/* Gradient Background on Hover */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    
+                    {/* Content */}
+                    <div className="relative z-10">
+                      {/* Icon */}
+                      <div className="mb-6 relative">
+                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
+                          <Icon className="w-8 h-8 text-white" aria-hidden="true" />
                         </div>
-                        <h3 className="text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl font-semibold mb-1.5 sm:mb-2 md:mb-3 lg:mb-3 leading-snug">{feature.title}</h3>
-                        <p className="text-xs sm:text-sm md:text-base lg:text-base text-muted-foreground leading-relaxed">
-                          {feature.description}
-                        </p>
+                        {/* Glow Effect */}
+                        <div className="absolute inset-0 w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
                       </div>
-                    </article>
-                  </div>;
-            })}
+
+                      {/* Text */}
+                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+
+                    {/* Corner Accent */}
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
