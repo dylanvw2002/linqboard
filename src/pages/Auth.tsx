@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, Shield, Users, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import authIllustration from "@/assets/auth-illustration.png";
+import authIllustration from "@/assets/linqboard-auth-mascot.png";
 import logo from "@/assets/logo-transparent.png";
 const Auth = () => {
   const {
