@@ -64,85 +64,66 @@ const Index = () => {
   }];
   const structuredData = {
     "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebPage",
-        "name": t('seo.home.title'),
-        "description": t('seo.home.description'),
-        "url": "https://linqboard.nl",
-        "inLanguage": "nl-NL",
-        "isPartOf": {
-          "@type": "WebSite",
-          "url": "https://linqboard.nl"
-        }
-      },
-      {
-        "@type": "Organization",
-        "name": "LinqBoard",
-        "url": "https://linqboard.nl",
-        "logo": "https://linqboard.nl/logo-linqboard.png",
-        "description": "LinqBoard - Het ultieme visuele projectmanagement platform voor teams",
-        "foundingDate": "2024",
-        "sameAs": [
-          "https://twitter.com/linqboard",
-          "https://linkedin.com/company/linqboard"
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer support",
-          "email": "support@linqboard.nl"
-        }
-      },
-      {
-        "@type": "SoftwareApplication",
-        "name": "LinqBoard",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web Browser",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "EUR"
-        },
-        "description": "Visueel projectmanagement platform met real-time samenwerking, aanpasbare kolommen en team management",
-        "featureList": [
-          "Real-time samenwerking",
-          "Team management",
-          "Aanpasbare kolommen",
-          "Deadline tracking",
-          "Bestandsbijlagen",
-          "Veilige opslag"
-        ]
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Wat is LinqBoard?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "LinqBoard is een visueel projectmanagement platform dat teams helpt om efficiënt samen te werken met real-time updates, aanpasbare boards en krachtige samenwerkingstools."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Is LinqBoard gratis te gebruiken?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ja, LinqBoard biedt een gratis plan waarmee je kunt starten. Voor meer functies zijn er betaalde plannen beschikbaar."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Kan ik LinqBoard gebruiken voor team samenwerking?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Absoluut! LinqBoard is speciaal ontworpen voor teams met real-time samenwerking, team management functies en veilige data opslag."
-            }
-          }
-        ]
+    "@graph": [{
+      "@type": "WebPage",
+      "name": t('seo.home.title'),
+      "description": t('seo.home.description'),
+      "url": "https://linqboard.nl",
+      "inLanguage": "nl-NL",
+      "isPartOf": {
+        "@type": "WebSite",
+        "url": "https://linqboard.nl"
       }
-    ]
+    }, {
+      "@type": "Organization",
+      "name": "LinqBoard",
+      "url": "https://linqboard.nl",
+      "logo": "https://linqboard.nl/logo-linqboard.png",
+      "description": "LinqBoard - Het ultieme visuele projectmanagement platform voor teams",
+      "foundingDate": "2024",
+      "sameAs": ["https://twitter.com/linqboard", "https://linkedin.com/company/linqboard"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "support@linqboard.nl"
+      }
+    }, {
+      "@type": "SoftwareApplication",
+      "name": "LinqBoard",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "description": "Visueel projectmanagement platform met real-time samenwerking, aanpasbare kolommen en team management",
+      "featureList": ["Real-time samenwerking", "Team management", "Aanpasbare kolommen", "Deadline tracking", "Bestandsbijlagen", "Veilige opslag"]
+    }, {
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Wat is LinqBoard?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LinqBoard is een visueel projectmanagement platform dat teams helpt om efficiënt samen te werken met real-time updates, aanpasbare boards en krachtige samenwerkingstools."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Is LinqBoard gratis te gebruiken?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ja, LinqBoard biedt een gratis plan waarmee je kunt starten. Voor meer functies zijn er betaalde plannen beschikbaar."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Kan ik LinqBoard gebruiken voor team samenwerking?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absoluut! LinqBoard is speciaal ontworpen voor teams met real-time samenwerking, team management functies en veilige data opslag."
+        }
+      }]
+    }]
   };
   return <>
       <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
@@ -202,11 +183,11 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup */}
-            <div className="relative mt-6 lg:mt-0 flex justify-center lg:justify-end">
+            <div className="relative mt-6 lg:mt-0 flex justify-center lg:flex lg:items-start lg:justify-start mr-0 ml-0 pr-[110px]">
               <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-3/4 lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
-              <div className="absolute -top-3 sm:-top-4 lg:-top-8 -right-3 sm:-right-4 lg:-right-8 w-12 h-12 sm:w-16 sm:h-16 lg:w-32 lg:h-32 bg-gradient-to-br from-primary to-accent rounded-full opacity-20 blur-2xl"></div>
+              
             </div>
           </section>
         </main>
@@ -274,19 +255,11 @@ const Index = () => {
           <div className="hidden sm:block absolute right-0 top-[50px] bottom-0 w-20 lg:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
           
           {/* Navigation Arrows - Better mobile positioning */}
-          <button 
-            onClick={() => emblaApi?.scrollPrev()} 
-            className="absolute left-2 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" 
-            aria-label="Previous"
-          >
+          <button onClick={() => emblaApi?.scrollPrev()} className="absolute left-2 sm:left-2 lg:left-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" aria-label="Previous">
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
           
-          <button 
-            onClick={() => emblaApi?.scrollNext()} 
-            className="absolute right-2 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" 
-            aria-label="Next"
-          >
+          <button onClick={() => emblaApi?.scrollNext()} className="absolute right-2 sm:right-2 lg:right-4 top-1/2 -translate-y-1/2 z-20 bg-white/95 hover:bg-white p-2.5 sm:p-3 rounded-full shadow-lg transition-all hover:scale-110 active:scale-95 touch-manipulation" aria-label="Next">
             <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
           </button>
 
@@ -296,7 +269,7 @@ const Index = () => {
               const Icon = feature.icon;
               return <div key={index} className="flex-[0_0_85%] sm:flex-[0_0_80%] md:flex-[0_0_340px] lg:flex-[0_0_380px] min-w-0 pl-2 pr-2 sm:pl-3 sm:pr-3 md:pl-4 md:pr-4 py-3 sm:py-4">
                     <article className={`h-full p-4 sm:p-5 md:p-6 lg:p-10 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-3xl bg-card border border-border shadow-[0_2px_8px_rgb(0,0,0,0.04)] sm:shadow-[0_4px_12px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgb(0,0,0,0.1)] lg:hover:shadow-[0_12px_32px_rgb(0,0,0,0.12)] transition-all duration-300 relative overflow-hidden touch-manipulation animate-fade-in`} style={{
-                  animationDelay: `${(index % features.length) * 100}ms`
+                  animationDelay: `${index % features.length * 100}ms`
                 }}>
                       {/* Subtle gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
