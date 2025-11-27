@@ -239,7 +239,7 @@ const Index = () => {
                 {/* Quote Content */}
                 <div className="space-y-4">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
-                    <span className="text-purple-500 text-4xl font-serif mr-1">"</span>LinqBoard is voor ons de perfecte vervanging van het traditionele whiteboard. Eindelijk kunnen we alle projecten digitaal en overzichtelijk beheren, zonder dat we nog met markers hoeven te werken!<span className="text-purple-500 text-4xl font-serif ml-1">"</span>
+                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>LinqBoard is voor ons de perfecte vervanging van het traditionele whiteboard. Eindelijk kunnen we alle projecten digitaal en overzichtelijk beheren, zonder dat we nog met markers hoeven te werken!
                   </blockquote>
                   
                   {/* Attribution */}
@@ -260,7 +260,7 @@ const Index = () => {
                 {/* Quote Content */}
                 <div className="space-y-4">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic">
-                    <span className="text-purple-500 text-4xl font-serif mr-1">"</span>Met de slimme reminder-functie en deadline tracking van LinqBoard vergeten we nooit meer een belangrijke taak. Alle vastgoedprojecten lopen nu soepel en op tijd!<span className="text-purple-500 text-4xl font-serif ml-1">"</span>
+                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>Met de slimme reminder-functie en deadline tracking van LinqBoard vergeten we nooit meer een belangrijke taak. Alle vastgoedprojecten lopen nu soepel en op tijd!
                   </blockquote>
                   
                   {/* Attribution */}
