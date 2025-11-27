@@ -132,51 +132,50 @@ const Index = () => {
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           {/* Desktop icons - hidden on mobile */}
           <div className="hidden md:block">
-            <Calendar className="absolute top-[5%] left-[5%] w-14 h-14 text-primary opacity-5" />
-            <Clipboard className="absolute top-[8%] right-[10%] w-16 h-16 text-primary opacity-5" />
-            <FileText className="absolute top-[15%] left-[20%] w-14 h-14 text-primary opacity-5" />
-            <Target className="absolute top-[12%] right-[25%] w-14 h-14 text-primary opacity-5" />
-            <Clock className="absolute top-[20%] left-[40%] w-14 h-14 text-primary opacity-5" />
-            <CheckSquare className="absolute top-[18%] right-[45%] w-16 h-16 text-primary opacity-5" />
-            <Archive className="absolute top-[25%] left-[60%] w-14 h-14 text-primary opacity-5" />
-            <CheckCircle2 className="absolute top-[22%] right-[70%] w-14 h-14 text-primary opacity-5" />
-            <Zap className="absolute top-[28%] left-[80%] w-14 h-14 text-primary opacity-5" />
-            <Paperclip className="absolute top-[30%] right-[5%] w-14 h-14 text-primary opacity-5" />
+            <Calendar className="absolute top-[6%] left-[4%] w-12 h-12 text-primary opacity-5" />
+            <Clipboard className="absolute top-[10%] right-[8%] w-13 h-13 text-primary opacity-5" />
+            <FileText className="absolute top-[5%] left-[25%] w-12 h-12 text-primary opacity-5" />
+            <Target className="absolute top-[14%] right-[30%] w-12 h-12 text-primary opacity-5" />
+            <Clock className="absolute top-[8%] left-[50%] w-12 h-12 text-primary opacity-5" />
+            <CheckSquare className="absolute top-[18%] right-[55%] w-13 h-13 text-primary opacity-5" />
+            <Archive className="absolute top-[6%] left-[70%] w-12 h-12 text-primary opacity-5" />
+            <CheckCircle2 className="absolute top-[12%] right-[75%] w-12 h-12 text-primary opacity-5" />
+            <Zap className="absolute top-[16%] left-[88%] w-12 h-12 text-primary opacity-5" />
+            <Paperclip className="absolute top-[22%] right-[3%] w-12 h-12 text-primary opacity-5" />
             
-            <Calendar className="absolute top-[40%] right-[15%] w-16 h-16 text-primary opacity-5" />
-            <Clipboard className="absolute top-[45%] left-[12%] w-14 h-14 text-primary opacity-5" />
-            <FileText className="absolute top-[42%] right-[35%] w-14 h-14 text-primary opacity-5" />
-            <Target className="absolute top-[48%] left-[35%] w-14 h-14 text-primary opacity-5" />
-            <Clock className="absolute top-[50%] right-[50%] w-14 h-14 text-primary opacity-5" />
-            <CheckSquare className="absolute top-[55%] left-[55%] w-16 h-16 text-primary opacity-5" />
-            <Archive className="absolute top-[52%] left-[75%] w-14 h-14 text-primary opacity-5" />
-            <CheckCircle2 className="absolute top-[58%] right-[65%] w-14 h-14 text-primary opacity-5" />
-            <Zap className="absolute top-[60%] left-[90%] w-14 h-14 text-primary opacity-5" />
-            <Paperclip className="absolute top-[62%] right-[8%] w-14 h-14 text-primary opacity-5" />
+            <Calendar className="absolute top-[35%] right-[12%] w-13 h-13 text-primary opacity-5" />
+            <Clipboard className="absolute top-[40%] left-[8%] w-12 h-12 text-primary opacity-5" />
+            <FileText className="absolute top-[45%] right-[40%] w-12 h-12 text-primary opacity-5" />
+            <Target className="absolute top-[38%] left-[32%] w-12 h-12 text-primary opacity-5" />
+            <Clock className="absolute top-[50%] right-[58%] w-12 h-12 text-primary opacity-5" />
+            <CheckSquare className="absolute top-[42%] left-[62%] w-13 h-13 text-primary opacity-5" />
+            <Archive className="absolute top-[48%] left-[82%] w-12 h-12 text-primary opacity-5" />
+            <CheckCircle2 className="absolute top-[55%] right-[70%] w-12 h-12 text-primary opacity-5" />
+            <Zap className="absolute top-[52%] left-[95%] w-12 h-12 text-primary opacity-5" />
+            <Paperclip className="absolute top-[58%] right-[5%] w-12 h-12 text-primary opacity-5" />
             
-            <Calendar className="absolute top-[70%] left-[10%] w-14 h-14 text-primary opacity-5" />
-            <Clipboard className="absolute top-[75%] right-[20%] w-14 h-14 text-primary opacity-5" />
-            <FileText className="absolute top-[72%] left-[30%] w-16 h-16 text-primary opacity-5" />
-            <Target className="absolute top-[78%] right-[40%] w-14 h-14 text-primary opacity-5" />
-            <Clock className="absolute top-[80%] left-[50%] w-14 h-14 text-primary opacity-5" />
-            <CheckSquare className="absolute top-[82%] right-[55%] w-14 h-14 text-primary opacity-5" />
-            <Archive className="absolute top-[85%] left-[70%] w-16 h-16 text-primary opacity-5" />
-            <CheckCircle2 className="absolute top-[88%] right-[10%] w-14 h-14 text-primary opacity-5" />
-            <Zap className="absolute top-[90%] left-[85%] w-14 h-14 text-primary opacity-5" />
-            <Layout className="absolute top-[92%] right-[78%] w-14 h-14 text-primary opacity-5" />
+            <Calendar className="absolute top-[68%] left-[6%] w-12 h-12 text-primary opacity-5" />
+            <Clipboard className="absolute top-[75%] right-[18%] w-12 h-12 text-primary opacity-5" />
+            <FileText className="absolute top-[72%] left-[28%] w-13 h-13 text-primary opacity-5" />
+            <Target className="absolute top-[78%] right-[45%] w-12 h-12 text-primary opacity-5" />
+            <Clock className="absolute top-[82%] left-[48%] w-12 h-12 text-primary opacity-5" />
+            <CheckSquare className="absolute top-[76%] right-[62%] w-12 h-12 text-primary opacity-5" />
+            <Archive className="absolute top-[85%] left-[68%] w-13 h-13 text-primary opacity-5" />
+            <CheckCircle2 className="absolute top-[88%] right-[8%] w-12 h-12 text-primary opacity-5" />
+            <Zap className="absolute top-[92%] left-[86%] w-12 h-12 text-primary opacity-5" />
+            <Layout className="absolute top-[90%] right-[82%] w-12 h-12 text-primary opacity-5" />
           </div>
           
           {/* Mobile icons - fewer and strategically placed */}
           <div className="block md:hidden">
-            <Calendar className="absolute top-[8%] left-[8%] w-12 h-12 text-primary opacity-5" />
-            <CheckSquare className="absolute top-[18%] right-[10%] w-14 h-14 text-primary opacity-5" />
-            <Target className="absolute top-[28%] left-[75%] w-12 h-12 text-primary opacity-5" />
-            <Clock className="absolute top-[38%] right-[12%] w-12 h-12 text-primary opacity-5" />
-            <Zap className="absolute top-[48%] left-[10%] w-14 h-14 text-primary opacity-5" />
-            <FileText className="absolute top-[58%] right-[15%] w-12 h-12 text-primary opacity-5" />
-            <CheckCircle2 className="absolute top-[68%] left-[12%] w-14 h-14 text-primary opacity-5" />
-            <Clipboard className="absolute top-[78%] right-[10%] w-12 h-12 text-primary opacity-5" />
-            <Archive className="absolute top-[88%] left-[18%] w-12 h-12 text-primary opacity-5" />
+            <Calendar className="absolute top-[10%] left-[10%] w-11 h-11 text-primary opacity-5" />
+            <CheckSquare className="absolute top-[22%] right-[12%] w-12 h-12 text-primary opacity-5" />
+            <Target className="absolute top-[34%] left-[78%] w-11 h-11 text-primary opacity-5" />
+            <Clock className="absolute top-[46%] right-[14%] w-11 h-11 text-primary opacity-5" />
+            <Zap className="absolute top-[58%] left-[12%] w-12 h-12 text-primary opacity-5" />
+            <FileText className="absolute top-[70%] right-[16%] w-11 h-11 text-primary opacity-5" />
+            <CheckCircle2 className="absolute top-[82%] left-[14%] w-12 h-12 text-primary opacity-5" />
+            <Clipboard className="absolute top-[94%] right-[12%] w-11 h-11 text-primary opacity-5" />
           </div>
         </div>
         
