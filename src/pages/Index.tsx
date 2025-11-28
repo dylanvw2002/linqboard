@@ -409,7 +409,7 @@ const Index = () => {
         {/* Partners Section */}
         <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl">
           <div className={`bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-center text-sm sm:text-base lg:text-lg uppercase tracking-wider text-muted-foreground mb-5 sm:mb-6 md:mb-8 lg:mb-10 font-semibold">
+            <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
               {t('landing.trustedBy')}
             </p>
             
