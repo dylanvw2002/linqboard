@@ -243,7 +243,7 @@ const Index = () => {
         </main>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+        <section ref={featuresSection.ref} className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 mt-0 lg:py-[200px]">
           <div className="container mx-auto max-w-7xl">
             {/* Header */}
             <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -551,14 +551,12 @@ const Index = () => {
 
                   {/* Features */}
                   <ul className="space-y-2">
-                    {[1, 2, 3].map(i => (
-                      <li key={i} className="flex items-start gap-2">
+                    {[1, 2, 3].map(i => <li key={i} className="flex items-start gap-2">
                         <div className="mt-0.5 w-4 h-4 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                           <Check className="h-2.5 w-2.5 text-primary-foreground" />
                         </div>
                         <span className="text-xs leading-relaxed font-medium">{t(`pricing.pro.feature${i}`)}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                 </div>
 
@@ -582,14 +580,12 @@ const Index = () => {
 
                 {/* Features */}
                 <ul className="space-y-2">
-                  {[1, 2, 3].map(i => (
-                    <li key={i} className="flex items-start gap-2">
+                  {[1, 2, 3].map(i => <li key={i} className="flex items-start gap-2">
                       <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <Check className="h-2.5 w-2.5 text-primary" />
                       </div>
                       <span className="text-xs leading-relaxed">{t(`pricing.team.feature${i}`)}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
 
                 {/* Corner Decoration */}
@@ -612,14 +608,12 @@ const Index = () => {
 
                 {/* Features */}
                 <ul className="space-y-2">
-                  {[1, 2, 3].map(i => (
-                    <li key={i} className="flex items-start gap-2">
+                  {[1, 2, 3].map(i => <li key={i} className="flex items-start gap-2">
                       <div className="mt-0.5 w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <Check className="h-2.5 w-2.5 text-primary" />
                       </div>
                       <span className="text-xs leading-relaxed">{t(`pricing.business.feature${i}`)}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
 
                 {/* Corner Decoration */}
