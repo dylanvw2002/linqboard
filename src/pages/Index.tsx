@@ -28,7 +28,6 @@ const Index = () => {
   } = useTranslation();
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
-  const partnersSection = useScrollAnimation(0.2);
   const autoplayPlugin = useRef(Autoplay({
     delay: 3000,
     stopOnInteraction: false
@@ -204,7 +203,7 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex flex-col items-center justify-center max-w-7xl">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full pl-0 ml-[110px]">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
@@ -240,6 +239,66 @@ const Index = () => {
               
             </div>
           </section>
+
+          {/* Trusted By Section - Moved from Partners */}
+          <div className="w-full mt-12 sm:mt-16 lg:mt-20">
+            <div className="bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 xl:p-16">
+              <p className="text-center text-sm sm:text-base lg:text-lg uppercase tracking-wider text-muted-foreground mb-5 sm:mb-6 md:mb-8 lg:mb-10 font-semibold">
+                {t('landing.trustedBy')}
+              </p>
+              
+              <Carousel opts={{
+                align: "start",
+                loop: true
+              }} plugins={[autoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
+                <CarouselContent>
+                  {/* NRG Totaal */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
+                      <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* NutriBuddi */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
+                      <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* Onderhoudscontracten.com */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
+                      <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* ODÉA Vastgoed Service */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
+                      <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* Zorgeloos Vastgoed */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
+                      <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* Fleature */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px] max-h-[180px]">
+                      <img src={fleatureLogo} alt="Fleature" className="h-28 sm:h-32 w-auto transition-all object-contain" loading="lazy" width="120" height="48" />
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            </div>
+          </div>
         </main>
 
         {/* Features Section */}
@@ -405,66 +464,6 @@ const Index = () => {
               </div>
             </div>
           </section>
-
-        {/* Partners Section */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl">
-          <div className={`bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-center text-sm sm:text-base lg:text-lg uppercase tracking-wider text-muted-foreground mb-5 sm:mb-6 md:mb-8 lg:mb-10 font-semibold">
-              {t('landing.trustedBy')}
-            </p>
-            
-            <Carousel opts={{
-            align: "start",
-            loop: true
-          }} plugins={[autoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
-              <CarouselContent>
-                {/* NRG Totaal */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" />
-                  </div>
-                </CarouselItem>
-                
-                {/* NutriBuddi */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
-                  </div>
-                </CarouselItem>
-                
-                {/* Onderhoudscontracten.com */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" />
-                  </div>
-                </CarouselItem>
-                
-                {/* ODÉA Vastgoed Service */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" />
-                  </div>
-                </CarouselItem>
-                
-                {/* Zorgeloos Vastgoed */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
-                  </div>
-                </CarouselItem>
-                
-                {/* Fleature */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px] max-h-[180px]">
-                    <img src={fleatureLogo} alt="Fleature" className="h-28 sm:h-32 w-auto transition-all object-contain" loading="lazy" width="120" height="48" />
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </div>
-        </section>
 
         {/* Pricing Section */}
         <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
