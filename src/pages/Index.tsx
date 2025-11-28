@@ -357,9 +357,9 @@ const Index = () => {
         </section>
 
         {/* Demo Section */}
-        <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-16 xl:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
-          <div className="container mx-auto max-w-7xl">
-            <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-20 xl:py-28 px-4 sm:px-6 lg:px-12 xl:px-16 min-h-screen flex items-center">
+          <div className="container mx-auto max-w-[1400px]">
+            <div className={`grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 xl:gap-24 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   {/* Left: Image */}
                   <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
                     <img alt="Linqboard Demo Preview" className="w-2/5 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} />
