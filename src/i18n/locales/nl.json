@@ -379,7 +379,8 @@
     "vatNumber": "BTW-nummer",
     "updateBillingDetails": "Factuurgegevens bijwerken",
     "billingDetailsUpdated": "Factuurgegevens succesvol bijgewerkt",
-    "billingDetailsUpdateError": "Fout bij bijwerken factuurgegevens"
+    "billingDetailsUpdateError": "Fout bij bijwerken factuurgegevens",
+    "viewPlans": "Bekijk plannen"
   },
   "onboarding": {
     "step1Title": "Welkom bij LinqBoard!",
