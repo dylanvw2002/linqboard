@@ -2461,6 +2461,9 @@ const Board = () => {
               {t('board.liveOverview')}
             </p>
           </div>
+          {isMobile && (
+            <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />
+          )}
           {!isMobile && <div className="[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]">
               <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
               <div className="text-muted-foreground font-semibold whitespace-nowrap relative z-10 text-[clamp(10px,1.2vw,14px)]">{formatDate(currentTime)}</div>
@@ -2578,7 +2581,7 @@ const Board = () => {
               <Pencil size={20} />
             </button>}
           
-          <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />
+          {!isMobile && <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />}
         </div>
       </header>
 
