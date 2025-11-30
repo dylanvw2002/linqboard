@@ -2326,7 +2326,7 @@ const Board = () => {
         </div>
       </div>;
   }
-  return <div className="h-screen overflow-hidden relative">
+  return <div className={cn("h-screen relative", isMobile ? "overflow-y-auto" : "overflow-hidden")}>
       {/* Fixed background layer - doesn't scale with zoom */}
       <div className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} style={{
       ...(backgroundImageUrl && {
@@ -2394,7 +2394,7 @@ const Board = () => {
       
       {/* Canvas layer with touch gestures */}
       <div 
-        className={cn("origin-top-left", isMobile ? "overflow-y-auto" : "overflow-hidden")} 
+        className={cn("origin-top-left", isMobile ? "" : "overflow-hidden")} 
         {...(!isMobile && {
           onTouchStart: handleTouchStart,
           onTouchMove: handleTouchMove,
@@ -2405,7 +2405,7 @@ const Board = () => {
           width: isMobile ? '100%' : `${100 / zoomLevel}vw`,
           height: isMobile ? 'auto' : `${100 / zoomLevel}vh`,
           touchAction: isMobile ? 'auto' : 'none',
-          minHeight: isMobile ? '100vh' : `${100 / zoomLevel}vh`
+          minHeight: isMobile ? 'auto' : `${100 / zoomLevel}vh`
         }}>
         <div className={cn("flex flex-col gap-[18px] pt-[22px] px-0", isMobile ? "min-h-screen" : "h-screen")}>
       
