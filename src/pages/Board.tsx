@@ -2465,10 +2465,12 @@ const Board = () => {
               {t('board.liveOverview')}
             </p>
           </div>
-          <div className={cn("[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative", isMobile ? "bg-gradient-to-br from-primary/10 to-accent/10 border border-gray-200 dark:border-gray-700 shadow-sm px-2 py-1 text-lg" : "backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]")}>
-            <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
-            <div className={cn("text-muted-foreground font-semibold whitespace-nowrap relative z-10", isMobile ? "text-[9px]" : "text-[clamp(10px,1.2vw,14px)]")}>{formatDate(currentTime)}</div>
-          </div>
+          {!isMobile && (
+            <div className="[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]">
+              <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
+              <div className="text-muted-foreground font-semibold whitespace-nowrap relative z-10 text-[clamp(10px,1.2vw,14px)]">{formatDate(currentTime)}</div>
+            </div>
+          )}
         </div>
         <div className={cn("flex relative z-10", isMobile ? "w-full justify-between gap-1" : "gap-2.5")}>
           <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className={cn("text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-1 relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 px-2 py-1.5 rounded-lg text-xs" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)] gap-2")}>
