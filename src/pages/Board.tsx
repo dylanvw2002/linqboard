@@ -2619,8 +2619,8 @@ const Board = () => {
       {/* Canvas Board / Mobile Layout */}
       {isMobile ?
         // Mobile: Single column carousel layout
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4 min-h-screen bg-background">
-          <div className="flex flex-col gap-4 h-full">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-2 pb-6 px-4 min-h-screen bg-background">
+          <div className="flex flex-col gap-2 h-full">
             {columns.length > 0 && (() => {
               const column = columns[currentColumnIndex];
               if (!column) return null;
