@@ -3251,9 +3251,9 @@ const Board = () => {
                     <Button onClick={handleEditTask} className="flex-1">
                       {t('common.save')}
                     </Button>
-                    <Button onClick={() => setExportDialogOpen(true)} variant="outline" className="flex-1">
-                      <Mail className="mr-2 h-4 w-4" />
-                      {t('board.exportTask')}
+                    <Button onClick={() => setExportDialogOpen(true)} variant="outline" className="flex-1 sm:px-4 px-2">
+                      <Mail className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">{t('board.exportTask')}</span>
                     </Button>
                     
                   </div>
