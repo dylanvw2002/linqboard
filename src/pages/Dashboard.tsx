@@ -593,16 +593,17 @@ const Dashboard = () => {
       {/* Logo linksonder met quote bubble */}
       <div className="fixed bottom-0 left-4 z-20 hidden md:block">
         {currentQuote && (
-          <div className="absolute bottom-full left-24 mb-2 animate-fade-in">
+          <div className="absolute bottom-full left-24 mb-4 animate-fade-in">
             <div className="relative bg-primary text-primary-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[280px]">
               <p className="text-sm font-medium">{currentQuote}</p>
-              {/* Speech bubble pointer - elongated triangle from bottom-left corner */}
+              {/* Speech bubble pointer - 45 degree angle from bottom-left corner */}
               <div 
-                className="absolute -bottom-6 left-2 w-0 h-0"
+                className="absolute -bottom-4 left-0 w-0 h-0"
                 style={{
-                  borderLeft: '8px solid transparent',
-                  borderRight: '12px solid transparent',
-                  borderTop: '24px solid hsl(var(--primary))'
+                  borderLeft: '20px solid transparent',
+                  borderTop: '20px solid hsl(var(--primary))',
+                  transform: 'rotate(-45deg)',
+                  transformOrigin: 'top left'
                 }}
               ></div>
             </div>
