@@ -221,7 +221,7 @@ const Index = () => {
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 text-center lg:text-left lg:ml-32">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold leading-tight">
-                Teamwerk, <span className="text-primary">moeiteloos georganiseerd</span>
+                {t('landing.heroTitle1')} <span className="text-primary">{t('landing.heroTitle2')}</span>
               </h1>
               
               <p className="text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-2xl text-muted-foreground max-w-xl lg:max-w-xl leading-relaxed mx-auto lg:mx-0">
@@ -732,7 +732,7 @@ const Index = () => {
             <div className="mt-8 text-center">
               <Link to="/auth?mode=create">
                 <Button size="lg" className="text-base px-8 py-6 shadow-lg hover:shadow-xl transition-all">
-                  Registreren
+                  {t('landing.register')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>

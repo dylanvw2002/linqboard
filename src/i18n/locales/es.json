@@ -335,6 +335,9 @@
     "settings": "Configuración de columna"
   },
   "landing": {
+    "heroTitle1": "Trabajo en equipo,",
+    "heroTitle2": "organizado sin esfuerzo",
+    "register": "Registrarse",
     "hero": "Trabajo en equipo, organizado sin esfuerzo",
     "tagline": "Gestiona tareas, colabora en tiempo real y mantén a tu equipo sincronizado con nuestra moderna herramienta de gestión de tareas",
     "getStarted": "Comenzar",
