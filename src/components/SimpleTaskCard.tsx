@@ -49,25 +49,25 @@ export const SimpleTaskCard = ({
     <div
       onClick={onClick}
       className={cn(
-        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-8 cursor-pointer transition-transform duration-150 will-change-transform hover:-translate-y-2 transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
+        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-3 cursor-pointer transition-transform duration-150 will-change-transform hover:-translate-y-2 transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
         glowGradient,
         glowShadow,
         isOverdue && "animate-overdue-glow"
       )}
     >
-      <h4 className="font-semibold text-2xl text-foreground mb-2 leading-snug relative z-10">
+      <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] text-foreground mb-1 leading-snug relative z-10">
         {title}
       </h4>
       
       {description && (
-        <p className="text-xl text-muted-foreground mb-3 relative z-10">
+        <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2 mb-1">
           {description}
         </p>
       )}
       
       {dueDate && (
-        <div className="flex items-center gap-2 text-xl text-muted-foreground relative z-10">
-          <Calendar className="h-6 w-6" />
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground relative z-10 mb-2">
+          <Calendar className="h-3.5 w-3.5" />
           <span>
             {format(new Date(dueDate), "d MMM", { locale: getDateLocale(i18n.language) })}
           </span>
@@ -75,14 +75,14 @@ export const SimpleTaskCard = ({
       )}
 
       {assignees && assignees.length > 0 && (
-        <div className="flex items-center gap-1 mt-4 relative z-[60]">
+        <div className="flex items-center gap-0.5 mt-2 relative z-[60]">
           {assignees.slice(0, 3).map((assignee, idx) => {
             return (
               <Tooltip key={assignee.user_id} delayDuration={200}>
                 <TooltipTrigger asChild>
-                  <Avatar className="h-14 w-14 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: idx > 0 ? '-16px' : '0' }}>
+                  <Avatar className="h-9 w-9 border-2 border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-transform duration-100 will-change-transform transform-gpu" style={{ marginLeft: idx > 0 ? '-6px' : '0' }}>
                     <AvatarImage src={assignee.avatar_url || undefined} />
-                    <AvatarFallback className="text-xl font-black bg-gradient-to-br from-primary to-primary/70 text-white">
+                    <AvatarFallback className="text-xs font-bold bg-primary/10">
                       {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -96,7 +96,7 @@ export const SimpleTaskCard = ({
           {assignees.length > 3 && (
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
-                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-xl font-black text-white cursor-pointer hover:scale-110 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: '-16px' }}>
+                <div className="h-9 w-9 rounded-full bg-muted border-2 border-white dark:border-gray-700 flex items-center justify-center text-xs font-bold cursor-pointer hover:scale-110 transition-transform duration-100 will-change-transform transform-gpu" style={{ marginLeft: '-6px' }}>
                   +{assignees.length - 3}
                 </div>
               </TooltipTrigger>
