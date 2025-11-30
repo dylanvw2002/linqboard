@@ -210,18 +210,18 @@ const Index = () => {
 
         {/* Hero Section */}
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
-          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full pl-0 ml-0 lg:ml-[110px]">
+          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content */}
-            <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
+            <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 text-center lg:text-left">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold leading-tight">
                 Teamwerk, <span className="text-primary">moeiteloos georganiseerd</span>
               </h1>
               
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-2xl text-muted-foreground max-w-xl lg:max-w-xl leading-relaxed">
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-2xl text-muted-foreground max-w-xl lg:max-w-xl leading-relaxed mx-auto lg:mx-0">
                 {t('landing.tagline')}
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-4 pt-2 lg:pt-3">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-4 pt-2 lg:pt-3 justify-center lg:justify-start">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
                   <Button size="lg" className="text-base sm:text-lg lg:text-base px-8 py-6 lg:py-5 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
@@ -238,8 +238,8 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
-            <div className="relative mt-6 lg:mt-0 flex justify-start mr-0 ml-0 pr-0 lg:pr-[110px] lg:flex lg:items-start lg:justify-center order-first lg:order-last">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-2/3 lg:w-3/4 h-auto -mt-8" loading="eager" fetchPriority="high" width="800" height="600" />
+            <div className="relative mt-6 lg:mt-0 flex justify-center items-center order-first lg:order-last">
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-2/3 lg:w-3/4 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
