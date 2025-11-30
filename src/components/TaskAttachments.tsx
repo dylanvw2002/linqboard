@@ -365,25 +365,25 @@ export const TaskAttachments = ({
       {/* File Viewer Modal */}
       <Dialog open={viewerOpen} onOpenChange={open => !open && handleCloseViewer()}>
         <DialogContent className="max-w-[95vw] max-h-[95vh] h-[95vh] p-0 flex flex-col">
-          <DialogHeader className="px-6 py-4 border-b shrink-0">
-            <DialogTitle className="flex items-center justify-between mx-[100px]">
-              <span className="truncate">{viewingAttachment?.file_name}</span>
-              <div className="flex gap-2 ml-4">
+          <DialogHeader className="px-4 sm:px-6 py-4 border-b shrink-0">
+            <DialogTitle className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:justify-between mx-0 sm:mx-[100px]">
+              <span className="truncate text-sm sm:text-base pr-2">{viewingAttachment?.file_name}</span>
+              <div className="flex gap-1.5 sm:gap-2 ml-0 sm:ml-4 flex-wrap">
                 {viewingAttachment?.file_type.includes("pdf") && numPages > 0 && <>
-                    <Button variant="outline" size="sm" onClick={handleZoomOut} disabled={scale <= 0.5}>
+                    <Button variant="outline" size="sm" onClick={handleZoomOut} disabled={scale <= 0.5} className="h-8 w-8 sm:w-auto p-0 sm:px-3">
                       <ZoomOut className="h-4 w-4" />
                     </Button>
-                    <span className="px-3 py-1 text-sm flex items-center">
+                    <span className="px-2 sm:px-3 py-1 text-xs sm:text-sm flex items-center">
                       {Math.round(scale * 100)}%
                     </span>
-                    <Button variant="outline" size="sm" onClick={handleZoomIn} disabled={scale >= 3.0}>
+                    <Button variant="outline" size="sm" onClick={handleZoomIn} disabled={scale >= 3.0} className="h-8 w-8 sm:w-auto p-0 sm:px-3">
                       <ZoomIn className="h-4 w-4" />
                     </Button>
-                    <div className="w-px bg-border mx-2" />
+                    <div className="w-px bg-border mx-1 sm:mx-2" />
                   </>}
-                <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
-                  <Download className="h-4 w-4 mr-2" />
-                  {t('common.download')}
+                <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)} className="h-8">
+                  <Download className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">{t('common.download')}</span>
                 </Button>
               </div>
             </DialogTitle>
