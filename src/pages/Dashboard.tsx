@@ -565,7 +565,7 @@ const Dashboard = () => {
         </div>
 
         {/* Subscription Status Card */}
-        {subscriptionLimits && <Card className="mb-3 p-3 bg-gradient-to-r from-primary/10 to-accent/10 border-2">
+        {subscriptionLimits && <Card className="mb-3 p-3 bg-gradient-to-r from-primary/10 to-accent/10 border-2 hidden md:block">
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2">
               <div className="flex-1">
                 <div className="flex items-center gap-1.5 mb-1.5">
