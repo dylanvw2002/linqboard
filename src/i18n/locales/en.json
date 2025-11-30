@@ -289,7 +289,9 @@
     "exportError": "Error exporting",
     "exportNoEmails": "Please enter at least one email address",
     "exportInvalidEmails": "One or more email addresses are invalid",
-    "exportTooManyEmails": "Maximum 10 recipients allowed"
+    "exportTooManyEmails": "Maximum 10 recipients allowed",
+    "exportSelectMembers": "Select recipients",
+    "exportExternalEmails": "Send to external email address"
   },
   "column": {
     "name": "Name",
@@ -546,7 +548,8 @@
     "cancelConfirm": "Are you sure you want to cancel?",
     "cancelDescription": "You'll retain access to your current plan until the end of the period.",
     "cancelled": "Subscription cancelled",
-    "cancelError": "Error cancelling"
+    "cancelError": "Error cancelling",
+    "activationSuccess": "Subscription successfully activated!"
   },
   "subscriptionSuccess": {
     "title": "Welcome to your new plan!",
@@ -586,6 +589,23 @@
   },
   "support": {
     "contact": "Contact Support"
+  },
+  "onboarding": {
+    "welcome": "Welcome to LinqBoard!",
+    "welcomeDescription": "Let's get you started quickly",
+    "step1Title": "Welcome to LinqBoard",
+    "step1Description": "The modern way to manage tasks with your team. Real-time, simple and clear.",
+    "step2Title": "What are organizations?",
+    "step2Description": "Organizations are your workspaces. Each team or project can have its own organization with boards and tasks.",
+    "step3Title": "Time to get started!",
+    "step3Description": "Choose how you want to begin:",
+    "createFirstOrg": "Create your first organization",
+    "joinWithCode": "Join a team with a code",
+    "skip": "Skip",
+    "next": "Next",
+    "previous": "Previous",
+    "getStarted": "Get started!",
+    "dontShowAgain": "Don't show this again"
   },
   "seo": {
     "home": {
