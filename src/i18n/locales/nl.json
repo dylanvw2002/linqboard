@@ -114,6 +114,18 @@
     "edit": "Board bewerken",
     "leave": "Verlaten"
   },
+  "board": {
+    "activeUsers": "Actieve gebruikers",
+    "noActiveUsers": "Geen actieve gebruikers",
+    "liveOverview": "Live overzicht van je taken",
+    "liveOverviewMobile": "Live overzicht",
+    "priority": "Prioriteit",
+    "priorityHigh": "Hoog",
+    "priorityMedium": "Gemiddeld",
+    "priorityLow": "Laag",
+    "priorityNone": "Geen",
+    "priorityChanged": "Prioriteit veranderd naar {{priority}}"
+  },
   "columns": {
     "addColumn": "Kolom toevoegen",
     "newColumn": "Nieuwe Kolom",
