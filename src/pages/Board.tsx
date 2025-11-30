@@ -634,7 +634,7 @@ const Board = () => {
   const [filterPriority, setFilterPriority] = useState<"low" | "medium" | "high" | null>(null);
   const [filterDeadline, setFilterDeadline] = useState<"overdue" | "today" | "this-week" | "no-deadline" | null>(null);
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
-  
+
   // Mobile column carousel state
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
   const [mobileSortBy, setMobileSortBy] = useState<"position" | "deadline" | "priority" | "newest" | "oldest">("position");
@@ -669,7 +669,12 @@ const Board = () => {
           return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
         });
       case "priority":
-        const priorityOrder = { high: 0, medium: 1, low: 2, null: 3 };
+        const priorityOrder = {
+          high: 0,
+          medium: 1,
+          low: 2,
+          null: 3
+        };
         return sorted.sort((a, b) => {
           const aPriority = a.priority || null;
           const bPriority = b.priority || null;
@@ -2476,14 +2481,9 @@ const Board = () => {
       {/* Header */}
       <header className={cn("flex items-center gap-2 rounded-[28px] relative", isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-7 py-7 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
         <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full gap-5" : "gap-4")}>
-          {isMobile && (
-            <button 
-              onClick={() => navigate(isDemo ? "/" : "/dashboard")} 
-              className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border-2 border-white/50 dark:border-white/30 shadow-[0_8px_20px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,0.6)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-6 rounded-2xl shrink-0 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
-            >
+          {isMobile && <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border-2 border-white/50 dark:border-white/30 shadow-[0_8px_20px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,0.6)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-6 rounded-2xl shrink-0 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
               <ArrowLeft className="w-9 h-9" />
-            </button>
-          )}
+            </button>}
           <div className="min-w-0 flex-1">
             <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-5xl" : "text-[clamp(26px,3.5vw,48px)]")}>
               {organization?.name || "NRG TOTAAL"} – To-Do Board
@@ -2492,21 +2492,17 @@ const Board = () => {
               {t(isMobile ? 'board.liveOverviewMobile' : 'board.liveOverview')}
             </p>
           </div>
-          {isMobile && (
-            <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />
-          )}
+          {isMobile && <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />}
           {!isMobile && <div className="[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]">
               <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
               <div className="text-muted-foreground font-semibold whitespace-nowrap relative z-10 text-[clamp(10px,1.2vw,14px)]">{formatDate(currentTime)}</div>
             </div>}
         </div>
         <div className={cn("flex relative z-10", isMobile ? "w-full justify-between gap-1" : "gap-2.5")}>
-          {!isMobile && (
-            <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-2 relative backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)]">
+          {!isMobile && <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-2 relative backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)]">
               <ArrowLeft className="w-4 h-4" />
               {isDemo ? t('demo.backToHome') : t('dashboard.title')}
-            </button>
-          )}
+            </button>}
           {!isMobile && <div className="flex items-center rounded-2xl backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2">
               <button onClick={handleZoomOut} disabled={zoomLevel <= 0.5} className="text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold hover:bg-white/30 dark:hover:bg-card/30 text-lg" title="Zoom uit (Ctrl/Cmd + -)">
                 <ZoomOut className="w-4 h-4" />
@@ -2624,21 +2620,11 @@ const Board = () => {
             {columns.length > 0 && (() => {
               const column = columns[currentColumnIndex];
               if (!column) return null;
-              
               return <section key={column.id} className="flex flex-col w-full h-full">
                   <div className={cn("flex items-center justify-between px-3 py-3 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
-                    <div className="flex items-center justify-between w-full gap-2">
+                    <div className="flex items-center justify-between w-full gap-2 my-[50px]">
                       {/* Left arrow */}
-                      <button 
-                        onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
-                        disabled={currentColumnIndex === 0}
-                        className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all",
-                          currentColumnIndex === 0 
-                            ? "opacity-30 cursor-not-allowed" 
-                            : "hover:bg-white/30 dark:hover:bg-card/30"
-                        )}
-                      >
+                      <button onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))} disabled={currentColumnIndex === 0} className={cn("backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all", currentColumnIndex === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-white/30 dark:hover:bg-card/30")}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m15 18-6-6 6-6" />
                         </svg>
@@ -2649,9 +2635,9 @@ const Board = () => {
                         <DropdownMenuTrigger asChild>
                           <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M3 6h18"/>
-                              <path d="M7 12h10"/>
-                              <path d="M10 18h4"/>
+                              <path d="M3 6h18" />
+                              <path d="M7 12h10" />
+                              <path d="M10 18h4" />
                             </svg>
                           </button>
                         </DropdownMenuTrigger>
@@ -2747,16 +2733,7 @@ const Board = () => {
                       </Dialog>
                       
                       {/* Right arrow */}
-                      <button 
-                        onClick={() => setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1))}
-                        disabled={currentColumnIndex === columns.length - 1}
-                        className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all",
-                          currentColumnIndex === columns.length - 1
-                            ? "opacity-30 cursor-not-allowed" 
-                            : "hover:bg-white/30 dark:hover:bg-card/30"
-                        )}
-                      >
+                      <button onClick={() => setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1))} disabled={currentColumnIndex === columns.length - 1} className={cn("backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all", currentColumnIndex === columns.length - 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-white/30 dark:hover:bg-card/30")}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m9 18 6-6-6-6" />
                         </svg>
@@ -2797,18 +2774,7 @@ const Board = () => {
                   
                   {/* Page indicator */}
                   <div className="flex justify-center gap-2 mt-4 pb-4">
-                    {columns.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentColumnIndex(index)}
-                        className={cn(
-                          "w-2 h-2 rounded-full transition-all",
-                          index === currentColumnIndex 
-                            ? "bg-primary w-6" 
-                            : "bg-primary/30"
-                        )}
-                      />
-                    ))}
+                    {columns.map((_, index) => <button key={index} onClick={() => setCurrentColumnIndex(index)} className={cn("w-2 h-2 rounded-full transition-all", index === currentColumnIndex ? "bg-primary w-6" : "bg-primary/30")} />)}
                   </div>
                 </section>;
             })()}
