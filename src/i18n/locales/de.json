@@ -335,6 +335,9 @@
     "settings": "Spalteneinstellungen"
   },
   "landing": {
+    "heroTitle1": "Teamarbeit,",
+    "heroTitle2": "mühelos organisiert",
+    "register": "Registrieren",
     "hero": "Teamarbeit, mühelos organisiert",
     "tagline": "Verwalten Sie Aufgaben, arbeiten Sie in Echtzeit zusammen und halten Sie Ihr Team mit unserem modernen Aufgabenverwaltungstool synchron",
     "getStarted": "Loslegen",

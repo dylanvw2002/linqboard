@@ -184,6 +184,9 @@
     "noSubtasks": "Nog geen subtaken"
   },
   "landing": {
+    "heroTitle1": "Teamwerk,",
+    "heroTitle2": "moeiteloos georganiseerd",
+    "register": "Registreren",
     "title": "LinqBoard - Project Management Tool",
     "description": "LinqBoard is een moderne project management tool die teams helpt om efficiënter samen te werken en projecten succesvol af te ronden.",
     "featuresTitle": "Functionaliteiten",

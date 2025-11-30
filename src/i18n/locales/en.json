@@ -345,6 +345,9 @@
     "settings": "Column settings"
   },
   "landing": {
+    "heroTitle1": "Teamwork,",
+    "heroTitle2": "effortlessly organized",
+    "register": "Register",
     "hero": "Teamwork, effortlessly organized",
     "tagline": "Manage tasks, collaborate in real-time and keep your team in sync with our modern task management tool",
     "getStarted": "Get started",
