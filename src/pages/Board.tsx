@@ -2408,10 +2408,11 @@ const Board = () => {
       <div className="origin-top-left overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} style={{
       transform: isMobile ? `translate(${panPosition.x}px, ${panPosition.y}px) scale(${zoomLevel})` : `scale(${zoomLevel})`,
       width: `${100 / zoomLevel}vw`,
-      height: `${100 / zoomLevel}vh`,
-      touchAction: 'none'
+      height: isMobile ? 'auto' : `${100 / zoomLevel}vh`,
+      touchAction: 'none',
+      minHeight: isMobile ? '100vh' : `${100 / zoomLevel}vh`
     }}>
-        <div className="flex flex-col gap-[18px] pt-[22px] px-0 h-screen">
+        <div className={cn("flex flex-col gap-[18px] pt-[22px] px-0", isMobile ? "min-h-screen" : "h-screen")}>
       
       {/* Demo Banner */}
       {isDemo && <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground shadow-lg px-[16px] py-px">
