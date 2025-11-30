@@ -2807,20 +2807,20 @@ const Board = () => {
                         <SimpleTaskCard taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <button className="absolute top-3 right-3 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border-2 border-white/50 dark:border-white/30 p-2.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <button className="absolute top-4 right-4 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border-2 border-white/50 dark:border-white/30 p-4 rounded-xl hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                 <path d="M7 7h10M7 12h10M7 17h10"/>
                               </svg>
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="bg-background border-border z-[100]" align="end">
-                            <DropdownMenuLabel className="text-base">Verplaats naar</DropdownMenuLabel>
+                            <DropdownMenuLabel className="text-lg">Verplaats naar</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {columns.filter(col => col.id !== column.id).map((col) => (
                               <DropdownMenuItem 
                                 key={col.id} 
                                 onClick={(e) => handleMoveTask(e, col.id)} 
-                                className="text-base py-2.5"
+                                className="text-lg py-3"
                               >
                                 {col.name}
                               </DropdownMenuItem>
@@ -2853,20 +2853,20 @@ const Board = () => {
                         </article>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <button className="absolute top-3 right-3 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border-2 border-white/50 dark:border-white/30 p-2.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <button className="absolute top-4 right-4 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border-2 border-white/50 dark:border-white/30 p-4 rounded-xl hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                 <path d="M7 7h10M7 12h10M7 17h10"/>
                               </svg>
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="bg-background border-border z-[100]" align="end">
-                            <DropdownMenuLabel className="text-base">Verplaats naar</DropdownMenuLabel>
+                            <DropdownMenuLabel className="text-lg">Verplaats naar</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {columns.filter(col => col.id !== column.id).map((col) => (
                               <DropdownMenuItem 
                                 key={col.id} 
                                 onClick={(e) => handleMoveTask(e, col.id)} 
-                                className="text-base py-2.5"
+                                className="text-lg py-3"
                               >
                                 {col.name}
                               </DropdownMenuItem>
