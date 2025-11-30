@@ -86,7 +86,7 @@ const getDemoData = (t: any) => {
   const DEMO_BOARD = {
     id: 'demo-board',
     name: t('demo.boardName'),
-    background_gradient: 'from-background via-primary/5 to-accent/5',
+    background_gradient: 'from-gray-50 to-gray-100',
     background_image_url: null,
     background_fit_mode: 'cover',
     background_position_x: 50,
@@ -568,7 +568,7 @@ const Board = () => {
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [selectedBackground, setSelectedBackground] = useState<string>("from-blue-50 to-blue-100");
+  const [selectedBackground, setSelectedBackground] = useState<string>("from-gray-50 to-gray-100");
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null);
   const [uploadingBackground, setUploadingBackground] = useState(false);
   const [backgroundPositionX, setBackgroundPositionX] = useState<number>(50);
@@ -852,7 +852,7 @@ const Board = () => {
         error
       } = await supabase.from("boards").update({
         background_image_url: 'default',
-        background_gradient: 'from-background via-primary/5 to-accent/5',
+        background_gradient: 'from-gray-50 to-gray-100',
         background_fit_mode: 'cover',
         background_position_x: 50,
         background_position_y: 50,
@@ -860,7 +860,7 @@ const Board = () => {
       }).eq("id", board?.id);
       if (error) throw error;
       setBackgroundImageUrl(null);
-      setSelectedBackground('from-background via-primary/5 to-accent/5');
+      setSelectedBackground('from-gray-50 to-gray-100');
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
       setBackgroundScale(100);
@@ -876,7 +876,7 @@ const Board = () => {
         error
       } = await supabase.from("boards").update({
         background_image_url: 'default',
-        background_gradient: 'from-background via-primary/5 to-accent/5',
+        background_gradient: 'from-gray-50 to-gray-100',
         background_fit_mode: 'cover',
         background_position_x: 50,
         background_position_y: 50,
@@ -884,7 +884,7 @@ const Board = () => {
       }).eq("id", board?.id);
       if (error) throw error;
       setBackgroundImageUrl(null);
-      setSelectedBackground('from-background via-primary/5 to-accent/5');
+      setSelectedBackground('from-gray-50 to-gray-100');
       setBackgroundFitMode('cover');
       setBackgroundPositionX(50);
       setBackgroundPositionY(50);
@@ -1128,7 +1128,7 @@ const Board = () => {
 
       // Load default background (landing page gradient)
       setBackgroundImageUrl(null);
-      setSelectedBackground('from-background via-primary/5 to-accent/5');
+      setSelectedBackground('from-gray-50 to-gray-100');
       setBackgroundFitMode('cover');
       setBackgroundScale(100);
       setBackgroundPositionX(50);
@@ -1422,7 +1422,7 @@ const Board = () => {
         // Use landing page gradient for 'default' marker
         if (boardResult.data.background_image_url === 'default') {
           setBackgroundImageUrl(null);
-          setSelectedBackground('from-background via-primary/5 to-accent/5');
+          setSelectedBackground('from-gray-50 to-gray-100');
         } else {
           setBackgroundImageUrl(boardResult.data.background_image_url);
           setBackgroundPositionX(boardResult.data.background_position_x ?? 50);
@@ -3348,7 +3348,7 @@ const Board = () => {
           </span>
           <div className="flex items-center gap-2">
             {(userPlan === 'team' || userPlan === 'business') && <div className="flex items-center gap-2 border-r border-primary/20 pr-2">
-                <Select value={!backgroundImageUrl && selectedBackground === 'from-background via-primary/5 to-accent/5' ? 'default' : selectedBackground} onValueChange={value => {
+                <Select value={!backgroundImageUrl && selectedBackground === 'from-gray-50 to-gray-100' ? 'default' : selectedBackground} onValueChange={value => {
                 if (value === 'default') {
                   handleSetDefaultBackground();
                 } else {
