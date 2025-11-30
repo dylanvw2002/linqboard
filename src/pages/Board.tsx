@@ -2688,11 +2688,12 @@ const Board = () => {
                             +
                           </button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[85vh] overflow-y-auto p-4 sm:p-6">
-                          <DialogHeader>
+                        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] p-0 flex flex-col">
+                          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3">
                             <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                           </DialogHeader>
-                          <div className="space-y-4">
+                          <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                            <div className="space-y-3 sm:space-y-4">
                             <div>
                               <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
                               <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
@@ -2742,6 +2743,7 @@ const Board = () => {
                             <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
                               {t('common.add')}
                             </button>
+                            </div>
                           </div>
                         </DialogContent>
                       </Dialog>
@@ -3019,11 +3021,12 @@ const Board = () => {
                       +
                     </button>}
                 </DialogTrigger>
-                <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[85vh] overflow-y-auto p-4 sm:p-6">
-                  <DialogHeader>
+                <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] p-0 flex flex-col">
+                  <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3">
                     <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4">
+                  <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                    <div className="space-y-3 sm:space-y-4">
                     <div>
                       <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
                       <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
@@ -3073,6 +3076,7 @@ const Board = () => {
                     <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
                       {t('common.add')}
                     </button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -3149,11 +3153,12 @@ const Board = () => {
 
       {/* Edit Task Dialog */}
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <DialogHeader>
+        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] p-0 flex flex-col">
+          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3">
             <DialogTitle>{t('board.editTask')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="overflow-y-auto flex-1 px-4 sm:px-6">
+            <div className="space-y-3 sm:space-y-4">
             {(() => {
                 const taskColumn = columns.find(c => c.id === editingTask?.column_id);
                 const isSimpleColumn = taskColumn && (taskColumn.column_type === 'sick_leave' || taskColumn.column_type === 'vacation');
@@ -3254,6 +3259,7 @@ const Board = () => {
                   </div>
                 </>;
               })()}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
