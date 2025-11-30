@@ -49,25 +49,25 @@ export const SimpleTaskCard = ({
     <div
       onClick={onClick}
       className={cn(
-        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-6 cursor-pointer transition-transform duration-150 will-change-transform hover:-translate-y-2 transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
+        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-8 cursor-pointer transition-transform duration-150 will-change-transform hover:-translate-y-2 transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
         glowGradient,
         glowShadow,
         isOverdue && "animate-overdue-glow"
       )}
     >
-      <h4 className="font-semibold text-lg text-foreground mb-2 leading-snug relative z-10">
+      <h4 className="font-semibold text-2xl text-foreground mb-2 leading-snug relative z-10">
         {title}
       </h4>
       
       {description && (
-        <p className="text-sm text-muted-foreground mb-3 relative z-10">
+        <p className="text-xl text-muted-foreground mb-3 relative z-10">
           {description}
         </p>
       )}
       
       {dueDate && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground relative z-10">
-          <Calendar className="h-4 w-4" />
+        <div className="flex items-center gap-2 text-xl text-muted-foreground relative z-10">
+          <Calendar className="h-6 w-6" />
           <span>
             {format(new Date(dueDate), "d MMM", { locale: getDateLocale(i18n.language) })}
           </span>
@@ -80,9 +80,9 @@ export const SimpleTaskCard = ({
             return (
               <Tooltip key={assignee.user_id} delayDuration={200}>
                 <TooltipTrigger asChild>
-                  <Avatar className="h-10 w-10 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: idx > 0 ? '-12px' : '0' }}>
+                  <Avatar className="h-14 w-14 border-[3px] border-white dark:border-gray-700 cursor-pointer hover:scale-110 hover:z-10 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: idx > 0 ? '-16px' : '0' }}>
                     <AvatarImage src={assignee.avatar_url || undefined} />
-                    <AvatarFallback className="text-sm font-black bg-gradient-to-br from-primary to-primary/70 text-white">
+                    <AvatarFallback className="text-xl font-black bg-gradient-to-br from-primary to-primary/70 text-white">
                       {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -96,7 +96,7 @@ export const SimpleTaskCard = ({
           {assignees.length > 3 && (
             <Tooltip delayDuration={200}>
               <TooltipTrigger asChild>
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-sm font-black text-white cursor-pointer hover:scale-110 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: '-12px' }}>
+                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-primary/70 border-[3px] border-white dark:border-gray-700 flex items-center justify-center text-xl font-black text-white cursor-pointer hover:scale-110 transition-transform duration-100 will-change-transform transform-gpu shadow-lg" style={{ marginLeft: '-16px' }}>
                   +{assignees.length - 3}
                 </div>
               </TooltipTrigger>
