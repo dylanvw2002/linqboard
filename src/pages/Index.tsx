@@ -69,19 +69,19 @@ const Index = () => {
     "@context": "https://schema.org",
     "@graph": [{
       "@type": "WebPage",
-      "name": t('seo.home.title'),
-      "description": t('seo.home.description'),
-      "url": "https://linqboard.nl",
+      "name": "LinqBoard - Visueel Projectmanagement voor Teams",
+      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Het moderne taakbeheertool voor efficiënte teams.",
+      "url": "https://linqboard.io",
       "inLanguage": "nl-NL",
       "isPartOf": {
         "@type": "WebSite",
-        "url": "https://linqboard.nl"
+        "url": "https://linqboard.io"
       }
     }, {
       "@type": "Organization",
       "name": "LinqBoard",
-      "url": "https://linqboard.nl",
-      "logo": "https://linqboard.nl/logo-linqboard.png",
+      "url": "https://linqboard.io",
+      "logo": "https://linqboard.io/logo-linqboard.png",
       "description": "LinqBoard - Het ultieme visuele projectmanagement platform voor teams",
       "foundingDate": "2024",
       "sameAs": ["https://twitter.com/linqboard", "https://linkedin.com/company/linqboard"],
@@ -129,7 +129,7 @@ const Index = () => {
     }]
   };
   return <>
-      <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.nl/" structuredData={structuredData} />
+      <SEO title={t('seo.home.title')} description={t('seo.home.description')} keywords={t('seo.home.keywords')} canonical="https://linqboard.io/" structuredData={structuredData} />
       
       {/* Preload critical images */}
       <link rel="preload" as="image" href={logo} />
