@@ -515,7 +515,7 @@ const Dashboard = () => {
             <img 
               src={logoText} 
               alt="LinqBoard" 
-              className="h-20 w-auto cursor-pointer hover:scale-105 transition-transform -my-4" 
+              className="h-24 w-auto cursor-pointer hover:scale-105 transition-transform -my-6" 
               onClick={() => navigate("/")} 
             />
             <div className="flex items-center gap-2">
