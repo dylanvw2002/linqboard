@@ -201,6 +201,7 @@
     "errorLoadingBoard": "Fehler beim Laden des Boards",
     "errorLoadingMembers": "Fehler beim Laden der Teammitglieder:",
     "liveOverview": "Live-Teamübersicht – klicken Sie auf eine Aufgabe zum Bearbeiten • Ziehen zum Organisieren",
+    "liveOverviewMobile": "Live-Teamübersicht – klicken Sie auf eine Aufgabe zum Bearbeiten",
     "addNewTask": "Neue Aufgabe hinzufügen",
     "name": "Name",
     "reason": "Grund",

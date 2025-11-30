@@ -2458,7 +2458,7 @@ const Board = () => {
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
             <p className={cn("text-muted-foreground font-semibold", isMobile ? "text-xl mt-2" : "text-[clamp(12px,1.4vw,16px)]")}>
-              {t('board.liveOverview')}
+              {t(isMobile ? 'board.liveOverviewMobile' : 'board.liveOverview')}
             </p>
           </div>
           {isMobile && (

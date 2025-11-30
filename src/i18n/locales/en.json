@@ -211,6 +211,7 @@
     "errorLoadingBoard": "Error loading board",
     "errorLoadingMembers": "Error loading team members:",
     "liveOverview": "Live team overview – click on a task to edit • Drag to organize",
+    "liveOverviewMobile": "Live team overview – click on a task to edit",
     "addNewTask": "Add new task",
     "name": "Name",
     "reason": "Reason",

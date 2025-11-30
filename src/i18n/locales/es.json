@@ -201,6 +201,7 @@
     "errorLoadingBoard": "Error al cargar tablero",
     "errorLoadingMembers": "Error al cargar miembros del equipo:",
     "liveOverview": "Vista en vivo del equipo – haz clic en una tarea para editar • Arrastra para organizar",
+    "liveOverviewMobile": "Vista en vivo del equipo – haz clic en una tarea para editar",
     "addNewTask": "Añadir nueva tarea",
     "name": "Nombre",
     "reason": "Razón",
