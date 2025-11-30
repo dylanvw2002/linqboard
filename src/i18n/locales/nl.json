@@ -1,4 +1,12 @@
 {
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Visueel Projectmanagement voor Teams",
+      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Het moderne taakbeheertool voor efficiënte teams.",
+      "keywords": "projectmanagement, taakbeheer, samenwerking, team, kanban, productiviteit, LinqBoard",
+      "heroImageAlt": "LinqBoard mascotte met moderne taakbeheer interface"
+    }
+  },
   "common": {
     "loading": "Laden...",
     "save": "Opslaan",

@@ -1,4 +1,12 @@
 {
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Visual Project Management for Teams",
+      "description": "Manage tasks, collaborate in real-time, and keep your team synchronized with LinqBoard. The modern task management tool for efficient teams.",
+      "keywords": "project management, task management, collaboration, team, kanban, productivity, LinqBoard",
+      "heroImageAlt": "LinqBoard mascot with modern task management interface"
+    }
+  },
   "common": {
     "loading": "Loading...",
     "save": "Save",
