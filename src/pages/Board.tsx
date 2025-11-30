@@ -2405,11 +2405,11 @@ const Board = () => {
 
       
       {/* Canvas layer with touch gestures */}
-      <div className="origin-top-left overflow-hidden" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} style={{
+      <div className={cn("origin-top-left", isMobile ? "overflow-y-auto" : "overflow-hidden")} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} style={{
       transform: isMobile ? `translate(${panPosition.x}px, ${panPosition.y}px) scale(${zoomLevel})` : `scale(${zoomLevel})`,
       width: `${100 / zoomLevel}vw`,
       height: isMobile ? 'auto' : `${100 / zoomLevel}vh`,
-      touchAction: 'none',
+      touchAction: isMobile ? 'pan-y' : 'none',
       minHeight: isMobile ? '100vh' : `${100 / zoomLevel}vh`
     }}>
         <div className={cn("flex flex-col gap-[18px] pt-[22px] px-0", isMobile ? "min-h-screen" : "h-screen")}>
