@@ -78,6 +78,25 @@ const Dashboard = () => {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [currentQuote, setCurrentQuote] = useState("");
+
+  const motivationalQuotes = [
+    "Elke dag is een nieuwe kans om je doelen te bereiken!",
+    "Kleine stappen leiden tot grote resultaten.",
+    "Focus op vooruitgang, niet op perfectie.",
+    "Jouw potentieel is onbeperkt!",
+    "Blijf gemotiveerd en blijf groeien.",
+    "Succes begint met de juiste mindset.",
+    "Je bent dichter bij je doel dan je denkt!",
+    "Consistentie is de sleutel tot succes.",
+    "Geloof in jezelf en je mogelijkheden.",
+    "Vandaag is de perfecte dag om te beginnen!",
+    "Uitdagingen maken je sterker.",
+    "Blijf doorgaan, je doet het geweldig!",
+    "Elke poging brengt je dichter bij succes.",
+    "Jouw inzet maakt het verschil.",
+    "Geef nooit op, grote dingen kosten tijd!"
+  ];
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour < 12) return "Goedemorgen";
@@ -117,6 +136,24 @@ const Dashboard = () => {
     };
     checkAccess();
   }, [navigate]);
+
+  // Motivational quote rotation every hour
+  useEffect(() => {
+    const getRandomQuote = () => {
+      const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+      return motivationalQuotes[randomIndex];
+    };
+
+    // Set initial quote
+    setCurrentQuote(getRandomQuote());
+
+    // Change quote every hour (3600000ms)
+    const interval = setInterval(() => {
+      setCurrentQuote(getRandomQuote());
+    }, 3600000);
+
+    return () => clearInterval(interval);
+  }, []);
   const fetchUserData = async (userId: string) => {
     try {
       setUserId(userId);
@@ -553,9 +590,18 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Logo linksonder */}
-      <div className="fixed bottom-0 left-4 z-20">
-        <img src={mascot} alt="LinqBoard Mascot" className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform hidden md:block" onClick={() => navigate("/")} />
+      {/* Logo linksonder met quote bubble */}
+      <div className="fixed bottom-0 left-4 z-20 hidden md:block">
+        {currentQuote && (
+          <div className="absolute bottom-full left-24 mb-2 animate-fade-in">
+            <div className="relative bg-primary text-primary-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[280px]">
+              <p className="text-sm font-medium">{currentQuote}</p>
+              {/* Speech bubble pointer */}
+              <div className="absolute -bottom-2 left-8 w-4 h-4 bg-primary transform rotate-45"></div>
+            </div>
+          </div>
+        )}
+        <img src={mascot} alt="LinqBoard Mascot" className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
       </div>
 
       <div className="container mx-auto px-4 py-4 pb-8 max-w-6xl">
