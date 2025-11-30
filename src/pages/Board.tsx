@@ -2587,7 +2587,7 @@ const Board = () => {
       {/* Canvas Board / Mobile Layout */}
       {isMobile ?
         // Mobile: Vertical scrolling layout with columns stacked
-        <main className="overflow-x-hidden pt-14 pb-6 px-4">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4">
           <div className="flex flex-col gap-4">
             {columns.map((column, index) => {
               const isFirst = index === 0;
