@@ -15,7 +15,7 @@ export const SEO = ({
   title,
   description,
   keywords,
-  ogImage = 'https://storage.googleapis.com/gpt-engineer-file-uploads/cevEwc5COWPoTsb0i6Vrf97zB0B3/social-images/social-1759756470209-44c83929-61b7-462f-bbf4-c54a5a2a2f00.png',
+  ogImage = 'https://linqboard.nl/social-share-image.png',
   ogType = 'website',
   canonical,
   structuredData,
