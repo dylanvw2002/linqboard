@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import linqboardMascot from "@/assets/linqboard-mascot-with-logo.png";
+import linqboardMascotNoLogo from "@/assets/linqboard-mascot-new.png";
 import collaborationIllustration from "@/assets/collaboration-illustration.png";
 import linqboardMascotTry from "@/assets/linqboard-mascot-try.png";
 import linqboardMascotChair from "@/assets/linqboard-mascot-chair.png";
@@ -239,7 +240,8 @@ const Index = () => {
 
             {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
             <div className="relative -mt-8 lg:-mt-16 flex justify-center items-center order-first lg:order-last">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 lg:hidden h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
