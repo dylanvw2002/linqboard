@@ -2628,6 +2628,22 @@ const Board = () => {
               return <section key={column.id} className="flex flex-col w-full h-full">
                   <div className={cn("flex items-center justify-between px-3 py-3 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
                     <div className="flex items-center justify-between w-full gap-2">
+                      {/* Left arrow */}
+                      <button 
+                        onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
+                        disabled={currentColumnIndex === 0}
+                        className={cn(
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all",
+                          currentColumnIndex === 0 
+                            ? "opacity-30 cursor-not-allowed" 
+                            : "hover:bg-white/30 dark:hover:bg-card/30"
+                        )}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m15 18-6-6 6-6" />
+                        </svg>
+                      </button>
+                      
                       {/* Sort dropdown */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -2659,22 +2675,6 @@ const Board = () => {
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
-                      
-                      {/* Left arrow */}
-                      <button 
-                        onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
-                        disabled={currentColumnIndex === 0}
-                        className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all",
-                          currentColumnIndex === 0 
-                            ? "opacity-30 cursor-not-allowed" 
-                            : "hover:bg-white/30 dark:hover:bg-card/30"
-                        )}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m15 18-6-6 6-6" />
-                        </svg>
-                      </button>
                       
                       {/* Column name - centered */}
                       <div className="text-2xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
