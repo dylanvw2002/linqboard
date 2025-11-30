@@ -198,8 +198,8 @@ const Index = () => {
                   <LanguageSwitcher />
                 </div>
                 <Link to="/auth">
-                  <Button size="lg" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-base sm:text-lg gap-2 sm:gap-3 h-12 px-6">
-                    <LogIn className="h-5 w-5" />
+                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-2 h-10 px-4">
+                    <LogIn className="h-4 w-4" />
                     {t('auth.login')}
                   </Button>
                 </Link>
