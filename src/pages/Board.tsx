@@ -2619,7 +2619,7 @@ const Board = () => {
       {/* Canvas Board / Mobile Layout */}
       {isMobile ?
         // Mobile: Single column carousel layout
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4 min-h-screen bg-gradient-to-br from-[hsl(var(--background))] via-[hsl(var(--primary))]/5 to-[hsl(var(--accent))]/5">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4 min-h-screen bg-background">
           <div className="flex flex-col gap-4 h-full">
             {columns.length > 0 && (() => {
               const column = columns[currentColumnIndex];
