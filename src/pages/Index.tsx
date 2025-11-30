@@ -238,8 +238,8 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
-            <div className="relative mt-6 lg:mt-0 flex justify-center items-center order-first lg:order-last">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-2/3 lg:w-3/4 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+            <div className="relative mt-0 lg:-mt-8 flex justify-center items-center order-first lg:order-last">
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
