@@ -263,8 +263,8 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Features Grid - Desktop */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {features.map((feature, index) => {
               const Icon = feature.icon;
               return <article key={index} className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
@@ -297,6 +297,55 @@ const Index = () => {
                     <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </article>;
             })}
+            </div>
+
+            {/* Features Carousel - Mobile */}
+            <div className="md:hidden">
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[autoplayPlugin.current]}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {features.map((feature, index) => {
+                    const Icon = feature.icon;
+                    return (
+                      <CarouselItem key={index}>
+                        <article className={`group relative bg-card rounded-2xl p-8 border border-border transition-all duration-500 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                          {/* Gradient Background */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
+                          
+                          {/* Content */}
+                          <div className="relative z-10">
+                            {/* Icon */}
+                            <div className="mb-6 relative">
+                              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                                <Icon className="w-8 h-8 text-white" aria-hidden="true" />
+                              </div>
+                            </div>
+
+                            {/* Text */}
+                            <h3 className="text-xl font-bold mb-3">
+                              {feature.title}
+                            </h3>
+                            <p className="text-muted-foreground leading-relaxed">
+                              {feature.description}
+                            </p>
+                          </div>
+
+                          {/* Corner Accent */}
+                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+                        </article>
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+                <CarouselPrevious className="hidden sm:flex" />
+                <CarouselNext className="hidden sm:flex" />
+              </Carousel>
             </div>
           </div>
         </section>
