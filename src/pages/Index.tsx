@@ -128,7 +128,7 @@ const Index = () => {
       <link rel="preload" as="image" href={logo} />
       <link rel="preload" as="image" href={linqboardMascot} />
       
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 overflow-x-hidden">
         {/* Background Icons Pattern - Carefully spaced to prevent any overlap */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           {/* Desktop icons - hidden on mobile */}
@@ -205,7 +205,7 @@ const Index = () => {
 
         {/* Hero Section */}
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
-          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full pl-0 ml-[110px]">
+          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full pl-0 ml-0 lg:ml-[110px]">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold leading-tight">
@@ -233,7 +233,7 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
-            <div className="relative mt-6 lg:mt-0 flex justify-start mr-0 ml-0 pr-[110px] lg:flex lg:items-start lg:justify-center order-first lg:order-last">
+            <div className="relative mt-6 lg:mt-0 flex justify-start mr-0 ml-0 pr-0 lg:pr-[110px] lg:flex lg:items-start lg:justify-center order-first lg:order-last">
               <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-full h-auto -mt-8" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
