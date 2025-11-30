@@ -637,6 +637,7 @@ const Board = () => {
   
   // Mobile column carousel state
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
+  const [mobileSortBy, setMobileSortBy] = useState<"position" | "deadline" | "priority" | "newest" | "oldest">("position");
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -654,6 +655,33 @@ const Board = () => {
         return de;
       default:
         return nl;
+    }
+  };
+
+  // Sort tasks function for mobile
+  const sortTasks = (tasks: Task[]) => {
+    const sorted = [...tasks];
+    switch (mobileSortBy) {
+      case "deadline":
+        return sorted.sort((a, b) => {
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+        });
+      case "priority":
+        const priorityOrder = { high: 0, medium: 1, low: 2, null: 3 };
+        return sorted.sort((a, b) => {
+          const aPriority = a.priority || null;
+          const bPriority = b.priority || null;
+          return priorityOrder[aPriority] - priorityOrder[bPriority];
+        });
+      case "newest":
+        return sorted.sort((a, b) => b.position - a.position);
+      case "oldest":
+        return sorted.sort((a, b) => a.position - b.position);
+      case "position":
+      default:
+        return sorted.sort((a, b) => a.position - b.position);
     }
   };
 
@@ -2598,33 +2626,65 @@ const Board = () => {
               if (!column) return null;
               
               return <section key={column.id} className="flex flex-col w-full h-full">
-                  <div className={cn("flex items-center justify-between px-5 py-4 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
-                    <div className="flex items-center justify-between w-full gap-3">
+                  <div className={cn("flex items-center justify-between px-3 py-3 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
+                    <div className="flex items-center justify-between w-full gap-2">
+                      {/* Sort dropdown */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M3 6h18"/>
+                              <path d="M7 12h10"/>
+                              <path d="M10 18h4"/>
+                            </svg>
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-background border-border z-[100]" align="start">
+                          <DropdownMenuLabel>Sorteer op</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => setMobileSortBy("position")} className={mobileSortBy === "position" ? "bg-accent" : ""}>
+                            Positie
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("deadline")} className={mobileSortBy === "deadline" ? "bg-accent" : ""}>
+                            Deadline
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("priority")} className={mobileSortBy === "priority" ? "bg-accent" : ""}>
+                            Prioriteit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("newest")} className={mobileSortBy === "newest" ? "bg-accent" : ""}>
+                            Nieuwste eerst
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("oldest")} className={mobileSortBy === "oldest" ? "bg-accent" : ""}>
+                            Oudste eerst
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      
                       {/* Left arrow */}
                       <button 
                         onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
                         disabled={currentColumnIndex === 0}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all",
                           currentColumnIndex === 0 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m15 18-6-6 6-6" />
                         </svg>
                       </button>
                       
                       {/* Column name - centered */}
-                      <div className="text-3xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
+                      <div className="text-2xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
                         {column.name}
                       </div>
                       
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
                         <DialogTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-5 py-3 rounded-xl font-bold text-2xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-4 py-2.5 rounded-xl font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
                             +
                           </button>
                         </DialogTrigger>
@@ -2691,13 +2751,13 @@ const Board = () => {
                         onClick={() => setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1))}
                         disabled={currentColumnIndex === columns.length - 1}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-xl transition-all",
                           currentColumnIndex === columns.length - 1
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m9 18 6-6-6-6" />
                         </svg>
                       </button>
@@ -2705,7 +2765,7 @@ const Board = () => {
                   </div>
                   
                   {/* Tasks */}
-                  <div className="space-y-3 flex-1">{filterTasks(getColumnTasks(column.id)).map(task => {
+                  <div className="space-y-3 flex-1">{sortTasks(filterTasks(getColumnTasks(column.id))).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
                     if (isSimpleColumn) {
