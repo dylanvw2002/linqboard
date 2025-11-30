@@ -211,6 +211,7 @@
     "errorLoadingBoard": "Fout bij laden van board",
     "errorLoadingMembers": "Fout bij laden van teamleden:",
     "liveOverview": "Live overzicht voor het team – klik op een taak om te bewerken • Sleep om te ordenen",
+    "liveOverviewMobile": "Live overzicht voor het team – klik op een taak om te bewerken",
     "addNewTask": "Nieuwe taak toevoegen",
     "name": "Naam",
     "reason": "Reden",
