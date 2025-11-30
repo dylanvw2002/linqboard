@@ -172,6 +172,8 @@ html {
   height: 100%;
   /* Safari dynamic viewport support */
   height: 100dvh;
+  /* Prevent white space on Safari */
+  overflow-x: hidden;
 }
 
 body {
@@ -179,6 +181,9 @@ body {
   min-height: 100%;
   /* Safari dynamic viewport support */
   min-height: 100dvh;
+  /* Fill entire viewport on Safari */
+  position: relative;
+  overflow-x: hidden;
 }
 }
 
