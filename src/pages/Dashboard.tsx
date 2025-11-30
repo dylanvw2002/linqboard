@@ -480,14 +480,14 @@ const Dashboard = () => {
   };
   const isPageLoading = loading;
   if (isPageLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
+    return <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-br from-background via-primary/5 to-accent/5">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
           <p className="text-muted-foreground">{t('dashboard.title')}</p>
         </div>
       </div>;
   }
-  return <div className="relative min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5">
+  return <div className="relative min-h-[100dvh] bg-gradient-to-br from-background via-primary/5 to-accent/5">
       {/* Background Icons Pattern */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Desktop icons */}
