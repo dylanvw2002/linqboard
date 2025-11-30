@@ -2676,10 +2676,27 @@ const Board = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
-                      {/* Column name - centered */}
-                      <div className="text-5xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
-                        {column.name}
-                      </div>
+                      {/* Column name - centered with dropdown navigation */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="text-5xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:opacity-80 transition-opacity cursor-pointer">
+                            {column.name}
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-background border-border z-[100]" align="center">
+                          <DropdownMenuLabel className="text-xl">Ga naar kolom</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          {columns.map((col, idx) => (
+                            <DropdownMenuItem 
+                              key={col.id} 
+                              onClick={() => setCurrentColumnIndex(idx)} 
+                              className={cn("text-xl py-3.5", currentColumnIndex === idx ? "bg-accent" : "")}
+                            >
+                              {col.name}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
