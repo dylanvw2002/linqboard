@@ -594,7 +594,7 @@ const Dashboard = () => {
       <div className="fixed bottom-0 left-4 z-20 hidden md:block">
         {currentQuote && (
           <div className="absolute bottom-full left-24 mb-4 animate-fade-in">
-            <div className="relative bg-primary text-primary-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[280px]">
+            <div className="relative bg-primary text-primary-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[400px]">
               <p className="text-sm font-medium">{currentQuote}</p>
               {/* Speech bubble pointer - 45 degree angle from bottom-left corner */}
               <div 
