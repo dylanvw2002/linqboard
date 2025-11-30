@@ -603,8 +603,14 @@ const Board = () => {
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [draggedWidget, setDraggedWidget] = useState<any | null>(null);
-  const [widgetDragOffset, setWidgetDragOffset] = useState({ x: 0, y: 0 });
-  const [widgetDragPreview, setWidgetDragPreview] = useState<{ x: number; y: number } | null>(null);
+  const [widgetDragOffset, setWidgetDragOffset] = useState({
+    x: 0,
+    y: 0
+  });
+  const [widgetDragPreview, setWidgetDragPreview] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [resizingWidget, setResizingWidget] = useState(false);
   const [widgetResizeHandle, setWidgetResizeHandle] = useState<string | null>(null);
   const [userPlan, setUserPlan] = useState<string>('free');
@@ -622,13 +628,12 @@ const Board = () => {
     avatar_url: string | null;
     email: string;
   }>>([]);
-  
+
   // Filter state
   const [filterAssignee, setFilterAssignee] = useState<string | null>(null);
   const [filterPriority, setFilterPriority] = useState<"low" | "medium" | "high" | null>(null);
   const [filterDeadline, setFilterDeadline] = useState<"overdue" | "today" | "this-week" | "no-deadline" | null>(null);
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
-  
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -648,7 +653,7 @@ const Board = () => {
         return nl;
     }
   };
-  
+
   // Filter tasks function
   const filterTasks = (tasks: Task[]) => {
     return tasks.filter(task => {
@@ -660,15 +665,12 @@ const Board = () => {
           if (!hasAssignee) return false;
         }
       }
-      
       if (filterPriority && task.priority !== filterPriority) {
         return false;
       }
-      
       if (filterDeadline) {
         const today = new Date();
         const dueDate = task.due_date ? new Date(task.due_date) : null;
-        
         if (filterDeadline === "no-deadline" && task.due_date) return false;
         if (filterDeadline === "overdue" && (!dueDate || !isBefore(dueDate, today))) return false;
         if (filterDeadline === "today" && (!dueDate || dueDate.toDateString() !== today.toDateString())) return false;
@@ -677,11 +679,10 @@ const Board = () => {
           if (!dueDate || dueDate < today || dueDate > weekEnd) return false;
         }
       }
-      
       return true;
     });
   };
-  
+
   // Update active filters count
   useEffect(() => {
     let count = 0;
@@ -973,100 +974,107 @@ const Board = () => {
       toast.error(t('board.deleteError') + error.message);
     }
   };
-  
-  const handleAddWidget = async (
-    widgetType: "chat" | "notes" | "timer" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements"
-  ) => {
+  const handleAddWidget = async (widgetType: "chat" | "notes" | "timer" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements") => {
     if (isDemo) {
       toast.info('Widgets uitgeschakeld in demo mode');
       return;
     }
-    
+
     // Default afmetingen per widget type
     const defaultSizes = {
-      chat: { width: 56, height: 56 },
-      notes: { width: 300, height: 400 },
-      timer: { width: 250, height: 250 },
-      calculator: { width: 250, height: 350 },
-      'quick-links': { width: 300, height: 400 },
-      calendar: { width: 320, height: 400 },
-      notifications: { width: 300, height: 450 },
-      achievements: { width: 300, height: 350 },
+      chat: {
+        width: 56,
+        height: 56
+      },
+      notes: {
+        width: 300,
+        height: 400
+      },
+      timer: {
+        width: 250,
+        height: 250
+      },
+      calculator: {
+        width: 250,
+        height: 350
+      },
+      'quick-links': {
+        width: 300,
+        height: 400
+      },
+      calendar: {
+        width: 320,
+        height: 400
+      },
+      notifications: {
+        width: 300,
+        height: 450
+      },
+      achievements: {
+        width: 300,
+        height: 350
+      }
     };
-    
     const size = defaultSizes[widgetType];
-    
     try {
-      const { data, error } = await supabase
-        .from('widgets')
-        .insert({
-          board_id: board?.id,
-          widget_type: widgetType,
-          x_position: 100,
-          y_position: 100,
-          width: size.width,
-          height: size.height,
-          settings: {},
-        })
-        .select()
-        .single();
-        
+      const {
+        data,
+        error
+      } = await supabase.from('widgets').insert({
+        board_id: board?.id,
+        widget_type: widgetType,
+        x_position: 100,
+        y_position: 100,
+        width: size.width,
+        height: size.height,
+        settings: {}
+      }).select().single();
       if (error) throw error;
-      
       setWidgets([...widgets, data]);
       toast.success('Widget toegevoegd!');
     } catch (error: any) {
       toast.error('Fout bij toevoegen widget: ' + error.message);
     }
   };
-  
   const handleDeleteWidget = async (widgetId: string) => {
     if (isDemo) {
       toast.info('Widgets uitgeschakeld in demo mode');
       return;
     }
-    
     try {
-      const { error } = await supabase
-        .from('widgets')
-        .delete()
-        .eq('id', widgetId);
-        
+      const {
+        error
+      } = await supabase.from('widgets').delete().eq('id', widgetId);
       if (error) throw error;
-      
       setWidgets(widgets.filter(w => w.id !== widgetId));
       toast.success('Widget verwijderd');
     } catch (error: any) {
       toast.error('Fout bij verwijderen widget: ' + error.message);
     }
   };
-  
   const handleUpdateWidget = async (widgetId: string, updates: any) => {
     if (isDemo) return;
-    
     try {
-      const { error } = await supabase
-        .from('widgets')
-        .update(updates)
-        .eq('id', widgetId);
-        
+      const {
+        error
+      } = await supabase.from('widgets').update(updates).eq('id', widgetId);
       if (error) throw error;
-      
-      setWidgets(widgets.map(w => w.id === widgetId ? { ...w, ...updates } : w));
+      setWidgets(widgets.map(w => w.id === widgetId ? {
+        ...w,
+        ...updates
+      } : w));
     } catch (error: any) {
       console.error('Error updating widget:', error);
     }
   };
-  
   const handleWidgetDragStart = (e: React.DragEvent, widget: any) => {
     setDraggedWidget(widget);
     const rect = e.currentTarget.getBoundingClientRect();
     setWidgetDragOffset({
       x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      y: e.clientY - rect.top
     });
   };
-  
   const handleWidgetDragEnd = () => {
     setDraggedWidget(null);
     setWidgetDragPreview(null);
@@ -1121,9 +1129,12 @@ const Board = () => {
   };
   const fetchUserPlan = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: {
+          session
+        }
+      } = await supabase.auth.getSession();
       if (!session) return;
-      
       const {
         data,
         error
@@ -1162,10 +1173,8 @@ const Board = () => {
   };
   useEffect(() => {
     if (!board?.id || isDemo) return;
-    
     console.log('🔌 Setting up realtime subscription for board:', board.id);
     const cleanup = setupRealtimeSubscriptions();
-    
     return () => {
       console.log('🔌 Cleaning up realtime subscription');
       if (cleanup) cleanup();
@@ -1397,26 +1406,21 @@ const Board = () => {
       const {
         data: columnsData
       } = await supabase.from("columns").select("*").eq("board_id", boardResult.data.id).order("position");
-      
+
       // Sort columns based on mobile_position for mobile view, position for desktop
-      const sortedColumns = columnsData 
-        ? columnsData.sort((a, b) => {
-            // For mobile, use mobile_position if available, otherwise fall back to position
-            const posA = a.mobile_position ?? a.position;
-            const posB = b.mobile_position ?? b.position;
-            return posA - posB;
-          })
-        : [];
-      
+      const sortedColumns = columnsData ? columnsData.sort((a, b) => {
+        // For mobile, use mobile_position if available, otherwise fall back to position
+        const posA = a.mobile_position ?? a.position;
+        const posB = b.mobile_position ?? b.position;
+        return posA - posB;
+      }) : [];
       setColumns(sortedColumns);
-      
+
       // Fetch widgets
-      const { data: widgetsData } = await supabase
-        .from("widgets")
-        .select("*")
-        .eq("board_id", boardResult.data.id);
+      const {
+        data: widgetsData
+      } = await supabase.from("widgets").select("*").eq("board_id", boardResult.data.id);
       setWidgets(widgetsData || []);
-      
       if (columnsData && columnsData.length > 0) {
         const columnIds = columnsData.map(c => c.id);
 
@@ -1468,11 +1472,14 @@ const Board = () => {
   };
   const setupRealtimeSubscriptions = () => {
     if (isDemo || !board?.id) return;
-
     console.log('🔌 Setting up realtime subscriptions for board:', board.id);
 
     // Get the current session and set auth for realtime
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       if (session?.access_token) {
         console.log('🔐 Setting realtime auth token');
         supabase.realtime.setAuth(session.access_token);
@@ -1481,65 +1488,56 @@ const Board = () => {
 
     // Use a unique channel name with timestamp to avoid conflicts
     const channelName = `board-changes-${board.id}-${Date.now()}`;
-    
-    const channel = supabase
-      .channel(channelName)
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "columns",
-        filter: `board_id=eq.${board.id}`
-      }, (payload) => {
-        console.log('🔔 Column change detected:', payload.eventType);
-        fetchBoardData();
-      })
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "tasks"
-      }, (payload) => {
-        console.log('🔔 Task change detected:', payload.eventType);
-        // Always refresh - fetchBoardData will only fetch tasks for this board's columns
-        fetchBoardData();
-      })
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "widgets",
-        filter: `board_id=eq.${board.id}`
-      }, (payload) => {
-        console.log('Widget change detected:', payload);
-        fetchBoardData();
-      })
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "task_assignees"
-      }, (payload) => {
-        console.log('🔔 Task assignee change detected:', payload.eventType);
-        // Always refresh - the query will filter correctly
-        fetchBoardData();
-      })
-      .on("postgres_changes", {
-        event: "*",
-        schema: "public",
-        table: "profiles"
-      }, (payload) => {
-        console.log('🔔 Profile change detected:', payload.eventType);
-        // Always refresh both - they're cheap queries
-        fetchOrgMembers();
-        fetchBoardData();
-      })
-      .subscribe((status, err) => {
-        console.log('🔌 Realtime subscription status:', status);
-        if (err) {
-          console.error('🔌 Realtime subscription error:', err);
-        }
-        if (status === 'SUBSCRIBED') {
-          console.log('✅ Successfully subscribed to realtime updates');
-        }
-      });
-
+    const channel = supabase.channel(channelName).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "columns",
+      filter: `board_id=eq.${board.id}`
+    }, payload => {
+      console.log('🔔 Column change detected:', payload.eventType);
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "tasks"
+    }, payload => {
+      console.log('🔔 Task change detected:', payload.eventType);
+      // Always refresh - fetchBoardData will only fetch tasks for this board's columns
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "widgets",
+      filter: `board_id=eq.${board.id}`
+    }, payload => {
+      console.log('Widget change detected:', payload);
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "task_assignees"
+    }, payload => {
+      console.log('🔔 Task assignee change detected:', payload.eventType);
+      // Always refresh - the query will filter correctly
+      fetchBoardData();
+    }).on("postgres_changes", {
+      event: "*",
+      schema: "public",
+      table: "profiles"
+    }, payload => {
+      console.log('🔔 Profile change detected:', payload.eventType);
+      // Always refresh both - they're cheap queries
+      fetchOrgMembers();
+      fetchBoardData();
+    }).subscribe((status, err) => {
+      console.log('🔌 Realtime subscription status:', status);
+      if (err) {
+        console.error('🔌 Realtime subscription error:', err);
+      }
+      if (status === 'SUBSCRIBED') {
+        console.log('✅ Successfully subscribed to realtime updates');
+      }
+    });
     return () => {
       console.log('Cleaning up realtime subscription');
       supabase.removeChannel(channel);
@@ -1825,7 +1823,7 @@ const Board = () => {
     console.log(`📋 Kolom ${columnId}: ${columnTasks.length} taken`);
     return columnTasks;
   };
-  
+
   // Update active filters count
   useEffect(() => {
     let count = 0;
@@ -2083,22 +2081,18 @@ const Board = () => {
     }
     try {
       const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
-      
+
       // Clear deadline if moving to a completed column
       const updateData: any = {
         column_id: targetColumn.id,
         position: maxPosition + 1
       };
-      
       console.log('Moving to column:', targetColumn.name, 'Type:', targetColumn.column_type, 'Task due_date before:', draggedTask.due_date);
-      
       if (targetColumn.column_type === 'completed') {
         updateData.due_date = null;
         console.log('Clearing due_date because column type is completed');
       }
-      
       console.log('Update data:', updateData);
-      
       const {
         error
       } = await supabase.from("tasks").update(updateData).eq("id", draggedTask.id);
@@ -2272,22 +2266,22 @@ const Board = () => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
-
   const startWidgetResize = (e: React.MouseEvent, widget: any, handle: string) => {
     e.preventDefault();
     e.stopPropagation();
     setResizingWidget(true);
     setWidgetResizeHandle(handle);
-    
     const startX = e.clientX / SCALE_FACTOR;
     const startY = e.clientY / SCALE_FACTOR;
-    let currentWidget = { ...widget };
-
+    let currentWidget = {
+      ...widget
+    };
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const deltaX = moveEvent.clientX / SCALE_FACTOR - startX;
       const deltaY = moveEvent.clientY / SCALE_FACTOR - startY;
-      const updated = { ...widget };
-
+      const updated = {
+        ...widget
+      };
       if (handle === 'nw') {
         updated.width = Math.max(300, widget.width - deltaX);
         updated.height = Math.max(200, widget.height - deltaY);
@@ -2301,11 +2295,9 @@ const Board = () => {
         updated.width = Math.max(300, widget.width + deltaX);
         updated.height = Math.max(200, widget.height + deltaY);
       }
-
       currentWidget = updated;
       setWidgets(prev => prev.map(w => w.id === widget.id ? updated : w));
     };
-
     const handleMouseUp = async () => {
       try {
         await supabase.from('widgets').update({
@@ -2323,11 +2315,9 @@ const Board = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
   };
-
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
@@ -2348,8 +2338,7 @@ const Board = () => {
     }} />
 
       {/* Background Icons Pattern - only show when using gradient background */}
-      {!backgroundImageUrl && (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {!backgroundImageUrl && <div className="fixed inset-0 pointer-events-none overflow-hidden">
           {/* Desktop icons */}
           <div className="hidden md:block">
             <CalendarLucide className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
@@ -2400,8 +2389,7 @@ const Board = () => {
             <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-primary opacity-5" />
             <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-primary opacity-5" />
           </div>
-        </div>
-      )}
+        </div>}
 
       
       {/* Canvas layer with touch gestures */}
@@ -2465,20 +2453,17 @@ const Board = () => {
               {t('board.liveOverview')}
             </p>
           </div>
-          {!isMobile && (
-            <div className="[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]">
+          {!isMobile && <div className="[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]">
               <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
               <div className="text-muted-foreground font-semibold whitespace-nowrap relative z-10 text-[clamp(10px,1.2vw,14px)]">{formatDate(currentTime)}</div>
-            </div>
-          )}
+            </div>}
         </div>
         <div className={cn("flex relative z-10", isMobile ? "w-full justify-between gap-1" : "gap-2.5")}>
           <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className={cn("text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-1 relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 px-2 py-1.5 rounded-lg text-xs" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)] gap-2")}>
             <ArrowLeft className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
             {!isMobile && (isDemo ? t('demo.backToHome') : t('dashboard.title'))}
           </button>
-          {!isMobile && (
-            <div className="flex items-center rounded-2xl backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2">
+          {!isMobile && <div className="flex items-center rounded-2xl backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2">
               <button onClick={handleZoomOut} disabled={zoomLevel <= 0.5} className="text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold hover:bg-white/30 dark:hover:bg-card/30 text-lg" title="Zoom uit (Ctrl/Cmd + -)">
                 <ZoomOut className="w-4 h-4" />
               </button>
@@ -2488,19 +2473,15 @@ const Board = () => {
               <button onClick={handleZoomIn} disabled={zoomLevel >= 1.0} className="text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold hover:bg-white/30 dark:hover:bg-card/30 text-lg" title="Zoom in (Ctrl/Cmd + +)">
                 <ZoomIn className="w-4 h-4" />
               </button>
-            </div>
-          )}
-          {!isMobile && (
-            <DropdownMenu>
+            </div>}
+          {!isMobile && <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className={cn("backdrop-blur-[60px] text-foreground border-2 px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none flex items-center gap-2", activeFiltersCount > 0 ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")}>
                   <Filter className="w-4 h-4" />
                   Filters
-                  {activeFiltersCount > 0 && (
-                    <Badge variant="destructive" className="ml-1 rounded-full w-5 h-5 flex items-center justify-center p-0 text-xs">
+                  {activeFiltersCount > 0 && <Badge variant="destructive" className="ml-1 rounded-full w-5 h-5 flex items-center justify-center p-0 text-xs">
                       {activeFiltersCount}
-                    </Badge>
-                  )}
+                    </Badge>}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-64 bg-background/95 backdrop-blur-sm z-50">
@@ -2510,18 +2491,16 @@ const Board = () => {
                 {/* Filter op Persoon */}
                 <div className="px-2 py-2">
                   <Label className="text-xs text-muted-foreground mb-2">Toegewezen aan</Label>
-                  <Select value={filterAssignee || "all"} onValueChange={(v) => setFilterAssignee(v === "all" ? null : v)}>
+                  <Select value={filterAssignee || "all"} onValueChange={v => setFilterAssignee(v === "all" ? null : v)}>
                     <SelectTrigger className="bg-background">
                       <span className="text-sm">{filterAssignee === "unassigned" ? "Niet toegewezen" : filterAssignee ? orgMembers.find(m => m.user_id === filterAssignee)?.full_name : "Alle personen"}</span>
                     </SelectTrigger>
                     <SelectContent className="bg-background/95 backdrop-blur-sm z-[100]">
                       <SelectItem value="all">Alle personen</SelectItem>
                       <SelectItem value="unassigned">Niet toegewezen</SelectItem>
-                      {orgMembers.map(member => (
-                        <SelectItem key={member.user_id} value={member.user_id}>
+                      {orgMembers.map(member => <SelectItem key={member.user_id} value={member.user_id}>
                           {member.full_name}
-                        </SelectItem>
-                      ))}
+                        </SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -2531,7 +2510,7 @@ const Board = () => {
                 {/* Filter op Prioriteit */}
                 <div className="px-2 py-2">
                   <Label className="text-xs text-muted-foreground mb-2">Prioriteit</Label>
-                  <Select value={filterPriority || "all"} onValueChange={(v) => setFilterPriority(v === "all" ? null : v as any)}>
+                  <Select value={filterPriority || "all"} onValueChange={v => setFilterPriority(v === "all" ? null : v as any)}>
                     <SelectTrigger className="bg-background">
                       <span className="text-sm">
                         {filterPriority === "low" ? "🟢 Laag" : filterPriority === "medium" ? "🟡 Gemiddeld" : filterPriority === "high" ? "🔴 Hoog" : "Alle prioriteiten"}
@@ -2551,7 +2530,7 @@ const Board = () => {
                 {/* Filter op Deadline */}
                 <div className="px-2 py-2">
                   <Label className="text-xs text-muted-foreground mb-2">Deadline</Label>
-                  <Select value={filterDeadline || "all"} onValueChange={(v) => setFilterDeadline(v === "all" ? null : v as any)}>
+                  <Select value={filterDeadline || "all"} onValueChange={v => setFilterDeadline(v === "all" ? null : v as any)}>
                     <SelectTrigger className="bg-background">
                       <span className="text-sm">
                         {filterDeadline === "overdue" ? "⚠️ Verlopen" : filterDeadline === "today" ? "📅 Vandaag" : filterDeadline === "this-week" ? "📆 Deze week" : filterDeadline === "no-deadline" ? "➖ Geen deadline" : "Alle deadlines"}
@@ -2571,156 +2550,121 @@ const Board = () => {
                 
                 {/* Reset knop */}
                 <div className="px-2 py-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => {
-                      setFilterAssignee(null);
-                      setFilterPriority(null);
-                      setFilterDeadline(null);
-                    }}
-                    disabled={activeFiltersCount === 0}
-                  >
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => {
+                    setFilterAssignee(null);
+                    setFilterPriority(null);
+                    setFilterDeadline(null);
+                  }} disabled={activeFiltersCount === 0}>
                     <X className="h-4 w-4 mr-2" />
                     Reset filters
                   </Button>
                 </div>
               </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+            </DropdownMenu>}
           {!isMobile && <button onClick={handleFullscreen} className={cn("text-foreground px-3.5 py-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 text-[clamp(12px,1.4vw,16px)] relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none")}>
             ⛶ {t('board.fullscreen')}
           </button>}
           {!isMobile && <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
               <Pencil size={20} />
             </button>}
-          <button onClick={handleClearCompleted} className={cn("text-foreground font-bold cursor-pointer transition-all duration-300 relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 p-1.5 rounded-lg" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none p-2.5 rounded-2xl")}>
-            <Trash2 size={isMobile ? 16 : 20} />
-          </button>
+          
           <ActiveUsers organizationId={organizationId!} isDemo={isDemo} />
         </div>
       </header>
 
       {/* Canvas Board / Mobile Layout */}
-      {isMobile ? (
+      {isMobile ?
         // Mobile: Vertical scrolling layout with columns stacked
         <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4">
           <div className="flex flex-col gap-4">
             {columns.map((column, index) => {
               const isFirst = index === 0;
               const isLast = index === columns.length - 1;
-              
-              return (
-                <section key={column.id} className="flex flex-col w-full">
-                  <div className={cn(
-                    "flex items-center justify-between px-3.5 py-3 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all",
-                    getGlowStyles(column.glow_type).header,
-                    "border-white/40 dark:border-white/20"
-                  )}>
+              return <section key={column.id} className="flex flex-col w-full">
+                  <div className={cn("flex items-center justify-between px-3.5 py-3 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
                     <div className="text-lg font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2">
                       {column.name}
                     </div>
                     
                     <div className="flex items-center gap-2">
                       {/* Move up/down buttons */}
-                      {!isFirst && (
-                        <button 
-                          onClick={async () => {
-                            if (isDemo) {
-                              // Demo mode - just reorder in state
-                              const newColumns = [...columns];
-                              const currentIndex = newColumns.findIndex(c => c.id === column.id);
-                              if (currentIndex > 0) {
-                                [newColumns[currentIndex], newColumns[currentIndex - 1]] = 
-                                [newColumns[currentIndex - 1], newColumns[currentIndex]];
-                                setColumns(newColumns);
-                              }
-                              return;
-                            }
-                            
-                            // Find current and target indices
-                            const currentIndex = columns.findIndex(c => c.id === column.id);
-                            if (currentIndex <= 0) return;
-                            
-                            const targetIndex = currentIndex - 1;
-                            
-                            // Re-number all columns
-                            const updates = columns.map((col, idx) => {
-                              let newPosition;
-                              if (col.id === column.id) {
-                                newPosition = targetIndex;
-                              } else if (idx === targetIndex) {
-                                newPosition = currentIndex;
-                              } else {
-                                newPosition = idx;
-                              }
-                              
-                              return supabase
-                                .from('columns')
-                                .update({ mobile_position: newPosition })
-                                .eq('id', col.id);
-                            });
-                            
-                            await Promise.all(updates);
-                            await fetchBoardData();
-                          }}
-                          className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all"
-                        >
+                      {!isFirst && <button onClick={async () => {
+                      if (isDemo) {
+                        // Demo mode - just reorder in state
+                        const newColumns = [...columns];
+                        const currentIndex = newColumns.findIndex(c => c.id === column.id);
+                        if (currentIndex > 0) {
+                          [newColumns[currentIndex], newColumns[currentIndex - 1]] = [newColumns[currentIndex - 1], newColumns[currentIndex]];
+                          setColumns(newColumns);
+                        }
+                        return;
+                      }
+
+                      // Find current and target indices
+                      const currentIndex = columns.findIndex(c => c.id === column.id);
+                      if (currentIndex <= 0) return;
+                      const targetIndex = currentIndex - 1;
+
+                      // Re-number all columns
+                      const updates = columns.map((col, idx) => {
+                        let newPosition;
+                        if (col.id === column.id) {
+                          newPosition = targetIndex;
+                        } else if (idx === targetIndex) {
+                          newPosition = currentIndex;
+                        } else {
+                          newPosition = idx;
+                        }
+                        return supabase.from('columns').update({
+                          mobile_position: newPosition
+                        }).eq('id', col.id);
+                      });
+                      await Promise.all(updates);
+                      await fetchBoardData();
+                    }} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m18 15-6-6-6 6"/>
+                            <path d="m18 15-6-6-6 6" />
                           </svg>
-                        </button>
-                      )}
+                        </button>}
                       
-                      {!isLast && (
-                        <button 
-                          onClick={async () => {
-                            if (isDemo) {
-                              // Demo mode - just reorder in state
-                              const newColumns = [...columns];
-                              const currentIndex = newColumns.findIndex(c => c.id === column.id);
-                              if (currentIndex < newColumns.length - 1) {
-                                [newColumns[currentIndex], newColumns[currentIndex + 1]] = 
-                                [newColumns[currentIndex + 1], newColumns[currentIndex]];
-                                setColumns(newColumns);
-                              }
-                              return;
-                            }
-                            
-                            // Find current and target indices
-                            const currentIndex = columns.findIndex(c => c.id === column.id);
-                            if (currentIndex >= columns.length - 1) return;
-                            
-                            const targetIndex = currentIndex + 1;
-                            
-                            // Re-number all columns
-                            const updates = columns.map((col, idx) => {
-                              let newPosition;
-                              if (col.id === column.id) {
-                                newPosition = targetIndex;
-                              } else if (idx === targetIndex) {
-                                newPosition = currentIndex;
-                              } else {
-                                newPosition = idx;
-                              }
-                              
-                              return supabase
-                                .from('columns')
-                                .update({ mobile_position: newPosition })
-                                .eq('id', col.id);
-                            });
-                            
-                            await Promise.all(updates);
-                            await fetchBoardData();
-                          }}
-                          className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all"
-                        >
+                      {!isLast && <button onClick={async () => {
+                      if (isDemo) {
+                        // Demo mode - just reorder in state
+                        const newColumns = [...columns];
+                        const currentIndex = newColumns.findIndex(c => c.id === column.id);
+                        if (currentIndex < newColumns.length - 1) {
+                          [newColumns[currentIndex], newColumns[currentIndex + 1]] = [newColumns[currentIndex + 1], newColumns[currentIndex]];
+                          setColumns(newColumns);
+                        }
+                        return;
+                      }
+
+                      // Find current and target indices
+                      const currentIndex = columns.findIndex(c => c.id === column.id);
+                      if (currentIndex >= columns.length - 1) return;
+                      const targetIndex = currentIndex + 1;
+
+                      // Re-number all columns
+                      const updates = columns.map((col, idx) => {
+                        let newPosition;
+                        if (col.id === column.id) {
+                          newPosition = targetIndex;
+                        } else if (idx === targetIndex) {
+                          newPosition = currentIndex;
+                        } else {
+                          newPosition = idx;
+                        }
+                        return supabase.from('columns').update({
+                          mobile_position: newPosition
+                        }).eq('id', col.id);
+                      });
+                      await Promise.all(updates);
+                      await fetchBoardData();
+                    }} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m6 9 6 6 6-6"/>
+                            <path d="m6 9 6 6 6-6" />
                           </svg>
-                        </button>
-                      )}
+                        </button>}
                       
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
@@ -2749,8 +2693,8 @@ const Board = () => {
                                   <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                     {newTaskDueDate ? format(newTaskDueDate, "PPP", {
-                                        locale: getDateLocale()
-                                      }) : t('board.selectDate')}
+                                    locale: getDateLocale()
+                                  }) : t('board.selectDate')}
                                   </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
@@ -2791,52 +2735,24 @@ const Board = () => {
                   
                   {/* Tasks */}
                   <div className="space-y-3">{filterTasks(getColumnTasks(column.id)).map(task => {
-                      const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
-                      const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
-                      
-                      if (isSimpleColumn) {
-                        return <SimpleTaskCard 
-                          key={task.id} 
-                          taskId={task.id}
-                          title={task.title} 
-                          description={task.description} 
-                          dueDate={task.due_date} 
-                          onClick={() => openEditDialog(task)} 
-                          glowShadow={getGlowStyles(column.glow_type).cardShadow} 
-                          assignees={task.assignees} 
-                          glowGradient={getGlowStyles(column.glow_type).cardGradient}
-                          columns={columns}
-                        />;
-                      }
-                      
-                      return (
-                        <article 
-                          key={task.id}
-                          onClick={() => openEditDialog(task)} 
-                          className={cn(
-                            "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-6 cursor-pointer hover:-translate-y-1 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                            "border-white/40 dark:border-white/20",
-                            getGlowStyles(column.glow_type).cardGradient,
-                            getGlowStyles(column.glow_type).cardShadow,
-                            isOverdue && "animate-overdue-glow"
-                          )}
-                        >
+                    const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
+                    const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
+                    if (isSimpleColumn) {
+                      return <SimpleTaskCard key={task.id} taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />;
+                    }
+                    return <article key={task.id} onClick={() => openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-6 cursor-pointer hover:-translate-y-1 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, isOverdue && "animate-overdue-glow")}>
                           <div className="flex flex-col gap-4">
                             {/* Badges eerst - deadline en priority */}
                             <div className="flex items-center gap-2 flex-wrap relative z-10">
                               <AttachmentCount taskId={task.id} />
-                              {task.due_date && (
-                                <span className={`inline-block px-3 py-1.5 rounded-full text-base font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                              {task.due_date && <span className={`inline-block px-3 py-1.5 rounded-full text-base font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                                   📅 {format(new Date(task.due_date), "d MMM", {
-                                    locale: getDateLocale()
-                                  })}
-                                </span>
-                              )}
-                              {task.priority && getPriorityBadge(task.priority) && (
-                                <span className={cn("inline-block px-3 py-1.5 rounded-full text-base font-bold border", getPriorityBadge(task.priority)!.color)}>
+                              locale: getDateLocale()
+                            })}
+                                </span>}
+                              {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-3 py-1.5 rounded-full text-base font-bold border", getPriorityBadge(task.priority)!.color)}>
                                   {getPriorityBadge(task.priority)!.label}
-                                </span>
-                              )}
+                                </span>}
                             </div>
                             
                             {/* Titel */}
@@ -2844,16 +2760,13 @@ const Board = () => {
                               {task.title}
                             </h4>
                           </div>
-                        </article>
-                      );
-                    })}
+                        </article>;
+                  })}
                   </div>
-                </section>
-              );
+                </section>;
             })}
           </div>
-        </main>
-      ) : (
+        </main> :
         // Desktop: Canvas-based layout with absolute positioning
         <main className="relative flex-1 min-h-0 overflow-auto" style={{
           minWidth: '3000px',
@@ -2865,7 +2778,6 @@ const Board = () => {
         }} onDragOver={editMode ? e => {
           e.preventDefault();
           const canvas = e.currentTarget.getBoundingClientRect();
-          
           if (draggedColumn) {
             // Account for UI scale factor
             const rawX = Math.max(0, (e.clientX - canvas.left) / SCALE_FACTOR - dragOffset.x);
@@ -2896,7 +2808,6 @@ const Board = () => {
           }
         } : undefined} onDrop={editMode ? async e => {
           e.preventDefault();
-          
           if (draggedColumn && dragPreview) {
             try {
               await supabase.from('columns').update({
@@ -2979,34 +2890,28 @@ const Board = () => {
           </>}
 
         {/* Widgets */}
-        {widgets.map(widget => (
-          <WidgetContainer
-            key={widget.id}
-            widget={widget}
-            boardName={organization?.name || "Board"}
-            onDelete={handleDeleteWidget}
-            onDragStart={handleWidgetDragStart}
-            onDragEnd={handleWidgetDragEnd}
-            onResizeMouseDown={startWidgetResize}
-            resizeHandle={widgetResizeHandle}
-            isEditMode={editMode}
-            onSizeChange={(widgetId, width, height, x, y) => {
-              // Check if this is a chat widget collapse/expand (don't save to DB, only update local state)
-              const isChatCollapseExpand = (width === 56 && height === 56) || (width === 400 && height === 500);
-              
-              if (isChatCollapseExpand) {
-                // Only update local state, don't save to database
-                setWidgets(widgets.map(w => 
-                  w.id === widgetId ? { ...w, width, height, x_position: x, y_position: y } : w
-                ));
-              } else {
-                // Normal widget resize, save to database
-                handleUpdateWidget(widgetId, { width, height, x_position: x, y_position: y });
-              }
-            }}
-            isDragging={draggedWidget?.id === widget.id}
-          />
-        ))}
+        {widgets.map(widget => <WidgetContainer key={widget.id} widget={widget} boardName={organization?.name || "Board"} onDelete={handleDeleteWidget} onDragStart={handleWidgetDragStart} onDragEnd={handleWidgetDragEnd} onResizeMouseDown={startWidgetResize} resizeHandle={widgetResizeHandle} isEditMode={editMode} onSizeChange={(widgetId, width, height, x, y) => {
+            // Check if this is a chat widget collapse/expand (don't save to DB, only update local state)
+            const isChatCollapseExpand = width === 56 && height === 56 || width === 400 && height === 500;
+            if (isChatCollapseExpand) {
+              // Only update local state, don't save to database
+              setWidgets(widgets.map(w => w.id === widgetId ? {
+                ...w,
+                width,
+                height,
+                x_position: x,
+                y_position: y
+              } : w));
+            } else {
+              // Normal widget resize, save to database
+              handleUpdateWidget(widgetId, {
+                width,
+                height,
+                x_position: x,
+                y_position: y
+              });
+            }
+          }} isDragging={draggedWidget?.id === widget.id} />)}
 
         {columns.map(column => {
             const isSelected = selectedColumn?.id === column.id;
@@ -3136,38 +3041,18 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <TaskStack 
-                maxVisibleTasks={4} 
-                stackOffset={5}
-                availableHeight={
-                  displayColumn.height - 
-                  (displayColumn.header_height || 60)
-                }
-                onDragStart={(e, index) => {
+              <TaskStack maxVisibleTasks={4} stackOffset={5} availableHeight={displayColumn.height - (displayColumn.header_height || 60)} onDragStart={(e, index) => {
                   const columnTasks = filterTasks(getColumnTasks(column.id));
                   const task = columnTasks[index];
                   if (task) {
                     handleDragStart(e, task);
                   }
-                }}
-                onDragEnd={handleDragEnd}
-              >
+                }} onDragEnd={handleDragEnd}>
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
                     if (isSimpleColumn) {
-                      return <SimpleTaskCard 
-                        key={task.id} 
-                        taskId={task.id}
-                        title={task.title} 
-                        description={task.description} 
-                        dueDate={task.due_date} 
-                        onClick={() => !isDragging && openEditDialog(task)} 
-                        glowShadow={getGlowStyles(column.glow_type).cardShadow} 
-                        assignees={task.assignees} 
-                        glowGradient={getGlowStyles(column.glow_type).cardGradient}
-                        columns={columns}
-                      />;
+                      return <SimpleTaskCard key={task.id} taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />;
                     }
                     return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95", isOverdue && "animate-overdue-glow")}>
                     <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
@@ -3213,8 +3098,7 @@ const Board = () => {
             </div>
           </section>;
           })}
-      </main>
-      )}
+      </main>}
 
       {/* Edit Task Dialog */}
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
@@ -3301,14 +3185,12 @@ const Board = () => {
                   
                   {editingTask && <TaskAttachments taskId={editingTask.id} />}
                   
-                  {editingTask && (
-                    <div className="border-t pt-4">
+                  {editingTask && <div className="border-t pt-4">
                       <div className="flex items-center justify-between mb-3">
                         <Label>Geschiedenis</Label>
                         <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
                       </div>
-                    </div>
-                  )}
+                    </div>}
                   
                   <div className="flex gap-2 pt-4">
                     <Button onClick={handleDeleteFromDialog} variant="destructive">
