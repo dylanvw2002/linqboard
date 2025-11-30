@@ -21,12 +21,13 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 const Index = () => {
-  const {
-    t
-  } = useTranslation();
+  const { t } = useTranslation();
+  const [isYearly, setIsYearly] = useState(false);
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
@@ -536,6 +537,22 @@ const Index = () => {
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
                 Groei met ons mee - van starter tot enterprise
               </p>
+
+              {/* Billing Toggle */}
+              <div className="flex flex-col items-center justify-center gap-2 lg:gap-4 mt-8">
+                <div className="flex items-center gap-3 sm:gap-4 lg:gap-6">
+                  <Label htmlFor="billing-toggle-home" className={!isYearly ? 'font-bold text-xs sm:text-sm' : 'text-xs sm:text-sm'}>
+                    {t('pricing.monthly')}
+                  </Label>
+                  <Switch id="billing-toggle-home" checked={isYearly} onCheckedChange={setIsYearly} />
+                  <Label htmlFor="billing-toggle-home" className={isYearly ? 'font-bold text-xs sm:text-sm' : 'text-xs sm:text-sm'}>
+                    {t('pricing.yearly')}
+                  </Label>
+                </div>
+                <span className={`text-xs lg:text-sm text-primary font-semibold bg-primary/10 px-2 sm:px-3 lg:px-5 py-1 lg:py-2 rounded-full transition-opacity duration-200 ${isYearly ? 'opacity-100' : 'opacity-0'}`}>
+                  {t('pricing.yearlyBonus')}
+                </span>
+              </div>
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -546,7 +563,7 @@ const Index = () => {
                   <h3 className="text-lg font-bold mb-1">{t('pricing.free.name')}</h3>
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-bold">€0</span>
-                    <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
+                    <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                   </div>
                 </div>
 
@@ -597,9 +614,18 @@ const Index = () => {
                   <div className="mb-4">
                     <h3 className="text-lg font-bold mb-1">{t('pricing.pro.name')}</h3>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">€7.99</span>
-                      <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
+                      <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                        €{isYearly ? '79.90' : '7.99'}
+                      </span>
+                      <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                     </div>
+                    {isYearly && (
+                      <div className="mt-1">
+                        <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                          {t('pricing.saveAmount').replace('{amount}', '16.00')}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
 
                   {/* Divider */}
@@ -626,9 +652,16 @@ const Index = () => {
                 <div className="mb-4">
                   <h3 className="text-lg font-bold mb-1">{t('pricing.team.name')}</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold">€19.99</span>
-                    <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
+                    <span className="text-3xl font-bold">€{isYearly ? '199.00' : '19.99'}</span>
+                    <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                   </div>
+                  {isYearly && (
+                    <div className="mt-1">
+                      <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                        {t('pricing.saveAmount').replace('{amount}', '40.88')}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
 
                 {/* Divider */}
@@ -654,9 +687,16 @@ const Index = () => {
                 <div className="mb-4">
                   <h3 className="text-lg font-bold mb-1">{t('pricing.business.name')}</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold">€39.00</span>
-                    <span className="text-xs text-muted-foreground">/{t('pricing.month')}</span>
+                    <span className="text-3xl font-bold">€{isYearly ? '390.00' : '39.00'}</span>
+                    <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                   </div>
+                  {isYearly && (
+                    <div className="mt-1">
+                      <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
+                        {t('pricing.saveAmount').replace('{amount}', '78.00')}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
 
                 {/* Divider */}
