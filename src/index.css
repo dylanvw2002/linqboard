@@ -169,10 +169,16 @@ All colors MUST be HSL.
 
 html {
   scroll-behavior: smooth;
+  height: 100%;
+  /* Safari dynamic viewport support */
+  height: 100dvh;
 }
 
 body {
   @apply bg-background text-foreground;
+  min-height: 100%;
+  /* Safari dynamic viewport support */
+  min-height: 100dvh;
 }
 }
 
