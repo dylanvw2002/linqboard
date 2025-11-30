@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout, ChevronLeft, ChevronRight } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -77,6 +77,7 @@ const Dashboard = () => {
   const [orgMembers, setOrgMembers] = useState<OrganizationMember[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [removeMemberId, setRemoveMemberId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour < 12) return "Goedemorgen";
@@ -600,8 +601,32 @@ const Dashboard = () => {
                   </Button>
                 </div>
               </div>
-            </Card> : <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {organizations.map(org => <Card key={org.id} className="p-3 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
+            </Card> : <div className="relative">
+              {/* Navigation Buttons */}
+              {organizations.length > 3 && currentPage > 0 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-2 border-border/50 shadow-lg hover:shadow-xl hover:border-primary/50"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+              )}
+              
+              {organizations.length > 3 && currentPage < Math.ceil(organizations.length / 3) - 1 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-2 border-border/50 shadow-lg hover:shadow-xl hover:border-primary/50"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              )}
+
+              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {organizations.slice(currentPage * 3, (currentPage + 1) * 3).map(org => <Card key={org.id} className="p-3 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-[72px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-7 w-7" onClick={e => {
                 e.stopPropagation();
@@ -651,6 +676,7 @@ const Dashboard = () => {
                     </Button>
                   </div>
                 </Card>)}
+              </div>
             </div>}
         </div>
 
