@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
-import linqboardMascot from "@/assets/linqboard-mascot-new.png";
+import linqboardMascot from "@/assets/linqboard-mascot-with-logo.png";
 import collaborationIllustration from "@/assets/collaboration-illustration.png";
 import linqboardMascotTry from "@/assets/linqboard-mascot-try.png";
 import linqboardMascotChair from "@/assets/linqboard-mascot-chair.png";
