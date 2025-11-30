@@ -135,7 +135,7 @@ const Index = () => {
       <link rel="preload" as="image" href={logo} />
       <link rel="preload" as="image" href={linqboardMascot} />
       
-      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 overflow-x-hidden">
+      <div className="min-h-[100dvh] bg-gradient-to-br from-background via-primary/5 to-accent/5 overflow-x-hidden pb-20">
         {/* Background Icons Pattern - Carefully spaced to prevent any overlap */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           {/* Desktop icons - hidden on mobile */}
@@ -216,7 +216,7 @@ const Index = () => {
         </header>
 
         {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[100dvh] flex items-center max-w-7xl">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content */}
             <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 text-center lg:text-left lg:ml-32">
@@ -256,7 +256,7 @@ const Index = () => {
         </main>
 
         {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 mt-0 lg:py-[200px]">
+        <section ref={featuresSection.ref} className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 mt-0 lg:py-[200px] min-h-[100dvh] flex flex-col justify-center">
           <div className="container mx-auto max-w-7xl">
             {/* Header */}
             <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
