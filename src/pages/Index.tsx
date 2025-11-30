@@ -188,7 +188,7 @@ const Index = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24" role="navigation" aria-label="Main navigation">
               <div className="flex items-center gap-8">
-                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="h-40 sm:h-44 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
+                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="hidden sm:block h-40 sm:h-44 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-3 sm:gap-4 lg:gap-5">
                 <LanguageSwitcher />
