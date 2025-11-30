@@ -261,13 +261,13 @@ const Index = () => {
             {/* Header */}
             <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
-                FEATURES
+                {t('landing.featuresLabel').toUpperCase()}
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-                Alles wat je nodig hebt
+                {t('landing.featuresTitle')}
               </h2>
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Krachtige functies om je team productiever te maken
+                {t('landing.featuresDescription')}
               </p>
             </div>
 
@@ -363,13 +363,13 @@ const Index = () => {
           {/* Header */}
           <div className="text-center mb-8 sm:mb-12">
             <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
-              TESTIMONIALS
+              {t('landing.testimonialsLabel').toUpperCase()}
             </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-              Wat onze gebruikers <span className="text-primary">over ons</span> zeggen
+              {t('landing.testimonialsTitle')}
             </h2>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Ontdek waarom teams voor LinqBoard kiezen
+              {t('landing.testimonialsDescription')}
             </p>
           </div>
           
@@ -380,15 +380,15 @@ const Index = () => {
                 {/* Quote Content */}
                 <div className="space-y-4 flex-1 flex flex-col">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic flex-1">
-                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>LinqBoard is voor ons de perfecte vervanging van het traditionele whiteboard. Eindelijk kunnen we alle projecten digitaal en overzichtelijk beheren, zonder dat we nog met markers hoeven te werken!
+                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>{t('landing.testimonial1')}
                   </blockquote>
                   
                   {/* Attribution */}
                   <div className="flex items-center gap-3 pt-3 border-t border-border/50">
                     <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-8 w-auto opacity-80" loading="lazy" />
                     <div>
-                      <p className="font-semibold text-sm text-foreground">NRG Totaal</p>
-                      <p className="text-xs text-muted-foreground">Technische Installaties</p>
+                      <p className="font-semibold text-sm text-foreground">{t('landing.testimonial1Company')}</p>
+                      <p className="text-xs text-muted-foreground">{t('landing.testimonial1Role')}</p>
                     </div>
                   </div>
                 </div>
@@ -401,15 +401,15 @@ const Index = () => {
                 {/* Quote Content */}
                 <div className="space-y-4 flex-1 flex flex-col">
                   <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic flex-1">
-                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>Met de slimme reminder-functie en deadline tracking van LinqBoard vergeten we nooit meer een belangrijke taak. Alle vastgoedprojecten lopen nu soepel en op tijd!
+                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>{t('landing.testimonial2')}
                   </blockquote>
                   
                   {/* Attribution */}
                   <div className="flex items-center gap-3 pt-3 border-t border-border/50">
                     <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-8 w-auto opacity-80" loading="lazy" />
                     <div>
-                      <p className="font-semibold text-sm text-foreground">Zorgeloos Vastgoed BV</p>
-                      <p className="text-xs text-muted-foreground">Vastgoed digitalisering</p>
+                      <p className="font-semibold text-sm text-foreground">{t('landing.testimonial2Company')}</p>
+                      <p className="text-xs text-muted-foreground">{t('landing.testimonial2Role')}</p>
                     </div>
                   </div>
                 </div>
@@ -534,13 +534,13 @@ const Index = () => {
             {/* Header */}
             <div className="text-center mb-12 sm:mb-16 lg:mb-20">
               <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
-                PRIJZEN
+                {t('pricing.title').toUpperCase()}
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-                Kies jouw <span className="text-primary">plan</span>
+                {t('pricing.title')}
               </h2>
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                Groei met ons mee - van starter tot enterprise
+                {t('pricing.subtitle')}
               </p>
 
               {/* Billing Toggle */}
@@ -749,16 +749,16 @@ const Index = () => {
               </div>
               <div className="flex-1 text-center md:text-left">
                 <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-                  Werk je solo? Ontdek SoloLinq!
+                  {t('landing.soloTitle')}
                 </h2>
                 <p className="text-muted-foreground text-sm sm:text-base">
-                  Persoonlijke to-do manager voor wie alleen werkt. Simpel, snel en overzichtelijk.
+                  {t('landing.soloDescription')}
                 </p>
               </div>
               <div className="flex-shrink-0">
                 <a href="https://sololinq.lovable.app" target="_blank" rel="noopener noreferrer">
                   <Button size="lg" variant="outline" className="text-base px-6 py-6 border-2">
-                    Bekijk SoloLinq
+                    {t('landing.soloButton')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
