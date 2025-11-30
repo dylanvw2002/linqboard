@@ -279,7 +279,9 @@
     "exportError": "Fehler beim Exportieren",
     "exportNoEmails": "Bitte geben Sie mindestens eine E-Mail-Adresse ein",
     "exportInvalidEmails": "Eine oder mehrere E-Mail-Adressen sind ungültig",
-    "exportTooManyEmails": "Maximal 10 Empfänger erlaubt"
+    "exportTooManyEmails": "Maximal 10 Empfänger erlaubt",
+    "exportSelectMembers": "Empfänger auswählen",
+    "exportExternalEmails": "An externe E-Mail-Adresse senden"
   },
   "column": {
     "name": "Name",
@@ -536,7 +538,8 @@
     "cancelConfirm": "Sind Sie sicher, dass Sie kündigen möchten?",
     "cancelDescription": "Sie behalten Zugriff auf Ihren aktuellen Plan bis zum Ende des Zeitraums.",
     "cancelled": "Abonnement gekündigt",
-    "cancelError": "Fehler beim Kündigen"
+    "cancelError": "Fehler beim Kündigen",
+    "activationSuccess": "Abonnement erfolgreich aktiviert!"
   },
   "subscriptionSuccess": {
     "title": "Willkommen bei Ihrem neuen Plan!",
@@ -576,6 +579,23 @@
   },
   "support": {
     "contact": "Support Kontaktieren"
+  },
+  "onboarding": {
+    "welcome": "Willkommen bei LinqBoard!",
+    "welcomeDescription": "Lassen Sie uns schnell loslegen",
+    "step1Title": "Willkommen bei LinqBoard",
+    "step1Description": "Die moderne Art, Aufgaben mit Ihrem Team zu verwalten. Echtzeit, einfach und übersichtlich.",
+    "step2Title": "Was sind Organisationen?",
+    "step2Description": "Organisationen sind Ihre Arbeitsbereiche. Jedes Team oder Projekt kann eine eigene Organisation mit Boards und Aufgaben haben.",
+    "step3Title": "Zeit zu starten!",
+    "step3Description": "Wählen Sie, wie Sie beginnen möchten:",
+    "createFirstOrg": "Erstellen Sie Ihre erste Organisation",
+    "joinWithCode": "Treten Sie einem Team mit einem Code bei",
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "previous": "Zurück",
+    "getStarted": "Loslegen!",
+    "dontShowAgain": "Nicht mehr anzeigen"
   },
   "seo": {
     "home": {

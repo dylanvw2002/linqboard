@@ -279,7 +279,9 @@
     "exportError": "Error al exportar",
     "exportNoEmails": "Ingrese al menos una dirección de correo",
     "exportInvalidEmails": "Una o más direcciones de correo no son válidas",
-    "exportTooManyEmails": "Máximo 10 destinatarios permitidos"
+    "exportTooManyEmails": "Máximo 10 destinatarios permitidos",
+    "exportSelectMembers": "Seleccionar destinatarios",
+    "exportExternalEmails": "Enviar a dirección de correo externa"
   },
   "column": {
     "name": "Nombre",
@@ -536,7 +538,8 @@
     "cancelConfirm": "¿Estás seguro de que quieres cancelar?",
     "cancelDescription": "Mantendrás acceso a tu plan actual hasta el final del período.",
     "cancelled": "Suscripción cancelada",
-    "cancelError": "Error al cancelar"
+    "cancelError": "Error al cancelar",
+    "activationSuccess": "¡Suscripción activada exitosamente!"
   },
   "subscriptionSuccess": {
     "title": "¡Bienvenido a tu nuevo plan!",
@@ -576,6 +579,23 @@
   },
   "support": {
     "contact": "Contactar Soporte"
+  },
+  "onboarding": {
+    "welcome": "¡Bienvenido a LinqBoard!",
+    "welcomeDescription": "Vamos a empezar rápidamente",
+    "step1Title": "Bienvenido a LinqBoard",
+    "step1Description": "La forma moderna de gestionar tareas con tu equipo. En tiempo real, simple y claro.",
+    "step2Title": "¿Qué son las organizaciones?",
+    "step2Description": "Las organizaciones son tus espacios de trabajo. Cada equipo o proyecto puede tener su propia organización con tableros y tareas.",
+    "step3Title": "¡Hora de comenzar!",
+    "step3Description": "Elige cómo quieres empezar:",
+    "createFirstOrg": "Crea tu primera organización",
+    "joinWithCode": "Únete a un equipo con un código",
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "getStarted": "¡Empezar!",
+    "dontShowAgain": "No mostrar esto de nuevo"
   },
   "seo": {
     "home": {
