@@ -594,14 +594,14 @@ const Dashboard = () => {
       <div className="fixed bottom-0 left-4 z-20 hidden md:block">
         {currentQuote && (
           <div className="absolute bottom-full left-24 mb-4 animate-fade-in">
-            <div className="relative bg-primary text-primary-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[520px]">
+            <div className="relative bg-white dark:bg-white text-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[520px]">
               <p className="text-sm font-medium">{currentQuote}</p>
               {/* Speech bubble pointer - 45 degree angle from bottom-left corner */}
               <div 
                 className="absolute -bottom-4 left-0 w-0 h-0"
                 style={{
                   borderLeft: '20px solid transparent',
-                  borderTop: '20px solid hsl(var(--primary))',
+                  borderTop: '20px solid white',
                   transform: 'rotate(-45deg)',
                   transformOrigin: 'top left'
                 }}
