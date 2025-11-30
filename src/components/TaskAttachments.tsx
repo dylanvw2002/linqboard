@@ -380,16 +380,6 @@ export const TaskAttachments = ({
                       <ZoomIn className="h-4 w-4" />
                     </Button>
                     <div className="w-px bg-border mx-2" />
-                    <Button variant="outline" size="sm" onClick={handlePreviousPage} disabled={pageNumber <= 1}>
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <span className="px-3 py-1 text-sm flex items-center">
-                      {pageNumber} / {numPages}
-                    </span>
-                    <Button variant="outline" size="sm" onClick={handleNextPage} disabled={pageNumber >= numPages}>
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                    <div className="w-px bg-border mx-2" />
                   </>}
                 <Button variant="outline" size="sm" onClick={() => viewingAttachment && handleDownload(viewingAttachment)}>
                   <Download className="h-4 w-4 mr-2" />
