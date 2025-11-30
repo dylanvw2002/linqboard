@@ -19,7 +19,7 @@ import SupportButton from "@/components/SupportButton";
 import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useTranslation } from "react-i18next";
-import logo from "@/assets/linqboard-logo-new.png";
+import mascot from "@/assets/linqboard-mascot-new.png";
 import logoText from "@/assets/logo-transparent.png";
 interface Organization {
   id: string;
@@ -554,7 +554,7 @@ const Dashboard = () => {
 
       {/* Logo linksonder */}
       <div className="fixed bottom-4 left-4 z-20">
-        <img src={logo} alt="LinqBoard Logo" className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform hidden md:block" onClick={() => navigate("/")} />
+        <img src={mascot} alt="LinqBoard Mascot" className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform hidden md:block" onClick={() => navigate("/")} />
       </div>
 
       <div className="container mx-auto px-4 py-4 pb-8 max-w-6xl">
