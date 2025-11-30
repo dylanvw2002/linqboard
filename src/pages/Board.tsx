@@ -2434,16 +2434,16 @@ const Board = () => {
         <div className={cn("flex flex-col gap-[18px] pt-[22px] px-0", isMobile ? "min-h-screen" : "h-screen")}>
       
       {/* Demo Banner */}
-      {isDemo && <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground shadow-lg px-[16px] py-px">
-          <div className="flex justify-between items-center sm:items-start gap-2">
-            <span className="text-sm font-semibold text-left py-[4px]">
+      {isDemo && <div className="fixed top-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-sm text-primary-foreground shadow-lg px-4 py-3 sm:px-[16px] sm:py-px">
+          <div className="flex justify-between items-center sm:items-start gap-3 sm:gap-2">
+            <span className="text-base sm:text-sm font-semibold text-left py-1 sm:py-[4px]">
               {t('demo.bannerText')}
             </span>
             <div className="flex gap-2 justify-end">
-              <Button size="sm" variant="secondary" onClick={() => navigate('/auth')}>
+              <Button size="default" className="sm:h-8 sm:px-3 sm:text-xs" variant="secondary" onClick={() => navigate('/auth')}>
                 {t('demo.createOwnBoard')}
               </Button>
-              <Button size="sm" className="bg-white/10 hover:bg-white/20 text-white border border-white/20" onClick={() => navigate('/pricing')}>
+              <Button size="default" className="sm:h-8 sm:px-3 sm:text-xs bg-white/10 hover:bg-white/20 text-white border border-white/20" onClick={() => navigate('/pricing')}>
                 {t('demo.viewPricing')}
               </Button>
             </div>
