@@ -2484,7 +2484,7 @@ const Board = () => {
               <ArrowLeft className="w-9 h-9" />
             </button>
           )}
-          <div className="min-w-0 flex-1">
+          <div className={cn("min-w-0 flex-1", isMobile && "text-center")}>
             <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-5xl" : "text-[clamp(26px,3.5vw,48px)]")}>
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
