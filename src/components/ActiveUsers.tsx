@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 interface ActiveUsersProps {
   organizationId: string;
   isDemo?: boolean;
+  isMobile?: boolean;
 }
 
 interface UserPresence {
@@ -18,7 +19,7 @@ interface UserPresence {
   online_at: string;
 }
 
-export const ActiveUsers = ({ organizationId, isDemo = false }: ActiveUsersProps) => {
+export const ActiveUsers = ({ organizationId, isDemo = false, isMobile = false }: ActiveUsersProps) => {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { t } = useTranslation();
@@ -151,8 +152,11 @@ export const ActiveUsers = ({ organizationId, isDemo = false }: ActiveUsersProps
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="backdrop-blur-sm bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-transform duration-150 will-change-transform transform-gpu shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-          <Users size={20} />
+        <button className={isMobile 
+          ? "text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border-2 border-white/50 dark:border-white/30 shadow-[0_8px_20px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,0.6)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-4 rounded-2xl shrink-0 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+          : "backdrop-blur-sm bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 p-2.5 rounded-2xl font-bold cursor-pointer transition-transform duration-150 will-change-transform transform-gpu shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+        }>
+          <Users size={isMobile ? 28 : 20} />
           {activeUsers.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
               {activeUsers.length}

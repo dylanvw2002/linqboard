@@ -2578,7 +2578,7 @@ const Board = () => {
               <Pencil size={20} />
             </button>}
           
-          <ActiveUsers organizationId={organizationId!} isDemo={isDemo} />
+          <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />
         </div>
       </header>
 
