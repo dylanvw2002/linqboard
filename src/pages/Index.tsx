@@ -366,39 +366,39 @@ const Index = () => {
                   </div>
 
                   {/* Right: Content */}
-                  <div className={`space-y-6 sm:space-y-8 lg:space-y-10 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+                  <div className={`space-y-4 sm:space-y-5 lg:space-y-6 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
                       {t('landing.demoTitle')}
                     </h2>
-                    <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl text-muted-foreground leading-relaxed">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-muted-foreground leading-relaxed">
                       {t('landing.demoSubtitle')}
                     </p>
                     
-                    <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:gap-6 xl:gap-8">
-                      <div className="flex items-center gap-4 lg:gap-5 xl:gap-6">
-                        <div className="w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 text-primary" />
+                    <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-5">
+                      <div className="flex items-center gap-3 lg:gap-4">
+                        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
                         </div>
-                        <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-medium">{t('landing.demoFeature1')}</span>
+                        <span className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium">{t('landing.demoFeature1')}</span>
                       </div>
-                      <div className="flex items-center gap-4 lg:gap-5 xl:gap-6">
-                        <div className="w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Edit className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 text-primary" />
+                      <div className="flex items-center gap-3 lg:gap-4">
+                        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Edit className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
                         </div>
-                        <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-medium">{t('landing.demoFeature2')}</span>
+                        <span className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium">{t('landing.demoFeature2')}</span>
                       </div>
-                      <div className="flex items-center gap-4 lg:gap-5 xl:gap-6">
-                        <div className="w-12 h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Eye className="w-6 h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8 text-primary" />
+                      <div className="flex items-center gap-3 lg:gap-4">
+                        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Eye className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
                         </div>
-                        <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-medium">{t('landing.demoFeature3')}</span>
+                        <span className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium">{t('landing.demoFeature3')}</span>
                       </div>
                     </div>
 
-                    <Link to="/board/demo" className="block pt-3 lg:pt-4 xl:pt-6">
-                      <Button size="lg" className="text-lg sm:text-xl lg:text-xl xl:text-2xl px-10 py-6 lg:py-7 xl:py-8 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
+                    <Link to="/board/demo" className="block pt-2 lg:pt-3">
+                      <Button size="lg" className="text-base sm:text-lg lg:text-lg xl:text-xl px-8 py-5 lg:py-6 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
                         {t('landing.demoButton')}
-                        <ArrowRight className="ml-2 w-6 h-6 lg:w-7 lg:h-7" />
+                        <ArrowRight className="ml-2 w-5 h-5 lg:w-6 lg:h-6" />
                       </Button>
                     </Link>
                 </div>
