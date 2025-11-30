@@ -124,7 +124,8 @@
     "priorityMedium": "Gemiddeld",
     "priorityLow": "Laag",
     "priorityNone": "Geen",
-    "priorityChanged": "Prioriteit veranderd naar {{priority}}"
+    "priorityChanged": "Prioriteit veranderd naar {{priority}}",
+    "addTeamMember": "Teamlid toevoegen..."
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
@@ -599,5 +600,32 @@
     "CA": "Canada",
     "AU": "Australië",
     "OTHER": "Overig (buiten EU)"
+  },
+  "attachments": {
+    "title": "Bijlagen",
+    "uploadPrompt": "Sleep een bestand hierheen of klik om te uploaden",
+    "uploading": "Uploaden...",
+    "supportedFiles": "PDF, Word, Excel of afbeeldingen (max 10 MB)",
+    "loading": "Bijlagen laden...",
+    "none": "Nog geen bijlagen toegevoegd",
+    "fileTooLarge": "Bestand is te groot. Maximale grootte is 10 MB",
+    "unsupportedType": "Bestandstype niet ondersteund. Alleen PDF, Word, Excel en afbeeldingen zijn toegestaan",
+    "uploaded": "Bestand geüpload",
+    "uploadError": "Fout bij uploaden: ",
+    "loadingFile": "Bestand laden...",
+    "fileLoaded": "Bestand geladen",
+    "openError": "Fout bij openen: ",
+    "deleted": "Bijlage verwijderd",
+    "deleteError": "Fout bij verwijderen: ",
+    "downloadError": "Fout bij downloaden: ",
+    "notLoggedIn": "Niet ingelogd",
+    "loadingPdf": "PDF laden...",
+    "pdfLoadError": "Fout bij laden PDF",
+    "downloadPdf": "Download PDF",
+    "noPreview": "Geen voorbeeld beschikbaar",
+    "download": "Download",
+    "dropOrClick": "Sleep een bestand hierheen of klik om te uploaden",
+    "supportedTypes": "PDF, Word, Excel of afbeeldingen (max 10 MB)",
+    "loadingAttachments": "Bijlagen laden..."
   }
 }
