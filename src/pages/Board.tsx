@@ -2633,13 +2633,13 @@ const Board = () => {
                         onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
                         disabled={currentColumnIndex === 0}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-4 rounded-xl transition-all",
                           currentColumnIndex === 0 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m15 18-6-6 6-6" />
                         </svg>
                       </button>
@@ -2647,8 +2647,8 @@ const Board = () => {
                       {/* Sort dropdown */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-4 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M3 6h18"/>
                               <path d="M7 12h10"/>
                               <path d="M10 18h4"/>
@@ -2656,35 +2656,35 @@ const Board = () => {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border-border z-[100]" align="start">
-                          <DropdownMenuLabel className="text-base">Sorteer op</DropdownMenuLabel>
+                          <DropdownMenuLabel className="text-lg">Sorteer op</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => setMobileSortBy("position")} className={cn("text-base py-2.5", mobileSortBy === "position" ? "bg-accent" : "")}>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("position")} className={cn("text-lg py-3", mobileSortBy === "position" ? "bg-accent" : "")}>
                             Positie
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setMobileSortBy("deadline")} className={cn("text-base py-2.5", mobileSortBy === "deadline" ? "bg-accent" : "")}>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("deadline")} className={cn("text-lg py-3", mobileSortBy === "deadline" ? "bg-accent" : "")}>
                             Deadline
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setMobileSortBy("priority")} className={cn("text-base py-2.5", mobileSortBy === "priority" ? "bg-accent" : "")}>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("priority")} className={cn("text-lg py-3", mobileSortBy === "priority" ? "bg-accent" : "")}>
                             Prioriteit
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setMobileSortBy("newest")} className={cn("text-base py-2.5", mobileSortBy === "newest" ? "bg-accent" : "")}>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("newest")} className={cn("text-lg py-3", mobileSortBy === "newest" ? "bg-accent" : "")}>
                             Nieuwste eerst
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => setMobileSortBy("oldest")} className={cn("text-base py-2.5", mobileSortBy === "oldest" ? "bg-accent" : "")}>
+                          <DropdownMenuItem onClick={() => setMobileSortBy("oldest")} className={cn("text-lg py-3", mobileSortBy === "oldest" ? "bg-accent" : "")}>
                             Oudste eerst
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
                       {/* Column name - centered */}
-                      <div className="text-3xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
+                      <div className="text-4xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
                         {column.name}
                       </div>
                       
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
                         <DialogTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-5 py-3 rounded-xl font-bold text-2xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-6 py-4 rounded-xl font-bold text-3xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
                             +
                           </button>
                         </DialogTrigger>
@@ -2751,13 +2751,13 @@ const Board = () => {
                         onClick={() => setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1))}
                         disabled={currentColumnIndex === columns.length - 1}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-4 rounded-xl transition-all",
                           currentColumnIndex === columns.length - 1
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m9 18 6-6-6-6" />
                         </svg>
                       </button>
