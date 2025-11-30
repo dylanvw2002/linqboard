@@ -31,7 +31,12 @@ const Index = () => {
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
-  const autoplayPlugin = useRef(Autoplay({
+  const partnersAutoplayPlugin = useRef(Autoplay({
+    delay: 3000,
+    stopOnInteraction: false
+  }));
+  
+  const featuresAutoplayPlugin = useRef(Autoplay({
     delay: 3000,
     stopOnInteraction: false
   }));
@@ -309,7 +314,7 @@ const Index = () => {
                   align: "start",
                   loop: true,
                 }}
-                plugins={[autoplayPlugin.current]}
+                plugins={[featuresAutoplayPlugin.current]}
                 className="w-full"
               >
                 <CarouselContent>
@@ -473,7 +478,7 @@ const Index = () => {
             <Carousel opts={{
             align: "start",
             loop: true
-          }} plugins={[autoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
+          }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
               <CarouselContent>
                 {/* NRG Totaal */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
