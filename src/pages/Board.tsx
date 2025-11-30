@@ -2446,8 +2446,11 @@ const Board = () => {
       <header className={cn("flex items-center gap-2 rounded-[28px] relative", isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-5 py-5 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
         <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full gap-3" : "gap-4")}>
           {isMobile && (
-            <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 p-3 rounded-lg shrink-0">
-              <ArrowLeft className="w-6 h-6" />
+            <button 
+              onClick={() => navigate(isDemo ? "/" : "/dashboard")} 
+              className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border-2 border-white/50 dark:border-white/30 shadow-[0_8px_20px_rgba(0,0,0,0.12),inset_0_2px_4px_rgba(255,255,255,0.6)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_4px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-4 rounded-2xl shrink-0 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+            >
+              <ArrowLeft className="w-7 h-7" />
             </button>
           )}
           <div className="min-w-0 flex-1">
