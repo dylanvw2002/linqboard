@@ -2444,7 +2444,12 @@ const Board = () => {
 
       {/* Header */}
       <header className={cn("flex items-center gap-2 rounded-[28px] relative", isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-5 py-5 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
-        <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full justify-between" : "gap-4")}>
+        <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full gap-3" : "gap-4")}>
+          {isMobile && (
+            <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 p-3 rounded-lg shrink-0">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          )}
           <div className="min-w-0 flex-1">
             <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-3xl" : "text-[clamp(26px,3.5vw,48px)]")}>
               {organization?.name || "NRG TOTAAL"} – To-Do Board
@@ -2459,10 +2464,12 @@ const Board = () => {
             </div>}
         </div>
         <div className={cn("flex relative z-10", isMobile ? "w-full justify-between gap-1" : "gap-2.5")}>
-          <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className={cn("text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-1 relative", isMobile ? "bg-white dark:bg-card border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md active:scale-95 px-2 py-1.5 rounded-lg text-xs" : "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)] gap-2")}>
-            <ArrowLeft className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
-            {!isMobile && (isDemo ? t('demo.backToHome') : t('dashboard.title'))}
-          </button>
+          {!isMobile && (
+            <button onClick={() => navigate(isDemo ? "/" : "/dashboard")} className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center gap-2 relative backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 hover:bg-white/30 dark:hover:bg-card/30 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none px-3.5 py-2.5 rounded-2xl text-[clamp(12px,1.4vw,16px)]">
+              <ArrowLeft className="w-4 h-4" />
+              {isDemo ? t('demo.backToHome') : t('dashboard.title')}
+            </button>
+          )}
           {!isMobile && <div className="flex items-center rounded-2xl backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] px-3 py-2 gap-2">
               <button onClick={handleZoomOut} disabled={zoomLevel <= 0.5} className="text-foreground p-1 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed font-bold hover:bg-white/30 dark:hover:bg-card/30 text-lg" title="Zoom uit (Ctrl/Cmd + -)">
                 <ZoomOut className="w-4 h-4" />
