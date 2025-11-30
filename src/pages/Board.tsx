@@ -2359,8 +2359,8 @@ const Board = () => {
   }
   return <div className={cn("h-screen relative", isMobile ? "overflow-y-auto overflow-x-hidden" : "overflow-hidden")}>
       {/* Fixed background layer - doesn't scale with zoom */}
-      <div className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} style={{
-      ...(backgroundImageUrl && {
+      <div className={cn("absolute inset-0 pointer-events-none", isMobile ? "bg-background" : (backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground))} style={{
+      ...(backgroundImageUrl && !isMobile && {
         backgroundImage: `linear-gradient(to bottom right, rgba(0,0,0,0.1), rgba(0,0,0,0.05)), url(${backgroundImageUrl})`,
         backgroundSize: backgroundFitMode === 'cover' ? 'cover' : `${backgroundScale}%`,
         backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
