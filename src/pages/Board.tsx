@@ -634,6 +634,9 @@ const Board = () => {
   const [filterPriority, setFilterPriority] = useState<"low" | "medium" | "high" | null>(null);
   const [filterDeadline, setFilterDeadline] = useState<"overdue" | "today" | "this-week" | "no-deadline" | null>(null);
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+  
+  // Mobile carousel state
+  const [currentMobileColumnIndex, setCurrentMobileColumnIndex] = useState(0);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -2586,16 +2589,52 @@ const Board = () => {
 
       {/* Canvas Board / Mobile Layout */}
       {isMobile ?
-        // Mobile: Vertical scrolling layout with columns stacked
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4">
-          <div className="flex flex-col gap-4">
-            {columns.map((column, index) => {
-              const isFirst = index === 0;
-              const isLast = index === columns.length - 1;
+        // Mobile: Carousel with one column at a time
+        <main className="flex-1 flex flex-col pt-14 pb-6 overflow-hidden">
+          {/* Navigation Header */}
+          <div className="flex items-center justify-between px-4 py-4 border-b border-border/20 flex-shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCurrentMobileColumnIndex(Math.max(0, currentMobileColumnIndex - 1))}
+              disabled={currentMobileColumnIndex === 0 || columns.length === 0}
+              className="h-12 w-12 flex-shrink-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </Button>
+            
+            <h2 className="text-3xl font-bold text-center flex-1 px-4">
+              {columns[currentMobileColumnIndex]?.name || ''}
+            </h2>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCurrentMobileColumnIndex(Math.min(columns.length - 1, currentMobileColumnIndex + 1))}
+              disabled={currentMobileColumnIndex >= columns.length - 1 || columns.length === 0}
+              className="h-12 w-12 flex-shrink-0"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </Button>
+          </div>
+
+          {/* Current Column Content */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-6">
+            {columns.length > 0 && (() => {
+              const column = columns[currentMobileColumnIndex];
+              if (!column) return null;
+              
+              const isFirst = currentMobileColumnIndex === 0;
+              const isLast = currentMobileColumnIndex === columns.length - 1;
+              
               return <section key={column.id} className="flex flex-col w-full">
                   <div className={cn("flex items-center justify-between px-5 py-4 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
-                    <div className="text-4xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2">
-                      {column.name}
+                    <div className="text-2xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2 flex-1 text-center justify-center">
+                      Taken
                     </div>
                     
                     <div className="flex items-center gap-2">
@@ -2776,7 +2815,7 @@ const Board = () => {
                   })}
                   </div>
                 </section>;
-            })}
+            })()}
           </div>
         </main> :
         // Desktop: Canvas-based layout with absolute positioning
