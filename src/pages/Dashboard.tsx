@@ -571,60 +571,6 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Subscription Status Card */}
-        {subscriptionLimits && <Card className="mb-3 p-3 bg-gradient-to-r from-primary/10 to-accent/10 border-2 hidden md:block">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-2">
-              <div className="flex-1">
-                <div className="flex items-center gap-1.5 mb-1.5">
-                  <Crown className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-bold">
-                    {t('subscription.yourPlan')}: <span className="text-primary capitalize">{subscriptionLimits.plan}</span>
-                  </h3>
-                </div>
-                {subscription && subscription.status && <div className="mb-3">
-                    <span className="text-sm text-muted-foreground">
-                      {t('subscription.status')}:{" "}
-                      <span className={`font-semibold ${subscription.status === 'active' ? 'text-green-600' : subscription.status === 'canceled' ? 'text-orange-600' : 'text-red-600'}`}>
-                        {subscription.status === 'active' && 'Actief'}
-                        {subscription.status === 'canceled' && 'Geannuleerd'}
-                        {subscription.status === 'past_due' && 'Betaling achterstallig'}
-                        {subscription.status === 'pending' && 'In behandeling'}
-                      </span>
-                    </span>
-                    {subscription.billing_interval && <span className="text-sm text-muted-foreground ml-4">
-                        • {subscription.billing_interval === 'monthly' ? 'Maandelijks' : 'Jaarlijks'}
-                      </span>}
-                    {subscription.current_period_end && <span className="text-sm text-muted-foreground ml-4">
-                        • Verlengt op {new Date(subscription.current_period_end).toLocaleDateString('nl-NL')}
-                      </span>}
-                  </div>}
-                <div className="space-y-2 mt-2">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">{t('subscription.organizations')}</span>
-                      <span className="font-semibold">
-                        {subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations}
-                      </span>
-                    </div>
-                    <Progress value={subscriptionLimits.max_organizations === -1 ? 0 : subscriptionLimits.current_org_count / subscriptionLimits.max_organizations * 100} className="h-2" />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {t('subscription.membersPerOrg')}: {subscriptionLimits.max_members_per_org === -1 ? '∞' : subscriptionLimits.max_members_per_org}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2 shrink-0">
-                {subscriptionLimits.plan !== 'business' && <Button onClick={() => navigate('/pricing')} size="sm" className="text-xs">
-                    {t('subscription.upgrade')}
-                    <ArrowRight className="ml-1 h-3 w-3" />
-                  </Button>}
-                {subscription && subscription.mollie_subscription_id && subscription.status === 'active' && <Button onClick={() => setCancelDialogOpen(true)} size="sm" variant="outline" className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground text-xs">
-                    {t('subscription.cancel')}
-                  </Button>}
-              </div>
-            </div>
-          </Card>}
-
         {/* Organizations */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
