@@ -553,7 +553,7 @@ const Dashboard = () => {
       </header>
 
       {/* Logo linksonder */}
-      <div className="fixed bottom-4 left-4 z-20">
+      <div className="fixed bottom-0 left-4 z-20">
         <img src={mascot} alt="LinqBoard Mascot" className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform hidden md:block" onClick={() => navigate("/")} />
       </div>
 
