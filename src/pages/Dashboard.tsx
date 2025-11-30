@@ -20,6 +20,7 @@ import AdminVatReportLink from "@/components/AdminVatReportLink";
 import { OnboardingGuide } from "@/components/OnboardingGuide";
 import { useTranslation } from "react-i18next";
 import logo from "@/assets/linqboard-logo-new.png";
+import logoText from "@/assets/logo-transparent.png";
 interface Organization {
   id: string;
   name: string;
@@ -509,8 +510,14 @@ const Dashboard = () => {
       {/* Header */}
       <header className="relative z-10">
         <div className="container mx-auto px-4 py-0 max-w-6xl">
-          <div className="flex items-center justify-end gap-1">
-            {/* Logo removed from header */}
+          <div className="flex items-center justify-between gap-1">
+            {/* Logo in header */}
+            <img 
+              src={logoText} 
+              alt="LinqBoard" 
+              className="h-12 w-auto cursor-pointer hover:scale-105 transition-transform" 
+              onClick={() => navigate("/")} 
+            />
             <div className="flex items-center gap-2">
               <AdminVatReportLink />
               <LanguageSwitcher />
