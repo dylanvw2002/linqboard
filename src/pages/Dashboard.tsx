@@ -515,10 +515,10 @@ const Dashboard = () => {
             <img 
               src={logoText} 
               alt="LinqBoard" 
-              className="h-20 w-auto cursor-pointer hover:scale-105 transition-transform -my-4" 
+              className="h-20 w-auto cursor-pointer hover:scale-105 transition-transform -my-4 md:hidden" 
               onClick={() => navigate("/")} 
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 md:ml-auto">
               <AdminVatReportLink />
               <LanguageSwitcher />
               <DropdownMenu>
