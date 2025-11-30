@@ -213,7 +213,7 @@ const Index = () => {
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[90vh] sm:min-h-[85vh] flex items-center max-w-7xl">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content */}
-            <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 text-center lg:text-left lg:ml-16">
+            <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 text-center lg:text-left lg:ml-32">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold leading-tight">
                 Teamwerk, <span className="text-primary">moeiteloos georganiseerd</span>
               </h1>
