@@ -187,11 +187,16 @@ const Index = () => {
         <header className="absolute top-0 left-0 right-0 z-50" role="banner">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
             <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24" role="navigation" aria-label="Main navigation">
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-3 sm:gap-8">
+                <div className="sm:hidden">
+                  <LanguageSwitcher />
+                </div>
                 <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="hidden sm:block h-40 sm:h-44 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
               <div className="flex items-center gap-3 sm:gap-4 lg:gap-5">
-                <LanguageSwitcher />
+                <div className="hidden sm:block">
+                  <LanguageSwitcher />
+                </div>
                 <Link to="/auth">
                   <Button size="lg" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-base sm:text-lg gap-2 sm:gap-3 h-12 px-6">
                     <LogIn className="h-5 w-5" />
