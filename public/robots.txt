@@ -17,4 +17,4 @@ Disallow: /board/
 Disallow: /checkout
 Disallow: /invoices
 
-Sitemap: https://linqboard.nl/sitemap.xml
+Sitemap: https://linqboard.io/sitemap.xml
