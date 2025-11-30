@@ -2,32 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://linqboard.nl/</loc>
+    <loc>https://linqboard.io/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://linqboard.nl/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://linqboard.nl/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://linqboard.nl/?lang=es" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://linqboard.nl/?lang=de" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://linqboard.nl/" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://linqboard.io/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://linqboard.io/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://linqboard.io/?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://linqboard.io/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://linqboard.io/" />
   </url>
   <url>
-    <loc>https://linqboard.nl/pricing</loc>
+    <loc>https://linqboard.io/pricing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="nl" href="https://linqboard.nl/pricing" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://linqboard.nl/pricing?lang=en" />
-    <xhtml:link rel="alternate" hreflang="es" href="https://linqboard.nl/pricing?lang=es" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://linqboard.nl/pricing?lang=de" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://linqboard.nl/pricing" />
+    <xhtml:link rel="alternate" hreflang="nl" href="https://linqboard.io/pricing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://linqboard.io/pricing?lang=en" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://linqboard.io/pricing?lang=es" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://linqboard.io/pricing?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://linqboard.io/pricing" />
   </url>
   <url>
-    <loc>https://linqboard.nl/auth</loc>
+    <loc>https://linqboard.io/auth</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://linqboard.nl/board-demo</loc>
+    <loc>https://linqboard.io/board-demo</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
