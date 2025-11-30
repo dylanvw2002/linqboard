@@ -128,7 +128,8 @@
     "addTeamMember": "Teamlid toevoegen...",
     "deadline": "Deadline",
     "expectedReturn": "Verwachte terugkeer",
-    "assignedTo": "Toegewezen aan"
+    "assignedTo": "Toegewezen aan",
+    "editTask": "Taak bewerken"
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
