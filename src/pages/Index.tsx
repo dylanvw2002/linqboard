@@ -241,7 +241,7 @@ const Index = () => {
             {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
             <div className="relative -mt-8 lg:-mt-16 flex justify-center items-center order-first lg:order-last">
               <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 lg:hidden h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
-              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-2/3 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-1/2 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
