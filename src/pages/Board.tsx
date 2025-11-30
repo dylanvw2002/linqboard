@@ -2455,13 +2455,13 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className={cn("flex items-center gap-2 rounded-[28px] relative", isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-3 py-2 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
+      <header className={cn("flex items-center gap-2 rounded-[28px] relative", isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-4 py-4 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
         <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full justify-between" : "gap-4")}>
           <div className="min-w-0 flex-1">
-            <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-base" : "text-[clamp(26px,3.5vw,48px)]")}>
+            <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-2xl" : "text-[clamp(26px,3.5vw,48px)]")}>
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
-            <p className={cn("text-muted-foreground font-semibold", isMobile ? "text-xs" : "text-[clamp(12px,1.4vw,16px)]")}>
+            <p className={cn("text-muted-foreground font-semibold", isMobile ? "text-base" : "text-[clamp(12px,1.4vw,16px)]")}>
               {t('board.liveOverview')}
             </p>
           </div>
