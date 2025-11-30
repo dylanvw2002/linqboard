@@ -16,8 +16,8 @@ const SupportButton = () => {
         size="lg"
         className="rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
       >
-        <MessageCircle className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-        {t('support.contact')}
+        <MessageCircle className="md:mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
+        <span className="hidden md:inline">{t('support.contact')}</span>
       </Button>
     </div>
   );
