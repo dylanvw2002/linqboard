@@ -609,7 +609,7 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-        <img src={mascot} alt="LinqBoard Mascot" className="h-32 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
+        <img src={mascot} alt="LinqBoard Mascot" className="h-40 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
       </div>
 
       <div className="container mx-auto px-4 py-4 pb-8 max-w-6xl">
