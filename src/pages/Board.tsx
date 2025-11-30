@@ -2326,7 +2326,7 @@ const Board = () => {
         </div>
       </div>;
   }
-  return <div className="h-screen overflow-hidden relative">
+  return <div className={cn("h-screen relative", isMobile ? "overflow-y-auto overflow-x-hidden" : "overflow-hidden")}>
       {/* Fixed background layer - doesn't scale with zoom */}
       <div className={cn("absolute inset-0 pointer-events-none", backgroundImageUrl ? "" : "bg-gradient-to-br " + selectedBackground)} style={{
       ...(backgroundImageUrl && {
