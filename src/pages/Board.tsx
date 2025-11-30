@@ -634,6 +634,9 @@ const Board = () => {
   const [filterPriority, setFilterPriority] = useState<"low" | "medium" | "high" | null>(null);
   const [filterDeadline, setFilterDeadline] = useState<"overdue" | "today" | "this-week" | "no-deadline" | null>(null);
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
+  
+  // Mobile column carousel state
+  const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -2587,102 +2590,41 @@ const Board = () => {
 
       {/* Canvas Board / Mobile Layout */}
       {isMobile ?
-        // Mobile: Vertical scrolling layout with columns stacked
+        // Mobile: Single column carousel layout
         <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 pb-6 px-4">
-          <div className="flex flex-col gap-4">
-            {columns.map((column, index) => {
-              const isFirst = index === 0;
-              const isLast = index === columns.length - 1;
-              return <section key={column.id} className="flex flex-col w-full">
+          <div className="flex flex-col gap-4 h-full">
+            {columns.length > 0 && (() => {
+              const column = columns[currentColumnIndex];
+              if (!column) return null;
+              
+              return <section key={column.id} className="flex flex-col w-full h-full">
                   <div className={cn("flex items-center justify-between px-5 py-4 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
-                    <div className="text-4xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex items-center gap-2">
-                      {column.name}
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      {/* Move up/down buttons */}
-                      {!isFirst && <button onClick={async () => {
-                      if (isDemo) {
-                        // Demo mode - just reorder in state
-                        const newColumns = [...columns];
-                        const currentIndex = newColumns.findIndex(c => c.id === column.id);
-                        if (currentIndex > 0) {
-                          [newColumns[currentIndex], newColumns[currentIndex - 1]] = [newColumns[currentIndex - 1], newColumns[currentIndex]];
-                          setColumns(newColumns);
-                        }
-                        return;
-                      }
-
-                      // Find current and target indices
-                      const currentIndex = columns.findIndex(c => c.id === column.id);
-                      if (currentIndex <= 0) return;
-                      const targetIndex = currentIndex - 1;
-
-                      // Re-number all columns
-                      const updates = columns.map((col, idx) => {
-                        let newPosition;
-                        if (col.id === column.id) {
-                          newPosition = targetIndex;
-                        } else if (idx === targetIndex) {
-                          newPosition = currentIndex;
-                        } else {
-                          newPosition = idx;
-                        }
-                        return supabase.from('columns').update({
-                          mobile_position: newPosition
-                        }).eq('id', col.id);
-                      });
-                      await Promise.all(updates);
-                      await fetchBoardData();
-                    }} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-5 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m18 15-6-6-6 6" />
-                          </svg>
-                        </button>}
+                    <div className="flex items-center justify-between w-full gap-3">
+                      {/* Left arrow */}
+                      <button 
+                        onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
+                        disabled={currentColumnIndex === 0}
+                        className={cn(
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl transition-all",
+                          currentColumnIndex === 0 
+                            ? "opacity-30 cursor-not-allowed" 
+                            : "hover:bg-white/30 dark:hover:bg-card/30"
+                        )}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m15 18-6-6 6-6" />
+                        </svg>
+                      </button>
                       
-                      {!isLast && <button onClick={async () => {
-                      if (isDemo) {
-                        // Demo mode - just reorder in state
-                        const newColumns = [...columns];
-                        const currentIndex = newColumns.findIndex(c => c.id === column.id);
-                        if (currentIndex < newColumns.length - 1) {
-                          [newColumns[currentIndex], newColumns[currentIndex + 1]] = [newColumns[currentIndex + 1], newColumns[currentIndex]];
-                          setColumns(newColumns);
-                        }
-                        return;
-                      }
-
-                      // Find current and target indices
-                      const currentIndex = columns.findIndex(c => c.id === column.id);
-                      if (currentIndex >= columns.length - 1) return;
-                      const targetIndex = currentIndex + 1;
-
-                      // Re-number all columns
-                      const updates = columns.map((col, idx) => {
-                        let newPosition;
-                        if (col.id === column.id) {
-                          newPosition = targetIndex;
-                        } else if (idx === targetIndex) {
-                          newPosition = currentIndex;
-                        } else {
-                          newPosition = idx;
-                        }
-                        return supabase.from('columns').update({
-                          mobile_position: newPosition
-                        }).eq('id', col.id);
-                      });
-                      await Promise.all(updates);
-                      await fetchBoardData();
-                    }} className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-5 rounded-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m6 9 6 6 6-6" />
-                          </svg>
-                        </button>}
+                      {/* Column name - centered */}
+                      <div className="text-3xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center">
+                        {column.name}
+                      </div>
                       
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
                         <DialogTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-6 py-4 rounded-xl font-bold text-2xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-5 py-3 rounded-xl font-bold text-2xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
                             +
                           </button>
                         </DialogTrigger>
@@ -2743,11 +2685,27 @@ const Board = () => {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      
+                      {/* Right arrow */}
+                      <button 
+                        onClick={() => setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1))}
+                        disabled={currentColumnIndex === columns.length - 1}
+                        className={cn(
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-3 rounded-xl transition-all",
+                          currentColumnIndex === columns.length - 1
+                            ? "opacity-30 cursor-not-allowed" 
+                            : "hover:bg-white/30 dark:hover:bg-card/30"
+                        )}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="m9 18 6-6-6-6" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                   
                   {/* Tasks */}
-                  <div className="space-y-3">{filterTasks(getColumnTasks(column.id)).map(task => {
+                  <div className="space-y-3 flex-1">{filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
                     if (isSimpleColumn) {
@@ -2776,8 +2734,24 @@ const Board = () => {
                         </article>;
                   })}
                   </div>
+                  
+                  {/* Page indicator */}
+                  <div className="flex justify-center gap-2 mt-4 pb-4">
+                    {columns.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentColumnIndex(index)}
+                        className={cn(
+                          "w-2 h-2 rounded-full transition-all",
+                          index === currentColumnIndex 
+                            ? "bg-primary w-6" 
+                            : "bg-primary/30"
+                        )}
+                      />
+                    ))}
+                  </div>
                 </section>;
-            })}
+            })()}
           </div>
         </main> :
         // Desktop: Canvas-based layout with absolute positioning
