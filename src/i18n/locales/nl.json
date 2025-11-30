@@ -125,7 +125,10 @@
     "priorityLow": "Laag",
     "priorityNone": "Geen",
     "priorityChanged": "Prioriteit veranderd naar {{priority}}",
-    "addTeamMember": "Teamlid toevoegen..."
+    "addTeamMember": "Teamlid toevoegen...",
+    "deadline": "Deadline",
+    "expectedReturn": "Verwachte terugkeer",
+    "assignedTo": "Toegewezen aan"
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
@@ -626,6 +629,7 @@
     "download": "Download",
     "dropOrClick": "Sleep een bestand hierheen of klik om te uploaden",
     "supportedTypes": "PDF, Word, Excel of afbeeldingen (max 10 MB)",
-    "loadingAttachments": "Bijlagen laden..."
+    "loadingAttachments": "Bijlagen laden...",
+    "noAttachments": "Nog geen bijlagen"
   }
 }
