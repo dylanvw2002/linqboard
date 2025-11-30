@@ -596,8 +596,15 @@ const Dashboard = () => {
           <div className="absolute bottom-full left-24 mb-2 animate-fade-in">
             <div className="relative bg-primary text-primary-foreground px-4 py-3 rounded-2xl shadow-lg max-w-[280px]">
               <p className="text-sm font-medium">{currentQuote}</p>
-              {/* Speech bubble pointer */}
-              <div className="absolute -bottom-2 left-8 w-4 h-4 bg-primary transform rotate-45"></div>
+              {/* Speech bubble pointer - elongated triangle from bottom-left corner */}
+              <div 
+                className="absolute -bottom-6 left-2 w-0 h-0"
+                style={{
+                  borderLeft: '8px solid transparent',
+                  borderRight: '12px solid transparent',
+                  borderTop: '24px solid hsl(var(--primary))'
+                }}
+              ></div>
             </div>
           </div>
         )}
