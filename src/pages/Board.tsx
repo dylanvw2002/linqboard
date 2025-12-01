@@ -2598,21 +2598,21 @@ const Board = () => {
       `}</style>
 
       {/* Header */}
-      <header className={cn("flex items-center gap-2 rounded-[28px] relative", isDemo && (isMobile ? "mt-20" : "mt-16"), isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-3 py-3 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
-        <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full gap-3" : "gap-4")}>
+      <header className={cn("flex items-center gap-2 rounded-[28px] relative", isDemo && (isMobile ? "mt-20" : "mt-16"), isMobile ? "flex-col bg-white/95 dark:bg-card/95 border border-gray-200 dark:border-gray-700 shadow-md px-2.5 py-2.5 mx-2" : "justify-between backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.1),inset_0_2px_2px_rgba(255,255,255,0.6)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6),inset_0_2px_2px_rgba(255,255,255,0.2)] overflow-visible before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/5 after:pointer-events-none px-5 py-[18px] mx-[22px]")}>
+        <div className={cn("flex items-center relative z-10 min-w-0", isMobile ? "w-full gap-2" : "gap-4")}>
           {isMobile && (
             <button 
               onClick={() => navigate(isDemo ? "/" : "/dashboard")} 
-              className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border border-white/50 dark:border-white/30 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-2 rounded-lg shrink-0 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+              className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border border-white/50 dark:border-white/30 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-1.5 rounded-lg shrink-0 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4" />
             </button>
           )}
           <div className={cn("min-w-0 flex-1", isMobile && "text-center")}>
-            <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-xl" : "text-[clamp(26px,3.5vw,48px)]")}>
+            <h1 className={cn("font-extrabold tracking-[0.2px] leading-[1.1] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-sm", isMobile ? "text-base" : "text-[clamp(26px,3.5vw,48px)]")}>
               {organization?.name || "NRG TOTAAL"} – To-Do Board
             </h1>
-            <p className={cn("text-muted-foreground font-semibold", isMobile ? "text-sm mt-0.5" : "text-[clamp(12px,1.4vw,16px)]")}>
+            <p className={cn("text-muted-foreground font-semibold", isMobile ? "text-xs mt-0.5" : "text-[clamp(12px,1.4vw,16px)]")}>
               {t(isMobile ? 'board.liveOverviewMobile' : 'board.liveOverview')}
             </p>
           </div>
@@ -2763,8 +2763,8 @@ const Board = () => {
                   isTransitioning && slideDirection === 'right' && "slide-out-right"
                 )}
               >
-                  <div className={cn("flex items-center justify-between px-3 py-3 rounded-[24px] backdrop-blur-[60px] border-2 mb-3 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[24px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[23px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
-                    <div className="flex items-center justify-between w-full gap-2">
+                  <div className={cn("flex items-center justify-between px-2.5 py-2.5 rounded-[20px] backdrop-blur-[60px] border-2 mb-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[20px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[19px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
+                    <div className="flex items-center justify-between w-full gap-1.5">
                       {/* Left arrow */}
                       <button 
                         onClick={() => {
@@ -2782,13 +2782,13 @@ const Board = () => {
                         }}
                         disabled={currentColumnIndex === 0}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-lg transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 p-2 rounded-lg transition-all",
                           currentColumnIndex === 0 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m15 18-6-6 6-6" />
                         </svg>
                       </button>
@@ -2796,8 +2796,8 @@ const Board = () => {
                       {/* Sort dropdown */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 p-2 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M3 6h18"/>
                               <path d="M7 12h10"/>
                               <path d="M10 18h4"/>
@@ -2805,7 +2805,7 @@ const Board = () => {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border-border z-[100]" align="start">
-                          <DropdownMenuLabel className="text-base">Sorteer op</DropdownMenuLabel>
+                          <DropdownMenuLabel className="text-sm">Sorteer op</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => setMobileSortBy("position")} className={cn("text-sm py-2", mobileSortBy === "position" ? "bg-accent" : "")}>
                             Positie
@@ -2828,12 +2828,12 @@ const Board = () => {
                       {/* Column name - centered with dropdown navigation */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="text-2xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:opacity-80 transition-opacity cursor-pointer">
+                          <button className="text-xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:opacity-80 transition-opacity cursor-pointer">
                             {column.name}
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-background border-border z-[100]" align="center">
-                          <DropdownMenuLabel className="text-base">Ga naar kolom</DropdownMenuLabel>
+                          <DropdownMenuLabel className="text-sm">Ga naar kolom</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           {columns.map((col, idx) => (
                             <DropdownMenuItem 
@@ -2850,7 +2850,7 @@ const Board = () => {
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
                         <DialogTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-4 py-2.5 rounded-lg font-bold text-2xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.5)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border border-white/40 dark:border-white/20 px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.5)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
                             +
                           </button>
                         </DialogTrigger>
@@ -2931,13 +2931,13 @@ const Board = () => {
                         }}
                         disabled={currentColumnIndex === columns.length - 1}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-2.5 rounded-lg transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 p-2 rounded-lg transition-all",
                           currentColumnIndex === columns.length - 1 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                           <path d="m9 18 6-6-6-6" />
                         </svg>
                       </button>
@@ -2952,7 +2952,7 @@ const Board = () => {
                   </div>
                   
                   {/* Tasks */}
-                  <div className="space-y-2.5 flex-1">{sortTasks(filterTasks(getColumnTasks(column.id))).map(task => {
+                  <div className="space-y-2 flex-1">{sortTasks(filterTasks(getColumnTasks(column.id))).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
                     
@@ -2975,20 +2975,20 @@ const Board = () => {
                         <SimpleTaskCard taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <button className="absolute top-2 right-2 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-2 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <button className="absolute top-1.5 right-1.5 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                 <path d="M7 7h10M7 12h10M7 17h10"/>
                               </svg>
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="bg-background border-border z-[100]" align="end">
-                            <DropdownMenuLabel className="text-base">Verplaats naar</DropdownMenuLabel>
+                            <DropdownMenuLabel className="text-sm">Verplaats naar</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {columns.filter(col => col.id !== column.id).map((col) => (
                               <DropdownMenuItem 
                                 key={col.id} 
                                 onClick={(e) => handleMoveTask(e, col.id)} 
-                                className="text-sm py-2"
+                                className="text-xs py-1.5"
                               >
                                 {col.name}
                               </DropdownMenuItem>
@@ -2998,43 +2998,43 @@ const Board = () => {
                       </div>;
                     }
                     return <div key={task.id} className="relative">
-                      <article onClick={() => openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[20px] p-4 cursor-pointer hover:-translate-y-0.5 transition-all duration-300 before:absolute before:inset-0 before:rounded-[20px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[19px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, isOverdue && "animate-overdue-glow")}>
-                          <div className="flex flex-col gap-2.5">
+                      <article onClick={() => openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border rounded-[16px] p-3 cursor-pointer hover:-translate-y-0.5 transition-all duration-300 before:absolute before:inset-0 before:rounded-[16px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, isOverdue && "animate-overdue-glow")}>
+                          <div className="flex flex-col gap-2">
                             {/* Badges eerst - deadline en priority */}
-                            <div className="flex items-center gap-1.5 flex-wrap relative z-10">
+                            <div className="flex items-center gap-1 flex-wrap relative z-10">
                               <AttachmentCount taskId={task.id} />
-                              {task.due_date && <span className={`inline-block px-2.5 py-1.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                              {task.due_date && <span className={`inline-block px-2 py-1 rounded-full text-[10px] font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
                                   📅 {format(new Date(task.due_date), "d MMM", {
                               locale: getDateLocale()
                             })}
                                 </span>}
-                              {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-2.5 py-1.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                              {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-2 py-1 rounded-full text-[10px] font-bold border", getPriorityBadge(task.priority)!.color)}>
                                   {getPriorityBadge(task.priority)!.label}
                                 </span>}
                             </div>
                             
                             {/* Titel */}
-                            <h4 className="font-extrabold text-lg leading-tight text-foreground relative z-10">
+                            <h4 className="font-extrabold text-base leading-tight text-foreground relative z-10">
                               {task.title}
                             </h4>
                           </div>
                         </article>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <button className="absolute top-2 right-2 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-2 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                            <button className="absolute top-1.5 right-1.5 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                 <path d="M7 7h10M7 12h10M7 17h10"/>
                               </svg>
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="bg-background border-border z-[100]" align="end">
-                            <DropdownMenuLabel className="text-base">Verplaats naar</DropdownMenuLabel>
+                            <DropdownMenuLabel className="text-sm">Verplaats naar</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {columns.filter(col => col.id !== column.id).map((col) => (
                               <DropdownMenuItem 
                                 key={col.id} 
                                 onClick={(e) => handleMoveTask(e, col.id)} 
-                                className="text-sm py-2"
+                                className="text-xs py-1.5"
                               >
                                 {col.name}
                               </DropdownMenuItem>
