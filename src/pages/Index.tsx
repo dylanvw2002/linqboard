@@ -273,26 +273,28 @@ const Index = () => {
                   {features.map((feature, index) => {
                   const Icon = feature.icon;
                   return <CarouselItem key={index}>
-                        <article className={`group relative bg-card rounded-2xl p-8 border border-border transition-all duration-500 h-[280px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                        <article className={`group relative bg-card rounded-2xl p-6 border border-border transition-all duration-500 h-[340px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                           {/* Gradient Background */}
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
                           
                           {/* Content */}
-                          <div className="relative z-10 flex flex-col h-full">
+                          <div className="relative z-10 flex flex-col h-full justify-between">
                             {/* Icon */}
-                            <div className="mb-6 relative flex-shrink-0">
+                            <div className="mb-4 relative flex-shrink-0">
                               <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
                                 <Icon className="w-8 h-8 text-white" aria-hidden="true" />
                               </div>
                             </div>
 
                             {/* Text */}
-                            <h3 className="text-xl font-bold mb-3 flex-shrink-0">
-                              {feature.title}
-                            </h3>
-                            <p className="text-muted-foreground leading-relaxed flex-grow">
-                              {feature.description}
-                            </p>
+                            <div className="flex-1 flex flex-col">
+                              <h3 className="text-xl font-bold mb-3 flex-shrink-0">
+                                {feature.title}
+                              </h3>
+                              <p className="text-base text-muted-foreground leading-relaxed">
+                                {feature.description}
+                              </p>
+                            </div>
                           </div>
 
                           {/* Corner Accent */}
