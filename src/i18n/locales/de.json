@@ -1,4 +1,12 @@
 {
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Visuelle Projektverwaltung für Teams",
+      "description": "Verwalten Sie Aufgaben, arbeiten Sie in Echtzeit zusammen und halten Sie Ihr Team mit LinqBoard synchronisiert. Das moderne Aufgabenverwaltungstool für effiziente Teams.",
+      "keywords": "Projektverwaltung, Aufgabenverwaltung, Zusammenarbeit, Team, Kanban, Produktivität, LinqBoard",
+      "heroImageAlt": "LinqBoard-Maskottchen mit moderner Aufgabenverwaltungsoberfläche"
+    }
+  },
   "common": {
     "loading": "Lädt...",
     "save": "Speichern",

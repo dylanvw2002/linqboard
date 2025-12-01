@@ -1,4 +1,12 @@
 {
+  "seo": {
+    "home": {
+      "title": "LinqBoard - Gestión Visual de Proyectos para Equipos",
+      "description": "Gestiona tareas, colabora en tiempo real y mantén a tu equipo sincronizado con LinqBoard. La herramienta moderna de gestión de tareas para equipos eficientes.",
+      "keywords": "gestión de proyectos, gestión de tareas, colaboración, equipo, kanban, productividad, LinqBoard",
+      "heroImageAlt": "Mascota de LinqBoard con interfaz moderna de gestión de tareas"
+    }
+  },
   "common": {
     "loading": "Cargando...",
     "save": "Guardar",
