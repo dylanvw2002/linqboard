@@ -192,11 +192,11 @@ export const TaskStack = ({
 
       {/* Dialog voor expanded view */}
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent className="w-[100vw] h-[100vh] sm:w-auto sm:h-auto sm:max-w-3xl sm:max-h-[85vh] max-w-none max-h-none overflow-visible flex flex-col sm:rounded-lg rounded-none" onOpenAutoFocus={(e) => e.preventDefault()}>
-          <DialogHeader className="shrink-0">
+        <DialogContent className="w-screen h-[100dvh] sm:w-auto sm:h-auto sm:max-w-3xl sm:max-h-[85vh] overflow-visible flex flex-col sm:rounded-lg rounded-none border-0 sm:border" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <DialogHeader className="shrink-0 px-4 pt-safe sm:pt-6 pb-3 border-b sm:border-0">
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto flex-1 px-4 sm:px-6 -mx-4 sm:-mx-6 py-4" style={{ scrollbarWidth: 'thin' }}>
+          <div className="overflow-y-auto flex-1 px-4 sm:px-6 py-4 pb-safe" style={{ scrollbarWidth: 'thin' }}>
             <div className="grid gap-3 py-2 px-4">
               {children.map((child, index) => (
                 <div 
