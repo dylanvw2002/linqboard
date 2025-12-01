@@ -145,7 +145,11 @@
     "editTask": "Taak bewerken",
     "editModeOn": "Bewerkmodus inschakelen",
     "editModeOff": "Bewerkmodus uit",
-    "editModeActive": "Bewerkmodus actief - Klik op HEADER of TAAK GEBIED → sleep de handvatten om te vergroten/verkleinen"
+    "editModeActive": "Bewerkmodus actief - Klik op HEADER of TAAK GEBIED → sleep de handvatten om te vergroten/verkleinen",
+    "exportTask": "Exporteren",
+    "exportTaskTitle": "Taak exporteren naar email",
+    "exportEmails": "E-mailadressen",
+    "exportEmailsPlaceholder": "naam@voorbeeld.nl, ander@voorbeeld.nl"
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
