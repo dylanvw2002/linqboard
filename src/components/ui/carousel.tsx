@@ -47,6 +47,7 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         watchDrag: true,
         skipSnaps: false,
         dragFree: false,
+        containScroll: "trimSnaps",
       },
       plugins,
     );
