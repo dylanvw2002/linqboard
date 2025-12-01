@@ -26,7 +26,9 @@ import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
 import { useRef, useState } from "react";
 const Index = () => {
-  const { t } = useTranslation();
+  const {
+    t
+  } = useTranslation();
   const [isYearly, setIsYearly] = useState(false);
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
@@ -35,7 +37,6 @@ const Index = () => {
     delay: 3000,
     stopOnInteraction: false
   }));
-  
   const featuresAutoplayPlugin = useRef(Autoplay({
     delay: 3000,
     stopOnInteraction: false
@@ -309,19 +310,14 @@ const Index = () => {
 
             {/* Features Carousel - Mobile */}
             <div className="md:hidden">
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
-                plugins={[featuresAutoplayPlugin.current]}
-                className="w-full"
-              >
+              <Carousel opts={{
+              align: "start",
+              loop: true
+            }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
                 <CarouselContent>
                   {features.map((feature, index) => {
-                    const Icon = feature.icon;
-                    return (
-                      <CarouselItem key={index}>
+                  const Icon = feature.icon;
+                  return <CarouselItem key={index}>
                         <article className={`group relative bg-card rounded-2xl p-8 border border-border transition-all duration-500 h-[280px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                           {/* Gradient Background */}
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
@@ -347,9 +343,8 @@ const Index = () => {
                           {/* Corner Accent */}
                           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
                         </article>
-                      </CarouselItem>
-                    );
-                  })}
+                      </CarouselItem>;
+                })}
                 </CarouselContent>
                 <CarouselPrevious className="hidden sm:flex" />
                 <CarouselNext className="hidden sm:flex" />
@@ -624,13 +619,11 @@ const Index = () => {
                       </span>
                       <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                     </div>
-                    {isYearly && (
-                      <div className="mt-1">
+                    {isYearly && <div className="mt-1">
                         <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
                           {t('pricing.saveAmount').replace('{amount}', '16.00')}
                         </Badge>
-                      </div>
-                    )}
+                      </div>}
                   </div>
 
                   {/* Divider */}
@@ -660,13 +653,11 @@ const Index = () => {
                     <span className="text-3xl font-bold">€{isYearly ? '199.00' : '19.99'}</span>
                     <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                   </div>
-                  {isYearly && (
-                    <div className="mt-1">
+                  {isYearly && <div className="mt-1">
                       <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
                         {t('pricing.saveAmount').replace('{amount}', '40.88')}
                       </Badge>
-                    </div>
-                  )}
+                    </div>}
                 </div>
 
                 {/* Divider */}
@@ -695,13 +686,11 @@ const Index = () => {
                     <span className="text-3xl font-bold">€{isYearly ? '390.00' : '39.00'}</span>
                     <span className="text-xs text-muted-foreground">/{isYearly ? t('pricing.year') : t('pricing.month')}</span>
                   </div>
-                  {isYearly && (
-                    <div className="mt-1">
+                  {isYearly && <div className="mt-1">
                       <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-500/20">
                         {t('pricing.saveAmount').replace('{amount}', '78.00')}
                       </Badge>
-                    </div>
-                  )}
+                    </div>}
                 </div>
 
                 {/* Divider */}
@@ -742,29 +731,7 @@ const Index = () => {
 
         {/* SoloLinq CTA Section - responsive */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-[1920px]">
-          <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-12 bg-primary/5 backdrop-blur-sm rounded-2xl border border-primary/20 hover:border-primary/40 transition-all duration-300 p-5 sm:p-6 md:p-7 lg:p-8 xl:p-10">
-            <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-5 lg:gap-6 xl:gap-8">
-              <div className="flex-shrink-0">
-                <img src={sololinqLogo} alt="SoloLinq Logo" className="h-16 sm:h-18 md:h-20 lg:h-24 xl:h-28 w-auto" loading="lazy" />
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 lg:mb-4">
-                  {t('landing.soloTitle')}
-                </h2>
-                <p className="text-muted-foreground text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
-                  {t('landing.soloDescription')}
-                </p>
-              </div>
-              <div className="flex-shrink-0">
-                <a href="https://sololinq.lovable.app" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="text-sm sm:text-base md:text-lg lg:text-xl px-5 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-7 border-2">
-                    {t('landing.soloButton')}
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
-                  </Button>
-                </a>
-              </div>
-            </div>
-          </div>
+          
         </section>
 
         {/* Footer - responsive */}
