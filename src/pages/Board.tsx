@@ -2603,7 +2603,7 @@ const Board = () => {
           {isMobile && (
             <button 
               onClick={() => navigate(isDemo ? "/" : "/dashboard")} 
-              className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border border-white/50 dark:border-white/30 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-2 rounded-lg shrink-0 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+              className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border border-white/50 dark:border-white/30 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-1.5 rounded-lg shrink-0 relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
