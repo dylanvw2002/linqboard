@@ -22,31 +22,85 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { BackgroundIcons } from "@/components/landing/BackgroundIcons";
 const Index = () => {
   const {
     t
   } = useTranslation();
   const [isYearly, setIsYearly] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
   
-  // Detect mobile devices
-  const isMobile = window.innerWidth < 768;
+  // Create autoplay plugins that respect scroll state
+  const partnersAutoplayPlugin = useRef(Autoplay({
+    delay: 4000,
+    stopOnInteraction: true,
+    stopOnMouseEnter: true,
+    playOnInit: false
+  }));
   
-  // Only enable autoplay on desktop for better mobile performance
-  const partnersAutoplayPlugin = useRef(!isMobile ? Autoplay({
+  const featuresAutoplayPlugin = useRef(Autoplay({
     delay: 4000,
     stopOnInteraction: true,
-    stopOnMouseEnter: true
-  }) : null);
-  const featuresAutoplayPlugin = useRef(!isMobile ? Autoplay({
-    delay: 4000,
-    stopOnInteraction: true,
-    stopOnMouseEnter: true
-  }) : null);
+    stopOnMouseEnter: true,
+    playOnInit: false
+  }));
+
+  // Detect scrolling and pause autoplay
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolling(true);
+      
+      // Stop autoplay when scrolling
+      if (partnersAutoplayPlugin.current) {
+        partnersAutoplayPlugin.current.stop();
+      }
+      if (featuresAutoplayPlugin.current) {
+        featuresAutoplayPlugin.current.stop();
+      }
+      
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      
+      // Resume autoplay 1 second after scrolling stops
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+        if (partnersAutoplayPlugin.current) {
+          partnersAutoplayPlugin.current.play();
+        }
+        if (featuresAutoplayPlugin.current) {
+          featuresAutoplayPlugin.current.play();
+        }
+      }, 1000);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Start autoplay after initial delay
+    const initialTimeout = setTimeout(() => {
+      if (partnersAutoplayPlugin.current) {
+        partnersAutoplayPlugin.current.play();
+      }
+      if (featuresAutoplayPlugin.current) {
+        featuresAutoplayPlugin.current.play();
+      }
+    }, 1000);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      clearTimeout(initialTimeout);
+    };
+  }, []);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
@@ -268,7 +322,7 @@ const Index = () => {
               <Carousel opts={{
               align: "start",
               loop: true
-            }} plugins={[featuresAutoplayPlugin.current].filter(Boolean)} className="w-full">
+            }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
                 <CarouselContent>
                   {features.map((feature, index) => {
                   const Icon = feature.icon;
@@ -430,7 +484,7 @@ const Index = () => {
             <Carousel opts={{
             align: "start",
             loop: true
-          }} plugins={[partnersAutoplayPlugin.current].filter(Boolean)} className="w-full max-w-6xl mx-auto">
+          }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
               <CarouselContent>
                 {/* NRG Totaal */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
