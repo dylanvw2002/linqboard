@@ -180,7 +180,8 @@ const Index = () => {
       
       {/* Preload critical images */}
       <link rel="preload" as="image" href={logo} />
-      <link rel="preload" as="image" href={linqboardMascot} />
+      <link rel="preload" as="image" href={linqboardMascot} fetchPriority="high" />
+      <link rel="preload" as="image" href={linqboardMascotNoLogo} fetchPriority="high" />
       
       <div className="min-h-[100dvh] bg-background md:bg-gradient-to-br md:from-background md:via-primary/5 md:to-accent/5 overflow-x-hidden pb-20">
         {/* Background Icons Pattern - Lazy loaded with Intersection Observer */}
@@ -194,7 +195,7 @@ const Index = () => {
                 <div className="sm:hidden">
                   <LanguageSwitcher />
                 </div>
-                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="hidden sm:block h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
+                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="hidden sm:block h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" decoding="async" />
               </div>
               <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
                 <div className="hidden sm:block">
@@ -242,8 +243,8 @@ const Index = () => {
 
             {/* Right Visual Mockup - responsive images */}
             <div className="relative -mt-4 sm:-mt-6 lg:-mt-12 xl:-mt-16 flex justify-center items-center order-first lg:order-last">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 sm:w-2/5 lg:hidden h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
-              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-3/4 xl:w-4/5 2xl:w-full h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 sm:w-2/5 lg:hidden h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-3/4 xl:w-4/5 2xl:w-full h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
               
               {/* Decorative elements */}
               
@@ -379,7 +380,7 @@ const Index = () => {
                   
                   {/* Attribution - responsive */}
                   <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3 border-t border-border/50">
-                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" />
+                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" decoding="async" />
                     <div>
                       <p className="font-semibold text-xs sm:text-sm lg:text-base xl:text-lg text-foreground">{t('landing.testimonial1Company')}</p>
                       <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{t('landing.testimonial1Role')}</p>
@@ -400,7 +401,7 @@ const Index = () => {
                   
                   {/* Attribution - responsive */}
                   <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3 border-t border-border/50">
-                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" />
+                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" decoding="async" />
                     <div>
                       <p className="font-semibold text-xs sm:text-sm lg:text-base xl:text-lg text-foreground">{t('landing.testimonial2Company')}</p>
                       <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{t('landing.testimonial2Role')}</p>
@@ -418,7 +419,7 @@ const Index = () => {
             <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 2xl:gap-24 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   {/* Left: Image - responsive */}
                   <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
-                    <img alt="Linqboard Demo Preview" className="w-2/5 sm:w-1/3 lg:w-2/5 xl:w-1/2 2xl:w-3/5 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} />
+                    <img alt="Linqboard Demo Preview" className="w-2/5 sm:w-1/3 lg:w-2/5 xl:w-1/2 2xl:w-3/5 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} decoding="async" />
                   </div>
 
                   {/* Right: Content - responsive */}
@@ -479,28 +480,28 @@ const Index = () => {
                 {/* NRG Totaal */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" />
+                    <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" decoding="async" />
                   </div>
                 </CarouselItem>
                 
                 {/* NutriBuddi */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
+                    <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" decoding="async" />
                   </div>
                 </CarouselItem>
                 
                 {/* Onderhoudscontracten.com */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" />
+                    <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" decoding="async" />
                   </div>
                 </CarouselItem>
                 
                 {/* ODÉA Vastgoed Service */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" />
+                    <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" decoding="async" />
                   </div>
                 </CarouselItem>
                 
