@@ -22,69 +22,30 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { BackgroundIcons } from "@/components/landing/BackgroundIcons";
 const Index = () => {
   const {
     t
   } = useTranslation();
   const [isYearly, setIsYearly] = useState(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
   
-  // Create autoplay plugins - cards visible for 5 seconds
+  // Create autoplay plugins that start automatically
   const partnersAutoplayPlugin = useRef(Autoplay({
     delay: 5000,
     stopOnInteraction: false,
-    stopOnMouseEnter: true,
-    playOnInit: false
+    stopOnMouseEnter: true
   }));
   
   const featuresAutoplayPlugin = useRef(Autoplay({
     delay: 5000,
     stopOnInteraction: false,
-    stopOnMouseEnter: true,
-    playOnInit: false
+    stopOnMouseEnter: true
   }));
-
-  // Start autoplay 1 second after scrolling stops
-  useEffect(() => {
-    const handleScroll = () => {
-      // Stop autoplay when scrolling
-      partnersAutoplayPlugin.current?.stop();
-      featuresAutoplayPlugin.current?.stop();
-      
-      // Clear existing timeout
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      
-      // Start autoplay 1 second after scrolling stops
-      scrollTimeoutRef.current = setTimeout(() => {
-        partnersAutoplayPlugin.current?.play();
-        featuresAutoplayPlugin.current?.play();
-      }, 1000);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Initial start after 1 second
-    const initialTimeout = setTimeout(() => {
-      partnersAutoplayPlugin.current?.play();
-      featuresAutoplayPlugin.current?.play();
-    }, 1000);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      clearTimeout(initialTimeout);
-    };
-  }, []);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
