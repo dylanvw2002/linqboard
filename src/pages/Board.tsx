@@ -2968,7 +2968,7 @@ const Board = () => {
                         <SimpleTaskCard taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <button className="absolute top-1.5 right-1.5 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
+                            <button className="absolute top-1.5 right-1.5 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                 <path d="M7 7h10M7 12h10M7 17h10"/>
                               </svg>
@@ -3014,7 +3014,7 @@ const Board = () => {
                         </article>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                            <button className="absolute top-1.5 right-1.5 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all shadow-lg">
+                            <button className="absolute top-1.5 right-1.5 z-20 backdrop-blur-[60px] bg-white/40 dark:bg-card/40 border border-white/50 dark:border-white/30 p-1.5 rounded-lg hover:bg-white/60 dark:hover:bg-card/60 transition-all">
                               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                 <path d="M7 7h10M7 12h10M7 17h10"/>
                               </svg>
