@@ -22,8 +22,11 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { BackgroundIcons } from "@/components/landing/BackgroundIcons";
+import type { CarouselApi } from "@/components/ui/carousel";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 const Index = () => {
   const {
     t
@@ -31,6 +34,25 @@ const Index = () => {
   const [isYearly, setIsYearly] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMobile = useIsMobile();
+  
+  // Carousel API refs
+  const [featuresApi, setFeaturesApi] = useState<CarouselApi>();
+  const [partnersApi, setPartnersApi] = useState<CarouselApi>();
+  
+  // Swipe state for features carousel
+  const [featuresSwipeStartX, setFeaturesSwipeStartX] = useState<number>(0);
+  const [featuresSwipeStartY, setFeaturesSwipeStartY] = useState<number>(0);
+  const [featuresSwiping, setFeaturesSwiping] = useState(false);
+  
+  // Swipe state for partners carousel
+  const [partnersSwipeStartX, setPartnersSwipeStartX] = useState<number>(0);
+  const [partnersSwipeStartY, setPartnersSwipeStartY] = useState<number>(0);
+  const [partnersSwiping, setPartnersSwiping] = useState(false);
+  
+  // Current slide tracking
+  const [featuresCurrentSlide, setFeaturesCurrentSlide] = useState(0);
+  const [partnersCurrentSlide, setPartnersCurrentSlide] = useState(0);
   
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
@@ -87,6 +109,112 @@ const Index = () => {
       }
     };
   }, []);
+  
+  // Listen to carousel changes
+  useEffect(() => {
+    if (!featuresApi) return;
+    
+    const onSelect = () => {
+      setFeaturesCurrentSlide(featuresApi.selectedScrollSnap());
+    };
+    
+    featuresApi.on("select", onSelect);
+    onSelect();
+    
+    return () => {
+      featuresApi.off("select", onSelect);
+    };
+  }, [featuresApi]);
+  
+  useEffect(() => {
+    if (!partnersApi) return;
+    
+    const onSelect = () => {
+      setPartnersCurrentSlide(partnersApi.selectedScrollSnap());
+    };
+    
+    partnersApi.on("select", onSelect);
+    onSelect();
+    
+    return () => {
+      partnersApi.off("select", onSelect);
+    };
+  }, [partnersApi]);
+  
+  // Swipe handlers for features carousel
+  const handleFeaturesSwipeStart = useCallback((e: React.TouchEvent) => {
+    if (!isMobile || e.touches.length !== 1) return;
+    setFeaturesSwipeStartX(e.touches[0].clientX);
+    setFeaturesSwipeStartY(e.touches[0].clientY);
+    setFeaturesSwiping(true);
+  }, [isMobile]);
+  
+  const handleFeaturesSwipeMove = useCallback((e: React.TouchEvent) => {
+    if (!featuresSwiping || e.touches.length !== 1) return;
+    
+    const deltaX = e.touches[0].clientX - featuresSwipeStartX;
+    const deltaY = e.touches[0].clientY - featuresSwipeStartY;
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+    }
+  }, [featuresSwiping, featuresSwipeStartX, featuresSwipeStartY]);
+  
+  const handleFeaturesSwipeEnd = useCallback((e: React.TouchEvent) => {
+    if (!featuresSwiping || !featuresApi) return;
+    
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - featuresSwipeStartX;
+    const deltaY = touch.clientY - featuresSwipeStartY;
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        featuresApi.scrollPrev();
+      } else {
+        featuresApi.scrollNext();
+      }
+    }
+    
+    setFeaturesSwiping(false);
+  }, [featuresSwiping, featuresApi, featuresSwipeStartX, featuresSwipeStartY]);
+  
+  // Swipe handlers for partners carousel
+  const handlePartnersSwipeStart = useCallback((e: React.TouchEvent) => {
+    if (!isMobile || e.touches.length !== 1) return;
+    setPartnersSwipeStartX(e.touches[0].clientX);
+    setPartnersSwipeStartY(e.touches[0].clientY);
+    setPartnersSwiping(true);
+  }, [isMobile]);
+  
+  const handlePartnersSwipeMove = useCallback((e: React.TouchEvent) => {
+    if (!partnersSwiping || e.touches.length !== 1) return;
+    
+    const deltaX = e.touches[0].clientX - partnersSwipeStartX;
+    const deltaY = e.touches[0].clientY - partnersSwipeStartY;
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+    }
+  }, [partnersSwiping, partnersSwipeStartX, partnersSwipeStartY]);
+  
+  const handlePartnersSwipeEnd = useCallback((e: React.TouchEvent) => {
+    if (!partnersSwiping || !partnersApi) return;
+    
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - partnersSwipeStartX;
+    const deltaY = touch.clientY - partnersSwipeStartY;
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        partnersApi.scrollPrev();
+      } else {
+        partnersApi.scrollNext();
+      }
+    }
+    
+    setPartnersSwiping(false);
+  }, [partnersSwiping, partnersApi, partnersSwipeStartX, partnersSwipeStartY]);
+  
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
@@ -306,49 +434,78 @@ const Index = () => {
 
             {/* Features Carousel - Mobile */}
             <div className="md:hidden px-4">
-              <Carousel opts={{
-              align: "center",
-              loop: true,
-              watchDrag: true,
-              dragFree: false
-            }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
-                <CarouselContent className="ml-0">
-                  {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return <CarouselItem key={index} className="pl-0 basis-full">
-                        <article className={`group relative bg-card rounded-2xl p-6 border border-border transition-all duration-500 h-[340px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ contain: 'layout style paint' }}>
-                          {/* Gradient Background */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
-                          
-                          {/* Content */}
-                          <div className="relative z-10 flex flex-col h-full justify-between">
-                            {/* Icon */}
-                            <div className="mb-4 relative flex-shrink-0">
-                              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
-                                <Icon className="w-8 h-8 text-white" aria-hidden="true" />
+              <div
+                onTouchStart={handleFeaturesSwipeStart}
+                onTouchMove={handleFeaturesSwipeMove}
+                onTouchEnd={handleFeaturesSwipeEnd}
+              >
+                <Carousel 
+                  setApi={setFeaturesApi}
+                  opts={{
+                    align: "center",
+                    loop: true,
+                    watchDrag: true,
+                    dragFree: false
+                  }} 
+                  plugins={[featuresAutoplayPlugin.current]} 
+                  className="w-full"
+                >
+                  <CarouselContent className="ml-0">
+                    {features.map((feature, index) => {
+                    const Icon = feature.icon;
+                    return <CarouselItem key={index} className="pl-0 basis-full">
+                          <article className={`group relative bg-card rounded-2xl p-6 border border-border transition-all duration-500 h-[340px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ contain: 'layout style paint' }}>
+                            {/* Gradient Background */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
+                            
+                            {/* Content */}
+                            <div className="relative z-10 flex flex-col h-full justify-between">
+                              {/* Icon */}
+                              <div className="mb-4 relative flex-shrink-0">
+                                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg">
+                                  <Icon className="w-8 h-8 text-white" aria-hidden="true" />
+                                </div>
+                              </div>
+
+                              {/* Text */}
+                              <div className="flex-1 flex flex-col">
+                                <h3 className="text-xl font-bold mb-3 flex-shrink-0">
+                                  {feature.title}
+                                </h3>
+                                <p className="text-base text-muted-foreground leading-relaxed">
+                                  {feature.description}
+                                </p>
                               </div>
                             </div>
 
-                            {/* Text */}
-                            <div className="flex-1 flex flex-col">
-                              <h3 className="text-xl font-bold mb-3 flex-shrink-0">
-                                {feature.title}
-                              </h3>
-                              <p className="text-base text-muted-foreground leading-relaxed">
-                                {feature.description}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Corner Accent */}
-                          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
-                        </article>
-                      </CarouselItem>;
-                })}
-                </CarouselContent>
-                <CarouselPrevious className="hidden sm:flex" />
-                <CarouselNext className="hidden sm:flex" />
-              </Carousel>
+                            {/* Corner Accent */}
+                            <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full" />
+                          </article>
+                        </CarouselItem>;
+                  })}
+                  </CarouselContent>
+                  <CarouselPrevious className="hidden sm:flex" />
+                  <CarouselNext className="hidden sm:flex" />
+                </Carousel>
+              </div>
+              
+              {/* Swipe dots indicator */}
+              {isMobile && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {features.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => featuresApi?.scrollTo(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        index === featuresCurrentSlide
+                          ? 'w-8 bg-primary'
+                          : 'w-2 bg-muted-foreground/30'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -470,58 +627,87 @@ const Index = () => {
               {t('landing.trustedBy')}
             </p>
             
-            <Carousel opts={{
-            align: "center",
-            loop: true,
-            watchDrag: true,
-            dragFree: false
-          }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
-              <CarouselContent className="-ml-0">
-                {/* NRG Totaal */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
-                    <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" decoding="async" />
-                  </div>
-                </CarouselItem>
-                
-                {/* NutriBuddi */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" decoding="async" />
-                  </div>
-                </CarouselItem>
-                
-                {/* Onderhoudscontracten.com */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" decoding="async" />
-                  </div>
-                </CarouselItem>
-                
-                {/* ODÉA Vastgoed Service */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" decoding="async" />
-                  </div>
-                </CarouselItem>
-                
-                {/* Zorgeloos Vastgoed */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
-                  </div>
-                </CarouselItem>
-                
-                {/* Fleature */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
-                  <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px] max-h-[180px]" style={{ contain: 'layout style paint' }}>
-                    <img src={fleatureLogo} alt="Fleature" className="h-28 sm:h-32 w-auto transition-all object-contain" loading="lazy" width="120" height="48" />
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious className="hidden md:flex" />
-              <CarouselNext className="hidden md:flex" />
-            </Carousel>
+            <div
+              onTouchStart={handlePartnersSwipeStart}
+              onTouchMove={handlePartnersSwipeMove}
+              onTouchEnd={handlePartnersSwipeEnd}
+            >
+              <Carousel 
+                setApi={setPartnersApi}
+                opts={{
+                  align: "center",
+                  loop: true,
+                  watchDrag: true,
+                  dragFree: false
+                }} 
+                plugins={[partnersAutoplayPlugin.current]} 
+                className="w-full max-w-6xl mx-auto"
+              >
+                <CarouselContent className="-ml-0">
+                  {/* NRG Totaal */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
+                      <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" decoding="async" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* NutriBuddi */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
+                      <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" decoding="async" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* Onderhoudscontracten.com */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
+                      <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" decoding="async" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* ODÉA Vastgoed Service */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
+                      <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" decoding="async" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* Zorgeloos Vastgoed */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
+                      <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
+                    </div>
+                  </CarouselItem>
+                  
+                  {/* Fleature */}
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                    <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px] max-h-[180px]" style={{ contain: 'layout style paint' }}>
+                      <img src={fleatureLogo} alt="Fleature" className="h-28 sm:h-32 w-auto transition-all object-contain" loading="lazy" width="120" height="48" />
+                    </div>
+                  </CarouselItem>
+                </CarouselContent>
+                <CarouselPrevious className="hidden md:flex" />
+                <CarouselNext className="hidden md:flex" />
+              </Carousel>
+            </div>
+            
+            {/* Swipe dots indicator */}
+            {isMobile && (
+              <div className="flex justify-center gap-2 mt-6">
+                {[0, 1, 2, 3, 4, 5].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => partnersApi?.scrollTo(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      index === partnersCurrentSlide
+                        ? 'w-8 bg-primary'
+                        : 'w-2 bg-muted-foreground/30'
+                    }`}
+                    aria-label={`Go to partner ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
