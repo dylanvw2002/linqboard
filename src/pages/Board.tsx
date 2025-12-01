@@ -2942,16 +2942,9 @@ const Board = () => {
                         </svg>
                       </button>
                     </div>
-                    
-                    {/* Swipe indicator - subtle visual feedback */}
-                    <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-center">
-                      <p className="text-xs text-muted-foreground">
-                        ← Swipe om te navigeren →
-                      </p>
                     </div>
-                  </div>
-                  
-                  {/* Tasks */}
+                   
+                   {/* Tasks */}
                   <div className="space-y-2 flex-1">{sortTasks(filterTasks(getColumnTasks(column.id))).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
