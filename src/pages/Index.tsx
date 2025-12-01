@@ -69,7 +69,7 @@ const Index = () => {
         clearTimeout(scrollTimeoutRef.current);
       }
       
-      // Resume autoplay 1 second after scrolling stops
+      // Resume autoplay 500ms after scrolling stops
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
         if (partnersAutoplayPlugin.current) {
@@ -78,12 +78,12 @@ const Index = () => {
         if (featuresAutoplayPlugin.current) {
           featuresAutoplayPlugin.current.play();
         }
-      }, 1000);
+      }, 500);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Start autoplay after initial delay
+    // Start autoplay after initial 300ms delay
     const initialTimeout = setTimeout(() => {
       if (partnersAutoplayPlugin.current) {
         partnersAutoplayPlugin.current.play();
@@ -91,7 +91,7 @@ const Index = () => {
       if (featuresAutoplayPlugin.current) {
         featuresAutoplayPlugin.current.play();
       }
-    }, 1000);
+    }, 300);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
