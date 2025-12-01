@@ -2763,7 +2763,7 @@ const Board = () => {
                   isTransitioning && slideDirection === 'right' && "slide-out-right"
                 )}
               >
-                  <div className={cn("flex items-center justify-between px-2.5 py-1 rounded-[20px] backdrop-blur-[60px] border-2 mb-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[20px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[19px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
+                  <div className={cn("flex items-center justify-between px-2.5 py-0.5 rounded-[20px] backdrop-blur-[60px] border-2 mb-2.5 shadow-[0_4px_12px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[20px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[19px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
                     <div className="flex items-center justify-between w-full gap-1.5">
                       {/* Left arrow */}
                       <button 
