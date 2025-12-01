@@ -2828,7 +2828,7 @@ const Board = () => {
                       {/* Column name - centered with dropdown navigation */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="text-xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:opacity-80 transition-opacity cursor-pointer">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 px-3 py-2 rounded-lg text-xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:bg-white/30 dark:hover:bg-card/30 transition-all cursor-pointer">
                             {column.name}
                           </button>
                         </DropdownMenuTrigger>
