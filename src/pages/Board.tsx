@@ -643,7 +643,10 @@ const Board = () => {
   // Auto scroll to top when changing columns on mobile
   useEffect(() => {
     if (isMobile && mobileMainRef.current) {
-      mobileMainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      // Wait for transition to complete before scrolling
+      setTimeout(() => {
+        mobileMainRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 200);
     }
   }, [currentColumnIndex, isMobile]);
   
