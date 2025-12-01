@@ -34,9 +34,7 @@ export const BackgroundIcons = () => {
   }
 
   return (
-    <div ref={ref} className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Desktop icons - hidden on mobile */}
-      <div className="hidden md:block">
+    <div ref={ref} className="fixed inset-0 pointer-events-none overflow-hidden hidden md:block">
         <Calendar className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
         <Clipboard className="absolute top-[5%] left-[30%] w-10 h-10 text-primary opacity-5" />
         <FileText className="absolute top-[5%] left-[55%] w-10 h-10 text-primary opacity-5" />
@@ -67,24 +65,5 @@ export const BackgroundIcons = () => {
         <Calendar className="absolute top-[80%] left-[60%] w-10 h-10 text-primary opacity-5" />
         <Clipboard className="absolute top-[80%] left-[85%] w-10 h-10 text-primary opacity-5" />
       </div>
-      
-      {/* Mobile icons - fewer and strategically placed */}
-      <div className="block md:hidden">
-        <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-primary opacity-5" />
-        <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-primary opacity-5" />
-        
-        <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-primary opacity-5" />
-        <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-primary opacity-5" />
-        
-        <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
-        <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-primary opacity-5" />
-        
-        <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-primary opacity-5" />
-        <Clipboard className="absolute top-[70%] right-[10%] w-10 h-10 text-primary opacity-5" />
-        
-        <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-primary opacity-5" />
-        <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-primary opacity-5" />
-      </div>
-    </div>
   );
 };
