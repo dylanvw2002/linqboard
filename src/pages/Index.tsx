@@ -22,19 +22,21 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { BackgroundIcons } from "@/components/landing/BackgroundIcons";
 const Index = () => {
   const {
     t
   } = useTranslation();
   const [isYearly, setIsYearly] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
   
-  // Create autoplay plugins that run continuously
+  // Create autoplay plugins
   const partnersAutoplayPlugin = useRef(Autoplay({
     delay: 4000,
     stopOnInteraction: false,
@@ -48,6 +50,43 @@ const Index = () => {
     stopOnMouseEnter: false,
     stopOnFocusIn: false
   }));
+
+  // Pause autoplay during scroll to prevent jank
+  useEffect(() => {
+    let ticking = false;
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolling(true);
+          partnersAutoplayPlugin.current?.stop();
+          featuresAutoplayPlugin.current?.stop();
+          
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+          }
+          
+          scrollTimeoutRef.current = setTimeout(() => {
+            setIsScrolling(false);
+            partnersAutoplayPlugin.current?.play();
+            featuresAutoplayPlugin.current?.play();
+          }, 150);
+          
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
