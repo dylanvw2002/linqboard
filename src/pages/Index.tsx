@@ -34,17 +34,19 @@ const Index = () => {
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
   
-  // Create autoplay plugins that start automatically
+  // Create autoplay plugins that run continuously
   const partnersAutoplayPlugin = useRef(Autoplay({
-    delay: 5000,
+    delay: 4000,
     stopOnInteraction: false,
-    stopOnMouseEnter: true
+    stopOnMouseEnter: false,
+    stopOnFocusIn: false
   }));
   
   const featuresAutoplayPlugin = useRef(Autoplay({
-    delay: 5000,
+    delay: 4000,
     stopOnInteraction: false,
-    stopOnMouseEnter: true
+    stopOnMouseEnter: false,
+    stopOnFocusIn: false
   }));
   const features = [{
     icon: Zap,
@@ -266,7 +268,9 @@ const Index = () => {
             <div className="md:hidden px-4">
               <Carousel opts={{
               align: "center",
-              loop: true
+              loop: true,
+              watchDrag: true,
+              dragFree: false
             }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
                 <CarouselContent className="ml-0">
                   {features.map((feature, index) => {
@@ -428,7 +432,9 @@ const Index = () => {
             
             <Carousel opts={{
             align: "center",
-            loop: true
+            loop: true,
+            watchDrag: true,
+            dragFree: false
           }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
               <CarouselContent className="-ml-0">
                 {/* NRG Totaal */}
