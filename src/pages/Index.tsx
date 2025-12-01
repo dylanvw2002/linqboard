@@ -307,10 +307,10 @@ const Index = () => {
               align: "center",
               loop: true
             }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
-                <CarouselContent className="ml-0">
+                <CarouselContent className="ml-0 gap-4">
                   {features.map((feature, index) => {
                   const Icon = feature.icon;
-                  return <CarouselItem key={index} className="pl-0">
+                  return <CarouselItem key={index} className="pl-0 pr-4">
                         <article className={`group relative bg-card rounded-2xl p-6 border border-border transition-all duration-500 h-[340px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                           {/* Gradient Background */}
                           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
@@ -469,44 +469,44 @@ const Index = () => {
             align: "center",
             loop: true
           }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
-              <CarouselContent className="-ml-0">
+              <CarouselContent className="-ml-0 gap-4">
                 {/* NRG Totaal */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-2">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-4">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
                     <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" />
                   </div>
                 </CarouselItem>
                 
                 {/* NutriBuddi */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-2">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-4">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
                     <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" />
                   </div>
                 </CarouselItem>
                 
                 {/* Onderhoudscontracten.com */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-2">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-4">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
                     <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" />
                   </div>
                 </CarouselItem>
                 
                 {/* ODÉA Vastgoed Service */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-2">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-4">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
                     <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" />
                   </div>
                 </CarouselItem>
                 
                 {/* Zorgeloos Vastgoed */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-2">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-4">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
                     <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
                   </div>
                 </CarouselItem>
                 
                 {/* Fleature */}
-                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-2">
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-2 pr-4">
                   <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px] max-h-[180px]">
                     <img src={fleatureLogo} alt="Fleature" className="h-28 sm:h-32 w-auto transition-all object-contain" loading="lazy" width="120" height="48" />
                   </div>
