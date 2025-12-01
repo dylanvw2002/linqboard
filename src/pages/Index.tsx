@@ -6,8 +6,6 @@ import { SEO } from "@/components/SEO";
 import logo from "@/assets/logo-transparent.png";
 import linqboardMascot from "@/assets/linqboard-mascot-with-logo.png";
 import linqboardMascotNoLogo from "@/assets/linqboard-mascot-new.png";
-import collaborationIllustration from "@/assets/collaboration-illustration.png";
-import linqboardMascotTry from "@/assets/linqboard-mascot-try.png";
 import linqboardMascotChair from "@/assets/linqboard-mascot-chair.png";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import nrgTotaalLogo from "@/assets/partners/nrg-totaal.svg";
@@ -25,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
 import { useRef, useState } from "react";
+import { BackgroundIcons } from "@/components/landing/BackgroundIcons";
 const Index = () => {
   const {
     t
@@ -144,59 +143,8 @@ const Index = () => {
       <link rel="preload" as="image" href={linqboardMascot} />
       
       <div className="min-h-[100dvh] bg-gradient-to-br from-background via-primary/5 to-accent/5 overflow-x-hidden pb-20">
-        {/* Background Icons Pattern - Carefully spaced to prevent any overlap */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {/* Desktop icons - hidden on mobile */}
-          <div className="hidden md:block">
-            <Calendar className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
-            <Clipboard className="absolute top-[5%] left-[30%] w-10 h-10 text-primary opacity-5" />
-            <FileText className="absolute top-[5%] left-[55%] w-10 h-10 text-primary opacity-5" />
-            <Target className="absolute top-[5%] left-[80%] w-10 h-10 text-primary opacity-5" />
-            
-            <Clock className="absolute top-[20%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <CheckSquare className="absolute top-[20%] left-[35%] w-10 h-10 text-primary opacity-5" />
-            <Archive className="absolute top-[20%] left-[60%] w-10 h-10 text-primary opacity-5" />
-            <CheckCircle2 className="absolute top-[20%] left-[85%] w-10 h-10 text-primary opacity-5" />
-            
-            <Zap className="absolute top-[35%] left-[5%] w-10 h-10 text-primary opacity-5" />
-            <Paperclip className="absolute top-[35%] left-[30%] w-10 h-10 text-primary opacity-5" />
-            <Layout className="absolute top-[35%] left-[55%] w-10 h-10 text-primary opacity-5" />
-            <Calendar className="absolute top-[35%] left-[80%] w-10 h-10 text-primary opacity-5" />
-            
-            <Clipboard className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <FileText className="absolute top-[50%] left-[35%] w-10 h-10 text-primary opacity-5" />
-            <Target className="absolute top-[50%] left-[60%] w-10 h-10 text-primary opacity-5" />
-            <Clock className="absolute top-[50%] left-[85%] w-10 h-10 text-primary opacity-5" />
-            
-            <CheckSquare className="absolute top-[65%] left-[5%] w-10 h-10 text-primary opacity-5" />
-            <Archive className="absolute top-[65%] left-[30%] w-10 h-10 text-primary opacity-5" />
-            <CheckCircle2 className="absolute top-[65%] left-[55%] w-10 h-10 text-primary opacity-5" />
-            <Zap className="absolute top-[65%] left-[80%] w-10 h-10 text-primary opacity-5" />
-            
-            <Paperclip className="absolute top-[80%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <Layout className="absolute top-[80%] left-[35%] w-10 h-10 text-primary opacity-5" />
-            <Calendar className="absolute top-[80%] left-[60%] w-10 h-10 text-primary opacity-5" />
-            <Clipboard className="absolute top-[80%] left-[85%] w-10 h-10 text-primary opacity-5" />
-          </div>
-          
-          {/* Mobile icons - fewer and strategically placed */}
-          <div className="block md:hidden">
-            <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-primary opacity-5" />
-            
-            <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-primary opacity-5" />
-            
-            <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-primary opacity-5" />
-            
-            <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <Clipboard className="absolute top-[70%] right-[10%] w-10 h-10 text-primary opacity-5" />
-            
-            <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-primary opacity-5" />
-            <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-primary opacity-5" />
-          </div>
-        </div>
+        {/* Background Icons Pattern - Lazy loaded with Intersection Observer */}
+        <BackgroundIcons />
         
         {/* Header - responsive */}
         <header className="absolute top-0 left-0 right-0 z-50" role="banner">
