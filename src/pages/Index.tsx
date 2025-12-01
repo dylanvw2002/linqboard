@@ -268,7 +268,7 @@ const Index = () => {
               <Carousel opts={{
               align: "start",
               loop: true
-            }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
+            }} plugins={[featuresAutoplayPlugin.current].filter(Boolean)} className="w-full">
                 <CarouselContent>
                   {features.map((feature, index) => {
                   const Icon = feature.icon;
@@ -428,7 +428,7 @@ const Index = () => {
             <Carousel opts={{
             align: "start",
             loop: true
-          }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
+          }} plugins={[partnersAutoplayPlugin.current].filter(Boolean)} className="w-full max-w-6xl mx-auto">
               <CarouselContent>
                 {/* NRG Totaal */}
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
