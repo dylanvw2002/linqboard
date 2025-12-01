@@ -34,7 +34,9 @@ export const BackgroundIcons = () => {
   }
 
   return (
-    <div ref={ref} className="fixed inset-0 pointer-events-none overflow-hidden hidden md:block">
+    <div ref={ref} className="fixed inset-0 pointer-events-none overflow-hidden">
+      {/* Desktop icons - hidden on mobile */}
+      <div className="hidden md:block">
         <Calendar className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
         <Clipboard className="absolute top-[5%] left-[30%] w-10 h-10 text-primary opacity-5" />
         <FileText className="absolute top-[5%] left-[55%] w-10 h-10 text-primary opacity-5" />
@@ -65,5 +67,24 @@ export const BackgroundIcons = () => {
         <Calendar className="absolute top-[80%] left-[60%] w-10 h-10 text-primary opacity-5" />
         <Clipboard className="absolute top-[80%] left-[85%] w-10 h-10 text-primary opacity-5" />
       </div>
+      
+      {/* Mobile icons - zonder paarse tint */}
+      <div className="block md:hidden">
+        <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        
+        <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        
+        <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        
+        <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Clipboard className="absolute top-[70%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        
+        <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+      </div>
+    </div>
   );
 };
