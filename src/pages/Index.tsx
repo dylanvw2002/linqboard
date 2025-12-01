@@ -33,14 +33,21 @@ const Index = () => {
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
-  const partnersAutoplayPlugin = useRef(Autoplay({
-    delay: 3000,
-    stopOnInteraction: false
-  }));
-  const featuresAutoplayPlugin = useRef(Autoplay({
-    delay: 3000,
-    stopOnInteraction: false
-  }));
+  
+  // Detect mobile devices
+  const isMobile = window.innerWidth < 768;
+  
+  // Only enable autoplay on desktop for better mobile performance
+  const partnersAutoplayPlugin = useRef(!isMobile ? Autoplay({
+    delay: 4000,
+    stopOnInteraction: true,
+    stopOnMouseEnter: true
+  }) : null);
+  const featuresAutoplayPlugin = useRef(!isMobile ? Autoplay({
+    delay: 4000,
+    stopOnInteraction: true,
+    stopOnMouseEnter: true
+  }) : null);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
