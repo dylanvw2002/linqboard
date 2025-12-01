@@ -320,7 +320,7 @@ const Index = () => {
             {/* Features Carousel - Mobile */}
             <div className="md:hidden">
               <Carousel opts={{
-              align: "start",
+              align: "center",
               loop: true
             }} plugins={[featuresAutoplayPlugin.current]} className="w-full">
                 <CarouselContent>
@@ -482,7 +482,7 @@ const Index = () => {
             </p>
             
             <Carousel opts={{
-            align: "start",
+            align: "center",
             loop: true
           }} plugins={[partnersAutoplayPlugin.current]} className="w-full max-w-6xl mx-auto">
               <CarouselContent>
