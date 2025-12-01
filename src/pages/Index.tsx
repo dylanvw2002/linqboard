@@ -35,13 +35,13 @@ const Index = () => {
   
   // Create autoplay plugins with immediate start
   const partnersAutoplayPlugin = useRef(Autoplay({
-    delay: 3000,
+    delay: 2000,
     stopOnInteraction: false,
     stopOnMouseEnter: true
   }));
   
   const featuresAutoplayPlugin = useRef(Autoplay({
-    delay: 3000,
+    delay: 2000,
     stopOnInteraction: false,
     stopOnMouseEnter: true
   }));
