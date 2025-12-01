@@ -545,24 +545,24 @@ const Dashboard = () => {
       {/* Onboarding Guide */}
       <OnboardingGuide open={showOnboarding} onOpenChange={setShowOnboarding} />
 
-      {/* Header */}
+      {/* Header - responsive */}
       <header className="relative z-10">
-        <div className="container mx-auto px-4 py-0 max-w-6xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-0 max-w-[1920px]">
           <div className="flex items-center justify-between gap-1">
             {/* Logo in header */}
             <img 
               src={logoText} 
               alt="LinqBoard" 
-              className="h-24 w-auto cursor-pointer hover:scale-105 transition-transform -my-6" 
+              className="h-20 sm:h-24 lg:h-28 xl:h-32 w-auto cursor-pointer hover:scale-105 transition-transform -my-6" 
               onClick={() => navigate("/")} 
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 lg:gap-3">
               <AdminVatReportLink />
               <LanguageSwitcher />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9 border-2 border-primary/20 hover:border-primary/50 transition-colors">
+                  <Button variant="ghost" size="icon" className="relative h-9 w-9 lg:h-10 lg:w-10 rounded-full">
+                    <Avatar className="h-9 w-9 lg:h-10 lg:w-10 border-2 border-primary/20 hover:border-primary/50 transition-colors">
                       <AvatarImage src={avatarUrl || undefined} />
                       <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-white font-bold text-sm">
                         {userName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
@@ -590,12 +590,12 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Logo linksonder met quote bubble */}
-      <div className="fixed bottom-0 left-4 z-20 hidden md:block">
+      {/* Logo linksonder met quote bubble - responsive */}
+      <div className="fixed bottom-0 left-2 sm:left-4 lg:left-6 xl:left-8 z-20 hidden md:block">
         {currentQuote && (
-          <div className="absolute bottom-full left-24 mb-4 animate-fade-in">
-            <div className="relative bg-white dark:bg-white text-foreground px-6 py-3 rounded-2xl shadow-lg max-w-[720px] min-w-[400px]">
-              <p className="text-sm font-medium leading-relaxed">{currentQuote}</p>
+          <div className="absolute bottom-full left-20 sm:left-24 lg:left-28 xl:left-32 mb-3 lg:mb-4 animate-fade-in">
+            <div className="relative bg-white dark:bg-white text-foreground px-4 sm:px-5 lg:px-6 py-2.5 lg:py-3 rounded-2xl shadow-lg max-w-[500px] lg:max-w-[600px] xl:max-w-[720px] 2xl:max-w-[800px] min-w-[320px] lg:min-w-[400px] xl:min-w-[480px]">
+              <p className="text-xs sm:text-sm lg:text-base font-medium leading-relaxed">{currentQuote}</p>
               {/* Speech bubble pointer - 45 degree angle from bottom-left corner */}
               <div 
                 className="absolute -bottom-4 left-0 w-0 h-0"
@@ -609,62 +609,62 @@ const Dashboard = () => {
             </div>
           </div>
         )}
-        <img src={mascot} alt="LinqBoard Mascot" className="h-40 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
+        <img src={mascot} alt="LinqBoard Mascot" className="h-32 sm:h-36 lg:h-40 xl:h-44 w-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate("/")} />
       </div>
 
-      <div className="container mx-auto px-4 py-4 pb-8 max-w-6xl">
-        {/* Welcome Section */}
-        <div className="mb-4">
-          <h1 className="text-xl md:text-2xl font-bold mb-1.5 flex items-center gap-2">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-4 lg:py-6 pb-8 lg:pb-12 max-w-[1920px]">
+        {/* Welcome Section - responsive text */}
+        <div className="mb-4 lg:mb-6">
+          <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1.5 lg:mb-2 flex items-center gap-2">
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               {getTimeBasedGreeting()} {userName}
             </span>
             
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
             {t('dashboard.welcomeBack')}
           </p>
         </div>
 
-        {/* Organizations */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-bold">
+        {/* Organizations - responsive grid */}
+        <div className="mb-4 lg:mb-6">
+          <div className="flex items-center justify-between mb-2 lg:mb-3">
+            <h2 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold">
               {t('dashboard.yourOrganizations')}
-              {subscriptionLimits && <span className="text-muted-foreground text-xs ml-1.5">
+              {subscriptionLimits && <span className="text-muted-foreground text-xs sm:text-sm lg:text-base ml-1.5">
                   ({subscriptionLimits.current_org_count}/{subscriptionLimits.max_organizations === -1 ? '∞' : subscriptionLimits.max_organizations})
                 </span>}
             </h2>
           </div>
           
-          {organizations.length === 0 ? <Card className="p-6 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
+          {organizations.length === 0 ? <Card className="p-4 sm:p-5 lg:p-6 xl:p-8 text-center border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
               <div className="max-w-sm mx-auto">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-3">
-                  <Plus className="h-6 w-6 text-primary" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-3 lg:mb-4">
+                  <Plus className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-primary" />
                 </div>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mb-3 lg:mb-4">
                   {t('dashboard.noOrganizations')}
                 </p>
-                <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                  <Button size="sm" onClick={() => navigate("/create-organization")} className="shadow-lg hover:shadow-xl transition-all">
-                    <Plus className="mr-1.5 h-4 w-4" />
+                <div className="flex flex-col sm:flex-row gap-2 lg:gap-3 justify-center">
+                  <Button size="sm" onClick={() => navigate("/create-organization")} className="shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm lg:text-base">
+                    <Plus className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     {t('dashboard.createOrganization')}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => navigate("/join-organization")} className="border-2">
+                  <Button size="sm" variant="outline" onClick={() => navigate("/join-organization")} className="border-2 text-xs sm:text-sm lg:text-base">
                     {t('dashboard.joinOrganization')}
                   </Button>
                 </div>
               </div>
             </Card> : <div className="relative">
-              {/* Navigation Buttons */}
+              {/* Navigation Buttons - responsive */}
               {organizations.length > 3 && currentPage > 0 && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-2 border-border/50 shadow-lg hover:shadow-xl hover:border-primary/50"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 rounded-full bg-background/80 backdrop-blur-sm border-2 border-border/50 shadow-lg hover:shadow-xl hover:border-primary/50"
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                 </Button>
               )}
               
@@ -672,61 +672,61 @@ const Dashboard = () => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-2 border-border/50 shadow-lg hover:shadow-xl hover:border-primary/50"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 rounded-full bg-background/80 backdrop-blur-sm border-2 border-border/50 shadow-lg hover:shadow-xl hover:border-primary/50"
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                 </Button>
               )}
 
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {organizations.slice(currentPage * 3, (currentPage + 1) * 3).map(org => <Card key={org.id} className="p-3 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 lg:gap-4 xl:gap-5">
+              {organizations.slice(currentPage * 3, (currentPage + 1) * 3).map(org => <Card key={org.id} className="p-3 lg:p-4 xl:p-5 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-[72px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-7 w-7" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-2 right-[72px] lg:right-[80px] xl:right-[88px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" onClick={e => {
                 e.stopPropagation();
                 setEditBoardId(org.id);
                 setEditBoardName(org.name);
                 setEditBoardDialogOpen(true);
               }}>
-                      <Pencil className="h-3.5 w-3.5" />
+                      <Pencil className="h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-[40px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-7 w-7" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-2 right-[40px] lg:right-[44px] xl:right-[48px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" onClick={e => {
                 e.stopPropagation();
                 handleViewMembers(org.id, org.name);
               }}>
-                      <Users className="h-3.5 w-3.5" />
+                      <Users className="h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive hover:bg-destructive/10 z-10 h-7 w-7" onClick={e => {
+                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:text-destructive hover:bg-destructive/10 z-10 h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" onClick={e => {
                 e.stopPropagation();
                 setDeleteOrgId(org.id);
               }}>
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
                     </Button>
-                  </> : <Button variant="ghost" size="sm" className="absolute top-2 right-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10 text-xs px-2 h-7" onClick={e => {
+                  </> : <Button variant="ghost" size="sm" className="absolute top-2 right-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 z-10 text-xs px-2 h-6 sm:h-7 lg:h-8" onClick={e => {
               e.stopPropagation();
               setLeaveOrgId(org.id);
             }}>
                       {t('dashboard.leave')}
                     </Button>}
                   <div className="cursor-pointer" onClick={() => handleOpenBoard(org.id)}>
-                    <div className="mb-3">
-                      <h3 className="text-base font-bold mb-1.5 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <div className="mb-3 lg:mb-4">
+                      <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-bold mb-1.5 lg:mb-2 group-hover:text-primary transition-colors pr-8">{org.name}</h3>
+                      <div className="flex items-center gap-1.5 text-xs lg:text-sm text-muted-foreground">
                         <span>{t('common.code')}:</span>
-                        <span className="font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-xs">
+                        <span className="font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded text-xs lg:text-sm">
                           {org.invite_code}
                         </span>
-                        {org.role === 'owner' && <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={e => {
+                        {org.role === 'owner' && <Button variant="ghost" size="sm" className="h-5 w-5 sm:h-6 sm:w-6 p-0" onClick={e => {
                     e.stopPropagation();
                     handleShareInviteLink(org.invite_code);
                   }} title={t('dashboard.shareInviteLink')}>
-                            <Share2 className="h-3 w-3" />
+                            <Share2 className="h-2.5 w-2.5 sm:h-3 sm:w-3 lg:h-3.5 lg:w-3.5" />
                           </Button>}
                       </div>
                     </div>
-                    <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105 text-xs h-8">
+                    <Button className="w-full shadow-lg hover:shadow-xl transition-all group-hover:scale-105 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9">
                       {t('dashboard.openBoard')}
-                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                      <ArrowRight className="ml-1.5 h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
                     </Button>
                   </div>
                 </Card>)}
@@ -734,18 +734,18 @@ const Dashboard = () => {
             </div>}
         </div>
 
-        {/* Quick actions */}
-        <div className="border-t border-border/50 pt-4 pb-0">
-            <h3 className="text-sm font-semibold mb-2 text-muted-foreground">{t('dashboard.quickActions')}</h3>
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="outline" onClick={() => navigate("/create-organization")} className="border-2 text-xs" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
-                <Plus className="mr-1.5 h-3.5 w-3.5" />
+        {/* Quick actions - responsive */}
+        <div className="border-t border-border/50 pt-4 lg:pt-6 pb-0">
+            <h3 className="text-xs sm:text-sm lg:text-base font-semibold mb-2 lg:mb-3 text-muted-foreground">{t('dashboard.quickActions')}</h3>
+            <div className="flex flex-wrap gap-2 lg:gap-3">
+              <Button size="sm" variant="outline" onClick={() => navigate("/create-organization")} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
+                <Plus className="mr-1.5 h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
                 {t('dashboard.newOrganization')}
               </Button>
-              <Button size="sm" variant="outline" onClick={() => navigate("/join-organization")} className="border-2 text-xs">
+              <Button size="sm" variant="outline" onClick={() => navigate("/join-organization")} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9">
                 {t('dashboard.joinTeam')}
               </Button>
-              <Button size="sm" variant="outline" onClick={() => navigate("/pricing")} className="border-2 text-xs">
+              <Button size="sm" variant="outline" onClick={() => navigate("/pricing")} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9">
                 {t('subscription.viewPlans')}
               </Button>
             </div>
