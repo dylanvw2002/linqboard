@@ -1291,7 +1291,16 @@ const Board = () => {
   };
 
   const handleMobileSwipeMove = (e: React.TouchEvent) => {
-    // Don't prevent default to allow vertical scrolling
+    if (!swiping || e.touches.length !== 1) return;
+    
+    // Allow vertical scrolling but prevent default for horizontal swipes
+    const deltaX = e.touches[0].clientX - swipeStartX;
+    const deltaY = e.touches[0].clientY - swipeStartY;
+    
+    // If horizontal movement is dominant, prevent default to stop vertical scroll
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      e.preventDefault();
+    }
   };
 
   const handleMobileSwipeEnd = (e: React.TouchEvent) => {
@@ -2480,14 +2489,20 @@ const Board = () => {
         </div>}
 
       
-      {/* Canvas layer with touch gestures */}
-      <div className={cn("origin-top-left", isMobile ? "overflow-y-auto" : "overflow-hidden")} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd} style={{
-      transform: isMobile ? `translate(${panPosition.x}px, ${panPosition.y}px) scale(${zoomLevel})` : `scale(${zoomLevel})`,
-      width: `${100 / zoomLevel}vw`,
-      height: isMobile ? 'auto' : `${100 / zoomLevel}vh`,
-      touchAction: isMobile ? 'pan-y' : 'none',
-      minHeight: isMobile ? '100vh' : `${100 / zoomLevel}vh`
-    }}>
+      {/* Canvas layer with touch gestures - only for desktop */}
+      <div 
+        className={cn("origin-top-left", isMobile ? "overflow-y-auto" : "overflow-hidden")} 
+        onTouchStart={!isMobile ? handleTouchStart : undefined} 
+        onTouchMove={!isMobile ? handleTouchMove : undefined} 
+        onTouchEnd={!isMobile ? handleTouchEnd : undefined} 
+        style={{
+          transform: isMobile ? 'none' : `scale(${zoomLevel})`,
+          width: isMobile ? '100%' : `${100 / zoomLevel}vw`,
+          height: isMobile ? 'auto' : `${100 / zoomLevel}vh`,
+          touchAction: isMobile ? 'auto' : 'none',
+          minHeight: isMobile ? 'auto' : `${100 / zoomLevel}vh`
+        }}
+      >
         <div className={cn("flex flex-col gap-[18px] pt-[22px] px-0", isMobile ? "min-h-screen" : "h-screen")}>
       
       {/* Demo Banner */}
