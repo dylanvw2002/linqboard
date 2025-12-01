@@ -484,12 +484,28 @@ const Index = () => {
                         </CarouselItem>;
                   })}
                   </CarouselContent>
-                  <CarouselPrevious className="hidden sm:flex" />
-                  <CarouselNext className="hidden sm:flex" />
+                <CarouselPrevious className="hidden lg:flex" />
+                <CarouselNext className="hidden lg:flex" />
                 </Carousel>
               </div>
               
               {/* Swipe dots indicator */}
+              {!isMobile && (
+                <div className="lg:hidden flex justify-center gap-2 mt-4">
+                  {features.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => featuresApi?.scrollTo(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        index === featuresCurrentSlide
+                          ? 'w-8 bg-primary'
+                          : 'w-2 bg-muted-foreground/30'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
               {isMobile && (
                 <div className="flex justify-center gap-2 mt-4">
                   {features.map((_, index) => (
@@ -686,12 +702,28 @@ const Index = () => {
                     </div>
                   </CarouselItem>
                 </CarouselContent>
-                <CarouselPrevious className="hidden md:flex" />
-                <CarouselNext className="hidden md:flex" />
+                <CarouselPrevious className="hidden lg:flex" />
+                <CarouselNext className="hidden lg:flex" />
               </Carousel>
             </div>
             
             {/* Swipe dots indicator */}
+            {!isMobile && (
+              <div className="lg:hidden flex justify-center gap-2 mt-6">
+                {[0, 1, 2, 3, 4, 5].map((index) => (
+                  <button
+                    key={index}
+                    onClick={() => partnersApi?.scrollTo(index)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      index === partnersCurrentSlide
+                        ? 'w-8 bg-primary'
+                        : 'w-2 bg-muted-foreground/30'
+                    }`}
+                    aria-label={`Go to partner ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
             {isMobile && (
               <div className="flex justify-center gap-2 mt-6">
                 {[0, 1, 2, 3, 4, 5].map((index) => (
