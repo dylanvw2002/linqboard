@@ -1,9 +1,9 @@
 {
   "seo": {
     "home": {
-      "title": "LinqBoard - Visueel Projectmanagement voor Teams",
-      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Het moderne taakbeheertool voor efficiënte teams.",
-      "keywords": "projectmanagement, taakbeheer, samenwerking, team, kanban, productiviteit, LinqBoard",
+      "title": "LinqBoard - Teamwork, moeiteloos georganiseerd",
+      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Krachtig, veilig en eenvoudig te gebruiken.",
+      "keywords": "taakbeheer, team samenwerking, projectmanagement, real-time samenwerking, kanban board, team organisatie",
       "heroImageAlt": "LinqBoard mascotte met moderne taakbeheer interface"
     }
   },
@@ -503,8 +503,18 @@
     }
   },
   "seo": {
-    "title": "LinqBoard - Project Management Tool",
-    "description": "LinqBoard is een moderne project management tool die teams helpt om efficiënter samen te werken en projecten succesvol af te ronden."
+    "home": {
+      "title": "LinqBoard - Teamwork, moeiteloos georganiseerd",
+      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Krachtig, veilig en eenvoudig te gebruiken.",
+      "keywords": "taakbeheer, team samenwerking, projectmanagement, real-time samenwerking, kanban board, team organisatie",
+      "logoAlt": "LinqBoard Logo - Teamwork Platform",
+      "heroImageAlt": "LinqBoard taakbeheer interface illustratie"
+    },
+    "pricing": {
+      "title": "LinqBoard Prijzen - Plannen vanaf €7,99",
+      "description": "Kies het LinqBoard plan dat bij jouw team past. Van gratis tot business. Transparante prijzen, geen verborgen kosten.",
+      "keywords": "linqboard prijzen, taakbeheer abonnement, team prijzen, projectmanagement kosten"
+    }
   },
   "chat": {
     "title": "Chat",
