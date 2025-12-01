@@ -22,85 +22,29 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { BackgroundIcons } from "@/components/landing/BackgroundIcons";
 const Index = () => {
   const {
     t
   } = useTranslation();
   const [isYearly, setIsYearly] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  
   const demoSection = useScrollAnimation(0.2);
   const featuresSection = useScrollAnimation(0.2);
   const partnersSection = useScrollAnimation(0.2);
   
-  // Create autoplay plugins that respect scroll state
+  // Create autoplay plugins with immediate start
   const partnersAutoplayPlugin = useRef(Autoplay({
-    delay: 4000,
-    stopOnInteraction: true,
-    stopOnMouseEnter: true,
-    playOnInit: false
+    delay: 3000,
+    stopOnInteraction: false,
+    stopOnMouseEnter: true
   }));
   
   const featuresAutoplayPlugin = useRef(Autoplay({
-    delay: 4000,
-    stopOnInteraction: true,
-    stopOnMouseEnter: true,
-    playOnInit: false
+    delay: 3000,
+    stopOnInteraction: false,
+    stopOnMouseEnter: true
   }));
-
-  // Detect scrolling and pause autoplay
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolling(true);
-      
-      // Stop autoplay when scrolling
-      if (partnersAutoplayPlugin.current) {
-        partnersAutoplayPlugin.current.stop();
-      }
-      if (featuresAutoplayPlugin.current) {
-        featuresAutoplayPlugin.current.stop();
-      }
-      
-      // Clear existing timeout
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      
-      // Resume autoplay 500ms after scrolling stops
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsScrolling(false);
-        if (partnersAutoplayPlugin.current) {
-          partnersAutoplayPlugin.current.play();
-        }
-        if (featuresAutoplayPlugin.current) {
-          featuresAutoplayPlugin.current.play();
-        }
-      }, 500);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Start autoplay after initial 300ms delay
-    const initialTimeout = setTimeout(() => {
-      if (partnersAutoplayPlugin.current) {
-        partnersAutoplayPlugin.current.play();
-      }
-      if (featuresAutoplayPlugin.current) {
-        featuresAutoplayPlugin.current.play();
-      }
-    }, 300);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-      clearTimeout(initialTimeout);
-    };
-  }, []);
   const features = [{
     icon: Zap,
     title: t('landing.realtimeTitle'),
