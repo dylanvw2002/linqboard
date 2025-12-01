@@ -2866,7 +2866,7 @@ const Board = () => {
                             +
                           </button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[92vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                        <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
                           <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
                             <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                           </DialogHeader>
@@ -3276,7 +3276,7 @@ const Board = () => {
                       +
                     </button>}
                 </DialogTrigger>
-                <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[92vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
                   <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
                     <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                   </DialogHeader>
@@ -3408,7 +3408,7 @@ const Board = () => {
 
       {/* Edit Task Dialog */}
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
-        <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[92vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
             <DialogTitle>{t('board.editTask')}</DialogTitle>
           </DialogHeader>
@@ -3521,7 +3521,7 @@ const Board = () => {
 
       {/* Export Task Dialog */}
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
-        <DialogContent className="max-w-[96vw] sm:max-w-lg max-h-[92vh] flex flex-col p-4 sm:p-6" onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={e => {
+        <DialogContent className="max-w-[96vw] sm:max-w-lg max-h-[85vh] flex flex-col p-4 sm:p-6" onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={e => {
             // Prevent closing when clicking on Select dropdown
             const target = e.target as HTMLElement;
             if (target.closest('[role="listbox"]') || target.closest('[data-radix-select-content]')) {

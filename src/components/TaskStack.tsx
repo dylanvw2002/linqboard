@@ -192,7 +192,7 @@ export const TaskStack = ({
 
       {/* Dialog voor expanded view */}
       <Dialog open={isExpanded} onOpenChange={setIsExpanded}>
-        <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[92vh] overflow-visible flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[85vh] overflow-visible flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader className="shrink-0 px-4 pt-2 sm:pt-0 pb-3">
             <DialogTitle>Alle taken ({children.length})</DialogTitle>
           </DialogHeader>
