@@ -2866,8 +2866,8 @@ const Board = () => {
                             +
                           </button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-                          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3">
+                        <DialogContent className="w-[100vw] h-[100vh] sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] max-w-none max-h-none p-0 flex flex-col sm:rounded-lg rounded-none" onOpenAutoFocus={(e) => e.preventDefault()}>
+                          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3 shrink-0">
                             <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                           </DialogHeader>
                           <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
@@ -3276,8 +3276,8 @@ const Board = () => {
                       +
                     </button>}
                 </DialogTrigger>
-                <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-                  <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3">
+                <DialogContent className="w-[100vw] h-[100vh] sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] max-w-none max-h-none p-0 flex flex-col sm:rounded-lg rounded-none" onOpenAutoFocus={(e) => e.preventDefault()}>
+                  <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3 shrink-0">
                     <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                   </DialogHeader>
                   <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
@@ -3408,8 +3408,8 @@ const Board = () => {
 
       {/* Edit Task Dialog */}
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
-        <DialogContent className="max-w-[95vw] sm:max-w-3xl max-h-[90vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3">
+        <DialogContent className="w-[100vw] h-[100vh] sm:w-auto sm:h-auto sm:max-w-3xl sm:max-h-[90vh] max-w-none max-h-none p-0 flex flex-col sm:rounded-lg rounded-none" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6 pb-3 shrink-0">
             <DialogTitle>{t('board.editTask')}</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 px-4 sm:px-6">
@@ -3521,14 +3521,14 @@ const Board = () => {
 
       {/* Export Task Dialog */}
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
-        <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[80vh] flex flex-col p-4 sm:p-6" onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={e => {
+        <DialogContent className="w-[100vw] h-[100vh] sm:w-auto sm:h-auto sm:max-w-lg sm:max-h-[80vh] max-w-none max-h-none flex flex-col p-4 sm:p-6 sm:rounded-lg rounded-none" onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={e => {
             // Prevent closing when clicking on Select dropdown
             const target = e.target as HTMLElement;
             if (target.closest('[role="listbox"]') || target.closest('[data-radix-select-content]')) {
               e.preventDefault();
             }
           }}>
-          <DialogHeader>
+          <DialogHeader className="shrink-0">
             <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 overflow-y-auto flex-1 px-6">
