@@ -2782,7 +2782,7 @@ const Board = () => {
                         }}
                         disabled={currentColumnIndex === 0}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 p-2 rounded-lg transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 p-2 rounded-lg transition-all",
                           currentColumnIndex === 0 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
@@ -2796,7 +2796,7 @@ const Board = () => {
                       {/* Sort dropdown */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 p-2 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 p-2 rounded-lg hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-50">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M3 6h18"/>
                               <path d="M7 12h10"/>
@@ -2828,7 +2828,7 @@ const Board = () => {
                       {/* Column name - centered with dropdown navigation */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 px-3 py-2 rounded-lg text-xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:bg-white/30 dark:hover:bg-card/30 transition-all cursor-pointer">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 px-3 py-2 rounded-lg text-xl font-extrabold text-foreground relative z-10 drop-shadow-sm flex-1 text-center hover:bg-white/30 dark:hover:bg-card/30 transition-all cursor-pointer">
                             {column.name}
                           </button>
                         </DropdownMenuTrigger>
@@ -2850,7 +2850,7 @@ const Board = () => {
                       {/* Add task button */}
                       <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
                         <DialogTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.5)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15),inset_0_1px_1px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-10">
                             +
                           </button>
                         </DialogTrigger>
@@ -2931,7 +2931,7 @@ const Board = () => {
                         }}
                         disabled={currentColumnIndex === columns.length - 1}
                         className={cn(
-                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border border-white/40 dark:border-white/20 p-2 rounded-lg transition-all",
+                          "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 p-2 rounded-lg transition-all",
                           currentColumnIndex === columns.length - 1 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
