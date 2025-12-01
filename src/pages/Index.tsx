@@ -190,23 +190,23 @@ const Index = () => {
           </div>
         </div>
         
-        {/* Header */}
+        {/* Header - responsive */}
         <header className="absolute top-0 left-0 right-0 z-50" role="banner">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <nav className="flex items-center justify-between h-16 sm:h-20 lg:h-24" role="navigation" aria-label="Main navigation">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-[1920px]">
+            <nav className="flex items-center justify-between h-14 sm:h-16 md:h-20 lg:h-24 xl:h-28" role="navigation" aria-label="Main navigation">
               <div className="flex items-center gap-3 sm:gap-8">
                 <div className="sm:hidden">
                   <LanguageSwitcher />
                 </div>
-                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="hidden sm:block h-40 sm:h-44 lg:h-40 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
+                <img src={logo} alt="LinqBoard - Visueel Projectmanagement Platform" className="hidden sm:block h-32 sm:h-36 md:h-40 lg:h-44 xl:h-48 w-auto hover:scale-105 transition-transform duration-300" fetchPriority="high" width="160" height="160" />
               </div>
-              <div className="flex items-center gap-3 sm:gap-4 lg:gap-5">
+              <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-5">
                 <div className="hidden sm:block">
                   <LanguageSwitcher />
                 </div>
                 <Link to="/auth">
-                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-sm sm:text-base gap-2 h-10 px-4">
-                    <LogIn className="h-4 w-4" />
+                  <Button size="default" className="bg-white hover:bg-gray-50 text-foreground border border-gray-200 shadow-sm hover:shadow transition-all text-xs sm:text-sm md:text-base lg:text-lg gap-2 h-8 sm:h-9 md:h-10 lg:h-11 px-3 sm:px-4 lg:px-5">
+                    <LogIn className="h-3 w-3 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
                     {t('auth.login')}
                   </Button>
                 </Link>
@@ -215,39 +215,39 @@ const Index = () => {
           </div>
         </header>
 
-        {/* Hero Section */}
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[100dvh] flex items-center max-w-7xl">
-          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full">
-            {/* Left Content */}
-            <article className="space-y-6 sm:space-y-8 lg:space-y-8 xl:space-y-10 text-center lg:text-left lg:ml-32">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+        {/* Hero Section - responsive */}
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 xl:pt-40 2xl:pt-48 pb-6 sm:pb-8 lg:pb-12 xl:pb-16 min-h-[100dvh] flex items-center max-w-[1920px]">
+          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 2xl:gap-20 items-center justify-items-center animate-fade-in w-full">
+            {/* Left Content - responsive text */}
+            <article className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-8 xl:space-y-10 2xl:space-y-12 text-center lg:text-left lg:ml-8 xl:ml-16 2xl:ml-32">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-tight">
                 {t('landing.heroTitle1')} <span className="text-primary">{t('landing.heroTitle2')}</span>
               </h1>
               
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-xl lg:max-w-2xl leading-relaxed mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-muted-foreground max-w-xl lg:max-w-2xl xl:max-w-3xl leading-relaxed mx-auto lg:mx-0">
                 {t('landing.tagline')}
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 pt-2 lg:pt-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 xl:gap-6 pt-2 lg:pt-4 xl:pt-6 justify-center lg:justify-start">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
-                  <Button size="lg" className="text-base sm:text-lg lg:text-xl xl:text-2xl px-8 py-5 lg:px-10 lg:py-7 shadow-lg hover:shadow-xl transition-all w-full">
+                  <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl px-6 sm:px-8 lg:px-10 xl:px-12 py-4 sm:py-5 lg:py-6 xl:py-7 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
-                    <ArrowRight className="ml-2 h-5 w-5 lg:h-6 lg:w-6" />
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth?mode=join" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="text-base sm:text-lg lg:text-xl xl:text-2xl px-8 py-5 lg:px-10 lg:py-7 border-2 w-full">
+                  <Button size="lg" variant="outline" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl px-6 sm:px-8 lg:px-10 xl:px-12 py-4 sm:py-5 lg:py-6 xl:py-7 border-2 w-full">
                     {t('landing.haveCode')}
                   </Button>
                 </Link>
               </div>
             </article>
 
-            {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
-            <div className="relative -mt-8 lg:-mt-16 flex justify-center items-center order-first lg:order-last">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 lg:hidden h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
-              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-3/4 xl:w-4/5 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+            {/* Right Visual Mockup - responsive images */}
+            <div className="relative -mt-4 sm:-mt-6 lg:-mt-12 xl:-mt-16 flex justify-center items-center order-first lg:order-last">
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 sm:w-2/5 lg:hidden h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-3/4 xl:w-4/5 2xl:w-full h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
@@ -255,27 +255,27 @@ const Index = () => {
           </section>
         </main>
 
-        {/* Features Section */}
-        <section ref={featuresSection.ref} className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 mt-0 lg:py-[200px] min-h-[100dvh] flex flex-col justify-center">
-          <div className="container mx-auto max-w-7xl">
-            {/* Header */}
-            <div className={`text-center mb-12 sm:mb-16 lg:mb-20 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+        {/* Features Section - responsive */}
+        <section ref={featuresSection.ref} className="py-12 sm:py-16 md:py-20 lg:py-32 xl:py-40 2xl:py-[200px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 mt-0 min-h-[100dvh] flex flex-col justify-center">
+          <div className="container mx-auto max-w-[1920px]">
+            {/* Header - responsive text */}
+            <div className={`text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <p className="text-xs sm:text-sm lg:text-base xl:text-lg uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-5 font-semibold">
                 {t('landing.featuresLabel').toUpperCase()}
               </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3 sm:mb-4 lg:mb-5">
                 {t('landing.featuresTitle')}
               </h2>
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
                 {t('landing.featuresDescription')}
               </p>
             </div>
 
-            {/* Features Grid - Desktop */}
-            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {/* Features Grid - Desktop - responsive cards */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10">
               {features.map((feature, index) => {
               const Icon = feature.icon;
-              return <article key={index} className={`group relative bg-card rounded-2xl p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
+              return <article key={index} className={`group relative bg-card rounded-2xl p-5 sm:p-6 lg:p-8 xl:p-10 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
                 animationDelay: `${index * 100}ms`
               }}>
                     {/* Gradient Background on Hover */}
@@ -283,26 +283,26 @@ const Index = () => {
                     
                     {/* Content */}
                     <div className="relative z-10">
-                      {/* Icon */}
-                      <div className="mb-6 relative">
-                        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
-                          <Icon className="w-8 h-8 text-white" aria-hidden="true" />
+                      {/* Icon - responsive */}
+                      <div className="mb-4 sm:mb-5 lg:mb-6 xl:mb-7 relative">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 xl:w-20 xl:h-20 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
+                          <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 text-white" aria-hidden="true" />
                         </div>
                         {/* Glow Effect */}
-                        <div className="absolute inset-0 w-16 h-16 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
+                        <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 xl:w-20 xl:h-20 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
                       </div>
 
-                      {/* Text */}
-                      <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                      {/* Text - responsive */}
+                      <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 group-hover:text-primary transition-colors duration-300">
                         {feature.title}
                       </h3>
-                      <p className="text-muted-foreground leading-relaxed">
+                      <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-muted-foreground leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
 
                     {/* Corner Accent */}
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </article>;
             })}
             </div>
@@ -358,58 +358,58 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Testimonial Quotes Section */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 max-w-6xl">
-          {/* Header */}
-          <div className="text-center mb-8 sm:mb-12">
-            <p className="text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+        {/* Testimonial Quotes Section - responsive */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 md:py-10 lg:py-12 xl:py-16 max-w-[1920px]">
+          {/* Header - responsive */}
+          <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16">
+            <p className="text-xs sm:text-sm lg:text-base xl:text-lg uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-5 font-semibold">
               {t('landing.testimonialsLabel').toUpperCase()}
             </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3 sm:mb-4 lg:mb-5">
               {t('landing.testimonialsTitle')}
             </h2>
-            <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
               {t('landing.testimonialsDescription')}
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
-            {/* Quote 1 - NRG Totaal */}
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 xl:gap-8">
+            {/* Quote 1 - NRG Totaal - responsive */}
             <div className="relative h-full">
-              <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg h-full flex flex-col">
+              <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 xl:p-8 2xl:p-10 border border-border shadow-lg h-full flex flex-col">
                 {/* Quote Content */}
-                <div className="space-y-4 flex-1 flex flex-col">
-                  <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic flex-1">
-                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>{t('landing.testimonial1')}
+                <div className="space-y-3 sm:space-y-4 lg:space-y-5 flex-1 flex flex-col">
+                  <blockquote className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium text-foreground leading-relaxed italic flex-1">
+                    <span className="text-purple-500 text-4xl sm:text-5xl lg:text-6xl font-serif mr-2">"</span>{t('landing.testimonial1')}
                   </blockquote>
                   
-                  {/* Attribution */}
-                  <div className="flex items-center gap-3 pt-3 border-t border-border/50">
-                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-8 w-auto opacity-80" loading="lazy" />
+                  {/* Attribution - responsive */}
+                  <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3 border-t border-border/50">
+                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" />
                     <div>
-                      <p className="font-semibold text-sm text-foreground">{t('landing.testimonial1Company')}</p>
-                      <p className="text-xs text-muted-foreground">{t('landing.testimonial1Role')}</p>
+                      <p className="font-semibold text-xs sm:text-sm lg:text-base xl:text-lg text-foreground">{t('landing.testimonial1Company')}</p>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{t('landing.testimonial1Role')}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Quote 2 - Zorgeloos Vastgoed */}
+            {/* Quote 2 - Zorgeloos Vastgoed - responsive */}
             <div className="relative h-full">
-              <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-6 sm:p-7 border border-border shadow-lg h-full flex flex-col">
+              <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 xl:p-8 2xl:p-10 border border-border shadow-lg h-full flex flex-col">
                 {/* Quote Content */}
-                <div className="space-y-4 flex-1 flex flex-col">
-                  <blockquote className="text-sm sm:text-base lg:text-lg font-medium text-foreground leading-relaxed italic flex-1">
-                    <span className="text-purple-500 text-5xl font-serif mr-2">"</span>{t('landing.testimonial2')}
+                <div className="space-y-3 sm:space-y-4 lg:space-y-5 flex-1 flex flex-col">
+                  <blockquote className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium text-foreground leading-relaxed italic flex-1">
+                    <span className="text-purple-500 text-4xl sm:text-5xl lg:text-6xl font-serif mr-2">"</span>{t('landing.testimonial2')}
                   </blockquote>
                   
-                  {/* Attribution */}
-                  <div className="flex items-center gap-3 pt-3 border-t border-border/50">
-                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-8 w-auto opacity-80" loading="lazy" />
+                  {/* Attribution - responsive */}
+                  <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3 border-t border-border/50">
+                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" />
                     <div>
-                      <p className="font-semibold text-sm text-foreground">{t('landing.testimonial2Company')}</p>
-                      <p className="text-xs text-muted-foreground">{t('landing.testimonial2Role')}</p>
+                      <p className="font-semibold text-xs sm:text-sm lg:text-base xl:text-lg text-foreground">{t('landing.testimonial2Company')}</p>
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{t('landing.testimonial2Role')}</p>
                     </div>
                   </div>
                 </div>
@@ -418,49 +418,49 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Demo Section */}
-        <section ref={demoSection.ref} className="py-8 sm:py-12 lg:py-20 xl:py-28 px-4 sm:px-6 lg:px-12 xl:px-20 min-h-screen flex items-center w-full">
-          <div className="w-full max-w-none">
-            <div className={`grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 xl:gap-24 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                  {/* Left: Image */}
+        {/* Demo Section - responsive */}
+        <section ref={demoSection.ref} className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-28 2xl:py-32 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 min-h-screen flex items-center w-full">
+          <div className="w-full max-w-[1920px] mx-auto">
+            <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 2xl:gap-24 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                  {/* Left: Image - responsive */}
                   <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
-                    <img alt="Linqboard Demo Preview" className="w-2/5 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} />
+                    <img alt="Linqboard Demo Preview" className="w-2/5 sm:w-1/3 lg:w-2/5 xl:w-1/2 2xl:w-3/5 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} />
                   </div>
 
-                  {/* Right: Content */}
-                  <div className={`space-y-4 sm:space-y-5 lg:space-y-6 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+                  {/* Right: Content - responsive */}
+                  <div className={`space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
                       {t('landing.demoTitle')}
                     </h2>
-                    <p className="text-base sm:text-lg md:text-xl lg:text-xl xl:text-2xl text-muted-foreground leading-relaxed">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-muted-foreground leading-relaxed">
                       {t('landing.demoSubtitle')}
                     </p>
                     
-                    <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-5">
-                      <div className="flex items-center gap-3 lg:gap-4">
-                        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
+                    <div className="grid grid-cols-1 gap-2 sm:gap-3 md:gap-4 lg:gap-5">
+                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-primary" />
                         </div>
-                        <span className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium">{t('landing.demoFeature1')}</span>
+                        <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium">{t('landing.demoFeature1')}</span>
                       </div>
-                      <div className="flex items-center gap-3 lg:gap-4">
-                        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Edit className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
+                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Edit className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-primary" />
                         </div>
-                        <span className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium">{t('landing.demoFeature2')}</span>
+                        <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium">{t('landing.demoFeature2')}</span>
                       </div>
-                      <div className="flex items-center gap-3 lg:gap-4">
-                        <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Eye className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
+                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-primary" />
                         </div>
-                        <span className="text-sm sm:text-base lg:text-lg xl:text-xl font-medium">{t('landing.demoFeature3')}</span>
+                        <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium">{t('landing.demoFeature3')}</span>
                       </div>
                     </div>
 
-                    <Link to="/board/demo" className="block pt-2 lg:pt-3">
-                      <Button size="lg" className="text-base sm:text-lg lg:text-lg xl:text-xl px-8 py-5 lg:py-6 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
+                    <Link to="/board/demo" className="block pt-2 sm:pt-3 lg:pt-4">
+                      <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 xl:py-7 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
                         {t('landing.demoButton')}
-                        <ArrowRight className="ml-2 w-5 h-5 lg:w-6 lg:h-6" />
+                        <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
                       </Button>
                     </Link>
                 </div>
@@ -468,10 +468,10 @@ const Index = () => {
             </div>
           </section>
 
-        {/* Partners Section */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 max-w-7xl">
-          <div className={`bg-muted/20 rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 md:p-8 lg:p-12 xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-center text-xs sm:text-sm uppercase tracking-wider text-primary mb-4 font-semibold">
+        {/* Partners Section - responsive */}
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 md:py-12 lg:py-16 xl:py-20 max-w-[1920px]">
+          <div className={`bg-muted/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8 xl:p-12 2xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <p className="text-center text-xs sm:text-sm lg:text-base xl:text-lg uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-5 font-semibold">
               {t('landing.trustedBy')}
             </p>
             
@@ -722,44 +722,44 @@ const Index = () => {
               </article>
             </div>
 
-            <div className="mt-8 text-center">
-              <p className="text-sm text-muted-foreground">
+            <div className="mt-6 sm:mt-8 lg:mt-10 text-center">
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-muted-foreground">
                 {t('pricing.footer')}
               </p>
             </div>
 
-            {/* Register Button */}
-            <div className="mt-8 text-center">
+            {/* Register Button - responsive */}
+            <div className="mt-6 sm:mt-8 lg:mt-10 text-center">
               <Link to="/auth?mode=create">
-                <Button size="lg" className="text-base px-8 py-6 shadow-lg hover:shadow-xl transition-all">
+                <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl px-6 sm:px-8 lg:px-10 py-5 sm:py-6 lg:py-7 shadow-lg hover:shadow-xl transition-all">
                   {t('landing.register')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                 </Button>
               </Link>
             </div>
           </div>
         </section>
 
-        {/* SoloLinq CTA Section */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
-          <div className="mt-8 md:mt-12 bg-primary/5 backdrop-blur-sm rounded-2xl border border-primary/20 hover:border-primary/40 transition-all duration-300 p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center gap-6">
+        {/* SoloLinq CTA Section - responsive */}
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 max-w-[1920px]">
+          <div className="mt-6 sm:mt-8 md:mt-10 lg:mt-12 bg-primary/5 backdrop-blur-sm rounded-2xl border border-primary/20 hover:border-primary/40 transition-all duration-300 p-5 sm:p-6 md:p-7 lg:p-8 xl:p-10">
+            <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-5 lg:gap-6 xl:gap-8">
               <div className="flex-shrink-0">
-                <img src={sololinqLogo} alt="SoloLinq Logo" className="h-20 sm:h-24 w-auto" loading="lazy" />
+                <img src={sololinqLogo} alt="SoloLinq Logo" className="h-16 sm:h-18 md:h-20 lg:h-24 xl:h-28 w-auto" loading="lazy" />
               </div>
               <div className="flex-1 text-center md:text-left">
-                <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+                <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 lg:mb-4">
                   {t('landing.soloTitle')}
                 </h2>
-                <p className="text-muted-foreground text-sm sm:text-base">
+                <p className="text-muted-foreground text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
                   {t('landing.soloDescription')}
                 </p>
               </div>
               <div className="flex-shrink-0">
                 <a href="https://sololinq.lovable.app" target="_blank" rel="noopener noreferrer">
-                  <Button size="lg" variant="outline" className="text-base px-6 py-6 border-2">
+                  <Button size="lg" variant="outline" className="text-sm sm:text-base md:text-lg lg:text-xl px-5 sm:px-6 lg:px-8 py-5 sm:py-6 lg:py-7 border-2">
                     {t('landing.soloButton')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
                   </Button>
                 </a>
               </div>
@@ -767,9 +767,9 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="py-6 sm:py-4 mt-4 sm:mt-[15px]">
-          <div className="container mx-auto px-4 sm:px-6 text-center text-xs sm:text-sm md:text-base text-muted-foreground">
+        {/* Footer - responsive */}
+        <footer className="py-4 sm:py-5 lg:py-6 mt-4 sm:mt-6 lg:mt-8">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 text-center text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground max-w-[1920px]">
             <p>{t('landing.footerText')}</p>
           </div>
         </footer>
