@@ -638,6 +638,11 @@ const Board = () => {
   // Mobile column carousel state
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
   const [mobileSortBy, setMobileSortBy] = useState<"position" | "deadline" | "priority" | "newest" | "oldest">("position");
+  
+  // Mobile swipe state
+  const [swipeStartX, setSwipeStartX] = useState<number>(0);
+  const [swipeStartY, setSwipeStartY] = useState<number>(0);
+  const [swiping, setSwiping] = useState(false);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -1273,6 +1278,40 @@ const Board = () => {
     x: (touch1.clientX + touch2.clientX) / 2,
     y: (touch1.clientY + touch2.clientY) / 2
   });
+
+  // Mobile swipe handlers for column navigation
+  const handleMobileSwipeStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setSwipeStartX(e.touches[0].clientX);
+      setSwipeStartY(e.touches[0].clientY);
+      setSwiping(true);
+    }
+  };
+
+  const handleMobileSwipeMove = (e: React.TouchEvent) => {
+    // Don't prevent default to allow vertical scrolling
+  };
+
+  const handleMobileSwipeEnd = (e: React.TouchEvent) => {
+    if (!swiping) return;
+    
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - swipeStartX;
+    const deltaY = touch.clientY - swipeStartY;
+    
+    // Check if horizontal swipe is dominant (more horizontal than vertical)
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0 && currentColumnIndex > 0) {
+        // Swipe right - go to previous column
+        setCurrentColumnIndex(prev => Math.max(0, prev - 1));
+      } else if (deltaX < 0 && currentColumnIndex < columns.length - 1) {
+        // Swipe left - go to next column
+        setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1));
+      }
+    }
+    
+    setSwiping(false);
+  };
 
   // Touch event handlers for pan (1 finger) and pinch-to-zoom (2 fingers)
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -2619,7 +2658,12 @@ const Board = () => {
       {/* Canvas Board / Mobile Layout */}
       {isMobile ?
         // Mobile: Single column carousel layout
-        <main className="flex-1 overflow-y-auto overflow-x-hidden pt-2 pb-6 px-4 min-h-screen bg-background">
+        <main 
+          className="flex-1 overflow-y-auto overflow-x-hidden pt-2 pb-6 px-4 min-h-screen bg-background"
+          onTouchStart={handleMobileSwipeStart}
+          onTouchMove={handleMobileSwipeMove}
+          onTouchEnd={handleMobileSwipeEnd}
+        >
           <div className="flex flex-col gap-2 h-full">
             {columns.length > 0 && (() => {
               const column = columns[currentColumnIndex];
@@ -2771,7 +2815,7 @@ const Board = () => {
                         disabled={currentColumnIndex === columns.length - 1}
                         className={cn(
                           "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-5 rounded-xl transition-all",
-                          currentColumnIndex === columns.length - 1
+                          currentColumnIndex === columns.length - 1 
                             ? "opacity-30 cursor-not-allowed" 
                             : "hover:bg-white/30 dark:hover:bg-card/30"
                         )}
@@ -2780,6 +2824,13 @@ const Board = () => {
                           <path d="m9 18 6-6-6-6" />
                         </svg>
                       </button>
+                    </div>
+                    
+                    {/* Swipe indicator - subtle visual feedback */}
+                    <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-center">
+                      <p className="text-xs text-muted-foreground">
+                        ← Swipe om te navigeren →
+                      </p>
                     </div>
                   </div>
                   
