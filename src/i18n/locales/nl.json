@@ -171,7 +171,10 @@
     "exportTask": "Exporteren",
     "exportTaskTitle": "Taak exporteren naar email",
     "exportEmails": "E-mailadressen",
-    "exportEmailsPlaceholder": "naam@voorbeeld.nl, ander@voorbeeld.nl"
+    "exportEmailsPlaceholder": "naam@voorbeeld.nl, ander@voorbeeld.nl",
+    "loadingBoard": "Board laden...",
+    "errorLoadingBoard": "Fout bij het laden van board",
+    "errorLoadingMembers": "Fout bij het laden van teamleden:"
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
