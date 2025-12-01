@@ -18,6 +18,7 @@ i18next
       de: { translation: de },
     },
     fallbackLng: 'nl',
+    lng: 'nl', // Force default language to Dutch
     interpolation: {
       escapeValue: false,
     },
