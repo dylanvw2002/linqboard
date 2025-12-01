@@ -2744,7 +2744,7 @@ const Board = () => {
       {isMobile ?
         // Mobile: Single column carousel layout
         <main 
-          className="flex-1 overflow-y-auto overflow-x-hidden pt-2 pb-6 px-4 min-h-screen bg-background"
+          className="flex-1 overflow-y-auto overflow-x-hidden pt-1 pb-6 px-4 min-h-screen bg-background"
           onTouchStart={handleMobileSwipeStart}
           onTouchMove={handleMobileSwipeMove}
           onTouchEnd={handleMobileSwipeEnd}
