@@ -182,7 +182,7 @@ const Index = () => {
       <link rel="preload" as="image" href={logo} />
       <link rel="preload" as="image" href={linqboardMascot} />
       
-      <div className="min-h-[100dvh] bg-gradient-to-br from-background via-primary/5 to-accent/5 overflow-x-hidden pb-20">
+      <div className="min-h-[100dvh] bg-background md:bg-gradient-to-br md:from-background md:via-primary/5 md:to-accent/5 overflow-x-hidden pb-20">
         {/* Background Icons Pattern - Lazy loaded with Intersection Observer */}
         <BackgroundIcons />
         
