@@ -219,25 +219,25 @@ const Index = () => {
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 lg:pt-32 xl:pt-36 pb-6 sm:pb-8 lg:pb-10 min-h-[100dvh] flex items-center max-w-7xl">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-16 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content */}
-            <article className="space-y-6 sm:space-y-8 lg:space-y-6 xl:space-y-8 text-center lg:text-left lg:ml-32">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl font-bold leading-tight">
+            <article className="space-y-6 sm:space-y-8 lg:space-y-8 xl:space-y-10 text-center lg:text-left lg:ml-32">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                 {t('landing.heroTitle1')} <span className="text-primary">{t('landing.heroTitle2')}</span>
               </h1>
               
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-2xl text-muted-foreground max-w-xl lg:max-w-xl leading-relaxed mx-auto lg:mx-0">
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-xl lg:max-w-2xl leading-relaxed mx-auto lg:mx-0">
                 {t('landing.tagline')}
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-4 pt-2 lg:pt-3 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 pt-2 lg:pt-4 justify-center lg:justify-start">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
-                  <Button size="lg" className="text-base sm:text-lg lg:text-lg xl:text-xl px-8 py-5 lg:py-6 shadow-lg hover:shadow-xl transition-all w-full">
+                  <Button size="lg" className="text-base sm:text-lg lg:text-xl xl:text-2xl px-8 py-5 lg:px-10 lg:py-7 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-5 w-5 lg:h-6 lg:w-6" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth?mode=join" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="text-base sm:text-lg lg:text-lg xl:text-xl px-8 py-5 lg:py-6 border-2 w-full">
+                  <Button size="lg" variant="outline" className="text-base sm:text-lg lg:text-xl xl:text-2xl px-8 py-5 lg:px-10 lg:py-7 border-2 w-full">
                     {t('landing.haveCode')}
                   </Button>
                 </Link>
@@ -247,7 +247,7 @@ const Index = () => {
             {/* Right Visual Mockup - Shows first on mobile, last on desktop */}
             <div className="relative -mt-8 lg:-mt-16 flex justify-center items-center order-first lg:order-last">
               <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 lg:hidden h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
-              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-1/2 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-3/4 xl:w-4/5 h-auto" loading="eager" fetchPriority="high" width="800" height="600" />
               
               {/* Decorative elements */}
               
