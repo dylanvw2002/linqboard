@@ -2866,12 +2866,12 @@ const Board = () => {
                             +
                           </button>
                         </DialogTrigger>
-                        <DialogContent className="w-screen h-[100dvh] sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-0 flex flex-col sm:rounded-lg rounded-none border-0 sm:border" onOpenAutoFocus={(e) => e.preventDefault()}>
-                          <DialogHeader className="px-4 pt-safe sm:pt-6 pb-3 shrink-0 border-b sm:border-0">
+                        <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[92vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                          <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
                             <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                           </DialogHeader>
-                          <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-safe sm:pb-6">
-                            <div className="space-y-3 sm:space-y-4 py-4">
+                          <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                            <div className="space-y-3 sm:space-y-4 py-2">
                             <div>
                               <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
                               <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
@@ -3276,12 +3276,12 @@ const Board = () => {
                       +
                     </button>}
                 </DialogTrigger>
-                <DialogContent className="w-screen h-[100dvh] sm:w-auto sm:h-auto sm:max-w-2xl sm:max-h-[90vh] p-0 flex flex-col sm:rounded-lg rounded-none border-0 sm:border" onOpenAutoFocus={(e) => e.preventDefault()}>
-                  <DialogHeader className="px-4 pt-safe sm:pt-6 pb-3 shrink-0 border-b sm:border-0">
+                <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[92vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                  <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
                     <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
                   </DialogHeader>
-                  <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-safe sm:pb-6">
-                    <div className="space-y-3 sm:space-y-4 py-4">
+                  <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                    <div className="space-y-3 sm:space-y-4 py-2">
                     <div>
                       <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
                       <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
@@ -3408,12 +3408,12 @@ const Board = () => {
 
       {/* Edit Task Dialog */}
       <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
-        <DialogContent className="w-screen h-[100dvh] sm:w-auto sm:h-auto sm:max-w-3xl sm:max-h-[90vh] p-0 flex flex-col sm:rounded-lg rounded-none border-0 sm:border" onOpenAutoFocus={(e) => e.preventDefault()}>
-          <DialogHeader className="px-4 pt-safe sm:pt-6 pb-3 shrink-0 border-b sm:border-0">
+        <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[92vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
             <DialogTitle>{t('board.editTask')}</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-safe sm:pb-6">
-            <div className="space-y-3 sm:space-y-4 py-4">
+          <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+            <div className="space-y-3 sm:space-y-4 py-2">
             {(() => {
                 const taskColumn = columns.find(c => c.id === editingTask?.column_id);
                 const isSimpleColumn = taskColumn && (taskColumn.column_type === 'sick_leave' || taskColumn.column_type === 'vacation');
@@ -3521,17 +3521,17 @@ const Board = () => {
 
       {/* Export Task Dialog */}
       <Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
-        <DialogContent className="w-screen h-[100dvh] sm:w-auto sm:h-auto sm:max-w-lg sm:max-h-[80vh] flex flex-col p-4 sm:p-6 sm:rounded-lg rounded-none border-0 sm:border pt-safe pb-safe" onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={e => {
+        <DialogContent className="max-w-[96vw] sm:max-w-lg max-h-[92vh] flex flex-col p-4 sm:p-6" onOpenAutoFocus={(e) => e.preventDefault()} onInteractOutside={e => {
             // Prevent closing when clicking on Select dropdown
             const target = e.target as HTMLElement;
             if (target.closest('[role="listbox"]') || target.closest('[data-radix-select-content]')) {
               e.preventDefault();
             }
           }}>
-          <DialogHeader className="shrink-0 border-b sm:border-0 pb-3">
+          <DialogHeader className="shrink-0 pb-3">
             <DialogTitle>{t('board.exportTaskTitle')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 overflow-y-auto flex-1 py-4">
+          <div className="space-y-4 overflow-y-auto flex-1 py-2">
             {/* Team Members Selection */}
             <div>
               <Label>{t('board.exportSelectMembers')}</Label>
