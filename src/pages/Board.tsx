@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -638,6 +638,14 @@ const Board = () => {
   // Mobile column carousel state
   const [currentColumnIndex, setCurrentColumnIndex] = useState(0);
   const [mobileSortBy, setMobileSortBy] = useState<"position" | "deadline" | "priority" | "newest" | "oldest">("position");
+  const mobileMainRef = useRef<HTMLElement>(null);
+  
+  // Auto scroll to top when changing columns on mobile
+  useEffect(() => {
+    if (isMobile && mobileMainRef.current) {
+      mobileMainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentColumnIndex, isMobile]);
   
   // Mobile swipe state
   const [swipeStartX, setSwipeStartX] = useState<number>(0);
@@ -2744,6 +2752,7 @@ const Board = () => {
       {isMobile ?
         // Mobile: Single column carousel layout
         <main 
+          ref={mobileMainRef}
           className="flex-1 overflow-y-auto overflow-x-hidden pt-1 pb-6 px-4 min-h-screen bg-background"
           onTouchStart={handleMobileSwipeStart}
           onTouchMove={handleMobileSwipeMove}
