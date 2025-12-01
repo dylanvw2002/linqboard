@@ -3038,20 +3038,22 @@ const Board = () => {
                   })}
                   </div>
                   
-                  {/* Page indicator */}
-                  <div className="flex justify-center gap-2 mt-4 pb-4">
-                    {columns.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentColumnIndex(index)}
-                        className={cn(
-                          "w-2 h-2 rounded-full transition-all",
-                          index === currentColumnIndex 
-                            ? "bg-primary w-6" 
-                            : "bg-primary/30"
-                        )}
-                      />
-                    ))}
+                  {/* Page indicator - sticky aan de onderkant */}
+                  <div className="sticky bottom-0 left-0 right-0 flex justify-center gap-2 mt-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent pointer-events-none z-10">
+                    <div className="pointer-events-auto flex gap-2">
+                      {columns.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentColumnIndex(index)}
+                          className={cn(
+                            "w-2 h-2 rounded-full transition-all",
+                            index === currentColumnIndex 
+                              ? "bg-primary w-6" 
+                              : "bg-primary/30"
+                          )}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </section>;
             })()}
