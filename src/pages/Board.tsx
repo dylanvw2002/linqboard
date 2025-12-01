@@ -643,6 +643,8 @@ const Board = () => {
   const [swipeStartX, setSwipeStartX] = useState<number>(0);
   const [swipeStartY, setSwipeStartY] = useState<number>(0);
   const [swiping, setSwiping] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
@@ -1303,10 +1305,26 @@ const Board = () => {
     if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
       if (deltaX > 0 && currentColumnIndex > 0) {
         // Swipe right - go to previous column
-        setCurrentColumnIndex(prev => Math.max(0, prev - 1));
+        setIsTransitioning(true);
+        setSlideDirection('right');
+        setTimeout(() => {
+          setCurrentColumnIndex(prev => Math.max(0, prev - 1));
+          setTimeout(() => {
+            setIsTransitioning(false);
+            setSlideDirection(null);
+          }, 50);
+        }, 100);
       } else if (deltaX < 0 && currentColumnIndex < columns.length - 1) {
         // Swipe left - go to next column
-        setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1));
+        setIsTransitioning(true);
+        setSlideDirection('left');
+        setTimeout(() => {
+          setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1));
+          setTimeout(() => {
+            setIsTransitioning(false);
+            setSlideDirection(null);
+          }, 50);
+        }, 100);
       }
     }
     
@@ -2510,6 +2528,58 @@ const Board = () => {
             opacity: 1;
           }
         }
+        @keyframes slide-in-from-left {
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slide-in-from-right {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes slide-out-to-left {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+        }
+        @keyframes slide-out-to-right {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        .slide-in-left {
+          animation: slide-in-from-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide-in-right {
+          animation: slide-in-from-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide-out-left {
+          animation: slide-out-to-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide-out-right {
+          animation: slide-out-to-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
       `}</style>
 
       {/* Header */}
@@ -2669,12 +2739,32 @@ const Board = () => {
               const column = columns[currentColumnIndex];
               if (!column) return null;
               
-              return <section key={column.id} className="flex flex-col w-full h-full">
+              return <section 
+                key={column.id} 
+                className={cn(
+                  "flex flex-col w-full h-full",
+                  !isTransitioning && slideDirection === null && "slide-in-right",
+                  isTransitioning && slideDirection === 'left' && "slide-out-left",
+                  isTransitioning && slideDirection === 'right' && "slide-out-right"
+                )}
+              >
                   <div className={cn("flex items-center justify-between px-4 py-4 rounded-[32px] backdrop-blur-[60px] border-2 mb-3.5 shadow-[0_8px_20px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] relative overflow-visible group before:absolute before:inset-0 before:rounded-[32px] before:bg-gradient-to-br before:from-white/30 before:via-white/10 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[31px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none transition-all", getGlowStyles(column.glow_type).header, "border-white/40 dark:border-white/20")}>
                     <div className="flex items-center justify-between w-full gap-3">
                       {/* Left arrow */}
                       <button 
-                        onClick={() => setCurrentColumnIndex(prev => Math.max(0, prev - 1))}
+                        onClick={() => {
+                          if (currentColumnIndex > 0) {
+                            setIsTransitioning(true);
+                            setSlideDirection('right');
+                            setTimeout(() => {
+                              setCurrentColumnIndex(prev => Math.max(0, prev - 1));
+                              setTimeout(() => {
+                                setIsTransitioning(false);
+                                setSlideDirection(null);
+                              }, 50);
+                            }, 100);
+                          }
+                        }}
                         disabled={currentColumnIndex === 0}
                         className={cn(
                           "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-5 rounded-xl transition-all",
@@ -2811,7 +2901,19 @@ const Board = () => {
                       
                       {/* Right arrow */}
                       <button 
-                        onClick={() => setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1))}
+                        onClick={() => {
+                          if (currentColumnIndex < columns.length - 1) {
+                            setIsTransitioning(true);
+                            setSlideDirection('left');
+                            setTimeout(() => {
+                              setCurrentColumnIndex(prev => Math.min(columns.length - 1, prev + 1));
+                              setTimeout(() => {
+                                setIsTransitioning(false);
+                                setSlideDirection(null);
+                              }, 50);
+                            }, 100);
+                          }
+                        }}
                         disabled={currentColumnIndex === columns.length - 1}
                         className={cn(
                           "backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 p-5 rounded-xl transition-all",
