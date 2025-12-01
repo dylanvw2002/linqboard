@@ -51,7 +51,8 @@ export const SimpleTaskCard = ({
     <div
       onClick={onClick}
       className={cn(
-        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-3 cursor-pointer transition-transform duration-150 will-change-transform hover:-translate-y-2 transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
+        "relative backdrop-blur-sm bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] p-3 cursor-pointer transition-transform duration-150 will-change-transform transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 before:transition-opacity before:duration-150 after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none contain-layout contain-paint",
+        !isMobile && "hover:-translate-y-2 hover:before:opacity-100",
         glowGradient,
         glowShadow,
         isOverdue && "animate-overdue-glow"
