@@ -230,14 +230,14 @@ const Index = () => {
               
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-4 pt-2 lg:pt-3 justify-center lg:justify-start">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
-                  <Button size="lg" className="text-base sm:text-lg lg:text-base px-8 py-6 lg:py-5 shadow-lg hover:shadow-xl transition-all w-full">
+                  <Button size="lg" className="text-base sm:text-lg lg:text-lg xl:text-xl px-8 py-5 lg:py-6 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth?mode=join" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="text-base sm:text-lg lg:text-base px-8 py-6 lg:py-5 border-2 w-full">
+                  <Button size="lg" variant="outline" className="text-base sm:text-lg lg:text-lg xl:text-xl px-8 py-5 lg:py-6 border-2 w-full">
                     {t('landing.haveCode')}
                   </Button>
                 </Link>
