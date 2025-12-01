@@ -46,6 +46,7 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         axis: orientation === "horizontal" ? "x" : "y",
         watchDrag: true,
         skipSnaps: false,
+        dragFree: false,
       },
       plugins,
     );
@@ -120,8 +121,8 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         <div
           ref={ref}
           onKeyDownCapture={handleKeyDown}
-          className={cn("relative touch-pan-y", className)}
-          style={{ willChange: 'transform' }}
+          className={cn("relative", className)}
+          style={{ willChange: 'auto' }}
           role="region"
           aria-roledescription="carousel"
           {...props}
@@ -143,7 +144,7 @@ const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
         <div
           ref={ref}
           className={cn("flex", orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col", className)}
-          style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
+          style={{ backfaceVisibility: 'hidden', perspective: 1000 }}
           {...props}
         />
       </div>
