@@ -646,7 +646,7 @@ const Board = () => {
       // Wait for transition to complete before scrolling
       setTimeout(() => {
         mobileMainRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 200);
+      }, 120);
     }
   }, [currentColumnIndex, isMobile]);
   
@@ -1332,8 +1332,8 @@ const Board = () => {
           setTimeout(() => {
             setIsTransitioning(false);
             setSlideDirection(null);
-          }, 50);
-        }, 100);
+          }, 30);
+        }, 60);
       } else if (deltaX < 0 && currentColumnIndex < columns.length - 1) {
         // Swipe left - go to next column
         setIsTransitioning(true);
@@ -1343,8 +1343,8 @@ const Board = () => {
           setTimeout(() => {
             setIsTransitioning(false);
             setSlideDirection(null);
-          }, 50);
-        }, 100);
+          }, 30);
+        }, 60);
       }
     }
     
@@ -2595,16 +2595,16 @@ const Board = () => {
           }
         }
         .slide-in-left {
-          animation: slide-in-from-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: slide-in-from-left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .slide-in-right {
-          animation: slide-in-from-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: slide-in-from-right 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .slide-out-left {
-          animation: slide-out-to-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: slide-out-to-left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .slide-out-right {
-          animation: slide-out-to-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: slide-out-to-right 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
       `}</style>
 
@@ -2788,8 +2788,8 @@ const Board = () => {
                               setTimeout(() => {
                                 setIsTransitioning(false);
                                 setSlideDirection(null);
-                              }, 50);
-                            }, 100);
+                              }, 30);
+                            }, 60);
                           }
                         }}
                         disabled={currentColumnIndex === 0}
@@ -2937,8 +2937,8 @@ const Board = () => {
                               setTimeout(() => {
                                 setIsTransitioning(false);
                                 setSlideDirection(null);
-                              }, 50);
-                            }, 100);
+                              }, 30);
+                            }, 60);
                           }
                         }}
                         disabled={currentColumnIndex === columns.length - 1}
