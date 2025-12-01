@@ -68,22 +68,22 @@ export const BackgroundIcons = () => {
         <Clipboard className="absolute top-[80%] left-[85%] w-10 h-10 text-primary opacity-5" />
       </div>
       
-      {/* Mobile icons - zonder paarse tint */}
+      {/* Mobile icons - fewer and strategically placed */}
       <div className="block md:hidden">
-        <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
-        <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-primary opacity-5" />
+        <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-primary opacity-5" />
         
-        <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
-        <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Target className="absolute top-[30%] left-[10%] w-10 h-10 text-primary opacity-5" />
+        <Clock className="absolute top-[30%] right-[10%] w-10 h-10 text-primary opacity-5" />
         
-        <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
-        <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Zap className="absolute top-[50%] left-[10%] w-10 h-10 text-primary opacity-5" />
+        <FileText className="absolute top-[50%] right-[10%] w-10 h-10 text-primary opacity-5" />
         
-        <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
-        <Clipboard className="absolute top-[70%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <CheckCircle2 className="absolute top-[70%] left-[10%] w-10 h-10 text-primary opacity-5" />
+        <Clipboard className="absolute top-[70%] right-[10%] w-10 h-10 text-primary opacity-5" />
         
-        <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-muted-foreground opacity-3" />
-        <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-muted-foreground opacity-3" />
+        <Archive className="absolute top-[90%] left-[10%] w-10 h-10 text-primary opacity-5" />
+        <Paperclip className="absolute top-[90%] right-[10%] w-10 h-10 text-primary opacity-5" />
       </div>
     </div>
   );
