@@ -89,15 +89,16 @@ serve(async (req) => {
         if (reminder.notification_type === 'email' || reminder.notification_type === 'both') {
           try {
             const offsetLabels: Record<string, string> = {
-              '15_minutes': '15 minuten',
-              '1_hour': '1 uur',
-              '3_hours': '3 uur',
-              '1_day': '1 dag',
-              '3_days': '3 dagen',
-              '1_week': '1 week',
+              '15_minutes': '15 minuten van tevoren',
+              '1_hour': '1 uur van tevoren',
+              '3_hours': '3 uur van tevoren',
+              '1_day': '1 dag van tevoren',
+              '3_days': '3 dagen van tevoren',
+              '1_week': '1 week van tevoren',
+              'custom': 'op het ingestelde moment',
             };
 
-            const offsetLabel = offsetLabels[reminder.reminder_offset] || reminder.reminder_offset;
+            const offsetLabel = offsetLabels[reminder.reminder_offset] || 'op het ingestelde moment';
             const dueDate = task.due_date ? new Date(task.due_date).toLocaleString('nl-NL') : 'Niet ingesteld';
 
             await resend.emails.send({
