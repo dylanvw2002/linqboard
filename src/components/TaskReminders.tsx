@@ -272,7 +272,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {["00", "15", "30", "45"].map((minute) => (
+                  {Array.from({ length: 12 }, (_, i) => (i * 5).toString().padStart(2, "0")).map((minute) => (
                     <SelectItem key={minute} value={minute}>
                       {minute}
                     </SelectItem>
