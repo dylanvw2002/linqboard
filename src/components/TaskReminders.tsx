@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Plus, Trash2 } from "lucide-react";
+import { Bell, Plus, Trash2, CalendarIcon, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -10,8 +10,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { nl } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 interface TaskRemindersProps {
   taskId: string;
@@ -36,7 +46,11 @@ const REMINDER_OFFSETS = [
 
 export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
   const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [mode, setMode] = useState<"relative" | "specific">("relative");
   const [selectedOffset, setSelectedOffset] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedHour, setSelectedHour] = useState<string>("09");
+  const [selectedMinute, setSelectedMinute] = useState<string>("00");
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [desktopEnabled, setDesktopEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -81,14 +95,36 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
   };
 
   const addReminder = async () => {
-    if (!selectedOffset || !dueDate) {
-      toast.error("Selecteer een herinneringsmoment");
-      return;
-    }
-
     if (!emailEnabled && !desktopEnabled) {
       toast.error("Selecteer minimaal één notificatietype");
       return;
+    }
+
+    let remindAt: string;
+    let reminderOffset: string;
+
+    if (mode === "relative") {
+      if (!selectedOffset || !dueDate) {
+        toast.error("Selecteer een herinneringsmoment");
+        return;
+      }
+      remindAt = calculateRemindAt(selectedOffset, dueDate);
+      reminderOffset = selectedOffset;
+    } else {
+      if (!selectedDate) {
+        toast.error("Selecteer een datum en tijd");
+        return;
+      }
+      const combinedDateTime = new Date(selectedDate);
+      combinedDateTime.setHours(parseInt(selectedHour), parseInt(selectedMinute), 0, 0);
+      
+      if (combinedDateTime <= new Date()) {
+        toast.error("Herinnering moet in de toekomst liggen");
+        return;
+      }
+      
+      remindAt = combinedDateTime.toISOString();
+      reminderOffset = "custom";
     }
 
     setLoading(true);
@@ -96,8 +132,6 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
     const notificationType = 
       emailEnabled && desktopEnabled ? "both" :
       emailEnabled ? "email" : "desktop";
-
-    const remindAt = calculateRemindAt(selectedOffset, dueDate);
 
     const { data: user } = await supabase.auth.getUser();
     if (!user.user) {
@@ -109,7 +143,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
     const { error } = await supabase.from("task_reminders").insert({
       task_id: taskId,
       user_id: user.user.id,
-      reminder_offset: selectedOffset,
+      reminder_offset: reminderOffset,
       notification_type: notificationType,
       remind_at: remindAt,
     });
@@ -124,6 +158,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
 
     toast.success("Herinnering toegevoegd");
     setSelectedOffset("");
+    setSelectedDate(undefined);
     fetchReminders();
   };
 
@@ -143,10 +178,16 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
     fetchReminders();
   };
 
-  if (!dueDate) {
+  if (!dueDate && mode === "relative") {
     return (
-      <div className="text-sm text-muted-foreground">
-        Stel eerst een deadline in om herinneringen te kunnen toevoegen.
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Bell className="w-4 h-4 text-primary" />
+          <h3 className="font-semibold text-sm">Herinneringen</h3>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Stel eerst een deadline in om relatieve herinneringen te kunnen toevoegen, of kies "Specifieke tijd".
+        </div>
       </div>
     );
   }
@@ -160,18 +201,87 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
 
       {/* Add reminder section */}
       <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
-        <Select value={selectedOffset} onValueChange={setSelectedOffset}>
-          <SelectTrigger>
-            <SelectValue placeholder="Selecteer moment..." />
-          </SelectTrigger>
-          <SelectContent>
-            {REMINDER_OFFSETS.map((offset) => (
-              <SelectItem key={offset.value} value={offset.value}>
-                {offset.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <RadioGroup value={mode} onValueChange={(v) => setMode(v as "relative" | "specific")} className="flex gap-4">
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="relative" id="relative" />
+            <Label htmlFor="relative" className="cursor-pointer">Relatief</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="specific" id="specific" />
+            <Label htmlFor="specific" className="cursor-pointer">Specifieke tijd</Label>
+          </div>
+        </RadioGroup>
+
+        {mode === "relative" ? (
+          <Select value={selectedOffset} onValueChange={setSelectedOffset}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecteer moment..." />
+            </SelectTrigger>
+            <SelectContent>
+              {REMINDER_OFFSETS.map((offset) => (
+                <SelectItem key={offset.value} value={offset.value}>
+                  {offset.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <div className="space-y-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "PPP", { locale: nl }) : "Kies een datum"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+
+            <div className="flex gap-2">
+              <Select value={selectedHour} onValueChange={setSelectedHour}>
+                <SelectTrigger className="flex-1">
+                  <Clock className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0")).map((hour) => (
+                    <SelectItem key={hour} value={hour}>
+                      {hour}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="flex items-center">:</span>
+              <Select value={selectedMinute} onValueChange={setSelectedMinute}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["00", "15", "30", "45"].map((minute) => (
+                    <SelectItem key={minute} value={minute}>
+                      {minute}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -199,7 +309,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
 
         <Button
           onClick={addReminder}
-          disabled={!selectedOffset || loading}
+          disabled={(mode === "relative" && !selectedOffset) || (mode === "specific" && !selectedDate) || loading}
           size="sm"
           className="w-full"
         >
@@ -214,8 +324,10 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
           <p className="text-sm font-medium">Actieve herinneringen:</p>
           {reminders.map((reminder) => {
             const offsetLabel =
-              REMINDER_OFFSETS.find((o) => o.value === reminder.reminder_offset)?.label ||
-              reminder.reminder_offset;
+              reminder.reminder_offset === "custom"
+                ? format(new Date(reminder.remind_at), "d MMM yyyy 'om' HH:mm", { locale: nl })
+                : REMINDER_OFFSETS.find((o) => o.value === reminder.reminder_offset)?.label ||
+                  reminder.reminder_offset;
             
             const typeLabel =
               reminder.notification_type === "both"
