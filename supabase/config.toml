@@ -9,6 +9,9 @@ verify_jwt = false
 [functions.check-deadline-reminders]
 verify_jwt = false
 
+[functions.process-task-reminders]
+verify_jwt = false
+
 [functions.create_org]
 verify_jwt = true
 

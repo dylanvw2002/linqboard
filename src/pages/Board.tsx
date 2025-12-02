@@ -29,6 +29,9 @@ import { TaskHistory } from "@/components/TaskHistory";
 import { TaskHistoryDialog } from "@/components/TaskHistoryDialog";
 import { ActiveUsers } from "@/components/ActiveUsers";
 import { ColumnManagement } from "@/components/ColumnManagement";
+import { TaskReminders } from "@/components/TaskReminders";
+import { NotificationPermissionBanner } from "@/components/NotificationPermissionBanner";
+import { useDesktopNotifications } from "@/hooks/useDesktopNotifications";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
@@ -505,6 +508,8 @@ const Board = () => {
     i18n
   } = useTranslation();
   const isMobile = useIsMobile();
+  const { requestPermission } = useDesktopNotifications();
+  
   const taskSchema = z.object({
     title: z.string().trim().min(1, t('board.titleRequired')).max(200, t('board.titleMaxLength')),
     description: z.string().trim().max(1000, t('board.descriptionMaxLength')).optional()
@@ -3493,6 +3498,10 @@ const Board = () => {
                   {editingTask && <TaskAttachments taskId={editingTask.id} />}
                   
                   {editingTask && <div className="border-t pt-4">
+                      <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
+                    </div>}
+                  
+                  {editingTask && <div className="border-t pt-4">
                       <div className="flex items-center justify-between mb-3">
                         <Label>Geschiedenis</Label>
                         <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
@@ -3739,6 +3748,8 @@ const Board = () => {
 
         </div>
       </div>
+      
+      <NotificationPermissionBanner />
       
       {/* Logo links onderaan */}
       <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate(isDemo ? "/" : "/dashboard")} />

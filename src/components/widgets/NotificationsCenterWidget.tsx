@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface NotificationsCenterWidgetProps {
   widgetId: string;
@@ -12,7 +14,7 @@ interface NotificationsCenterWidgetProps {
 
 interface Notification {
   id: string;
-  type: "assignment" | "mention" | "deadline";
+  type: "assignment" | "mention" | "deadline" | "custom";
   message: string;
   created_at: string;
   read: boolean;
@@ -21,12 +23,13 @@ interface Notification {
 
 export const NotificationsCenterWidget = ({ boardId }: NotificationsCenterWidgetProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotifications();
     
-    // Real-time subscription voor nieuwe notificaties
-    const channel = supabase
+    // Real-time subscription for task assignments
+    const taskChannel = supabase
       .channel('task-changes')
       .on(
         'postgres_changes',
@@ -39,14 +42,37 @@ export const NotificationsCenterWidget = ({ boardId }: NotificationsCenterWidget
       )
       .subscribe();
 
+    // Real-time subscription for custom notifications
+    const notificationChannel = supabase
+      .channel('custom-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'user_notifications'
+        },
+        () => fetchNotifications()
+      )
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(taskChannel);
+      supabase.removeChannel(notificationChannel);
     };
   }, [boardId]);
 
   const fetchNotifications = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+
+    // Fetch custom notifications (reminders)
+    const { data: customNotifs } = await supabase
+      .from("user_notifications")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(10);
 
     // Fetch recent task assignments
     const { data: columns } = await supabase
@@ -71,8 +97,23 @@ export const NotificationsCenterWidget = ({ boardId }: NotificationsCenterWidget
       .order("created_at", { ascending: false })
       .limit(10);
 
+    const allNotifications: Notification[] = [];
+
+    // Add custom notifications
+    if (customNotifs) {
+      allNotifications.push(...customNotifs.map((notif: any) => ({
+        id: notif.id,
+        type: "custom" as const,
+        message: notif.message,
+        created_at: notif.created_at,
+        read: notif.is_read,
+        task_id: notif.task_id,
+      })));
+    }
+
+    // Add assignment notifications
     if (assignees) {
-      const notifs: Notification[] = assignees
+      const assignmentNotifs = assignees
         .filter((a: any) => columns.some(c => c.id === a.tasks?.column_id))
         .map((a: any) => ({
           id: a.id,
@@ -82,15 +123,31 @@ export const NotificationsCenterWidget = ({ boardId }: NotificationsCenterWidget
           read: false,
           task_id: a.task_id,
         }));
-
-      setNotifications(notifs);
+      
+      allNotifications.push(...assignmentNotifs);
     }
+
+    // Sort by date and limit
+    allNotifications.sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    setNotifications(allNotifications.slice(0, 15));
   };
 
-  const markAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
+  const markAsRead = async (notification: Notification) => {
+    if (notification.type === "custom") {
+      await supabase
+        .from("user_notifications")
+        .update({ is_read: true })
+        .eq("id", notification.id);
+      
+      fetchNotifications();
+    } else {
+      setNotifications(prev => 
+        prev.map(n => n.id === notification.id ? { ...n, read: true } : n)
+      );
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -118,9 +175,10 @@ export const NotificationsCenterWidget = ({ boardId }: NotificationsCenterWidget
           notifications.map(notif => (
             <div
               key={notif.id}
-              className={`p-3 rounded-lg border ${
+              className={cn(
+                "p-3 rounded-lg border",
                 notif.read ? "bg-muted/50" : "bg-background"
-              }`}
+              )}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1">
@@ -137,7 +195,7 @@ export const NotificationsCenterWidget = ({ boardId }: NotificationsCenterWidget
                     size="sm"
                     variant="ghost"
                     className="h-6 w-6 p-0"
-                    onClick={() => markAsRead(notif.id)}
+                    onClick={() => markAsRead(notif)}
                   >
                     <Check className="h-4 w-4" />
                   </Button>
