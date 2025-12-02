@@ -491,7 +491,7 @@ const Dashboard = () => {
       {/* Background Icons Pattern */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Desktop icons */}
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <Calendar className="absolute top-[5%] left-[5%] w-10 h-10 text-primary opacity-5" />
           <Clipboard className="absolute top-[5%] left-[30%] w-10 h-10 text-primary opacity-5" />
           <FileText className="absolute top-[5%] left-[55%] w-10 h-10 text-primary opacity-5" />
@@ -524,7 +524,7 @@ const Dashboard = () => {
         </div>
         
         {/* Mobile icons */}
-        <div className="block md:hidden">
+        <div className="block lg:hidden">
           <Calendar className="absolute top-[10%] left-[10%] w-10 h-10 text-primary opacity-5" />
           <CheckSquare className="absolute top-[10%] right-[10%] w-10 h-10 text-primary opacity-5" />
           
@@ -591,7 +591,7 @@ const Dashboard = () => {
       </header>
 
       {/* Logo linksonder met quote bubble - responsive */}
-      <div className="fixed bottom-0 left-2 sm:left-4 lg:left-6 xl:left-8 z-20 hidden md:block">
+      <div className="fixed bottom-0 left-2 sm:left-4 lg:left-6 xl:left-8 z-20 hidden lg:block">
         {currentQuote && (
           <div className="absolute bottom-full left-20 sm:left-24 lg:left-28 xl:left-32 mb-3 lg:mb-4 animate-fade-in">
             <div className="relative bg-white dark:bg-white text-foreground px-4 sm:px-5 lg:px-6 py-2.5 lg:py-3 rounded-2xl shadow-lg max-w-[500px] lg:max-w-[600px] xl:max-w-[720px] 2xl:max-w-[800px] min-w-[320px] lg:min-w-[400px] xl:min-w-[480px]">
@@ -679,7 +679,7 @@ const Dashboard = () => {
                 </Button>
               )}
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 lg:gap-4 xl:gap-5">
+              <div className="grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 lg:gap-4 xl:gap-5">
               {organizations.slice(currentPage * 3, (currentPage + 1) * 3).map(org => <Card key={org.id} className="p-3 lg:p-4 xl:p-5 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-[72px] lg:right-[80px] xl:right-[88px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" onClick={e => {
