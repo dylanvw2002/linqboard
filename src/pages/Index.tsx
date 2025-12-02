@@ -371,8 +371,8 @@ const Index = () => {
 
             {/* Right Visual Mockup - responsive images */}
             <div className="relative -mt-4 sm:-mt-6 lg:-mt-12 xl:-mt-16 flex justify-center items-center order-first lg:order-last">
-              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 sm:w-2/5 lg:hidden h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
-              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden lg:block lg:w-3/4 xl:w-4/5 2xl:w-full h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
+              <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 sm:w-2/5 md:hidden h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden md:block md:w-3/4 lg:w-3/4 xl:w-4/5 2xl:w-full h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
               
               {/* Decorative elements */}
               
