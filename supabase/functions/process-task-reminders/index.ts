@@ -84,6 +84,7 @@ serve(async (req) => {
         }
 
         const userEmail = userData.user.email;
+        console.log(`Processing reminder ${reminder.id} for user ${userEmail}, type: ${reminder.notification_type}`);
 
         // Send email notification if requested
         if (reminder.notification_type === 'email' || reminder.notification_type === 'both') {
@@ -101,8 +102,10 @@ serve(async (req) => {
             const offsetLabel = offsetLabels[reminder.reminder_offset] || 'op het ingestelde moment';
             const dueDate = task.due_date ? new Date(task.due_date).toLocaleString('nl-NL') : 'Niet ingesteld';
 
-            await resend.emails.send({
-              from: 'LinqBoard <herinneringen@linqboard.com>',
+            console.log(`Sending email to ${userEmail} for task: ${task.title}`);
+            
+            const emailResult = await resend.emails.send({
+              from: 'LinqBoard <onboarding@resend.dev>',
               to: [userEmail],
               subject: `⏰ Herinnering: ${task.title}`,
               html: `
@@ -128,7 +131,7 @@ serve(async (req) => {
                       <h1>⏰ Taak Herinnering</h1>
                     </div>
                     <div class="content">
-                      <p>Je hebt een herinnering ingesteld voor ${offsetLabel} van tevoren.</p>
+                      <p>Je hebt een herinnering ingesteld ${offsetLabel}.</p>
                       
                       <div class="task-info">
                         <div class="task-title">${task.title}</div>
@@ -150,16 +153,19 @@ serve(async (req) => {
               `,
             });
 
+            console.log(`Email result for ${reminder.id}:`, JSON.stringify(emailResult));
             results.emailsSent++;
-            console.log(`Email sent for reminder ${reminder.id} to ${userEmail}`);
+            console.log(`Email sent successfully for reminder ${reminder.id} to ${userEmail}`);
           } catch (emailError) {
             console.error(`Error sending email for reminder ${reminder.id}:`, emailError);
-            results.errors.push({ reminder_id: reminder.id, error: 'Email send failed' });
+            results.errors.push({ reminder_id: reminder.id, error: 'Email send failed', details: String(emailError) });
           }
         }
 
         // Create desktop notification if requested
         if (reminder.notification_type === 'desktop' || reminder.notification_type === 'both') {
+          console.log(`Creating desktop notification for reminder ${reminder.id}`);
+          
           const { error: notificationError } = await supabase
             .from('user_notifications')
             .insert({
@@ -174,7 +180,7 @@ serve(async (req) => {
             results.errors.push({ reminder_id: reminder.id, error: 'Notification creation failed' });
           } else {
             results.notificationsCreated++;
-            console.log(`Notification created for reminder ${reminder.id}`);
+            console.log(`Notification created successfully for reminder ${reminder.id}`);
           }
         }
 
@@ -187,6 +193,8 @@ serve(async (req) => {
         if (updateError) {
           console.error(`Error updating reminder ${reminder.id}:`, updateError);
           results.errors.push({ reminder_id: reminder.id, error: 'Update failed' });
+        } else {
+          console.log(`Reminder ${reminder.id} marked as sent`);
         }
       } catch (error) {
         console.error(`Error processing reminder ${reminder.id}:`, error);
@@ -195,7 +203,7 @@ serve(async (req) => {
       }
     }
 
-    console.log('Processing complete:', results);
+    console.log('Processing complete:', JSON.stringify(results));
 
     return new Response(
       JSON.stringify({
