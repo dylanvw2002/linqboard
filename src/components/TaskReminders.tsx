@@ -53,13 +53,29 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
   const [selectedMinute, setSelectedMinute] = useState<string>("00");
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [desktopEnabled, setDesktopEnabled] = useState(true);
+  const [smsEnabled, setSmsEnabled] = useState(false);
+  const [userPhoneNumber, setUserPhoneNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (taskId) {
       fetchReminders();
+      fetchUserPhoneNumber();
     }
   }, [taskId]);
+
+  const fetchUserPhoneNumber = async () => {
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) return;
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("phone_number")
+      .eq("user_id", user.user.id)
+      .single();
+
+    setUserPhoneNumber(profile?.phone_number || null);
+  };
 
   // Auto-select specific mode when no deadline is set
   useEffect(() => {
@@ -102,8 +118,13 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
   };
 
   const addReminder = async () => {
-    if (!emailEnabled && !desktopEnabled) {
+    if (!emailEnabled && !desktopEnabled && !smsEnabled) {
       toast.error("Selecteer minimaal één notificatietype");
+      return;
+    }
+
+    if (smsEnabled && !userPhoneNumber) {
+      toast.error("Voeg eerst een telefoonnummer toe aan je profiel");
       return;
     }
 
@@ -136,9 +157,23 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
 
     setLoading(true);
 
-    const notificationType = 
-      emailEnabled && desktopEnabled ? "both" :
-      emailEnabled ? "email" : "desktop";
+    // Determine notification type based on enabled options
+    let notificationType: string;
+    if (emailEnabled && desktopEnabled && smsEnabled) {
+      notificationType = "all";
+    } else if (emailEnabled && desktopEnabled) {
+      notificationType = "both";
+    } else if (emailEnabled && smsEnabled) {
+      notificationType = "email_sms";
+    } else if (desktopEnabled && smsEnabled) {
+      notificationType = "desktop_sms";
+    } else if (emailEnabled) {
+      notificationType = "email";
+    } else if (desktopEnabled) {
+      notificationType = "desktop";
+    } else {
+      notificationType = "sms";
+    }
 
     const { data: user } = await supabase.auth.getUser();
     if (!user.user) {
@@ -293,7 +328,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
           </div>
         )}
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <Checkbox
               id="email"
@@ -315,7 +350,28 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
               Desktop
             </Label>
           </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="sms"
+              checked={smsEnabled}
+              onCheckedChange={(checked) => setSmsEnabled(checked as boolean)}
+              disabled={!userPhoneNumber}
+            />
+            <Label 
+              htmlFor="sms" 
+              className={cn("text-sm cursor-pointer", !userPhoneNumber && "text-muted-foreground cursor-not-allowed")}
+            >
+              SMS
+            </Label>
+          </div>
         </div>
+
+        {!userPhoneNumber && (
+          <p className="text-xs text-muted-foreground">
+            Voeg een telefoonnummer toe aan je profiel om SMS herinneringen in te schakelen.
+          </p>
+        )}
 
         <Button
           onClick={addReminder}
@@ -339,12 +395,16 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
                 : REMINDER_OFFSETS.find((o) => o.value === reminder.reminder_offset)?.label ||
                   reminder.reminder_offset;
             
-            const typeLabel =
-              reminder.notification_type === "both"
-                ? "Email & Desktop"
-                : reminder.notification_type === "email"
-                ? "Alleen email"
-                : "Alleen desktop";
+            const typeLabels: Record<string, string> = {
+              all: "Email, Desktop & SMS",
+              both: "Email & Desktop",
+              email_sms: "Email & SMS",
+              desktop_sms: "Desktop & SMS",
+              email: "Alleen email",
+              desktop: "Alleen desktop",
+              sms: "Alleen SMS",
+            };
+            const typeLabel = typeLabels[reminder.notification_type] || reminder.notification_type;
 
             return (
               <div
