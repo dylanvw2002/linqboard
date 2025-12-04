@@ -60,6 +60,7 @@ const Dashboard = () => {
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
   const [avatarUploadOpen, setAvatarUploadOpen] = useState(false);
   const [editName, setEditName] = useState("");
+  const [editPhoneNumber, setEditPhoneNumber] = useState("");
   const [subscriptionLimits, setSubscriptionLimits] = useState<SubscriptionLimits | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -161,11 +162,12 @@ const Dashboard = () => {
       // Fetch profile
       const {
         data: profile
-      } = await supabase.from('profiles').select('full_name, avatar_url').eq('user_id', userId).maybeSingle();
+      } = await supabase.from('profiles').select('full_name, avatar_url, phone_number').eq('user_id', userId).maybeSingle();
       if (profile) {
         setUserName(profile.full_name || "");
         setEditName(profile.full_name || "");
         setAvatarUrl(profile.avatar_url || null);
+        setEditPhoneNumber(profile.phone_number || "");
       }
 
       // Fetch subscription limits
@@ -239,7 +241,8 @@ const Dashboard = () => {
       const {
         error
       } = await supabase.from('profiles').update({
-        full_name: editName
+        full_name: editName,
+        phone_number: editPhoneNumber.trim() || null
       }).eq('user_id', userId);
       if (error) throw error;
       setProfileDialogOpen(false);
@@ -812,6 +815,21 @@ const Dashboard = () => {
             <div className="space-y-2">
               <Label htmlFor="name">{t('dashboard.nameLabel')}</Label>
               <Input id="name" value={editName} onChange={e => setEditName(e.target.value)} placeholder={t('dashboard.namePlaceholder')} />
+            </div>
+
+            {/* Phone number input */}
+            <div className="space-y-2">
+              <Label htmlFor="phone">{t('dashboard.phoneLabel', 'Telefoonnummer')}</Label>
+              <Input 
+                id="phone" 
+                type="tel"
+                value={editPhoneNumber} 
+                onChange={e => setEditPhoneNumber(e.target.value)} 
+                placeholder={t('dashboard.phonePlaceholder', '+31612345678')} 
+              />
+              <p className="text-xs text-muted-foreground">
+                {t('dashboard.phoneHint', 'Voor SMS herinneringen. Gebruik internationaal formaat (bijv. +31612345678)')}
+              </p>
             </div>
 
             {/* Actions */}
