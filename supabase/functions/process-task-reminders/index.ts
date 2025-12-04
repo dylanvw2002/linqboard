@@ -10,6 +10,50 @@ const corsHeaders = {
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
+// Twilio credentials
+const TWILIO_ACCOUNT_SID = Deno.env.get('TWILIO_ACCOUNT_SID');
+const TWILIO_AUTH_TOKEN = Deno.env.get('TWILIO_AUTH_TOKEN');
+const TWILIO_PHONE_NUMBER = Deno.env.get('TWILIO_PHONE_NUMBER');
+
+async function sendSMS(to: string, message: string): Promise<boolean> {
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+    console.error('Twilio credentials not configured');
+    return false;
+  }
+
+  try {
+    const auth = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
+    const response = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          To: to,
+          From: TWILIO_PHONE_NUMBER,
+          Body: message,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Twilio API error:', errorData);
+      return false;
+    }
+
+    const result = await response.json();
+    console.log('SMS sent successfully:', result.sid);
+    return true;
+  } catch (error) {
+    console.error('Error sending SMS:', error);
+    return false;
+  }
+}
+
 async function imageUrlToBase64(url: string): Promise<string> {
   try {
     const response = await fetch(url);
@@ -176,6 +220,7 @@ serve(async (req) => {
 
     const results = {
       emailsSent: 0,
+      smsSent: 0,
       notificationsCreated: 0,
       errors: [] as any[],
     };
@@ -204,7 +249,10 @@ serve(async (req) => {
         console.log(`Processing reminder ${reminder.id} for user ${userEmail}, type: ${reminder.notification_type}`);
 
         // Send email notification if requested
-        if (reminder.notification_type === 'email' || reminder.notification_type === 'both') {
+        const includesEmail = reminder.notification_type === 'email' || reminder.notification_type === 'both' ||
+          reminder.notification_type === 'email_sms' || reminder.notification_type === 'all';
+        
+        if (includesEmail) {
           try {
             const offsetLabels: Record<string, string> = {
               '15_minutes': '15 minuten van tevoren',
@@ -281,7 +329,11 @@ serve(async (req) => {
         }
 
         // Create desktop notification if requested
-        if (reminder.notification_type === 'desktop' || reminder.notification_type === 'both') {
+        const notificationType = reminder.notification_type;
+        const includesDesktop = notificationType === 'desktop' || notificationType === 'both' || 
+          notificationType === 'desktop_sms' || notificationType === 'all';
+        
+        if (includesDesktop) {
           console.log(`Creating desktop notification for reminder ${reminder.id}`);
           
           const { error: notificationError } = await supabase
@@ -299,6 +351,41 @@ serve(async (req) => {
           } else {
             results.notificationsCreated++;
             console.log(`Notification created successfully for reminder ${reminder.id}`);
+          }
+        }
+
+        // Send SMS if requested
+        const includesSms = notificationType === 'sms' || notificationType === 'email_sms' || 
+          notificationType === 'desktop_sms' || notificationType === 'all';
+        
+        if (includesSms) {
+          console.log(`Sending SMS for reminder ${reminder.id}`);
+          
+          // Get user's phone number from profile
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('phone_number')
+            .eq('user_id', reminder.user_id)
+            .single();
+
+          if (profileError || !profile?.phone_number) {
+            console.error(`No phone number for user ${reminder.user_id}`);
+            results.errors.push({ reminder_id: reminder.id, error: 'No phone number configured' });
+          } else {
+            const dueDate = task.due_date ? new Date(task.due_date) : null;
+            const dueDateStr = dueDate 
+              ? dueDate.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+              : 'Niet ingesteld';
+            
+            const smsMessage = `⏰ LinqBoard Herinnering: ${task.title}\nDeadline: ${dueDateStr}`;
+            
+            const smsSent = await sendSMS(profile.phone_number, smsMessage);
+            if (smsSent) {
+              results.smsSent++;
+              console.log(`SMS sent successfully for reminder ${reminder.id}`);
+            } else {
+              results.errors.push({ reminder_id: reminder.id, error: 'SMS send failed' });
+            }
           }
         }
 
