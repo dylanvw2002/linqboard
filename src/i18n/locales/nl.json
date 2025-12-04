@@ -475,6 +475,9 @@
     "billingDetailsUpdateError": "Fout bij bijwerken factuurgegevens",
     "viewPlans": "Bekijk plannen"
   },
+  "support": {
+    "contact": "Contact Support"
+  },
   "onboarding": {
     "welcome": "Welkom bij LinqBoard!",
     "welcomeDescription": "Laten we je snel op weg helpen",
