@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 import { Resend } from 'https://esm.sh/resend@2.0.0';
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,6 +9,118 @@ const corsHeaders = {
 };
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
+
+async function imageUrlToBase64(url: string): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch image');
+    const arrayBuffer = await response.arrayBuffer();
+    const base64 = base64Encode(arrayBuffer);
+    const ext = url.split('.').pop()?.toLowerCase();
+    const mimeType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+    return `data:${mimeType};base64,${base64}`;
+  } catch (error) {
+    console.error('Error converting image to base64:', error);
+    return '';
+  }
+}
+
+const EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinqBoard – Taak Herinnering</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f3ff;font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f3ff;">
+    <tr>
+      <td align="center" style="padding:8px;">
+        
+        <!-- Logo -->
+        <img src="{{logoBase64}}" alt="LinqBoard" width="120" height="120" style="display:block;margin:0 auto 6px;" />
+        
+        <!-- Main Container -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:24px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+          
+          <!-- Reminder Badge -->
+          <tr>
+            <td align="center" style="padding:8px 12px 6px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:#dbeafe;color:#1e40af;font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;text-transform:uppercase;">
+                    ⏰ Herinnering
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Title -->
+          <tr>
+            <td align="center" style="padding:0 12px 8px;">
+              <h1 style="margin:0;font-size:20px;font-weight:700;color:#1e1b4b;">{{title}}</h1>
+            </td>
+          </tr>
+          
+          <!-- Description -->
+          <tr>
+            <td style="padding:0 12px 8px;">
+              <div style="background:#f9fafb;border-left:4px solid #c7d2fe;padding:8px;border-radius:12px;font-size:13px;line-height:1.4;color:#334155;">
+                {{description}}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Meta Info (Deadline & Reminder Type) -->
+          <tr>
+            <td style="padding:0 12px 8px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fef9f5;border-radius:16px;border:2px solid #f97316;">
+                <tr>
+                  <td style="padding:10px;">
+                    <div style="font-size:11px;font-weight:700;color:#9a3412;text-transform:uppercase;margin-bottom:6px;">
+                      📅 Details
+                    </div>
+                    <div style="font-size:12px;line-height:1.6;color:#451a03;">
+                      <strong>Deadline:</strong> {{dueDateStr}}<br>
+                      <strong>Herinnering:</strong> {{offsetLabel}}
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Priority if set -->
+          {{priorityHtml}}
+          
+          <!-- CTA Button -->
+          <tr>
+            <td align="center" style="padding:0 12px 12px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;box-shadow:0 3px 8px rgba(99,102,241,0.4);">
+                    <a href="https://linqboard.io" style="display:block;padding:10px 28px;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;">
+                      🔗 Bekijk in LinqBoard
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+        </table>
+        
+        <!-- Footer -->
+        <div style="margin-top:8px;font-size:11px;color:#64748b;text-align:center;padding-bottom:8px;">
+          © 2025 LinqBoard – Samen, van to-do naar done.
+        </div>
+        
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -57,6 +170,10 @@ serve(async (req) => {
 
     console.log(`Found ${reminders.length} reminders to process`);
 
+    // Pre-fetch logo
+    const logoUrl = 'https://vvoktdypcvdawumavylp.supabase.co/storage/v1/object/public/Logo\'s/logo-transparent.png';
+    const logoBase64 = await imageUrlToBase64(logoUrl);
+
     const results = {
       emailsSent: 0,
       notificationsCreated: 0,
@@ -96,11 +213,54 @@ serve(async (req) => {
               '1_day': '1 dag van tevoren',
               '3_days': '3 dagen van tevoren',
               '1_week': '1 week van tevoren',
-              'custom': 'op het ingestelde moment',
+              'custom': 'Op het ingestelde moment',
             };
 
-            const offsetLabel = offsetLabels[reminder.reminder_offset] || 'op het ingestelde moment';
-            const dueDate = task.due_date ? new Date(task.due_date).toLocaleString('nl-NL') : 'Niet ingesteld';
+            const offsetLabel = offsetLabels[reminder.reminder_offset] || 'Op het ingestelde moment';
+            const dueDate = task.due_date ? new Date(task.due_date) : null;
+            const dueDateStr = dueDate 
+              ? dueDate.toLocaleDateString('nl-NL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+              : 'Niet ingesteld';
+            
+            const description = task.description 
+              ? task.description.replace(/\n/g, '<br>')
+              : '<span style="color:#999;font-style:italic;">Geen beschrijving</span>';
+
+            const priorityConfig: Record<string, { bg: string; fg: string; label: string }> = {
+              high: { bg: '#fecaca', fg: '#991b1b', label: 'Hoog' },
+              medium: { bg: '#fef08a', fg: '#854d0e', label: 'Middel' },
+              low: { bg: '#bbf7d0', fg: '#166534', label: 'Laag' }
+            };
+
+            let priorityHtml = '';
+            if (task.priority) {
+              const prio = priorityConfig[task.priority];
+              if (prio) {
+                priorityHtml = `
+                  <tr>
+                    <td style="padding:0 12px 8px;">
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${prio.bg};border-radius:16px;">
+                        <tr>
+                          <td style="padding:8px 10px;">
+                            <div style="font-size:12px;color:${prio.fg};font-weight:600;text-align:center;">
+                              Prioriteit: ${prio.label}
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                `;
+              }
+            }
+
+            const emailHtml = EMAIL_TEMPLATE
+              .replace(/{{logoBase64}}/g, logoBase64)
+              .replace(/{{title}}/g, task.title)
+              .replace(/{{description}}/g, description)
+              .replace(/{{dueDateStr}}/g, dueDateStr)
+              .replace(/{{offsetLabel}}/g, offsetLabel)
+              .replace(/{{priorityHtml}}/g, priorityHtml);
 
             console.log(`Sending email to ${userEmail} for task: ${task.title}`);
             
@@ -108,49 +268,7 @@ serve(async (req) => {
               from: 'LinqBoard Herinneringen <herinneringen@linqboard.io>',
               to: [userEmail],
               subject: `⏰ Herinnering: ${task.title}`,
-              html: `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                  <meta charset="utf-8">
-                  <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-                    .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-                    .task-info { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #667eea; }
-                    .task-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-                    .task-detail { margin: 10px 0; }
-                    .label { font-weight: bold; color: #667eea; }
-                    .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
-                  </style>
-                </head>
-                <body>
-                  <div class="container">
-                    <div class="header">
-                      <h1>⏰ Taak Herinnering</h1>
-                    </div>
-                    <div class="content">
-                      <p>Je hebt een herinnering ingesteld ${offsetLabel}.</p>
-                      
-                      <div class="task-info">
-                        <div class="task-title">${task.title}</div>
-                        ${task.description ? `<div class="task-detail">${task.description}</div>` : ''}
-                        <div class="task-detail">
-                          <span class="label">Deadline:</span> ${dueDate}
-                        </div>
-                        ${task.priority ? `<div class="task-detail"><span class="label">Prioriteit:</span> ${task.priority}</div>` : ''}
-                      </div>
-
-                      <p>Log in op LinqBoard om de taak te bekijken en bij te werken.</p>
-                    </div>
-                    <div class="footer">
-                      <p>Dit is een automatische herinnering van LinqBoard</p>
-                    </div>
-                  </div>
-                </body>
-                </html>
-              `,
+              html: emailHtml,
             });
 
             console.log(`Email result for ${reminder.id}:`, JSON.stringify(emailResult));
