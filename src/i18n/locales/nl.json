@@ -476,13 +476,21 @@
     "viewPlans": "Bekijk plannen"
   },
   "onboarding": {
-    "step1Title": "Welkom bij LinqBoard!",
-    "step1Description": "Laten we je helpen om aan de slag te gaan.",
-    "step2Title": "Maak je eerste board",
-    "step2Description": "Organiseer je taken en projecten in een visueel board.",
-    "step3Title": "Nodig je team uit",
-    "step3Description": "Werk samen met je team en bereik je doelen.",
-    "getStarted": "Aan de slag"
+    "welcome": "Welkom bij LinqBoard!",
+    "welcomeDescription": "Laten we je snel op weg helpen",
+    "step1Title": "Welkom bij LinqBoard",
+    "step1Description": "De moderne manier om taken te beheren met je team. Realtime, simpel en overzichtelijk.",
+    "step2Title": "Wat zijn organisaties?",
+    "step2Description": "Organisaties zijn je werkruimtes. Elk team of project kan zijn eigen organisatie hebben met boards en taken.",
+    "step3Title": "Tijd om te beginnen!",
+    "step3Description": "Kies hoe je wilt starten:",
+    "createFirstOrg": "Maak je eerste organisatie",
+    "joinWithCode": "Sluit je aan bij een team met een code",
+    "skip": "Overslaan",
+    "next": "Volgende",
+    "previous": "Vorige",
+    "getStarted": "Aan de slag!",
+    "dontShowAgain": "Niet meer tonen"
   },
   "widgets": {
     "notes": {
