@@ -61,6 +61,13 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
     }
   }, [taskId]);
 
+  // Auto-select specific mode when no deadline is set
+  useEffect(() => {
+    if (!dueDate && mode === "relative") {
+      setMode("specific");
+    }
+  }, [dueDate]);
+
   const fetchReminders = async () => {
     const { data, error } = await supabase
       .from("task_reminders")
@@ -178,19 +185,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
     fetchReminders();
   };
 
-  if (!dueDate && mode === "relative") {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-primary" />
-          <h3 className="font-semibold text-sm">Herinneringen</h3>
-        </div>
-        <div className="text-sm text-muted-foreground">
-          Stel eerst een deadline in om relatieve herinneringen te kunnen toevoegen, of kies "Specifieke tijd".
-        </div>
-      </div>
-    );
-  }
+  const showRelativeOption = !!dueDate;
 
   return (
     <div className="space-y-4">
@@ -201,10 +196,19 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
 
       {/* Add reminder section */}
       <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
-        <RadioGroup value={mode} onValueChange={(v) => setMode(v as "relative" | "specific")} className="flex gap-4">
+        <RadioGroup 
+          value={mode} 
+          onValueChange={(v) => setMode(v as "relative" | "specific")} 
+          className="flex gap-4"
+        >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="relative" id="relative" />
-            <Label htmlFor="relative" className="cursor-pointer">Relatief</Label>
+            <RadioGroupItem value="relative" id="relative" disabled={!showRelativeOption} />
+            <Label 
+              htmlFor="relative" 
+              className={cn("cursor-pointer", !showRelativeOption && "text-muted-foreground cursor-not-allowed")}
+            >
+              Relatief
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="specific" id="specific" />
@@ -212,7 +216,13 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
           </div>
         </RadioGroup>
 
-        {mode === "relative" ? (
+        {!showRelativeOption && mode === "relative" && (
+          <p className="text-sm text-muted-foreground">
+            Stel eerst een deadline in voor relatieve herinneringen.
+          </p>
+        )}
+
+        {mode === "relative" && showRelativeOption ? (
           <Select value={selectedOffset} onValueChange={setSelectedOffset}>
             <SelectTrigger>
               <SelectValue placeholder="Selecteer moment..." />
