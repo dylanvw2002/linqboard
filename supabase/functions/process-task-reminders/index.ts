@@ -105,7 +105,7 @@ serve(async (req) => {
             console.log(`Sending email to ${userEmail} for task: ${task.title}`);
             
             const emailResult = await resend.emails.send({
-              from: 'LinqBoard <onboarding@resend.dev>',
+              from: 'LinqBoard Herinneringen <herinneringen@linqboard.io>',
               to: [userEmail],
               subject: `⏰ Herinnering: ${task.title}`,
               html: `
