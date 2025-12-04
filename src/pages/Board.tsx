@@ -638,6 +638,7 @@ const Board = () => {
   const [filterAssignee, setFilterAssignee] = useState<string | null>(null);
   const [filterPriority, setFilterPriority] = useState<"low" | "medium" | "high" | null>(null);
   const [filterDeadline, setFilterDeadline] = useState<"overdue" | "today" | "this-week" | "no-deadline" | null>(null);
+  const [filterKeyword, setFilterKeyword] = useState<string>("");
   const [activeFiltersCount, setActiveFiltersCount] = useState(0);
   
   // Mobile column carousel state
@@ -711,6 +712,13 @@ const Board = () => {
   // Filter tasks function
   const filterTasks = (tasks: Task[]) => {
     return tasks.filter(task => {
+      // Keyword filter - search in title and description
+      if (filterKeyword.trim()) {
+        const keyword = filterKeyword.toLowerCase().trim();
+        const titleMatch = task.title.toLowerCase().includes(keyword);
+        const descMatch = task.description?.toLowerCase().includes(keyword) || false;
+        if (!titleMatch && !descMatch) return false;
+      }
       if (filterAssignee) {
         if (filterAssignee === "unassigned") {
           if (task.assignees && task.assignees.length > 0) return false;
@@ -740,11 +748,12 @@ const Board = () => {
   // Update active filters count
   useEffect(() => {
     let count = 0;
+    if (filterKeyword.trim()) count++;
     if (filterAssignee) count++;
     if (filterPriority) count++;
     if (filterDeadline) count++;
     setActiveFiltersCount(count);
-  }, [filterAssignee, filterPriority, filterDeadline]);
+  }, [filterKeyword, filterAssignee, filterPriority, filterDeadline]);
   const handleAddColumn = async () => {
     if (isDemo) {
       const visibleColumns = columns.filter(c => c.x_position < 1500);
@@ -1940,11 +1949,12 @@ const Board = () => {
   // Update active filters count
   useEffect(() => {
     let count = 0;
+    if (filterKeyword.trim()) count++;
     if (filterAssignee) count++;
     if (filterPriority) count++;
     if (filterDeadline) count++;
     setActiveFiltersCount(count);
-  }, [filterAssignee, filterPriority, filterDeadline]);
+  }, [filterKeyword, filterAssignee, filterPriority, filterDeadline]);
   const handleClearCompleted = async () => {
     const completedColumn = columns.find(col => col.name === t('board.completedColumn'));
     if (!completedColumn) return;
@@ -2672,6 +2682,19 @@ const Board = () => {
                 <DropdownMenuLabel>Filter taken</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
+                {/* Filter op Trefwoord */}
+                <div className="px-2 py-2">
+                  <Label className="text-xs text-muted-foreground mb-2">Zoek op trefwoord</Label>
+                  <Input
+                    placeholder="Zoek in titel of omschrijving..."
+                    value={filterKeyword}
+                    onChange={(e) => setFilterKeyword(e.target.value)}
+                    className="bg-background h-9 text-sm"
+                  />
+                </div>
+                
+                <DropdownMenuSeparator />
+                
                 {/* Filter op Persoon */}
                 <div className="px-2 py-2">
                   <Label className="text-xs text-muted-foreground mb-2">Toegewezen aan</Label>
@@ -2735,6 +2758,7 @@ const Board = () => {
                 {/* Reset knop */}
                 <div className="px-2 py-2">
                   <Button variant="outline" size="sm" className="w-full" onClick={() => {
+                    setFilterKeyword("");
                     setFilterAssignee(null);
                     setFilterPriority(null);
                     setFilterDeadline(null);
