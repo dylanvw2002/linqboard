@@ -53,29 +53,13 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
   const [selectedMinute, setSelectedMinute] = useState<string>("00");
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [desktopEnabled, setDesktopEnabled] = useState(true);
-  const [smsEnabled, setSmsEnabled] = useState(false);
-  const [userPhoneNumber, setUserPhoneNumber] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (taskId) {
       fetchReminders();
-      fetchUserPhoneNumber();
     }
   }, [taskId]);
-
-  const fetchUserPhoneNumber = async () => {
-    const { data: user } = await supabase.auth.getUser();
-    if (!user.user) return;
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("phone_number")
-      .eq("user_id", user.user.id)
-      .single();
-
-    setUserPhoneNumber(profile?.phone_number || null);
-  };
 
   // Auto-select specific mode when no deadline is set
   useEffect(() => {
@@ -118,13 +102,8 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
   };
 
   const addReminder = async () => {
-    if (!emailEnabled && !desktopEnabled && !smsEnabled) {
+    if (!emailEnabled && !desktopEnabled) {
       toast.error("Selecteer minimaal één notificatietype");
-      return;
-    }
-
-    if (smsEnabled && !userPhoneNumber) {
-      toast.error("Voeg eerst een telefoonnummer toe aan je profiel");
       return;
     }
 
@@ -159,20 +138,12 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
 
     // Determine notification type based on enabled options
     let notificationType: string;
-    if (emailEnabled && desktopEnabled && smsEnabled) {
-      notificationType = "all";
-    } else if (emailEnabled && desktopEnabled) {
+    if (emailEnabled && desktopEnabled) {
       notificationType = "both";
-    } else if (emailEnabled && smsEnabled) {
-      notificationType = "email_sms";
-    } else if (desktopEnabled && smsEnabled) {
-      notificationType = "desktop_sms";
     } else if (emailEnabled) {
       notificationType = "email";
-    } else if (desktopEnabled) {
-      notificationType = "desktop";
     } else {
-      notificationType = "sms";
+      notificationType = "desktop";
     }
 
     const { data: user } = await supabase.auth.getUser();
@@ -350,28 +321,7 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
               Desktop
             </Label>
           </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="sms"
-              checked={smsEnabled}
-              onCheckedChange={(checked) => setSmsEnabled(checked as boolean)}
-              disabled={!userPhoneNumber}
-            />
-            <Label 
-              htmlFor="sms" 
-              className={cn("text-sm cursor-pointer", !userPhoneNumber && "text-muted-foreground cursor-not-allowed")}
-            >
-              SMS
-            </Label>
-          </div>
         </div>
-
-        {!userPhoneNumber && (
-          <p className="text-xs text-muted-foreground">
-            Voeg een telefoonnummer toe aan je profiel om SMS herinneringen in te schakelen.
-          </p>
-        )}
 
         <Button
           onClick={addReminder}
