@@ -3418,10 +3418,10 @@ const Board = () => {
               <div data-task-content className="grid gap-3 content-start" style={{
                 paddingTop: '14px',
                 paddingBottom: '16px',
-                paddingLeft: '24px',
-                paddingRight: '24px',
-                marginLeft: '-12px',
-                marginRight: '-12px'
+                paddingLeft: '32px',
+                paddingRight: '32px',
+                marginLeft: '-20px',
+                marginRight: '-20px'
               }}>
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
