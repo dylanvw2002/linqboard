@@ -381,26 +381,26 @@ const Index = () => {
         </main>
 
         {/* Features Section - responsive */}
-        <section ref={featuresSection.ref} className="py-12 sm:py-16 md:py-20 lg:py-32 xl:py-40 2xl:py-[200px] px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 mt-0 min-h-[100dvh] flex flex-col justify-center">
+        <section ref={featuresSection.ref} className="py-12 sm:py-16 md:py-20 lg:py-24 xl:py-28 2xl:py-32 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 mt-0 min-h-[100dvh] flex flex-col justify-center">
           <div className="container mx-auto max-w-[1920px]">
             {/* Header - responsive text */}
-            <div className={`text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 xl:mb-24 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              <p className="text-xs sm:text-sm lg:text-base xl:text-lg uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-5 font-semibold">
+            <div className={`text-center mb-8 sm:mb-12 md:mb-16 lg:mb-16 xl:mb-18 transition-all duration-700 ease-out ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              <p className="text-xs sm:text-sm lg:text-sm xl:text-base uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-4 font-semibold">
                 {t('landing.featuresLabel').toUpperCase()}
               </p>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3 sm:mb-4 lg:mb-5">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-4">
                 {t('landing.featuresTitle')}
               </h2>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
+              <p className="text-base sm:text-lg md:text-xl lg:text-lg xl:text-xl text-muted-foreground max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
                 {t('landing.featuresDescription')}
               </p>
             </div>
 
             {/* Features Grid - Desktop - responsive cards */}
-            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-10">
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-6 xl:gap-8">
               {features.map((feature, index) => {
               const Icon = feature.icon;
-              return <article key={index} className={`group relative bg-card rounded-2xl p-5 sm:p-6 lg:p-8 xl:p-10 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
+              return <article key={index} className={`group relative bg-card rounded-2xl p-5 sm:p-6 lg:p-6 xl:p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
                 animationDelay: `${index * 100}ms`
               }}>
                     {/* Gradient Background on Hover */}
@@ -409,25 +409,25 @@ const Index = () => {
                     {/* Content */}
                     <div className="relative z-10">
                       {/* Icon - responsive */}
-                      <div className="mb-4 sm:mb-5 lg:mb-6 xl:mb-7 relative">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 xl:w-20 xl:h-20 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
-                          <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 xl:w-10 xl:h-10 text-white" aria-hidden="true" />
+                      <div className="mb-4 sm:mb-5 lg:mb-5 xl:mb-6 relative">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500">
+                          <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-7 lg:h-7 xl:w-8 xl:h-8 text-white" aria-hidden="true" />
                         </div>
                         {/* Glow Effect */}
-                        <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 xl:w-20 xl:h-20 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
+                        <div className="absolute inset-0 w-12 h-12 sm:w-14 sm:h-14 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-xl bg-gradient-to-br from-primary to-accent blur-xl opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
                       </div>
 
                       {/* Text - responsive */}
-                      <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold mb-2 sm:mb-3 lg:mb-4 group-hover:text-primary transition-colors duration-300">
+                      <h3 className="text-base sm:text-lg lg:text-lg xl:text-xl font-bold mb-2 sm:mb-3 lg:mb-3 group-hover:text-primary transition-colors duration-300">
                         {feature.title}
                       </h3>
-                      <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-muted-foreground leading-relaxed">
+                      <p className="text-sm sm:text-base lg:text-base xl:text-lg text-muted-foreground leading-relaxed">
                         {feature.description}
                       </p>
                     </div>
 
                     {/* Corner Accent */}
-                    <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </article>;
             })}
             </div>
@@ -527,36 +527,36 @@ const Index = () => {
         </section>
 
         {/* Testimonial Quotes Section - responsive */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 md:py-10 lg:py-12 xl:py-16 max-w-[1920px]">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-6 sm:py-8 md:py-10 lg:py-10 xl:py-12 max-w-[1920px]">
           {/* Header - responsive */}
-          <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16">
-            <p className="text-xs sm:text-sm lg:text-base xl:text-lg uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-5 font-semibold">
+          <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-10 xl:mb-12">
+            <p className="text-xs sm:text-sm lg:text-sm xl:text-base uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-4 font-semibold">
               {t('landing.testimonialsLabel').toUpperCase()}
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold mb-3 sm:mb-4 lg:mb-5">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-5xl font-bold mb-3 sm:mb-4 lg:mb-4">
               {t('landing.testimonialsTitle')}
             </h2>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-muted-foreground max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl lg:text-lg xl:text-xl text-muted-foreground max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
               {t('landing.testimonialsDescription')}
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 xl:gap-8">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-5 lg:gap-5 xl:gap-6">
             {/* Quote 1 - NRG Totaal - responsive */}
             <div className="relative h-full">
-              <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 xl:p-8 2xl:p-10 border border-border shadow-lg h-full flex flex-col">
+              <div className="bg-gradient-to-br from-card via-card to-primary/5 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-6 xl:p-8 border border-border shadow-lg h-full flex flex-col">
                 {/* Quote Content */}
-                <div className="space-y-3 sm:space-y-4 lg:space-y-5 flex-1 flex flex-col">
-                  <blockquote className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium text-foreground leading-relaxed italic flex-1">
-                    <span className="text-purple-500 text-4xl sm:text-5xl lg:text-6xl font-serif mr-2">"</span>{t('landing.testimonial1')}
+                <div className="space-y-3 sm:space-y-4 lg:space-y-4 flex-1 flex flex-col">
+                  <blockquote className="text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl font-medium text-foreground leading-relaxed italic flex-1">
+                    <span className="text-purple-500 text-4xl sm:text-5xl lg:text-5xl font-serif mr-2">"</span>{t('landing.testimonial1')}
                   </blockquote>
                   
                   {/* Attribution - responsive */}
-                  <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3 border-t border-border/50">
-                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" decoding="async" />
+                  <div className="flex items-center gap-2 sm:gap-3 lg:gap-3 pt-2 sm:pt-3 border-t border-border/50">
+                    <img src={nrgTotaalLogo} alt="NRG Totaal logo" className="h-6 sm:h-7 lg:h-7 xl:h-8 w-auto opacity-80" loading="lazy" decoding="async" />
                     <div>
-                      <p className="font-semibold text-xs sm:text-sm lg:text-base xl:text-lg text-foreground">{t('landing.testimonial1Company')}</p>
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{t('landing.testimonial1Role')}</p>
+                      <p className="font-semibold text-xs sm:text-sm lg:text-sm xl:text-base text-foreground">{t('landing.testimonial1Company')}</p>
+                      <p className="text-[10px] sm:text-xs lg:text-xs text-muted-foreground">{t('landing.testimonial1Role')}</p>
                     </div>
                   </div>
                 </div>
@@ -565,19 +565,19 @@ const Index = () => {
 
             {/* Quote 2 - Zorgeloos Vastgoed - responsive */}
             <div className="relative h-full">
-              <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 xl:p-8 2xl:p-10 border border-border shadow-lg h-full flex flex-col">
+              <div className="bg-gradient-to-br from-card via-card to-accent/5 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-6 xl:p-8 border border-border shadow-lg h-full flex flex-col">
                 {/* Quote Content */}
-                <div className="space-y-3 sm:space-y-4 lg:space-y-5 flex-1 flex flex-col">
-                  <blockquote className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium text-foreground leading-relaxed italic flex-1">
-                    <span className="text-purple-500 text-4xl sm:text-5xl lg:text-6xl font-serif mr-2">"</span>{t('landing.testimonial2')}
+                <div className="space-y-3 sm:space-y-4 lg:space-y-4 flex-1 flex flex-col">
+                  <blockquote className="text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl font-medium text-foreground leading-relaxed italic flex-1">
+                    <span className="text-purple-500 text-4xl sm:text-5xl lg:text-5xl font-serif mr-2">"</span>{t('landing.testimonial2')}
                   </blockquote>
                   
                   {/* Attribution - responsive */}
-                  <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 pt-2 sm:pt-3 border-t border-border/50">
-                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-6 sm:h-7 lg:h-8 xl:h-10 w-auto opacity-80" loading="lazy" decoding="async" />
+                  <div className="flex items-center gap-2 sm:gap-3 lg:gap-3 pt-2 sm:pt-3 border-t border-border/50">
+                    <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed BV logo" className="h-6 sm:h-7 lg:h-7 xl:h-8 w-auto opacity-80" loading="lazy" decoding="async" />
                     <div>
-                      <p className="font-semibold text-xs sm:text-sm lg:text-base xl:text-lg text-foreground">{t('landing.testimonial2Company')}</p>
-                      <p className="text-[10px] sm:text-xs lg:text-sm text-muted-foreground">{t('landing.testimonial2Role')}</p>
+                      <p className="font-semibold text-xs sm:text-sm lg:text-sm xl:text-base text-foreground">{t('landing.testimonial2Company')}</p>
+                      <p className="text-[10px] sm:text-xs lg:text-xs text-muted-foreground">{t('landing.testimonial2Role')}</p>
                     </div>
                   </div>
                 </div>
@@ -587,48 +587,48 @@ const Index = () => {
         </section>
 
         {/* Demo Section - responsive */}
-        <section ref={demoSection.ref} className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-28 2xl:py-32 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 min-h-screen flex items-center w-full">
+        <section ref={demoSection.ref} className="py-8 sm:py-12 md:py-16 lg:py-16 xl:py-20 2xl:py-24 px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 min-h-screen flex items-center w-full">
           <div className="w-full max-w-[1920px] mx-auto">
-            <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 2xl:gap-24 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-8 xl:gap-12 2xl:gap-16 items-center transition-all duration-700 ease-out ${demoSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                   {/* Left: Image - responsive */}
                   <div className={`transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 -translate-x-0' : 'opacity-0 translate-x-8'}`}>
-                    <img alt="Linqboard Demo Preview" className="w-2/5 sm:w-1/3 lg:w-2/5 xl:w-1/2 2xl:w-3/5 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} decoding="async" />
+                    <img alt="Linqboard Demo Preview" className="w-2/5 sm:w-1/3 lg:w-1/3 xl:w-2/5 2xl:w-1/2 h-auto mx-auto" loading="lazy" width="600" height="400" src={linqboardMascotChair} decoding="async" />
                   </div>
 
                   {/* Right: Content - responsive */}
-                  <div className={`space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 xl:space-y-7 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
+                  <div className={`space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-5 xl:space-y-6 transition-all duration-700 ease-out delay-100 ${demoSection.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl xl:text-4xl 2xl:text-5xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent leading-tight">
                       {t('landing.demoTitle')}
                     </h2>
-                    <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl text-muted-foreground leading-relaxed">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-lg xl:text-xl 2xl:text-2xl text-muted-foreground leading-relaxed">
                       {t('landing.demoSubtitle')}
                     </p>
                     
-                    <div className="grid grid-cols-1 gap-2 sm:gap-3 md:gap-4 lg:gap-5">
-                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-primary" />
+                    <div className="grid grid-cols-1 gap-2 sm:gap-3 md:gap-4 lg:gap-4">
+                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-3">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-primary" />
                         </div>
-                        <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium">{t('landing.demoFeature1')}</span>
+                        <span className="text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl font-medium">{t('landing.demoFeature1')}</span>
                       </div>
-                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Edit className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-primary" />
+                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-3">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Edit className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-primary" />
                         </div>
-                        <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium">{t('landing.demoFeature2')}</span>
+                        <span className="text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl font-medium">{t('landing.demoFeature2')}</span>
                       </div>
-                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7 text-primary" />
+                      <div className="flex items-center gap-2 sm:gap-3 lg:gap-3">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-12 xl:h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Eye className="w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-5 lg:h-5 xl:w-6 xl:h-6 text-primary" />
                         </div>
-                        <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-medium">{t('landing.demoFeature3')}</span>
+                        <span className="text-xs sm:text-sm md:text-base lg:text-base xl:text-lg 2xl:text-xl font-medium">{t('landing.demoFeature3')}</span>
                       </div>
                     </div>
 
-                    <Link to="/board/demo" className="block pt-2 sm:pt-3 lg:pt-4">
-                      <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl px-6 sm:px-8 lg:px-10 py-4 sm:py-5 lg:py-6 xl:py-7 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
+                    <Link to="/board/demo" className="block pt-2 sm:pt-3 lg:pt-3">
+                      <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-base xl:text-lg px-6 sm:px-8 lg:px-8 py-4 sm:py-5 lg:py-5 xl:py-6 shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
                         {t('landing.demoButton')}
-                        <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
+                        <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 xl:w-6 xl:h-6" />
                       </Button>
                     </Link>
                 </div>
@@ -637,9 +637,9 @@ const Index = () => {
           </section>
 
         {/* Partners Section - responsive */}
-        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 md:py-12 lg:py-16 xl:py-20 max-w-[1920px]">
-          <div className={`bg-muted/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8 xl:p-12 2xl:p-16 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <p className="text-center text-xs sm:text-sm lg:text-base xl:text-lg uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-5 font-semibold">
+        <section ref={partnersSection.ref} className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 py-8 sm:py-10 md:py-12 lg:py-12 xl:py-16 max-w-[1920px]">
+          <div className={`bg-muted/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 lg:p-6 xl:p-10 2xl:p-12 transition-all duration-700 ease-out ${partnersSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <p className="text-center text-xs sm:text-sm lg:text-sm xl:text-base uppercase tracking-wider text-primary mb-3 sm:mb-4 lg:mb-4 font-semibold">
               {t('landing.trustedBy')}
             </p>
             
@@ -931,18 +931,18 @@ const Index = () => {
               </article>
             </div>
 
-            <div className="mt-6 sm:mt-8 lg:mt-10 text-center">
-              <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-muted-foreground">
+            <div className="mt-6 sm:mt-8 lg:mt-8 text-center">
+              <p className="text-xs sm:text-sm md:text-base lg:text-base xl:text-lg text-muted-foreground">
                 {t('pricing.footer')}
               </p>
             </div>
 
             {/* Register Button - responsive */}
-            <div className="mt-6 sm:mt-8 lg:mt-10 text-center">
+            <div className="mt-6 sm:mt-8 lg:mt-8 text-center">
               <Link to="/auth?mode=create">
-                <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl px-6 sm:px-8 lg:px-10 py-5 sm:py-6 lg:py-7 shadow-lg hover:shadow-xl transition-all">
+                <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-base xl:text-lg px-6 sm:px-8 lg:px-8 py-5 sm:py-6 lg:py-5 shadow-lg hover:shadow-xl transition-all">
                   {t('landing.register')}
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />
+                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5" />
                 </Button>
               </Link>
             </div>
@@ -955,8 +955,8 @@ const Index = () => {
         </section>
 
         {/* Footer - responsive */}
-        <footer className="py-4 sm:py-5 lg:py-6 mt-4 sm:mt-6 lg:mt-8">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 text-center text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground max-w-[1920px]">
+        <footer className="py-4 sm:py-5 lg:py-5 mt-4 sm:mt-6 lg:mt-6">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 text-center text-xs sm:text-sm md:text-base lg:text-sm text-muted-foreground max-w-[1920px]">
             <p>{t('landing.footerText')}</p>
           </div>
         </footer>
