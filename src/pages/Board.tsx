@@ -3365,7 +3365,8 @@ const Board = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-visible")} style={{
+            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("overflow-y-auto touch-pan-y py-3 relative")} style={{
+                height: `${displayColumn.height - (isMobile ? 56 : (displayColumn.header_height || 60))}px`,
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`
