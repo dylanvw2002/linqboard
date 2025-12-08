@@ -342,7 +342,7 @@ const Index = () => {
 
         {/* Hero Section - responsive */}
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 xl:pt-40 2xl:pt-48 pb-6 sm:pb-8 lg:pb-12 xl:pb-16 min-h-[100dvh] flex items-center max-w-[1920px]">
-          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 xl:gap-16 2xl:gap-20 items-center justify-items-center animate-fade-in w-full">
+          <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-8 xl:gap-10 2xl:gap-12 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content - responsive text */}
             <article className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-8 xl:space-y-10 2xl:space-y-12 text-center lg:text-left lg:ml-8 xl:ml-16 2xl:ml-32">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-tight">
