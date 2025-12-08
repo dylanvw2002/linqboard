@@ -344,25 +344,25 @@ const Index = () => {
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16 pt-20 sm:pt-24 md:pt-28 lg:pt-32 xl:pt-40 2xl:pt-48 pb-6 sm:pb-8 lg:pb-12 xl:pb-16 min-h-[100dvh] flex items-center max-w-[1920px]">
           <section className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-8 xl:gap-10 2xl:gap-12 items-center justify-items-center animate-fade-in w-full">
             {/* Left Content - responsive text */}
-            <article className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-8 xl:space-y-10 2xl:space-y-12 text-center lg:text-left lg:ml-8 xl:ml-16 2xl:ml-32">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold leading-tight">
+            <article className="space-y-4 sm:space-y-6 md:space-y-7 lg:space-y-6 xl:space-y-7 2xl:space-y-8 text-center lg:text-left lg:ml-8 xl:ml-16 2xl:ml-32">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-5xl 2xl:text-6xl font-bold leading-tight">
                 {t('landing.heroTitle1')} <span className="text-primary">{t('landing.heroTitle2')}</span>
               </h1>
               
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl text-muted-foreground max-w-xl lg:max-w-2xl xl:max-w-3xl leading-relaxed mx-auto lg:mx-0">
+              <p className="text-base sm:text-lg md:text-xl lg:text-lg xl:text-xl 2xl:text-2xl text-muted-foreground max-w-xl lg:max-w-2xl xl:max-w-3xl leading-relaxed mx-auto lg:mx-0">
                 {t('landing.tagline')}
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5 xl:gap-6 pt-2 lg:pt-4 xl:pt-6 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-4 xl:gap-5 pt-2 lg:pt-3 xl:pt-4 justify-center lg:justify-start">
                 <Link to="/auth?mode=create" className="w-full sm:w-auto">
-                  <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl px-6 sm:px-8 lg:px-10 xl:px-12 py-4 sm:py-5 lg:py-6 xl:py-7 shadow-lg hover:shadow-xl transition-all w-full">
+                  <Button size="lg" className="text-sm sm:text-base md:text-lg lg:text-base xl:text-lg 2xl:text-xl px-6 sm:px-8 lg:px-8 xl:px-10 py-4 sm:py-5 lg:py-5 xl:py-6 shadow-lg hover:shadow-xl transition-all w-full">
                     {t('landing.getStarted')}
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7" />
+                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 xl:h-6 xl:w-6" />
                   </Button>
                 </Link>
                 
                 <Link to="/auth?mode=join" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl px-6 sm:px-8 lg:px-10 xl:px-12 py-4 sm:py-5 lg:py-6 xl:py-7 border-2 w-full">
+                  <Button size="lg" variant="outline" className="text-sm sm:text-base md:text-lg lg:text-base xl:text-lg 2xl:text-xl px-6 sm:px-8 lg:px-8 xl:px-10 py-4 sm:py-5 lg:py-5 xl:py-6 border-2 w-full">
                     {t('landing.haveCode')}
                   </Button>
                 </Link>
@@ -370,9 +370,9 @@ const Index = () => {
             </article>
 
             {/* Right Visual Mockup - responsive images */}
-            <div className="relative -mt-4 sm:-mt-6 lg:-mt-12 xl:-mt-16 flex justify-center items-center order-first lg:order-last">
+            <div className="relative -mt-4 sm:-mt-6 lg:-mt-8 xl:-mt-10 flex justify-center items-center order-first lg:order-last">
               <img src={linqboardMascot} alt={t('seo.home.heroImageAlt')} className="w-1/2 sm:w-2/5 md:hidden h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
-              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden md:block md:w-1/2 lg:w-3/4 xl:w-4/5 2xl:w-full h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
+              <img src={linqboardMascotNoLogo} alt={t('seo.home.heroImageAlt')} className="hidden md:block md:w-1/2 lg:w-1/2 xl:w-3/5 2xl:w-2/3 h-auto" fetchPriority="high" width="800" height="600" decoding="async" />
               
               {/* Decorative elements */}
               
