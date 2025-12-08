@@ -3382,7 +3382,7 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <TaskStack maxVisibleTasks={4} stackOffset={5} availableHeight={displayColumn.height - (displayColumn.header_height || 60)} onDragStart={(e, index) => {
+              <TaskStack maxVisibleTasks={4} stackOffset={5} availableHeight={displayColumn.height - (displayColumn.header_height || 60)} disableStacking={column.name.toLowerCase().includes('maand') || column.column_type === 'completed'} onDragStart={(e, index) => {
                   const columnTasks = filterTasks(getColumnTasks(column.id));
                   const task = columnTasks[index];
                   if (task) {
