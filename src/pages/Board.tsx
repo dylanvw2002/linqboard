@@ -3367,11 +3367,22 @@ const Board = () => {
             </div>
             <div 
               ref={(el) => {
-                if (el && el.firstElementChild) {
-                  const containerHeight = el.clientHeight;
-                  const contentHeight = el.firstElementChild.scrollHeight;
-                  const needsScroll = contentHeight > containerHeight;
-                  el.style.overflowY = needsScroll ? 'auto' : 'hidden';
+                if (el) {
+                  const content = el.querySelector('[data-task-content]') as HTMLElement;
+                  const fadeIndicator = el.querySelector('[data-fade-indicator]') as HTMLElement;
+                  if (content && fadeIndicator) {
+                    const containerHeight = el.clientHeight;
+                    const contentHeight = content.scrollHeight;
+                    const needsScroll = contentHeight > containerHeight;
+                    el.style.overflowY = needsScroll ? 'auto' : 'hidden';
+                    fadeIndicator.style.opacity = needsScroll ? '1' : '0';
+                    
+                    // Update fade on scroll
+                    el.onscroll = () => {
+                      const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
+                      fadeIndicator.style.opacity = isAtBottom ? '0' : '1';
+                    };
+                  }
                 }
               }}
               onDragOver={e => handleDragOver(e, column.id)} 
@@ -3390,8 +3401,17 @@ const Board = () => {
                   setSelectedColumn(column);
                 }
               }}>
+              {/* Fade gradient indicator for overflow */}
+              <div 
+                data-fade-indicator
+                className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none z-10 transition-opacity duration-300"
+                style={{
+                  background: 'linear-gradient(to top, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 50%, transparent 100%)',
+                  opacity: 0
+                }}
+              />
               {/* Task rendering */}
-              <div className="grid gap-3 content-start" style={{
+              <div data-task-content className="grid gap-3 content-start" style={{
                 paddingTop: '14px',
                 paddingBottom: '16px',
                 paddingLeft: '12px',
