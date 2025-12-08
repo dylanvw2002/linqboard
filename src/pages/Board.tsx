@@ -3365,14 +3365,26 @@ const Board = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative")} style={{
+            <div 
+              ref={(el) => {
+                if (el) {
+                  const container = el;
+                  const content = el.firstElementChild as HTMLElement;
+                  if (content) {
+                    const needsScroll = content.scrollHeight > container.clientHeight;
+                    container.style.overflowY = needsScroll ? 'auto' : 'visible';
+                  }
+                }
+              }}
+              onDragOver={e => handleDragOver(e, column.id)} 
+              onDrop={e => handleDrop(e, column.id)} 
+              className={cn("flex-1 min-h-0 relative overflow-x-hidden [scrollbar-width:thin]")} 
+              style={{
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
-                paddingLeft: `${displayColumn.content_padding_left || 0}px`,
-                overflowY: 'scroll',
-                overflowX: 'hidden',
-                scrollbarWidth: 'none'
-              }} onClick={e => {
+                paddingLeft: `${displayColumn.content_padding_left || 0}px`
+              }} 
+              onClick={e => {
                 if (editMode) {
                   e.stopPropagation();
                   setSelectedColumn(column);
