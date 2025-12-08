@@ -3387,7 +3387,7 @@ const Board = () => {
               }}
               onDragOver={e => handleDragOver(e, column.id)} 
               onDrop={e => handleDrop(e, column.id)} 
-              className="flex-1 min-h-0 relative column-scroll-container" 
+              className="flex-1 min-h-0 relative group/scroll [scrollbar-width:none] hover:[scrollbar-width:thin]" 
               style={{
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
