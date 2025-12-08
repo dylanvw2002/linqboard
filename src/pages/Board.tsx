@@ -35,7 +35,7 @@ import { useDesktopNotifications } from "@/hooks/useDesktopNotifications";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
-import { TaskStack } from "@/components/TaskStack";
+
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
 import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
@@ -3365,10 +3365,11 @@ const Board = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-visible")} style={{
+            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-y-auto overflow-x-hidden")} style={{
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
-                paddingLeft: `${displayColumn.content_padding_left || 0}px`
+                paddingLeft: `${displayColumn.content_padding_left || 0}px`,
+                scrollbarWidth: 'thin'
               }} onClick={e => {
                 if (editMode) {
                   e.stopPropagation();
@@ -3376,13 +3377,7 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <TaskStack maxVisibleTasks={4} stackOffset={5} availableHeight={displayColumn.height - (displayColumn.header_height || 60)} onDragStart={(e, index) => {
-                  const columnTasks = filterTasks(getColumnTasks(column.id));
-                  const task = columnTasks[index];
-                  if (task) {
-                    handleDragStart(e, task);
-                  }
-                }} onDragEnd={handleDragEnd}>
+              <div className="flex-1 pt-3.5 pb-1 grid gap-3 content-start">
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
@@ -3425,11 +3420,11 @@ const Board = () => {
                           }}>
                               +{task.assignees.length - 3}
                             </div>}
-                        </div>}
-                    </div>
-                  </article>;
+                      </div>}
+                  </div>
+                </article>;
                   })}
-              </TaskStack>
+              </div>
             </div>
           </section>;
           })}
