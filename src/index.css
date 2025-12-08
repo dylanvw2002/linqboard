@@ -205,18 +205,19 @@ body {
 
 /* Animated scrollbar for column scroll containers */
 .column-scroll-container {
-  scrollbar-width: thin;
-  scrollbar-color: transparent transparent;
-  transition: scrollbar-color 0.3s ease;
+  scrollbar-width: none; /* Hide Firefox scrollbar by default */
 }
 
 .column-scroll-container:hover {
+  scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
 }
 
 /* Webkit browsers (Chrome, Safari, Edge) */
 .column-scroll-container::-webkit-scrollbar {
   width: 6px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .column-scroll-container::-webkit-scrollbar-track {
@@ -224,7 +225,7 @@ body {
 }
 
 .column-scroll-container::-webkit-scrollbar-thumb {
-  background: transparent;
+  background: rgba(0, 0, 0, 0);
   border-radius: 3px;
   transition: background 0.3s ease;
 }
