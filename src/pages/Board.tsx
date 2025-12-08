@@ -3392,7 +3392,6 @@ const Board = () => {
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`,
-                overflowX: 'clip',
                 overflowY: 'hidden'
               }} 
               onClick={e => {
