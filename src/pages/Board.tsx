@@ -3365,7 +3365,12 @@ const Board = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("overflow-auto touch-pan-y py-3 relative scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/40")} style={{
+            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn(
+              "py-3 relative",
+              (column.name.toLowerCase().includes('maand') || column.column_type === 'completed') 
+                ? "overflow-y-auto touch-pan-y scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/40" 
+                : "overflow-visible"
+            )} style={{
                 height: `${displayColumn.height - (isMobile ? 56 : (displayColumn.header_height || 60))}px`,
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
