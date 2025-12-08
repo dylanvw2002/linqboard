@@ -3365,12 +3365,13 @@ const Board = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-y-auto overflow-x-visible")} style={{
-                paddingRight: `${(displayColumn.content_padding_right || 0) + 12}px`,
-                paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
-                paddingLeft: `${(displayColumn.content_padding_left || 0) + 12}px`,
-                marginLeft: '-12px',
-                marginRight: '-12px',
+            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-auto")} style={{
+                paddingRight: `${(displayColumn.content_padding_right || 0) + 16}px`,
+                paddingBottom: `${(displayColumn.content_padding_bottom || 0) + 16}px`,
+                paddingLeft: `${(displayColumn.content_padding_left || 0) + 16}px`,
+                marginLeft: '-16px',
+                marginRight: '-16px',
+                marginBottom: '-16px',
                 scrollbarWidth: 'thin'
               }} onClick={e => {
                 if (editMode) {
