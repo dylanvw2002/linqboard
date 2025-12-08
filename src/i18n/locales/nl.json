@@ -115,6 +115,7 @@
     "leave": "Verlaten"
   },
   "board": {
+    "editColumn": "Kolom bewerken",
     "activeUsers": "Actieve gebruikers",
     "noActiveUsers": "Geen actieve gebruikers",
     "fullscreen": "Volledig scherm",
@@ -244,7 +245,14 @@
     "nameRequired": "Kolom naam mag niet leeg zijn",
     "addNewColumn": "Nieuwe kolom toevoegen",
     "namePlaceholder": "Kolom naam",
-    "headerAndTaskArea": "Header & Taak Gebied"
+    "headerAndTaskArea": "Header & Taak Gebied",
+    "tip": "Tip",
+    "resizeInstructions": "Sleep de randen of hoeken van de geselecteerde kolom om de grootte aan te passen",
+    "dragCornersEdges": "Sleep hoeken en randen om te vergroten/verkleinen",
+    "holdAlt": "Houd Alt ingedrukt voor fijnere aanpassingen",
+    "headerWidth": "Header Breedte",
+    "fullWidth": "Volledige breedte",
+    "resetToFullWidth": "Reset naar volledige breedte"
   },
   "tasks": {
     "newTask": "Nieuwe taak",
