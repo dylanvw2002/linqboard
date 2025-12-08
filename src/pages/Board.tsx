@@ -3367,22 +3367,23 @@ const Board = () => {
             </div>
             <div 
               ref={(el) => {
-                if (el) {
-                  const container = el;
-                  const content = el.firstElementChild as HTMLElement;
-                  if (content) {
-                    const needsScroll = content.scrollHeight > container.clientHeight;
-                    container.style.overflowY = needsScroll ? 'auto' : 'visible';
-                  }
+                if (el && el.firstElementChild) {
+                  const containerHeight = el.clientHeight;
+                  const contentHeight = el.firstElementChild.scrollHeight;
+                  console.log(`📏 Kolom ${column.name}: container=${containerHeight}px, content=${contentHeight}px, overflow=${contentHeight > containerHeight}`);
                 }
               }}
               onDragOver={e => handleDragOver(e, column.id)} 
               onDrop={e => handleDrop(e, column.id)} 
-              className={cn("flex-1 min-h-0 relative overflow-x-hidden [scrollbar-width:thin]")} 
+              className="flex-1 min-h-0 relative" 
               style={{
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
-                paddingLeft: `${displayColumn.content_padding_left || 0}px`
+                paddingLeft: `${displayColumn.content_padding_left || 0}px`,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                scrollbarWidth: 'thin',
+                scrollbarColor: 'rgba(0,0,0,0.2) transparent'
               }} 
               onClick={e => {
                 if (editMode) {
@@ -3391,7 +3392,12 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <div className="pt-3.5 pb-4 px-3 grid gap-3 content-start">
+              <div className="grid gap-3 content-start" style={{
+                paddingTop: '14px',
+                paddingBottom: '16px',
+                paddingLeft: '12px',
+                paddingRight: '12px'
+              }}>
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
