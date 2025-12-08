@@ -3365,11 +3365,14 @@ const Board = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative overflow-auto")} style={{
+            <div onDragOver={e => handleDragOver(e, column.id)} onDrop={e => handleDrop(e, column.id)} className={cn("flex-1 min-h-0 relative")} style={{
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`,
-                scrollbarWidth: 'thin'
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                scrollbarWidth: 'thin',
+                scrollbarGutter: 'stable'
               }} onClick={e => {
                 if (editMode) {
                   e.stopPropagation();
@@ -3377,7 +3380,7 @@ const Board = () => {
                 }
               }}>
               {/* Task rendering */}
-              <div className="flex-1 pt-3.5 pb-4 px-3 grid gap-3 content-start">
+              <div className="pt-3.5 pb-4 px-3 grid gap-3 content-start">
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
