@@ -3392,7 +3392,7 @@ const Board = () => {
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`,
-                overflowX: 'hidden',
+                overflowX: 'clip',
                 overflowY: 'hidden'
               }} 
               onClick={e => {
@@ -3406,20 +3406,22 @@ const Board = () => {
                 data-fade-indicator
                 className="absolute bottom-0 pointer-events-none z-10 transition-opacity duration-300"
                 style={{
-                  left: '12px',
-                  right: '12px',
+                  left: '20px',
+                  right: '20px',
                   height: '40px',
                   background: 'linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 50%, transparent 100%)',
                   opacity: 0,
                   borderRadius: '0 0 16px 16px'
                 }}
               />
-              {/* Task rendering */}
+              {/* Task rendering - extra padding for shadows */}
               <div data-task-content className="grid gap-3 content-start" style={{
                 paddingTop: '14px',
                 paddingBottom: '16px',
-                paddingLeft: '12px',
-                paddingRight: '12px'
+                paddingLeft: '20px',
+                paddingRight: '20px',
+                marginLeft: '-8px',
+                marginRight: '-8px'
               }}>
                 {filterTasks(getColumnTasks(column.id)).map(task => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
