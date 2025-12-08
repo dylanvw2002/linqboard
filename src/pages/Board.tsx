@@ -3376,15 +3376,13 @@ const Board = () => {
               }}
               onDragOver={e => handleDragOver(e, column.id)} 
               onDrop={e => handleDrop(e, column.id)} 
-              className="flex-1 min-h-0 relative" 
+              className="flex-1 min-h-0 relative group/scroll [scrollbar-width:none] hover:[scrollbar-width:thin]" 
               style={{
                 paddingRight: `${displayColumn.content_padding_right || 0}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`,
                 overflowX: 'hidden',
-                overflowY: 'hidden',
-                scrollbarWidth: 'thin',
-                scrollbarColor: 'rgba(0,0,0,0.2) transparent'
+                overflowY: 'hidden'
               }} 
               onClick={e => {
                 if (editMode) {
