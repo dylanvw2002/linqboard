@@ -10,6 +10,7 @@ interface TaskStackProps {
   availableHeight?: number;
   onDragStart?: (e: React.DragEvent, index: number) => void;
   onDragEnd?: () => void;
+  disableStacking?: boolean;
 }
 
 export const TaskStack = ({ 
@@ -19,7 +20,8 @@ export const TaskStack = ({
   onTaskClick,
   availableHeight,
   onDragStart,
-  onDragEnd
+  onDragEnd,
+  disableStacking = false
 }: TaskStackProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -105,7 +107,8 @@ export const TaskStack = ({
     return <div ref={containerRef} className="flex-1 pt-3.5 pb-1" />;
   }
 
-  if (!isOverflowing) {
+  // When stacking is disabled, always show all tasks without stacking
+  if (disableStacking || !isOverflowing) {
     // Normal mode - show all tasks (no stacking)
     return (
       <div 
