@@ -3401,17 +3401,17 @@ const Board = () => {
                   setSelectedColumn(column);
                 }
               }}>
-              {/* Fade gradient indicator for overflow - only on cards area */}
+              {/* Fade gradient indicator for overflow - subtle */}
               <div 
                 data-fade-indicator
                 className="absolute bottom-0 pointer-events-none z-10 transition-opacity duration-300"
                 style={{
                   left: '12px',
                   right: '12px',
-                  height: '60px',
-                  background: 'linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 40%, transparent 100%)',
+                  height: '40px',
+                  background: 'linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 50%, transparent 100%)',
                   opacity: 0,
-                  borderRadius: '0 0 20px 20px'
+                  borderRadius: '0 0 16px 16px'
                 }}
               />
               {/* Task rendering */}
