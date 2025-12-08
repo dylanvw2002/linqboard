@@ -3370,7 +3370,8 @@ const Board = () => {
                 if (el && el.firstElementChild) {
                   const containerHeight = el.clientHeight;
                   const contentHeight = el.firstElementChild.scrollHeight;
-                  console.log(`📏 Kolom ${column.name}: container=${containerHeight}px, content=${contentHeight}px, overflow=${contentHeight > containerHeight}`);
+                  const needsScroll = contentHeight > containerHeight;
+                  el.style.overflowY = needsScroll ? 'auto' : 'hidden';
                 }
               }}
               onDragOver={e => handleDragOver(e, column.id)} 
@@ -3381,7 +3382,7 @@ const Board = () => {
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
                 paddingLeft: `${displayColumn.content_padding_left || 0}px`,
                 overflowX: 'hidden',
-                overflowY: 'auto',
+                overflowY: 'hidden',
                 scrollbarWidth: 'thin',
                 scrollbarColor: 'rgba(0,0,0,0.2) transparent'
               }} 
