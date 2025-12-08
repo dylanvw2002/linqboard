@@ -3389,9 +3389,9 @@ const Board = () => {
               onDrop={e => handleDrop(e, column.id)} 
               className="flex-1 min-h-0 relative group/scroll [scrollbar-width:none] hover:[scrollbar-width:thin]" 
               style={{
-                paddingRight: `${displayColumn.content_padding_right || 0}px`,
+                paddingRight: `${(displayColumn.content_padding_right || 0) + 16}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
-                paddingLeft: `${displayColumn.content_padding_left || 0}px`,
+                paddingLeft: `${(displayColumn.content_padding_left || 0) + 16}px`,
                 overflowY: 'hidden'
               }} 
               onClick={e => {
