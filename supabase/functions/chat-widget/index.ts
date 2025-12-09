@@ -39,40 +39,67 @@ serve(async (req) => {
       throw new Error('Missing widgetId or message');
     }
 
-    // Step 1: Get widget
-    const { data: widget, error: widgetError } = await supabaseAdmin
-      .from('widgets')
-      .select('id, board_id')
-      .eq('id', widgetId)
-      .single();
+    // Check if this is a fixed chat (uses board ID directly) or a widget chat
+    const isFixedChat = typeof widgetId === 'string' && widgetId.startsWith('fixed-');
+    let boardId: string;
+    let organizationId: string;
 
-    if (widgetError || !widget) {
-      console.error('Widget not found:', widgetError);
-      throw new Error('Widget niet gevonden');
+    if (isFixedChat) {
+      // Fixed chat: extract board ID from "fixed-{boardId}"
+      boardId = widgetId.replace('fixed-', '');
+      
+      // Get board directly
+      const { data: board, error: boardError } = await supabaseAdmin
+        .from('boards')
+        .select('id, organization_id')
+        .eq('id', boardId)
+        .single();
+
+      if (boardError || !board) {
+        console.error('Board not found:', boardError);
+        throw new Error('Board niet gevonden');
+      }
+      
+      organizationId = board.organization_id;
+    } else {
+      // Widget chat: get widget first, then board
+      const { data: widget, error: widgetError } = await supabaseAdmin
+        .from('widgets')
+        .select('id, board_id')
+        .eq('id', widgetId)
+        .single();
+
+      if (widgetError || !widget) {
+        console.error('Widget not found:', widgetError);
+        throw new Error('Widget niet gevonden');
+      }
+
+      boardId = widget.board_id;
+
+      const { data: board, error: boardError } = await supabaseAdmin
+        .from('boards')
+        .select('id, organization_id')
+        .eq('id', boardId)
+        .single();
+
+      if (boardError || !board) {
+        console.error('Board not found:', boardError);
+        throw new Error('Board niet gevonden');
+      }
+      
+      organizationId = board.organization_id;
     }
 
-    // Step 2: Get board
-    const { data: board, error: boardError } = await supabaseAdmin
-      .from('boards')
-      .select('id, organization_id')
-      .eq('id', widget.board_id)
-      .single();
-
-    if (boardError || !board) {
-      console.error('Board not found:', boardError);
-      throw new Error('Board niet gevonden');
-    }
-
-    // Step 3: Check membership
+    // Check membership
     const { data: membership, error: membershipError } = await supabaseAdmin
       .from('memberships')
       .select('id')
       .eq('user_id', user.id)
-      .eq('organization_id', board.organization_id)
+      .eq('organization_id', organizationId)
       .maybeSingle();
 
     if (membershipError || !membership) {
-      console.error('Access denied:', membershipError, 'User:', user.id, 'Org:', board.organization_id);
+      console.error('Access denied:', membershipError, 'User:', user.id, 'Org:', organizationId);
       throw new Error('Geen toegang tot dit board');
     }
 
@@ -81,7 +108,7 @@ serve(async (req) => {
     const { data: ownerMembership, error: ownerError } = await supabaseAdmin
       .from('memberships')
       .select('user_id')
-      .eq('organization_id', board.organization_id)
+      .eq('organization_id', organizationId)
       .eq('role', 'owner')
       .single();
 

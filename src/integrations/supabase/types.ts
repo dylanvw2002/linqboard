@@ -1015,15 +1015,7 @@ export type Database = {
           user_id?: string | null
           widget_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "widget_chat_messages_widget_id_fkey"
-            columns: ["widget_id"]
-            isOneToOne: false
-            referencedRelation: "widgets"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       widgets: {
         Row: {
