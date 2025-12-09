@@ -301,7 +301,7 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
           <div className="flex items-center justify-between p-3 border-b border-white/30 dark:border-white/20 bg-gradient-to-r from-primary/10 to-accent/10 rounded-t-[26px] relative z-10">
             <div className="flex items-center gap-2">
               <img src={mascot} alt="AI" className="w-6 h-6 object-contain" />
-              <h3 className="font-semibold text-sm">🔒 AI Chat Assistent</h3>
+              <h3 className="font-semibold text-sm">AI Chat Assistent</h3>
             </div>
             <div className="flex items-center gap-2">
               <AlertDialog>
