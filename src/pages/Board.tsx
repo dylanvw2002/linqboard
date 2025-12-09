@@ -42,6 +42,7 @@ import { BackgroundCropEditor } from "@/components/BackgroundCropEditor";
 import { TeamMemberSelect } from "@/components/TeamMemberSelect";
 import { WidgetContainer } from "@/components/WidgetContainer";
 import { Badge } from "@/components/ui/badge";
+import { FixedChatWidget } from "@/components/FixedChatWidget";
 interface Column {
   id: string;
   name: string;
@@ -3733,11 +3734,6 @@ const Board = () => {
                 <DropdownMenuLabel>Widgets</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
-                <DropdownMenuItem onClick={() => handleAddWidget('chat')}>
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  AI Chat Assistent
-                </DropdownMenuItem>
-                
                 <DropdownMenuItem onClick={() => handleAddWidget('notes')}>
                   <StickyNote className="mr-2 h-4 w-4" />
                   📝 Notities
@@ -3816,6 +3812,9 @@ const Board = () => {
       
       {/* Logo links onderaan */}
       <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate(isDemo ? "/" : "/dashboard")} />
+      
+      {/* Fixed AI Chat Widget rechtsonder (alleen voor ingelogde gebruikers) */}
+      {!isDemo && board && <FixedChatWidget boardId={board.id} boardName={board.name} />}
     </div>;
 };
 export default Board;
