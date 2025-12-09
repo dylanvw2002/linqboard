@@ -396,8 +396,8 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Features Grid - Desktop - fixed 2x3 layout that scales */}
-            <div className="hidden md:grid md:grid-cols-2 gap-[2vw] max-w-[80vw] mx-auto">
+            {/* Features Grid - Desktop - fixed 3x2 layout that scales */}
+            <div className="hidden md:grid md:grid-cols-3 gap-[2vw] max-w-[85vw] mx-auto">
               {features.map((feature, index) => {
               const Icon = feature.icon;
               return <article key={index} className={`group relative bg-card rounded-2xl p-5 sm:p-6 lg:p-6 xl:p-8 border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{
