@@ -658,7 +658,7 @@ const Index = () => {
                   containScroll: false
                 }}
                 plugins={[partnersAutoplayPlugin.current]} 
-                className="w-full max-w-6xl mx-auto"
+                className="w-full max-w-6xl mx-auto px-4 md:px-0"
               >
                 <CarouselContent className="-ml-4">
                   {/* NRG Totaal */}
