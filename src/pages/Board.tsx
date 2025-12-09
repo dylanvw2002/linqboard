@@ -43,6 +43,7 @@ import { TeamMemberSelect } from "@/components/TeamMemberSelect";
 import { WidgetContainer } from "@/components/WidgetContainer";
 import { Badge } from "@/components/ui/badge";
 import { FixedChatWidget } from "@/components/FixedChatWidget";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 interface Column {
   id: string;
   name: string;
@@ -2776,6 +2777,8 @@ const Board = () => {
           {!isMobile && <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
               <Pencil size={20} />
             </button>}
+          
+          {!isMobile && board?.id && <NotificationsDropdown boardId={board.id} isDemo={isDemo} />}
           
           {!isMobile && <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />}
         </div>
