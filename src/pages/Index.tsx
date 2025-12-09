@@ -654,8 +654,9 @@ const Index = () => {
                   align: "center",
                   loop: true,
                   watchDrag: true,
-                  dragFree: false
-                }} 
+                  dragFree: false,
+                  containScroll: false
+                }}
                 plugins={[partnersAutoplayPlugin.current]} 
                 className="w-full max-w-6xl mx-auto"
               >
