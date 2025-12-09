@@ -659,44 +659,44 @@ const Index = () => {
                 plugins={[partnersAutoplayPlugin.current]} 
                 className="w-full max-w-6xl mx-auto"
               >
-                <CarouselContent className="-ml-0">
+                <CarouselContent className="-ml-4">
                   {/* NRG Totaal */}
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4 basis-full">
                     <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]">
                       <img src={nrgTotaalLogo} alt="NRG Totaal" className="h-14 sm:h-16 w-auto transition-all" loading="lazy" width="120" height="48" decoding="async" />
                     </div>
                   </CarouselItem>
                   
                   {/* NutriBuddi */}
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4 basis-full">
                     <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
                       <img src={nutribuddiLogo} alt="NutriBuddi" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="140" height="112" decoding="async" />
                     </div>
                   </CarouselItem>
                   
                   {/* Onderhoudscontracten.com */}
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4 basis-full">
                     <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
                       <img src={onderhoudscontractenLogo} alt="Onderhoudscontracten.com" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="160" height="80" decoding="async" />
                     </div>
                   </CarouselItem>
                   
                   {/* ODÉA Vastgoed Service */}
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4 basis-full">
                     <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
                       <img src={odeaVastgoedLogo} alt="ODÉA Vastgoed Service" className="h-20 sm:h-24 w-auto transition-all" loading="lazy" width="120" height="112" decoding="async" />
                     </div>
                   </CarouselItem>
                   
                   {/* Zorgeloos Vastgoed */}
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4 basis-full">
                     <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px]" style={{ contain: 'layout style paint' }}>
                       <img src={zorgeloosVastgoedLogo} alt="Zorgeloos Vastgoed" className="h-24 sm:h-28 w-auto transition-all" loading="lazy" width="120" height="48" />
                     </div>
                   </CarouselItem>
                   
                   {/* Fleature */}
-                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-0 basis-full">
+                  <CarouselItem className="md:basis-1/2 lg:basis-1/3 pl-4 basis-full">
                     <div className="flex items-center justify-center p-6 sm:p-8 bg-card rounded-xl border border-border hover:shadow-lg transition-all duration-300 hover:scale-105 min-h-[180px] max-h-[180px]" style={{ contain: 'layout style paint' }}>
                       <img src={fleatureLogo} alt="Fleature" className="h-28 sm:h-32 w-auto transition-all object-contain" loading="lazy" width="120" height="48" />
                     </div>
