@@ -362,8 +362,13 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
                     </div>
                   )}
                   <div className="flex flex-col gap-1 max-w-[80%]">
-                    {message.role === "user" && message.user_name && (
+                    {message.role === "assistant" && (
                       <span className="text-xs text-muted-foreground px-1">
+                        Linq
+                      </span>
+                    )}
+                    {message.role === "user" && message.user_name && (
+                      <span className="text-xs text-muted-foreground px-1 text-right">
                         {message.user_name}
                       </span>
                     )}
