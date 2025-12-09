@@ -7,6 +7,88 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to detect if a question needs web search
+function needsWebSearch(message: string): boolean {
+  const lowerMessage = message.toLowerCase();
+  
+  // Keywords that suggest factual/technical questions needing current info
+  const searchIndicators = [
+    'foutcode', 'fout code', 'error code', 'code', 'storing',
+    'wat is', 'wat betekent', 'hoe werkt', 'hoe kan ik',
+    'handleiding', 'manual', 'instructie',
+    'prijs', 'kosten', 'tarief',
+    'adres', 'telefoonnummer', 'contact',
+    'openingstijden', 'open',
+    'weer', 'temperatuur',
+    'nieuws', 'actueel',
+    'intergas', 'nefit', 'remeha', 'vaillant', 'bosch', 'daikin', 'mitsubishi',
+    'cv ketel', 'warmtepomp', 'airco', 'verwarming',
+    'recept', 'ingrediënten',
+    'definitie', 'betekenis',
+  ];
+  
+  return searchIndicators.some(indicator => lowerMessage.includes(indicator));
+}
+
+// Helper function to perform web search
+async function performWebSearch(query: string): Promise<string | null> {
+  const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
+  
+  if (!firecrawlApiKey) {
+    console.log('FIRECRAWL_API_KEY not configured, skipping web search');
+    return null;
+  }
+  
+  try {
+    console.log('Performing web search for:', query);
+    
+    const response = await fetch('https://api.firecrawl.dev/v1/search', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${firecrawlApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        limit: 3,
+        lang: 'nl',
+        country: 'nl',
+        scrapeOptions: {
+          formats: ['markdown'],
+        },
+      }),
+    });
+    
+    if (!response.ok) {
+      console.error('Firecrawl search failed:', response.status);
+      return null;
+    }
+    
+    const data = await response.json();
+    
+    if (!data.success || !data.data || data.data.length === 0) {
+      console.log('No search results found');
+      return null;
+    }
+    
+    // Compile search results into context
+    const searchContext = data.data
+      .map((result: any, index: number) => {
+        const title = result.title || 'Onbekende bron';
+        const url = result.url || '';
+        const content = result.markdown?.slice(0, 1000) || result.description || '';
+        return `[Bron ${index + 1}: ${title}]\nURL: ${url}\n${content}`;
+      })
+      .join('\n\n---\n\n');
+    
+    console.log('Web search successful, found', data.data.length, 'results');
+    return searchContext;
+  } catch (error) {
+    console.error('Web search error:', error);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -171,10 +253,38 @@ serve(async (req) => {
       throw new Error('Failed to store message');
     }
 
+    // Check if we need to perform a web search
+    let searchContext: string | null = null;
+    if (needsWebSearch(message)) {
+      searchContext = await performWebSearch(message);
+    }
+
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY not configured');
     }
+
+    // Build system prompt with or without search context
+    let systemPrompt = `Je bent Linq, een slimme AI-assistent met toegang tot actuele informatie van het internet.
+
+REGELS:
+1. Beantwoord ALLE vragen - technisch, algemeen, foutcodes, wat dan ook.
+2. Houd antwoorden KORT: maximaal 2-3 zinnen.
+3. Je kunt geen board-aanpassingen maken - meld dit alleen als iemand erom vraagt.`;
+
+    if (searchContext) {
+      systemPrompt += `
+
+BELANGRIJKE CONTEXT - Gebruik deze actuele informatie van het internet om je antwoord te baseren:
+
+${searchContext}
+
+Baseer je antwoord op bovenstaande bronnen. Als de informatie niet toereikend is, geef dan aan dat je het niet zeker weet.`;
+    }
+
+    systemPrompt += `
+
+Stijl: vriendelijk, behulpzaam, direct. Nederlands.`;
 
     // Call Lovable AI with user context
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -188,15 +298,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `Je bent Linq, een slimme AI-assistent.
-
-REGELS:
-1. Beantwoord ALLE vragen - technisch, algemeen, foutcodes, wat dan ook.
-2. Houd antwoorden KORT: maximaal 2-3 zinnen.
-3. Je kunt geen board-aanpassingen maken - meld dit alleen als iemand erom vraagt.
-4. Bij technische info (foutcodes, handleidingen): baseer je op je kennis, maar voeg toe: "Controleer dit voor de zekerheid in de officiële documentatie."
-
-Stijl: vriendelijk, behulpzaam, direct. Nederlands.`,
+            content: systemPrompt,
           },
           ...(messages || []),
           {
