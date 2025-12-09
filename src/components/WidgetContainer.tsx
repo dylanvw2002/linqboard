@@ -4,7 +4,7 @@ import { TimerWidget } from "./widgets/TimerWidget";
 import { CalculatorWidget } from "./widgets/CalculatorWidget";
 import { QuickLinksWidget } from "./widgets/QuickLinksWidget";
 import { CalendarWidget } from "./widgets/CalendarWidget";
-import { NotificationsCenterWidget } from "./widgets/NotificationsCenterWidget";
+
 import { AchievementBadgesWidget } from "./widgets/AchievementBadgesWidget";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { ResizeHandles } from "./ResizeHandles";
 
 interface Widget {
   id: string;
-  widget_type: "chat" | "notes" | "timer" | "calculator" | "quick-links" | "calendar" | "notifications" | "achievements";
+  widget_type: "chat" | "notes" | "timer" | "calculator" | "quick-links" | "calendar" | "achievements";
   x_position: number;
   y_position: number;
   width: number;
@@ -59,8 +59,6 @@ export const WidgetContainer = ({
         return <QuickLinksWidget widgetId={widget.id} settings={widget.settings} />;
       case "calendar":
         return <CalendarWidget widgetId={widget.id} boardId={widget.board_id} />;
-      case "notifications":
-        return <NotificationsCenterWidget widgetId={widget.id} boardId={widget.board_id} />;
       case "achievements":
         return <AchievementBadgesWidget widgetId={widget.id} boardId={widget.board_id} />;
       default:
