@@ -259,7 +259,7 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
         <img 
           src={mascot} 
           alt="AI Chat" 
-          className="h-28 w-auto object-contain drop-shadow-lg"
+          className="h-20 w-auto object-contain drop-shadow-lg"
         />
       </button>
     );
