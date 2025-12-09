@@ -446,10 +446,10 @@ const Index = () => {
                     loop: true,
                     watchDrag: true,
                     dragFree: false,
-                    containScroll: false
+                    containScroll: "trimSnaps"
                   }} 
                   plugins={isMobile ? [] : [featuresAutoplayPlugin.current]} 
-                  className="w-full"
+                  className="w-full overflow-hidden"
                 >
                   <CarouselContent className="-ml-4">
                     {features.map((feature, index) => {
