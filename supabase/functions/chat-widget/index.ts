@@ -50,12 +50,9 @@ async function performWebSearch(query: string): Promise<string | null> {
       },
       body: JSON.stringify({
         query,
-        limit: 3,
+        limit: 2,
         lang: 'nl',
         country: 'nl',
-        scrapeOptions: {
-          formats: ['markdown'],
-        },
       }),
     });
     
@@ -294,7 +291,7 @@ Stijl: vriendelijk, behulpzaam, direct. Nederlands.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-pro',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
