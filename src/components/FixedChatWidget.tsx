@@ -24,6 +24,7 @@ interface Message {
   created_at: string;
   user_id?: string;
   user_name?: string;
+  user_avatar?: string;
 }
 
 interface FixedChatWidgetProps {
@@ -127,17 +128,18 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
       
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("user_id, full_name")
+        .select("user_id, full_name, avatar_url")
         .in("user_id", userIds);
       
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p.full_name]));
+      const profileMap = new Map(profiles?.map(p => [p.user_id, { name: p.full_name, avatar: p.avatar_url }]));
       
       const messagesWithNames = (data || []).map((msg: any) => ({
         role: msg.role,
         content: msg.content,
         created_at: msg.created_at,
         user_id: msg.user_id,
-        user_name: msg.user_id ? profileMap.get(msg.user_id) || 'Gebruiker' : undefined
+        user_name: msg.user_id ? profileMap.get(msg.user_id)?.name || 'Gebruiker' : undefined,
+        user_avatar: msg.user_id ? profileMap.get(msg.user_id)?.avatar : undefined
       }));
       
       setMessages(messagesWithNames as Message[]);
@@ -184,18 +186,20 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, avatar_url")
         .eq("user_id", session.user.id)
         .single();
 
       const userName = profile?.full_name || 'Gebruiker';
+      const userAvatar = profile?.avatar_url;
 
       const tempUserMessage: Message = {
         role: "user",
         content: userMessage,
         created_at: new Date().toISOString(),
         user_id: session.user.id,
-        user_name: userName
+        user_name: userName,
+        user_avatar: userAvatar
       };
       setMessages((prev) => [...prev, tempUserMessage]);
 
@@ -374,8 +378,14 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
                     </div>
                   </div>
                   {message.role === "user" && (
-                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                      <User className="w-4 h-4 text-primary-foreground" />
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                      {message.user_avatar ? (
+                        <img src={message.user_avatar} alt={message.user_name || 'User'} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-primary flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary-foreground" />
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
