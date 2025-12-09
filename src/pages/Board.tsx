@@ -3816,11 +3816,6 @@ const Board = () => {
                   <Link className="mr-2 h-4 w-4" />
                   🔗 Snelkoppelingen
                 </DropdownMenuItem>
-                
-                <DropdownMenuItem onClick={() => handleAddWidget('notifications')}>
-                  <Bell className="mr-2 h-4 w-4" />
-                  🔔 Notificaties
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
