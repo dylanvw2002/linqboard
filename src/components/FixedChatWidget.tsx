@@ -251,12 +251,12 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
     return (
       <button 
         onClick={() => setIsExpanded(true)}
-        className="fixed -bottom-4 right-2 h-24 w-24 z-50 rounded-full overflow-hidden hover:scale-110 transition-all shadow-lg cursor-pointer border-0 p-0 bg-transparent"
+        className="fixed -bottom-6 right-2 z-50 hover:scale-110 transition-all cursor-pointer border-0 p-0 bg-transparent"
       >
         <img 
           src={mascot} 
           alt="AI Chat" 
-          className="w-full h-full object-cover"
+          className="h-28 w-auto object-contain drop-shadow-lg"
         />
       </button>
     );
