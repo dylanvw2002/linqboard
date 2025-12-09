@@ -16,7 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import aiChatBot from "@/assets/ai-chat-bot.png";
+import mascot from "@/assets/linqboard-mascot-new.png";
 
 interface Message {
   role: "user" | "assistant";
@@ -251,10 +251,10 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
     return (
       <button 
         onClick={() => setIsExpanded(true)}
-        className="fixed -bottom-4 right-2 h-24 w-24 z-50 rounded-full overflow-hidden bg-gradient-to-r from-primary to-accent hover:scale-110 transition-all shadow-lg cursor-pointer border-0 p-0"
+        className="fixed -bottom-4 right-2 h-24 w-24 z-50 rounded-full overflow-hidden hover:scale-110 transition-all shadow-lg cursor-pointer border-0 p-0 bg-transparent"
       >
         <img 
-          src={aiChatBot} 
+          src={mascot} 
           alt="AI Chat" 
           className="w-full h-full object-cover"
         />
