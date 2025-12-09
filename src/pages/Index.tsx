@@ -451,10 +451,10 @@ const Index = () => {
                   plugins={isMobile ? [] : [featuresAutoplayPlugin.current]} 
                   className="w-full"
                 >
-                  <CarouselContent className="-ml-4 px-4 md:px-0">
+                  <CarouselContent className="-ml-4">
                     {features.map((feature, index) => {
                     const Icon = feature.icon;
-                    return <CarouselItem key={index} className="pl-4 basis-full">
+                    return <CarouselItem key={index} className="pl-4 basis-[85%] md:basis-full mx-auto">
                           <article className={`group relative bg-card rounded-2xl p-6 border border-border transition-all duration-500 h-[340px] flex flex-col ${featuresSection.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} style={{ contain: 'layout style paint' }}>
                             {/* Gradient Background */}
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-2xl" />
