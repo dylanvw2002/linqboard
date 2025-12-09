@@ -447,8 +447,8 @@ const Index = () => {
                     watchDrag: true,
                     dragFree: false
                   }} 
-                  plugins={[featuresAutoplayPlugin.current]} 
-                  className="w-full"
+                  plugins={isMobile ? [] : [featuresAutoplayPlugin.current]} 
+                  className="w-full px-4 md:px-0"
                 >
                   <CarouselContent className="ml-0">
                     {features.map((feature, index) => {
@@ -484,8 +484,8 @@ const Index = () => {
                         </CarouselItem>;
                   })}
                   </CarouselContent>
-                <CarouselPrevious className="hidden lg:flex" />
-                <CarouselNext className="hidden lg:flex" />
+                <CarouselPrevious className="flex" />
+                <CarouselNext className="flex" />
                 </Carousel>
               </div>
               
