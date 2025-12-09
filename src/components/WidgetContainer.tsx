@@ -1,5 +1,4 @@
 import React from "react";
-import { ChatWidget } from "./ChatWidget";
 import { NotesWidget } from "./widgets/NotesWidget";
 import { TimerWidget } from "./widgets/TimerWidget";
 import { CalculatorWidget } from "./widgets/CalculatorWidget";
@@ -50,20 +49,6 @@ export const WidgetContainer = ({
 }: WidgetContainerProps) => {
   const renderWidgetContent = () => {
     switch (widget.widget_type) {
-      case "chat":
-        return (
-          <ChatWidget 
-            widgetId={widget.id} 
-            boardName={boardName}
-            x={widget.x_position}
-            y={widget.y_position}
-            onSizeChange={(width, height, x, y) => {
-              if (onSizeChange) {
-                onSizeChange(widget.id, width, height, x, y);
-              }
-            }}
-          />
-        );
       case "notes":
         return <NotesWidget widgetId={widget.id} settings={widget.settings} />;
       case "timer":
@@ -83,7 +68,7 @@ export const WidgetContainer = ({
     }
   };
 
-  // Check if this is a collapsed chat widget (56x56px button only)
+  // Check if this is a collapsed chat widget (56x56px button only) - legacy support
   const isCollapsedChat = widget.widget_type === "chat" && widget.width === 56 && widget.height === 56;
 
   return (

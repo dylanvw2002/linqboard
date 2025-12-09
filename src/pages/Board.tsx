@@ -1539,11 +1539,11 @@ const Board = () => {
       }) : [];
       setColumns(sortedColumns);
 
-      // Fetch widgets
+      // Fetch widgets (excluding chat widgets which are now handled by FixedChatWidget)
       const {
         data: widgetsData
       } = await supabase.from("widgets").select("*").eq("board_id", boardResult.data.id);
-      setWidgets(widgetsData || []);
+      setWidgets((widgetsData || []).filter(w => w.widget_type !== 'chat'));
       if (columnsData && columnsData.length > 0) {
         const columnIds = columnsData.map(c => c.id);
 
