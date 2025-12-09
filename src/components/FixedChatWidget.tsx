@@ -104,10 +104,18 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
   };
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
+    // Scroll to bottom when messages change
+    const scrollToBottom = () => {
+      if (scrollRef.current) {
+        const scrollContainer = scrollRef.current.querySelector('[data-radix-scroll-area-viewport]');
+        if (scrollContainer) {
+          scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        }
+      }
+    };
+    // Small delay to ensure content is rendered
+    setTimeout(scrollToBottom, 50);
+  }, [messages, isLoading]);
 
   const loadMessages = async () => {
     try {
