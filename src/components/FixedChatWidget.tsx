@@ -353,8 +353,8 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
                   }`}
                 >
                   {message.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-4 h-4 text-primary" />
+                    <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                      <img src={mascot} alt="AI" className="w-full h-full object-cover object-top" />
                     </div>
                   )}
                   <div className="flex flex-col gap-1 max-w-[80%]">
@@ -382,8 +382,8 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
               ))}
               {isLoading && (
                 <div className="flex gap-2 justify-start">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-4 h-4 text-primary animate-pulse" />
+                  <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                    <img src={mascot} alt="AI" className="w-full h-full object-cover object-top" />
                   </div>
                   <div className="bg-muted rounded-lg p-3 text-sm">
                     <div className="flex gap-1">
