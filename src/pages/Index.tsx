@@ -657,7 +657,7 @@ const Index = () => {
                   dragFree: false,
                   containScroll: false
                 }}
-                plugins={[partnersAutoplayPlugin.current]} 
+                plugins={isMobile ? [] : [partnersAutoplayPlugin.current]} 
                 className="w-full max-w-6xl mx-auto px-4 md:px-0"
               >
                 <CarouselContent className="-ml-4">
@@ -703,8 +703,8 @@ const Index = () => {
                     </div>
                   </CarouselItem>
                 </CarouselContent>
-                <CarouselPrevious className="hidden lg:flex" />
-                <CarouselNext className="hidden lg:flex" />
+                <CarouselPrevious className="flex" />
+                <CarouselNext className="flex" />
               </Carousel>
             </div>
             
