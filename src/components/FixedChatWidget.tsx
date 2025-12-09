@@ -93,20 +93,11 @@ export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) =>
         setHasAccess(false);
         return;
       }
-
-      const { data, error } = await supabase.functions.invoke('check-widget-access', {
-        body: { widgetId: `fixed-${boardId}` }
-      });
       
-      if (error) {
-        console.error("Error checking widget access:", error);
-        setHasAccess(false);
-        return;
-      }
-      
-      setHasAccess(data?.hasAccess || false);
+      // AI chat is now available for everyone - conversations are private per user
+      setHasAccess(true);
     } catch (error) {
-      console.error("Error checking subscription:", error);
+      console.error("Error checking access:", error);
       setHasAccess(false);
     }
   };
