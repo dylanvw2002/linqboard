@@ -1743,6 +1743,56 @@ const Board = () => {
     setEditTaskPriority(task.priority);
     setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
   };
+
+  const handleOpenTaskFromNotification = async (taskId: string) => {
+    // First check if task is already loaded
+    const existingTask = tasks.find(t => t.id === taskId);
+    if (existingTask) {
+      openEditDialog(existingTask);
+      return;
+    }
+
+    // Fetch task from database
+    const { data: taskData, error } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("id", taskId)
+      .single();
+
+    if (error || !taskData) {
+      toast.error("Kon taak niet vinden");
+      return;
+    }
+
+    // Fetch assignees for task
+    const { data: assigneesData } = await supabase
+      .from("task_assignees")
+      .select(`
+        user_id,
+        profiles:user_id (
+          full_name,
+          avatar_url
+        )
+      `)
+      .eq("task_id", taskId);
+
+    const task: Task = {
+      id: taskData.id,
+      column_id: taskData.column_id,
+      title: taskData.title,
+      description: taskData.description,
+      priority: taskData.priority,
+      position: taskData.position,
+      due_date: taskData.due_date,
+      assignees: assigneesData?.map((a: any) => ({
+        user_id: a.user_id,
+        full_name: a.profiles?.full_name || "Unknown",
+        avatar_url: a.profiles?.avatar_url,
+      })) || [],
+    };
+
+    openEditDialog(task);
+  };
   const handleAddAssignee = async (userId: string) => {
     if (!editingTask) return;
     if (isDemo) {
@@ -2778,7 +2828,7 @@ const Board = () => {
               <Pencil size={20} />
             </button>}
           
-          {!isMobile && board?.id && <NotificationsDropdown boardId={board.id} isDemo={isDemo} />}
+          {!isMobile && board?.id && <NotificationsDropdown boardId={board.id} isDemo={isDemo} onOpenTask={handleOpenTaskFromNotification} />}
           
           {!isMobile && <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />}
         </div>
