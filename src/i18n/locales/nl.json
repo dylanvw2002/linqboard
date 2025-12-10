@@ -1,10 +1,25 @@
 {
   "seo": {
     "home": {
-      "title": "LinqBoard - Teamwork, moeiteloos georganiseerd",
-      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Krachtig, veilig en eenvoudig te gebruiken.",
-      "keywords": "taakbeheer, team samenwerking, projectmanagement, real-time samenwerking, kanban board, team organisatie",
-      "heroImageAlt": "LinqBoard mascotte met moderne taakbeheer interface"
+      "title": "LinqBoard - Gratis Kanban Board & Taakbeheer voor Teams | Online Projectmanagement",
+      "description": "Gratis kanban board software voor teams. Beheer taken visueel, werk realtime samen en organiseer projecten efficiënt. Start vandaag gratis met LinqBoard!",
+      "keywords": "kanban board gratis, taakbeheer software, projectmanagement tool, team taken beheren, online kanban, gratis projectmanagement, scrum board, agile taakbeheer, team samenwerking tool, werk organiseren app, taken app, project planning software, team management tool, visueel projectbeheer, realtime samenwerken",
+      "heroImageAlt": "LinqBoard - Gratis kanban board en taakbeheer software voor teams"
+    },
+    "pricing": {
+      "title": "LinqBoard Prijzen - Gratis Starten | Pro & Team Plannen vanaf €6/maand",
+      "description": "Bekijk LinqBoard prijzen. Start gratis met ons kanban board. Upgrade naar Pro of Team voor meer functies. Geen creditcard nodig om te starten.",
+      "keywords": "linqboard prijs, kanban software kosten, projectmanagement prijzen, gratis taakbeheer, team software prijzen"
+    },
+    "auth": {
+      "title": "LinqBoard Inloggen of Registreren | Start Gratis met Taakbeheer",
+      "description": "Log in op LinqBoard of maak een gratis account aan. Begin direct met het organiseren van je taken en projecten.",
+      "keywords": "linqboard login, linqboard registreren, gratis account maken, taakbeheer inloggen"
+    },
+    "demo": {
+      "title": "LinqBoard Demo - Probeer Ons Kanban Board Gratis | Geen Account Nodig",
+      "description": "Probeer LinqBoard gratis zonder account. Ontdek hoe ons kanban board je team helpt taken te organiseren en projecten te beheren.",
+      "keywords": "linqboard demo, kanban board proberen, gratis projectmanagement demo, taakbeheer testen"
     }
   },
   "common": {

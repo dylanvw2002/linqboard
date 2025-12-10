@@ -1,13 +1,21 @@
+# LinqBoard Robots.txt
+# Gratis kanban board en taakbeheer software
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
 Allow: /
 
 User-agent: *
@@ -16,5 +24,12 @@ Disallow: /dashboard
 Disallow: /board/
 Disallow: /checkout
 Disallow: /invoices
+Disallow: /create-organization
+Disallow: /join-organization
+Disallow: /reset-password
+Disallow: /subscription-success
+Disallow: /subscription-failed
+Disallow: /vat-reports
 
+# Sitemap location
 Sitemap: https://linqboard.io/sitemap.xml
