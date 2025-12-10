@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { Loader2, Copy, CheckCircle, ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 const CreateOrganization = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const templateBoardId = searchParams.get('template');
   const {
     t
   } = useTranslation();
@@ -50,7 +52,8 @@ const CreateOrganization = () => {
         error
       } = await supabase.functions.invoke("create_org", {
         body: {
-          organizationName
+          organizationName,
+          templateBoardId
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`
