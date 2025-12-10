@@ -609,6 +609,7 @@ const Board = () => {
     col: Column;
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
+  const [clearCompletedColumnId, setClearCompletedColumnId] = useState<string | null>(null);
   const [draggedWidget, setDraggedWidget] = useState<any | null>(null);
   const [widgetDragOffset, setWidgetDragOffset] = useState({
     x: 0,
@@ -1035,6 +1036,46 @@ const Board = () => {
       toast.success(t('board.columnDeleted'));
       await fetchBoardData();
       setDeleteColumnId(null);
+    } catch (error: any) {
+      toast.error(t('board.deleteError') + error.message);
+    }
+  };
+  
+  // Delete all tasks in a completed column
+  const handleClearCompletedTasks = async () => {
+    if (!clearCompletedColumnId) return;
+    
+    const columnTasks = tasks.filter(t => t.column_id === clearCompletedColumnId);
+    if (columnTasks.length === 0) {
+      toast.info(t('board.noTasksToDelete'));
+      setClearCompletedColumnId(null);
+      return;
+    }
+    
+    if (isDemo) {
+      setTasks(tasks.filter(t => t.column_id !== clearCompletedColumnId));
+      toast.success(t('board.tasksCleared') + ' (demo)');
+      setClearCompletedColumnId(null);
+      return;
+    }
+    
+    try {
+      const taskIds = columnTasks.map(t => t.id);
+      
+      // Delete related records first
+      await supabase.from('task_assignees').delete().in('task_id', taskIds);
+      await supabase.from('task_labels').delete().in('task_id', taskIds);
+      await supabase.from('task_attachments').delete().in('task_id', taskIds);
+      await supabase.from('task_reminders').delete().in('task_id', taskIds);
+      await supabase.from('comments').delete().in('task_id', taskIds);
+      
+      // Delete the tasks
+      const { error } = await supabase.from('tasks').delete().in('id', taskIds);
+      if (error) throw error;
+      
+      toast.success(t('board.tasksCleared'));
+      await fetchBoardData();
+      setClearCompletedColumnId(null);
     } catch (error: any) {
       toast.error(t('board.deleteError') + error.message);
     }
@@ -2942,72 +2983,82 @@ const Board = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                       
-                      {/* Add task button */}
-                      <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
-                        <DialogTrigger asChild>
-                          <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-10">
-                            +
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-                          <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
-                            <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
-                          </DialogHeader>
-                          <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
-                            <div className="space-y-3 sm:space-y-4 py-2">
-                            <div>
-                              <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
-                              <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
-                            </div>
-                            <div>
-                              <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
-                              <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
-                            </div>
-                            <div>
-                              <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {newTaskDueDate ? format(newTaskDueDate, "PPP", {
-                                    locale: getDateLocale()
-                                  }) : t('board.selectDate')}
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                  <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
-                                  {newTaskDueDate && <div className="p-3 border-t">
-                                      <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
-                                        {t('board.removeDate')}
-                                      </Button>
-                                    </div>}
-                                </PopoverContent>
-                              </Popover>
-                            </div>
-                            {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
-                              <Label>{t('board.priority')}</Label>
-                              <div className="flex gap-2">
-                                <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
-                                  {t('board.priorityNone')}
-                                </Button>
-                                <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
-                                  {t('board.priorityLow')}
-                                </Button>
-                                <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
-                                  {t('board.priorityMedium')}
-                                </Button>
-                                <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
-                                  {t('board.priorityHigh')}
-                                </Button>
-                              </div>
-                            </div>}
-                            <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
-                              {t('common.add')}
+                      {/* Add task button OR Clear completed button */}
+                      {column.column_type === 'completed' ? (
+                        <button 
+                          onClick={() => setClearCompletedColumnId(column.id)}
+                          className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-red-50 dark:hover:bg-red-950/30 transition-all relative z-10"
+                          title={t('board.clearCompletedTasks')}
+                        >
+                          <Trash2 className="h-5 w-5 text-red-600 dark:text-red-500" />
+                        </button>
+                      ) : (
+                        <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
+                          <DialogTrigger asChild>
+                            <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-10">
+                              +
                             </button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                            <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
+                              <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
+                            </DialogHeader>
+                            <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                              <div className="space-y-3 sm:space-y-4 py-2">
+                              <div>
+                                <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
+                                <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                              </div>
+                              <div>
+                                <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
+                                <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                              </div>
+                              <div>
+                                <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
+                                      <CalendarIcon className="mr-2 h-4 w-4" />
+                                      {newTaskDueDate ? format(newTaskDueDate, "PPP", {
+                                      locale: getDateLocale()
+                                    }) : t('board.selectDate')}
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
+                                    {newTaskDueDate && <div className="p-3 border-t">
+                                        <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
+                                          {t('board.removeDate')}
+                                        </Button>
+                                      </div>}
+                                  </PopoverContent>
+                                </Popover>
+                              </div>
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                                <Label>{t('board.priority')}</Label>
+                                <div className="flex gap-2">
+                                  <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
+                                    {t('board.priorityNone')}
+                                  </Button>
+                                  <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
+                                    {t('board.priorityLow')}
+                                  </Button>
+                                  <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
+                                    {t('board.priorityMedium')}
+                                  </Button>
+                                  <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
+                                    {t('board.priorityHigh')}
+                                  </Button>
+                                </div>
+                              </div>}
+                              <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
+                                {t('common.add')}
+                              </button>
+                              </div>
                             </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
+                          </DialogContent>
+                        </Dialog>
+                      )}
                       
                       {/* Right arrow */}
                       <button 
@@ -3347,77 +3398,97 @@ const Board = () => {
                 {editMode && <span className="text-muted-foreground cursor-grab active:cursor-grabbing">⋮⋮</span>}
                 {displayColumn.name}
               </div>
-              <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
-                <DialogTrigger asChild>
-                  {editMode ? <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" onClick={e => {
+              {column.column_type === 'completed' ? (
+                editMode ? (
+                  <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" onClick={e => {
                       e.preventDefault();
                       e.stopPropagation();
                       setDeleteColumnId(column.id);
                     }}>
                       <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
-                    </button> : <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                      +
-                    </button>}
-                </DialogTrigger>
-                <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-                  <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
-                    <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
-                  </DialogHeader>
-                  <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
-                    <div className="space-y-3 sm:space-y-4 py-2">
-                    <div>
-                      <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
-                      <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
-                    </div>
-                    <div>
-                      <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
-                      <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
-                    </div>
-                    <div>
-                      <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {newTaskDueDate ? format(newTaskDueDate, "PPP", {
-                                locale: getDateLocale()
-                              }) : t('board.selectDate')}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
-                          {newTaskDueDate && <div className="p-3 border-t">
-                              <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
-                                {t('board.removeDate')}
-                              </Button>
-                            </div>}
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
-                      <Label>{t('board.priority')}</Label>
-                      <div className="flex gap-2">
-                        <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
-                          {t('board.priorityNone')}
-                        </Button>
-                        <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
-                          {t('board.priorityLow')}
-                        </Button>
-                        <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
-                          {t('board.priorityMedium')}
-                        </Button>
-                        <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
-                          {t('board.priorityHigh')}
-                        </Button>
-                      </div>
-                    </div>}
-                    <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
-                      {t('common.add')}
                     </button>
+                ) : (
+                  <button 
+                    onClick={() => setClearCompletedColumnId(column.id)}
+                    className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+                    title={t('board.clearCompletedTasks')}
+                  >
+                    <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
+                  </button>
+                )
+              ) : (
+                <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
+                  <DialogTrigger asChild>
+                    {editMode ? <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteColumnId(column.id);
+                      }}>
+                        <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
+                      </button> : <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                        +
+                      </button>}
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                    <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
+                      <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                      <div className="space-y-3 sm:space-y-4 py-2">
+                      <div>
+                        <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
+                        <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                      </div>
+                      <div>
+                        <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
+                        <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                      </div>
+                      <div>
+                        <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {newTaskDueDate ? format(newTaskDueDate, "PPP", {
+                                  locale: getDateLocale()
+                                }) : t('board.selectDate')}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar mode="single" selected={newTaskDueDate} onSelect={setNewTaskDueDate} initialFocus className="pointer-events-auto" />
+                            {newTaskDueDate && <div className="p-3 border-t">
+                                <Button variant="outline" className="w-full" onClick={() => setNewTaskDueDate(undefined)}>
+                                  {t('board.removeDate')}
+                                </Button>
+                              </div>}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                      {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                        <Label>{t('board.priority')}</Label>
+                        <div className="flex gap-2">
+                          <Button type="button" variant={newTaskPriority === null ? "default" : "outline"} onClick={() => setNewTaskPriority(null)} className="flex-1">
+                            {t('board.priorityNone')}
+                          </Button>
+                          <Button type="button" variant={newTaskPriority === "low" ? "default" : "outline"} onClick={() => setNewTaskPriority("low")} className="flex-1">
+                            {t('board.priorityLow')}
+                          </Button>
+                          <Button type="button" variant={newTaskPriority === "medium" ? "default" : "outline"} onClick={() => setNewTaskPriority("medium")} className="flex-1">
+                            {t('board.priorityMedium')}
+                          </Button>
+                          <Button type="button" variant={newTaskPriority === "high" ? "default" : "outline"} onClick={() => setNewTaskPriority("high")} className="flex-1">
+                            {t('board.priorityHigh')}
+                          </Button>
+                        </div>
+                      </div>}
+                      <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
+                        {t('common.add')}
+                      </button>
+                      </div>
                     </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+              )}
             </div>
             <div 
               ref={(el) => {
@@ -3847,6 +3918,24 @@ const Board = () => {
           <AlertDialogFooter>
             <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteColumn} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {t('common.delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Clear Completed Tasks Confirmation */}
+      <AlertDialog open={!!clearCompletedColumnId} onOpenChange={open => !open && setClearCompletedColumnId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('board.clearCompletedTasks')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('board.clearCompletedTasksConfirmation')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearCompletedTasks} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               {t('common.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
