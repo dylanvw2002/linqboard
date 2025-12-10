@@ -1541,6 +1541,12 @@ const Board = () => {
       const [orgResult, boardResult] = await Promise.all([supabase.from("organizations").select("*").eq("id", organizationId).single(), supabase.from("boards").select("*").eq("organization_id", organizationId).single()]);
       setOrganization(orgResult.data);
       setBoard(boardResult.data);
+      
+      // Store as template for new organizations
+      if (boardResult.data?.id) {
+        localStorage.setItem('lastViewedBoardId', boardResult.data.id);
+      }
+      
       if (!boardResult.data) {
         setLoading(false);
         return;

@@ -41,13 +41,13 @@ Deno.serve(async (req) => {
       throw new Error('User not authenticated')
     }
 
-    const { organizationName } = await req.json()
+    const { organizationName, templateBoardId } = await req.json()
 
     if (!organizationName || organizationName.trim() === '') {
       throw new Error('Organization name is required')
     }
 
-    console.log('Creating organization:', { organizationName, userId: user.id })
+    console.log('Creating organization:', { organizationName, userId: user.id, templateBoardId })
 
     // Check organization limit
     const { data: canCreate, error: limitError } = await supabaseClient
@@ -138,21 +138,61 @@ Deno.serve(async (req) => {
 
     console.log('Created default board:', board)
 
-    // Create default columns
-    const defaultColumns = [
-      { name: 'Vandaag', position: 0 },
-      { name: 'Deze week', position: 1 },
-      { name: 'Ziek', position: 2 },
-      { name: 'Afgerond', position: 3 },
-      { name: 'Verlof', position: 4 },
-      { name: 'Belangrijke informatie', position: 5 },
-    ]
+    // If templateBoardId is provided, fetch and copy columns from template
+    let columnsToInsert
+    if (templateBoardId) {
+      const { data: templateColumns, error: templateError } = await supabaseClient
+        .from('columns')
+        .select('*')
+        .eq('board_id', templateBoardId)
+        .order('position', { ascending: true })
 
-    const columnsToInsert = defaultColumns.map((col) => ({
-      board_id: board.id,
-      name: col.name,
-      position: col.position,
-    }))
+      if (templateError) {
+        console.error('Error fetching template columns:', templateError)
+        throw templateError
+      }
+
+      if (templateColumns && templateColumns.length > 0) {
+        columnsToInsert = templateColumns.map((col) => ({
+          board_id: board.id,
+          name: col.name,
+          position: col.position,
+          width_ratio: col.width_ratio,
+          width: col.width,
+          height: col.height,
+          x_position: col.x_position,
+          y_position: col.y_position,
+          header_height: col.header_height,
+          header_width: col.header_width,
+          glow_type: col.glow_type,
+          column_type: col.column_type,
+          content_padding_top: col.content_padding_top,
+          content_padding_bottom: col.content_padding_bottom,
+          content_padding_left: col.content_padding_left,
+          content_padding_right: col.content_padding_right,
+          mobile_position: col.mobile_position,
+        }))
+        console.log('Using template columns from board:', templateBoardId)
+      }
+    }
+
+    // Fall back to default columns if no template or template has no columns
+    if (!columnsToInsert) {
+      const defaultColumns = [
+        { name: 'Vandaag', position: 0 },
+        { name: 'Deze week', position: 1 },
+        { name: 'Ziek', position: 2 },
+        { name: 'Afgerond', position: 3 },
+        { name: 'Verlof', position: 4 },
+        { name: 'Belangrijke informatie', position: 5 },
+      ]
+
+      columnsToInsert = defaultColumns.map((col) => ({
+        board_id: board.id,
+        name: col.name,
+        position: col.position,
+      }))
+    }
 
     const { error: columnsError } = await supabaseClient
       .from('columns')

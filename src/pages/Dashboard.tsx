@@ -646,7 +646,10 @@ const Dashboard = () => {
                   {t('dashboard.noOrganizations')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 lg:gap-3 justify-center">
-                  <Button size="sm" onClick={() => navigate("/create-organization")} className="shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm lg:text-base">
+                  <Button size="sm" onClick={() => {
+                    const templateBoardId = localStorage.getItem('lastViewedBoardId');
+                    navigate(templateBoardId ? `/create-organization?template=${templateBoardId}` : "/create-organization");
+                  }} className="shadow-lg hover:shadow-xl transition-all text-xs sm:text-sm lg:text-base">
                     <Plus className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     {t('dashboard.createOrganization')}
                   </Button>
@@ -738,7 +741,10 @@ const Dashboard = () => {
         <div className="border-t border-border/50 pt-4 lg:pt-6 pb-0">
             <h3 className="text-xs sm:text-sm lg:text-base font-semibold mb-2 lg:mb-3 text-muted-foreground">{t('dashboard.quickActions')}</h3>
             <div className="flex flex-wrap gap-2 lg:gap-3">
-              <Button size="sm" variant="outline" onClick={() => navigate("/create-organization")} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
+              <Button size="sm" variant="outline" onClick={() => {
+                const templateBoardId = localStorage.getItem('lastViewedBoardId');
+                navigate(templateBoardId ? `/create-organization?template=${templateBoardId}` : "/create-organization");
+              }} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9" disabled={subscriptionLimits ? subscriptionLimits.current_org_count >= subscriptionLimits.max_organizations && subscriptionLimits.max_organizations !== -1 : false}>
                 <Plus className="mr-1.5 h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
                 {t('dashboard.newOrganization')}
               </Button>
