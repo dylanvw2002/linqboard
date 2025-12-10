@@ -22,7 +22,7 @@ export const SEO = ({
 }: SEOProps) => {
   const { i18n } = useTranslation();
   const currentLang = i18n.language || 'nl';
-  const baseUrl = 'https://linqboard.nl';
+  const baseUrl = 'https://linqboard.io';
   const currentUrl = canonical || window.location.href;
 
   const languages = ['nl', 'en', 'es', 'de'];
