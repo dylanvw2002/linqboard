@@ -52,6 +52,39 @@ export type Database = {
           },
         ]
       }
+      board_templates: {
+        Row: {
+          columns_config: Json
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          columns_config: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          columns_config?: Json
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       boards: {
         Row: {
           background_fit_mode: string | null
