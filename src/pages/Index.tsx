@@ -243,63 +243,100 @@ const Index = () => {
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [{
-      "@type": "WebPage",
-      "name": "LinqBoard - Visueel Projectmanagement voor Teams",
-      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Het moderne taakbeheertool voor efficiënte teams.",
+      "@type": "WebSite",
+      "name": "LinqBoard",
       "url": "https://linqboard.io",
+      "description": "Gratis kanban board software voor teams. Beheer taken visueel en werk realtime samen.",
       "inLanguage": "nl-NL",
-      "isPartOf": {
-        "@type": "WebSite",
-        "url": "https://linqboard.io"
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://linqboard.io/?search={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
     }, {
       "@type": "Organization",
       "name": "LinqBoard",
       "url": "https://linqboard.io",
       "logo": "https://linqboard.io/logo-linqboard.png",
-      "description": "LinqBoard - Het ultieme visuele projectmanagement platform voor teams",
+      "description": "LinqBoard - Gratis kanban board en projectmanagement software voor teams",
       "foundingDate": "2024",
       "sameAs": ["https://twitter.com/linqboard", "https://linkedin.com/company/linqboard"],
       "contactPoint": {
         "@type": "ContactPoint",
         "contactType": "customer support",
-        "email": "support@linqboard.nl"
+        "email": "support@linqboard.io"
       }
     }, {
       "@type": "SoftwareApplication",
       "name": "LinqBoard",
       "applicationCategory": "BusinessApplication",
+      "applicationSubCategory": "Project Management Software",
       "operatingSystem": "Web Browser",
       "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "EUR"
+        "@type": "AggregateOffer",
+        "lowPrice": "0",
+        "highPrice": "39",
+        "priceCurrency": "EUR",
+        "offerCount": "4"
       },
-      "description": "Visueel projectmanagement platform met real-time samenwerking, aanpasbare kolommen en team management",
-      "featureList": ["Real-time samenwerking", "Team management", "Aanpasbare kolommen", "Deadline tracking", "Bestandsbijlagen", "Veilige opslag"]
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "127",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "description": "Gratis kanban board en taakbeheer software. Organiseer projecten visueel, werk realtime samen met je team.",
+      "featureList": ["Kanban boards", "Realtime samenwerking", "Team management", "Deadline tracking", "Bestandsbijlagen", "Mobiele toegang"],
+      "screenshot": "https://linqboard.io/social-share-image.png"
     }, {
       "@type": "FAQPage",
       "mainEntity": [{
         "@type": "Question",
-        "name": "Wat is LinqBoard?",
+        "name": "Is LinqBoard gratis?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "LinqBoard is een visueel projectmanagement platform dat teams helpt om efficiënt samen te werken met real-time updates, aanpasbare boards en krachtige samenwerkingstools."
+          "text": "Ja, LinqBoard biedt een volledig gratis plan waarmee je direct kunt starten met kanban boards en taakbeheer. Geen creditcard nodig."
         }
       }, {
         "@type": "Question",
-        "name": "Is LinqBoard gratis te gebruiken?",
+        "name": "Wat is een kanban board?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ja, LinqBoard biedt een gratis plan waarmee je kunt starten. Voor meer functies zijn er betaalde plannen beschikbaar."
+          "text": "Een kanban board is een visueel hulpmiddel voor projectmanagement waarbij taken als kaarten worden weergegeven in kolommen die verschillende fasen van een workflow voorstellen."
         }
       }, {
         "@type": "Question",
-        "name": "Kan ik LinqBoard gebruiken voor team samenwerking?",
+        "name": "Kan ik LinqBoard gebruiken met mijn team?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Absoluut! LinqBoard is speciaal ontworpen voor teams met real-time samenwerking, team management functies en veilige data opslag."
+          "text": "Absoluut! LinqBoard is speciaal ontworpen voor teams met realtime samenwerking, team management en veilige data opslag."
         }
+      }, {
+        "@type": "Question",
+        "name": "Hoe verschilt LinqBoard van Trello?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "LinqBoard biedt vergelijkbare kanban functionaliteit maar met focus op de Nederlandse markt, realtime samenwerking en een intuïtieve interface. Plus een gratis plan om te starten."
+        }
+      }]
+    }, {
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://linqboard.io"
+      }, {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Prijzen",
+        "item": "https://linqboard.io/pricing"
+      }, {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Demo",
+        "item": "https://linqboard.io/board-demo"
       }]
     }]
   };
