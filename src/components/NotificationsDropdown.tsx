@@ -30,6 +30,24 @@ interface Notification {
   task_id?: string;
 }
 
+// Helper to get dismissed assignment IDs from localStorage
+const getDismissedAssignments = (): string[] => {
+  try {
+    const stored = localStorage.getItem('dismissed_assignment_notifications');
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const addDismissedAssignment = (id: string) => {
+  const dismissed = getDismissedAssignments();
+  if (!dismissed.includes(id)) {
+    dismissed.push(id);
+    localStorage.setItem('dismissed_assignment_notifications', JSON.stringify(dismissed));
+  }
+};
+
 export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: NotificationsDropdownProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -125,10 +143,12 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
       })));
     }
 
-    // Add assignment notifications
+    // Add assignment notifications (filter out dismissed ones)
     if (assignees) {
+      const dismissedIds = getDismissedAssignments();
       const assignmentNotifs = assignees
         .filter((a: any) => columns.some(c => c.id === a.tasks?.column_id))
+        .filter((a: any) => !dismissedIds.includes(a.id)) // Filter dismissed
         .map((a: any) => ({
           id: a.id,
           type: "assignment" as const,
@@ -199,7 +219,8 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
       
       fetchNotifications();
     } else {
-      // For non-custom notifications, just remove from local state
+      // For assignment notifications, save to localStorage so they don't come back
+      addDismissedAssignment(notification.id);
       setNotifications(prev => prev.filter(n => n.id !== notification.id));
     }
   };
