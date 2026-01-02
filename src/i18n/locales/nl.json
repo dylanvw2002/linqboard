@@ -601,7 +601,35 @@
   },
   "notifications": {
     "title": "Notificaties",
-    "noNotifications": "Nog geen notificaties"
+    "noNotifications": "Geen notificaties",
+    "new": "nieuw",
+    "clearAll": "Wis alles",
+    "clearError": "Kon notificaties niet wissen",
+    "cleared": "Notificaties gewist",
+    "deleteError": "Kon notificatie niet verwijderen",
+    "markAsRead": "Markeer als gelezen",
+    "delete": "Verwijder",
+    "notification": "Notificatie",
+    "openTask": "Open taak",
+    "newAssignment": "Nieuwe toewijzing",
+    "assignedTo": "Je bent toegewezen aan: {{task}}"
+  },
+  "taskHistory": {
+    "title": "Geschiedenis",
+    "loading": "Laden...",
+    "noHistory": "Nog geen geschiedenis",
+    "someone": "Iemand",
+    "unknown": "Onbekend",
+    "created": "{{user}} heeft deze taak aangemaakt",
+    "updated": "{{user}} heeft details bijgewerkt",
+    "moved": "{{user}} heeft de taak verplaatst van \"{{from}}\" naar \"{{to}}\"",
+    "deleted": "{{user}} heeft deze taak verwijderd",
+    "assigneeAdded": "{{user}} heeft {{assignee}} toegewezen",
+    "assigneeRemoved": "{{user}} heeft {{assignee}} verwijderd",
+    "changed": "{{user}} heeft een wijziging gemaakt",
+    "titleLabel": "Titel",
+    "priorityLabel": "Prioriteit",
+    "none": "geen"
   },
   "invoices": {
     "title": "Facturen",

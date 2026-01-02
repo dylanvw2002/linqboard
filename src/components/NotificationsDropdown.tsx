@@ -13,6 +13,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface NotificationsDropdownProps {
   boardId: string;
@@ -67,6 +68,7 @@ const addReadAssignment = (id: string) => {
 };
 
 export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: NotificationsDropdownProps) => {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
@@ -171,10 +173,10 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
         .map((a: any) => ({
           id: a.id,
           type: "assignment" as const,
-          title: "Nieuwe toewijzing",
-          message: `Je bent toegewezen aan: ${a.tasks?.title}`,
+          title: t('notifications.newAssignment'),
+          message: t('notifications.assignedTo', { task: a.tasks?.title }),
           created_at: a.created_at,
-          read: readIds.includes(a.id), // Check localStorage for read status
+          read: readIds.includes(a.id),
           task_id: a.task_id,
         }));
       
@@ -217,7 +219,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
       .eq("user_id", user.id);
 
     if (error) {
-      toast.error("Kon notificaties niet wissen");
+      toast.error(t('notifications.clearError'));
       return;
     }
 
@@ -230,7 +232,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
 
     // Clear local state
     setNotifications([]);
-    toast.success("Notificaties gewist");
+    toast.success(t('notifications.cleared'));
   };
 
   const deleteNotification = async (notification: Notification) => {
@@ -241,7 +243,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
         .eq("id", notification.id);
 
       if (error) {
-        toast.error("Kon notificatie niet wissen");
+        toast.error(t('notifications.deleteError'));
         return;
       }
       
@@ -302,10 +304,10 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
           <div className="flex items-center justify-between p-3 border-b">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-primary" />
-              <span className="font-semibold text-sm">Notificaties</span>
+              <span className="font-semibold text-sm">{t('notifications.title')}</span>
               {unreadCount > 0 && (
                 <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-medium">
-                  {unreadCount} nieuw
+                  {unreadCount} {t('notifications.new')}
                 </span>
               )}
             </div>
@@ -317,7 +319,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
                 onClick={clearAllNotifications}
               >
                 <Trash2 className="h-3 w-3 mr-1" />
-                Wis alles
+                {t('notifications.clearAll')}
               </Button>
             )}
           </div>
@@ -325,7 +327,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
           <div className="max-h-80 overflow-auto">
             {notifications.length === 0 ? (
               <div className="text-center text-muted-foreground text-sm py-8 px-4">
-                Geen notificaties
+                {t('notifications.noNotifications')}
               </div>
             ) : (
               <div className="divide-y">
@@ -368,7 +370,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
                             variant="ghost"
                             className="h-6 w-6 p-0"
                             onClick={() => markAsRead(notif)}
-                            title="Markeer als gelezen"
+                            title={t('notifications.markAsRead')}
                           >
                             <Check className="h-3 w-3" />
                           </Button>
@@ -378,7 +380,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
                           variant="ghost"
                           className="h-6 w-6 p-0 hover:text-destructive"
                           onClick={() => deleteNotification(notif)}
-                          title="Verwijder"
+                          title={t('notifications.delete')}
                         >
                           <X className="h-3 w-3" />
                         </Button>
@@ -397,7 +399,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg">
-              {selectedNotification?.title || "Notificatie"}
+              {selectedNotification?.title || t('notifications.notification')}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -412,7 +414,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
                 className="w-full"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Open taak
+                {t('notifications.openTask')}
               </Button>
             )}
           </div>
