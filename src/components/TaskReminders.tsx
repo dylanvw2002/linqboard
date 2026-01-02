@@ -200,6 +200,16 @@ export const TaskReminders = ({ taskId, dueDate }: TaskRemindersProps) => {
         <h3 className="font-semibold text-sm">Herinneringen</h3>
       </div>
 
+      {/* Info message about manual reminders */}
+      {reminders.length === 0 && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+          <Bell className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+          <p className="text-sm text-amber-600 dark:text-amber-400">
+            Herinneringen worden alleen verstuurd als je ze zelf instelt. Voeg hieronder een herinnering toe om op tijd genotificeerd te worden.
+          </p>
+        </div>
+      )}
+
       {/* Add reminder section */}
       <div className="space-y-3 p-3 border rounded-lg bg-muted/30">
         <RadioGroup 
