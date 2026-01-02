@@ -3538,6 +3538,42 @@ const Board = () => {
                           </Button>
                         </div>
                       </div>}
+                      
+                      {/* Team member assignment */}
+                      <div>
+                        <Label>{t('board.assignedTo')}</Label>
+                        <div className="space-y-3">
+                          {newTaskAssignees.length > 0 && <div className="flex flex-wrap gap-2">
+                            {newTaskAssignees.map(userId => {
+                              const member = orgMembers.find(m => m.user_id === userId);
+                              if (!member) return null;
+                              return <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                                <Avatar className="h-9 w-9">
+                                  <AvatarImage src={member.avatar_url || undefined} />
+                                  <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
+                                    {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm font-medium">{member.full_name}</span>
+                                <button onClick={() => setNewTaskAssignees(newTaskAssignees.filter(id => id !== userId))} className="ml-1 text-muted-foreground hover:text-destructive">
+                                  ×
+                                </button>
+                              </div>;
+                            })}
+                          </div>}
+                          <TeamMemberSelect 
+                            members={orgMembers} 
+                            selectedMembers={newTaskAssignees} 
+                            onSelect={(userId) => {
+                              if (!newTaskAssignees.includes(userId)) {
+                                setNewTaskAssignees([...newTaskAssignees, userId]);
+                              }
+                            }} 
+                            placeholder={t('board.addTeamMember')} 
+                          />
+                        </div>
+                      </div>
+                      
                       <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
                         {t('common.add')}
                       </button>
