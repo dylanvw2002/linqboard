@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
 import { History, UserPlus, UserMinus, ArrowRight, Pencil, Plus, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface HistoryEntry {
   id: string;
@@ -25,6 +26,7 @@ interface TaskHistoryProps {
 }
 
 export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
+  const { t } = useTranslation();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +88,7 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
   };
 
   const getColumnName = (columnId: string) => {
-    return columns.find(c => c.id === columnId)?.name || 'Onbekend';
+    return columns.find(c => c.id === columnId)?.name || t('taskHistory.unknown');
   };
 
   const getActionIcon = (action: string) => {
@@ -109,25 +111,25 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
   };
 
   const getActionDescription = (entry: HistoryEntry) => {
-    const userName = entry.user?.full_name || 'Iemand';
+    const userName = entry.user?.full_name || t('taskHistory.someone');
     
     switch (entry.action) {
       case 'created':
-        return `${userName} heeft deze taak aangemaakt`;
+        return t('taskHistory.created', { user: userName });
       case 'updated':
-        return `${userName} heeft details bijgewerkt`;
+        return t('taskHistory.updated', { user: userName });
       case 'moved':
         const fromCol = getColumnName(entry.changes.from_column_id);
         const toCol = getColumnName(entry.changes.to_column_id);
-        return `${userName} heeft de taak verplaatst van "${fromCol}" naar "${toCol}"`;
+        return t('taskHistory.moved', { user: userName, from: fromCol, to: toCol });
       case 'deleted':
-        return `${userName} heeft deze taak verwijderd`;
+        return t('taskHistory.deleted', { user: userName });
       case 'assignee_added':
-        return `${userName} heeft ${entry.changes.user_name} toegewezen`;
+        return t('taskHistory.assigneeAdded', { user: userName, assignee: entry.changes.user_name });
       case 'assignee_removed':
-        return `${userName} heeft ${entry.changes.user_name} verwijderd`;
+        return t('taskHistory.assigneeRemoved', { user: userName, assignee: entry.changes.user_name });
       default:
-        return `${userName} heeft een wijziging gemaakt`;
+        return t('taskHistory.changed', { user: userName });
     }
   };
 
@@ -151,7 +153,7 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="text-sm text-muted-foreground">Laden...</div>
+        <div className="text-sm text-muted-foreground">{t('taskHistory.loading')}</div>
       </div>
     );
   }
@@ -160,7 +162,7 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <History className="h-8 w-8 text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground">Nog geen geschiedenis</p>
+        <p className="text-sm text-muted-foreground">{t('taskHistory.noHistory')}</p>
       </div>
     );
   }
@@ -199,7 +201,7 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
                 <div className="ml-6 mt-2 text-xs space-y-1">
                   {entry.changes.old.title !== entry.changes.new.title && (
                     <div className="bg-muted p-2 rounded">
-                      <span className="text-muted-foreground">Titel: </span>
+                      <span className="text-muted-foreground">{t('taskHistory.titleLabel')}: </span>
                       <span className="line-through">{entry.changes.old.title}</span>
                       {' → '}
                       <span className="font-medium">{entry.changes.new.title}</span>
@@ -207,10 +209,10 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
                   )}
                   {entry.changes.old.priority !== entry.changes.new.priority && (
                     <div className="bg-muted p-2 rounded">
-                      <span className="text-muted-foreground">Prioriteit: </span>
-                      <span className="line-through">{entry.changes.old.priority || 'geen'}</span>
+                      <span className="text-muted-foreground">{t('taskHistory.priorityLabel')}: </span>
+                      <span className="line-through">{entry.changes.old.priority || t('taskHistory.none')}</span>
                       {' → '}
-                      <span className="font-medium">{entry.changes.new.priority || 'geen'}</span>
+                      <span className="font-medium">{entry.changes.new.priority || t('taskHistory.none')}</span>
                     </div>
                   )}
                 </div>
