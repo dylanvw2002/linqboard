@@ -562,6 +562,7 @@ const Board = () => {
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
+  const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
@@ -2107,6 +2108,10 @@ const Board = () => {
     }
     if (isDemo) {
       const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
+      const demoAssignees = newTaskAssignees.map(userId => {
+        const member = orgMembers.find(m => m.user_id === userId);
+        return member ? { user_id: userId, full_name: member.full_name, avatar_url: member.avatar_url } : null;
+      }).filter(Boolean);
       const newTask: Task = {
         id: `demo-task-${Date.now()}`,
         column_id: column.id,
@@ -2115,7 +2120,7 @@ const Board = () => {
         priority: newTaskPriority,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
         position: maxPosition + 1,
-        assignees: []
+        assignees: demoAssignees as any[]
       };
       setTasks([...tasks, newTask]);
       toast.success(t('board.taskAdded') + ' (demo)');
@@ -2124,27 +2129,37 @@ const Board = () => {
       setNewTaskDescription("");
       setNewTaskPriority("medium");
       setNewTaskDueDate(undefined);
+      setNewTaskAssignees([]);
       return;
     }
     try {
       const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
-      const {
-        error
-      } = await supabase.from("tasks").insert({
+      const { data: newTask, error } = await supabase.from("tasks").insert({
         column_id: column.id,
         title: validation.data.title,
         description: validation.data.description || null,
         priority: newTaskPriority,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
         position: maxPosition + 1
-      });
+      }).select().single();
       if (error) throw error;
+      
+      // Add assignees if any were selected
+      if (newTaskAssignees.length > 0 && newTask) {
+        const assigneeInserts = newTaskAssignees.map(userId => ({
+          task_id: newTask.id,
+          user_id: userId
+        }));
+        await supabase.from("task_assignees").insert(assigneeInserts);
+      }
+      
       toast.success(t('board.taskAdded'));
       setOpenDialog(null);
       setNewTaskTitle("");
       setNewTaskDescription("");
       setNewTaskPriority("medium");
       setNewTaskDueDate(undefined);
+      setNewTaskAssignees([]);
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
@@ -3057,6 +3072,42 @@ const Board = () => {
                                   </Button>
                                 </div>
                               </div>}
+                              
+                              {/* Team member assignment */}
+                              <div>
+                                <Label>{t('board.assignedTo')}</Label>
+                                <div className="space-y-3">
+                                  {newTaskAssignees.length > 0 && <div className="flex flex-wrap gap-2">
+                                    {newTaskAssignees.map(userId => {
+                                      const member = orgMembers.find(m => m.user_id === userId);
+                                      if (!member) return null;
+                                      return <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                                        <Avatar className="h-9 w-9">
+                                          <AvatarImage src={member.avatar_url || undefined} />
+                                          <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
+                                            {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <span className="text-sm font-medium">{member.full_name}</span>
+                                        <button onClick={() => setNewTaskAssignees(newTaskAssignees.filter(id => id !== userId))} className="ml-1 text-muted-foreground hover:text-destructive">
+                                          ×
+                                        </button>
+                                      </div>;
+                                    })}
+                                  </div>}
+                                  <TeamMemberSelect 
+                                    members={orgMembers} 
+                                    selectedMembers={newTaskAssignees} 
+                                    onSelect={(userId) => {
+                                      if (!newTaskAssignees.includes(userId)) {
+                                        setNewTaskAssignees([...newTaskAssignees, userId]);
+                                      }
+                                    }} 
+                                    placeholder={t('board.addTeamMember')} 
+                                  />
+                                </div>
+                              </div>
+                              
                               <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
                                 {t('common.add')}
                               </button>
