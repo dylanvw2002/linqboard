@@ -11,12 +11,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight, Share2, Download, Mail, Loader2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight, Share2, Download, Mail, Loader2, X, Users } from "lucide-react";
 import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, isToday, parseISO, addDays, addWeeks, isSameMonth, startOfMonth, endOfMonth, eachHourOfInterval, setHours, setMinutes, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { TeamMemberSelect } from "@/components/TeamMemberSelect";
 
 interface CalendarEvent {
   id: string;
@@ -70,11 +72,12 @@ export default function Agenda() {
   // Share dialog state
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [sharingEvent, setSharingEvent] = useState<CalendarEvent | null>(null);
-  const [shareEmail, setShareEmail] = useState("");
-  const [shareName, setShareName] = useState("");
+  const [shareExternalEmails, setShareExternalEmails] = useState("");
   const [shareMessage, setShareMessage] = useState("");
   const [isSendingShare, setIsSendingShare] = useState(false);
   const [currentUserName, setCurrentUserName] = useState("");
+  const [shareSelectedMembers, setShareSelectedMembers] = useState<string[]>([]);
+  const [orgMembers, setOrgMembers] = useState<{ user_id: string; full_name: string; avatar_url: string | null; email: string }[]>([]);
   
   // Form state
   const [title, setTitle] = useState("");
@@ -106,8 +109,59 @@ export default function Agenda() {
       setCurrentUserName(profile.full_name);
     }
     
-    await Promise.all([fetchEvents(), fetchTasks(user.id)]);
+    await Promise.all([fetchEvents(), fetchTasks(user.id), fetchOrgMembers(user.id)]);
     setLoading(false);
+  };
+
+  const fetchOrgMembers = async (userId: string) => {
+    // Get all orgs user belongs to
+    const { data: memberships } = await supabase
+      .from("memberships")
+      .select("organization_id")
+      .eq("user_id", userId);
+
+    if (!memberships?.length) {
+      setOrgMembers([]);
+      return;
+    }
+
+    const orgIds = memberships.map(m => m.organization_id);
+
+    // Get all members from those orgs (excluding current user)
+    const { data: allMemberships } = await supabase
+      .from("memberships")
+      .select("user_id")
+      .in("organization_id", orgIds)
+      .neq("user_id", userId);
+
+    if (!allMemberships?.length) {
+      setOrgMembers([]);
+      return;
+    }
+
+    const uniqueUserIds = [...new Set(allMemberships.map(m => m.user_id))];
+
+    // Get profiles with email from auth
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("user_id, full_name, avatar_url")
+      .in("user_id", uniqueUserIds);
+
+    // Get emails using RPC function
+    const orgId = orgIds[0]; // Use first org for email lookup
+    const { data: memberEmails } = await supabase.rpc("get_org_member_emails", { _org_id: orgId });
+
+    const membersWithEmails = profiles?.map(profile => {
+      const emailInfo = memberEmails?.find(m => m.user_id === profile.user_id);
+      return {
+        user_id: profile.user_id,
+        full_name: profile.full_name,
+        avatar_url: profile.avatar_url,
+        email: emailInfo?.email || ""
+      };
+    }).filter(m => m.email) || [];
+
+    setOrgMembers(membersWithEmails);
   };
 
   const fetchEvents = async () => {
@@ -355,22 +409,38 @@ export default function Agenda() {
   const openShareDialog = (event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
     setSharingEvent(event);
-    setShareEmail("");
-    setShareName("");
+    setShareExternalEmails("");
     setShareMessage("");
+    setShareSelectedMembers([]);
     setShareDialogOpen(true);
   };
 
   const handleShareViaEmail = async () => {
-    if (!sharingEvent || !shareEmail) {
-      toast.error("Vul een e-mailadres in");
+    if (!sharingEvent) return;
+
+    // Parse external emails
+    const externalEmails = shareExternalEmails
+      .split(/[,;\s]+/)
+      .map(e => e.trim())
+      .filter(e => e.length > 0);
+
+    // Validate external emails
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const invalidEmails = externalEmails.filter(e => !emailRegex.test(e));
+    if (invalidEmails.length > 0) {
+      toast.error(`Ongeldig e-mailadres: ${invalidEmails[0]}`);
       return;
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(shareEmail)) {
-      toast.error("Vul een geldig e-mailadres in");
+    // Get emails from selected members
+    const memberEmails = shareSelectedMembers
+      .map(userId => orgMembers.find(m => m.user_id === userId)?.email)
+      .filter((email): email is string => !!email);
+
+    const allEmails = [...memberEmails, ...externalEmails];
+
+    if (allEmails.length === 0) {
+      toast.error("Selecteer minimaal één teamlid of voer een e-mailadres in");
       return;
     }
 
@@ -380,8 +450,7 @@ export default function Agenda() {
       const { data, error } = await supabase.functions.invoke('share-calendar-event', {
         body: {
           event: sharingEvent,
-          recipientEmail: shareEmail,
-          recipientName: shareName || undefined,
+          recipientEmails: allEmails,
           senderName: currentUserName || 'Iemand',
           message: shareMessage || undefined,
         },
@@ -389,7 +458,7 @@ export default function Agenda() {
 
       if (error) throw error;
 
-      toast.success(`Uitnodiging verstuurd naar ${shareEmail}`);
+      toast.success(`Uitnodiging verstuurd naar ${allEmails.length} ${allEmails.length === 1 ? 'ontvanger' : 'ontvangers'}`);
       setShareDialogOpen(false);
     } catch (error) {
       console.error('Error sharing event:', error);
@@ -979,10 +1048,10 @@ export default function Agenda() {
 
       {/* Share Dialog */}
       <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5 text-primary" />
+              <Share2 className="h-5 w-5 text-primary" />
               Deel agenda-item
             </DialogTitle>
             <DialogDescription>
@@ -1001,28 +1070,71 @@ export default function Agenda() {
           )}
           
           <div className="space-y-4">
+            {/* Team Members Selection */}
             <div className="space-y-2">
-              <Label htmlFor="share-email">E-mailadres *</Label>
-              <Input
-                id="share-email"
-                type="email"
-                placeholder="naam@voorbeeld.nl"
-                value={shareEmail}
-                onChange={(e) => setShareEmail(e.target.value)}
-              />
+              <Label className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Teamleden
+              </Label>
+              
+              {/* Selected Members */}
+              {shareSelectedMembers.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {shareSelectedMembers.map(userId => {
+                    const member = orgMembers.find(m => m.user_id === userId);
+                    if (!member) return null;
+                    return (
+                      <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                        <Avatar className="h-7 w-7">
+                          <AvatarImage src={member.avatar_url || undefined} />
+                          <AvatarFallback className="text-xs font-bold bg-primary/30 text-primary">
+                            {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium">{member.full_name}</span>
+                        <button 
+                          onClick={() => setShareSelectedMembers(shareSelectedMembers.filter(id => id !== userId))} 
+                          className="ml-1 text-muted-foreground hover:text-destructive"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {orgMembers.length > 0 ? (
+                <TeamMemberSelect
+                  members={orgMembers}
+                  selectedMembers={shareSelectedMembers}
+                  onSelect={(userId) => setShareSelectedMembers([...shareSelectedMembers, userId])}
+                  placeholder="Selecteer een teamlid..."
+                />
+              ) : (
+                <p className="text-sm text-muted-foreground">Geen teamleden gevonden in je organisatie</p>
+              )}
             </div>
             
+            {/* External Email Addresses */}
             <div className="space-y-2">
-              <Label htmlFor="share-name">Naam ontvanger (optioneel)</Label>
+              <Label htmlFor="share-external-emails" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                Extra e-mailadressen
+              </Label>
               <Input
-                id="share-name"
+                id="share-external-emails"
                 type="text"
-                placeholder="Jan Jansen"
-                value={shareName}
-                onChange={(e) => setShareName(e.target.value)}
+                placeholder="naam@voorbeeld.nl, andere@voorbeeld.nl"
+                value={shareExternalEmails}
+                onChange={(e) => setShareExternalEmails(e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">
+                Voeg externe ontvangers toe, gescheiden door komma's
+              </p>
             </div>
             
+            {/* Personal Message */}
             <div className="space-y-2">
               <Label htmlFor="share-message">Persoonlijk bericht (optioneel)</Label>
               <Textarea
@@ -1045,7 +1157,7 @@ export default function Agenda() {
             </Button>
             <Button
               onClick={handleShareViaEmail}
-              disabled={isSendingShare || !shareEmail}
+              disabled={isSendingShare || (shareSelectedMembers.length === 0 && !shareExternalEmails.trim())}
             >
               {isSendingShare ? (
                 <>

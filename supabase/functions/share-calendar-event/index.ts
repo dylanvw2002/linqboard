@@ -43,8 +43,7 @@ interface CalendarEvent {
 
 interface ShareRequest {
   event: CalendarEvent;
-  recipientEmail: string;
-  recipientName: string;
+  recipientEmails: string[];
   senderName: string;
   message?: string;
 }
@@ -100,7 +99,6 @@ function generateICSContent(event: CalendarEvent): string {
 function createShareEmail(
   event: CalendarEvent, 
   senderName: string, 
-  recipientName: string, 
   message: string | undefined,
   logoBase64: string
 ): string {
@@ -241,17 +239,17 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { event, recipientEmail, recipientName, senderName, message }: ShareRequest = await req.json();
+    const { event, recipientEmails, senderName, message }: ShareRequest = await req.json();
     
     console.log('Sharing calendar event:', { 
       eventTitle: event.title, 
-      recipientEmail, 
+      recipientEmails, 
       senderName 
     });
 
     // Validate required fields
-    if (!event || !recipientEmail || !senderName) {
-      throw new Error('Missing required fields: event, recipientEmail, or senderName');
+    if (!event || !recipientEmails || recipientEmails.length === 0 || !senderName) {
+      throw new Error('Missing required fields: event, recipientEmails, or senderName');
     }
 
     // Convert logo to base64 for embedding
@@ -263,16 +261,16 @@ Deno.serve(async (req) => {
     const icsBase64 = btoa(icsContent);
 
     // Create HTML email
-    const html = createShareEmail(event, senderName, recipientName || 'daar', message, logoBase64);
+    const html = createShareEmail(event, senderName, message, logoBase64);
 
     // Format date for subject
     const eventDate = parseISO(event.start_time);
     const formattedSubjectDate = format(eventDate, "d MMM", { locale: nl });
 
-    // Send email via Resend with ICS attachment
+    // Send email to all recipients
     const { data, error } = await resend.emails.send({
       from: 'LinqBoard <info@linqboard.io>',
-      to: [recipientEmail],
+      to: recipientEmails,
       subject: `📅 Uitnodiging: ${event.title} - ${formattedSubjectDate}`,
       html,
       attachments: [
@@ -292,7 +290,7 @@ Deno.serve(async (req) => {
     console.log('Calendar event shared successfully:', data);
 
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({ success: true, data, sentTo: recipientEmails.length }),
       {
         status: 200,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
