@@ -2757,7 +2757,16 @@ const Board = () => {
             </p>
           </div>
           {isMobile && (
-            <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />
+            <div className="flex items-center gap-1 shrink-0">
+              <button 
+                onClick={() => navigate("/agenda")} 
+                className="text-foreground font-bold cursor-pointer transition-all duration-300 flex items-center justify-center backdrop-blur-[60px] bg-white/30 dark:bg-card/30 border border-white/50 dark:border-white/30 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_2px_rgba(255,255,255,0.6)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.8)] active:scale-95 hover:bg-white/40 dark:hover:bg-card/40 p-1.5 rounded-lg relative before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[7px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+                title={t('agenda.title')}
+              >
+                <CalendarLucide className="w-5 h-5" />
+              </button>
+              <ActiveUsers organizationId={organizationId!} isDemo={isDemo} isMobile={isMobile} />
+            </div>
           )}
           {!isMobile && <div className="[font-variant-numeric:tabular-nums] font-bold rounded-2xl text-center shrink-0 relative backdrop-blur-[15px] bg-gradient-to-br from-primary/10 to-accent/10 border border-white/20 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.08)] px-3.5 py-1.5 text-[clamp(20px,3vw,40px)]">
               <div className="text-primary whitespace-nowrap relative z-10">{formatTime(currentTime)}</div>
@@ -2888,6 +2897,10 @@ const Board = () => {
           </button>}
           {!isMobile && <button onClick={() => setEditMode(!editMode)} className={cn("backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", editMode ? "bg-primary/30 dark:bg-primary/30 border-primary/60 dark:border-primary/60 hover:bg-primary/40 dark:hover:bg-primary/40" : "bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30")} title={editMode ? t('board.editModeOff') : t('board.editModeOn')}>
               <Pencil size={20} />
+            </button>}
+          
+          {!isMobile && <button onClick={() => navigate("/agenda")} className="backdrop-blur-[60px] text-foreground border-2 p-2.5 rounded-2xl font-bold cursor-pointer transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.2),inset_0_2px_2px_rgba(255,255,255,0.7)] hover:-translate-y-1 bg-white/20 dark:bg-card/20 border-white/40 dark:border-white/20 hover:bg-white/30 dark:hover:bg-card/30 relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[15px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" title={t('agenda.title')}>
+              <CalendarLucide size={20} />
             </button>}
           
           {!isMobile && board?.id && <NotificationsDropdown boardId={board.id} isDemo={isDemo} onOpenTask={handleOpenTaskFromNotification} />}
