@@ -11,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid } from "lucide-react";
-import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, isToday, parseISO, addDays, isSameMonth, startOfMonth, endOfMonth, eachHourOfInterval, setHours, setMinutes, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
+import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, isToday, parseISO, addDays, addWeeks, isSameMonth, startOfMonth, endOfMonth, eachHourOfInterval, setHours, setMinutes, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -449,9 +449,27 @@ export default function Agenda() {
   const WeekView = () => (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base sm:text-lg">
-          {format(weekStart, "d MMM", { locale: nl })} - {format(weekEnd, "d MMM yyyy", { locale: nl })}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setSelectedDate(addWeeks(selectedDate, -1))}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <CardTitle className="text-base sm:text-lg">
+            {format(weekStart, "d MMM", { locale: nl })} - {format(weekEnd, "d MMM yyyy", { locale: nl })}
+          </CardTitle>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => setSelectedDate(addWeeks(selectedDate, 1))}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-2 sm:p-4">
         <div className={`grid gap-2 ${isMobile ? 'grid-cols-1' : 'grid-cols-7'}`}>
