@@ -392,7 +392,7 @@ export const TaskAttachments = ({
             {fileUrl && viewingAttachment && <>
                 {viewingAttachment.file_type.includes("image") ? <div className="w-full h-full flex items-center justify-center">
                     <img src={fileUrl} alt={viewingAttachment.file_name} className="max-w-full max-h-full object-contain" />
-                  </div> : viewingAttachment.file_type.includes("pdf") ? <div className="flex justify-center">
+                  </div> : viewingAttachment.file_type.includes("pdf") ? <div className="flex flex-col items-center">
                     <Document file={fileUrl} onLoadSuccess={onDocumentLoadSuccess} loading={<div className="flex items-center justify-center p-8">
                           <p className="text-muted-foreground">{t('attachments.loadingPDF')}</p>
                         </div>} error={<div className="flex items-center justify-center p-8 text-center">
@@ -408,6 +408,31 @@ export const TaskAttachments = ({
                         </div>}>
                       <Page pageNumber={pageNumber} scale={scale} renderTextLayer={true} renderAnnotationLayer={true} />
                     </Document>
+                    {numPages > 1 && (
+                      <div className="flex items-center gap-3 mt-4 bg-background/80 backdrop-blur-sm px-4 py-2 rounded-lg border shadow-sm">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={handlePreviousPage}
+                          disabled={pageNumber <= 1}
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        <span className="text-sm min-w-[80px] text-center">
+                          {pageNumber} / {numPages}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={handleNextPage}
+                          disabled={pageNumber >= numPages}
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </div> : <div className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
