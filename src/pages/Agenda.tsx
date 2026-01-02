@@ -371,17 +371,17 @@ export default function Agenda() {
     const { events: selectedDateEvents, tasks: selectedDateTasks } = getItemsForDate(selectedDate);
 
     return (
-      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`} style={{ minHeight: isMobile ? '400px' : '500px' }}>
+      <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'} h-[500px]`}>
         {/* Calendar */}
-        <Card className={`${isMobile ? '' : 'lg:col-span-1'} flex flex-col`}>
-          <CardContent className="p-4 flex-1 flex flex-col">
+        <Card className={`${isMobile ? 'h-[400px]' : 'lg:col-span-1 h-full'} flex flex-col`}>
+          <CardContent className="p-4 flex-1 flex flex-col min-h-0">
             <Calendar
               fill
               mode="single"
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
               locale={nl}
-              className="rounded-md pointer-events-auto w-full h-full"
+              className="rounded-md pointer-events-auto flex-1"
               modifiers={{
                 hasItems: datesWithItems,
               }}

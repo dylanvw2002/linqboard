@@ -49,15 +49,17 @@ function Calendar({
 
   const fillClasses = fill
     ? {
-        months: "flex flex-1 flex-col",
-        month: "flex flex-1 flex-col",
+        months: "flex flex-1 flex-col h-full",
+        month: "flex flex-1 flex-col h-full",
+        caption: "flex justify-center pt-1 relative items-center mb-4",
         table: "w-full flex-1 flex flex-col",
         head_row: "flex",
         head_cell: "text-muted-foreground rounded-md flex-1 font-normal text-[0.8rem] text-center",
+        tbody: "flex flex-col flex-1",
         row: "flex w-full flex-1",
         cell:
-          "flex-1 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-        day: cn(buttonVariants({ variant: "ghost" }), "w-full h-full p-0 font-normal aria-selected:opacity-100"),
+          "flex-1 flex items-center justify-center text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+        day: cn(buttonVariants({ variant: "ghost" }), "w-full h-full min-h-[40px] p-0 font-normal aria-selected:opacity-100 text-base"),
       }
     : {};
 
