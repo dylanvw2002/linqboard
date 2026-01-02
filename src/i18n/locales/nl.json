@@ -208,7 +208,14 @@
     "clearCompletedTasks": "Afgeronde taken verwijderen",
     "clearCompletedTasksConfirmation": "Weet je zeker dat je alle taken in deze kolom wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
     "tasksCleared": "Taken verwijderd",
-    "noTasksToDelete": "Geen taken om te verwijderen"
+    "noTasksToDelete": "Geen taken om te verwijderen",
+    "taskMoved": "Taak verplaatst naar \"{{column}}\"",
+    "columnMoved": "Kolom verplaatst",
+    "taskCompleted": "Taak afgerond",
+    "assigneeRemoved": "Toewijzing verwijderd",
+    "errorMovingTask": "Fout bij verplaatsen taak",
+    "errorCompletingTask": "Fout bij voltooien taak",
+    "moveError": "Fout bij verplaatsen: "
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
