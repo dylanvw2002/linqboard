@@ -404,11 +404,6 @@
     "feature6Title": "Realtime updates",
     "feature6Description": "Blijf op de hoogte van de laatste wijzigingen."
   },
-  "demo": {
-    "title": "Demo",
-    "description": "Bekijk de demo om te zien hoe LinqBoard werkt.",
-    "button": "Start de demo"
-  },
   "pricing": {
     "title": "Prijzen",
     "subtitle": "Groei met ons mee - van starter tot enterprise",
@@ -557,26 +552,52 @@
       "noTrack": "Geen Spotify track ingesteld"
     }
   },
-  "seo": {
-    "home": {
-      "title": "LinqBoard - Teamwork, moeiteloos georganiseerd",
-      "description": "Beheer taken, werk in real-time samen en houd je team gesynchroniseerd met LinqBoard. Krachtig, veilig en eenvoudig te gebruiken.",
-      "keywords": "taakbeheer, team samenwerking, projectmanagement, real-time samenwerking, kanban board, team organisatie",
-      "logoAlt": "LinqBoard Logo - Teamwork Platform",
-      "heroImageAlt": "LinqBoard taakbeheer interface illustratie"
-    },
-    "pricing": {
-      "title": "LinqBoard Prijzen - Plannen vanaf €7,99",
-      "description": "Kies het LinqBoard plan dat bij jouw team past. Van gratis tot business. Transparante prijzen, geen verborgen kosten.",
-      "keywords": "linqboard prijzen, taakbeheer abonnement, team prijzen, projectmanagement kosten"
-    }
-  },
   "chat": {
     "title": "Chat",
     "description": "Chat met je teamleden.",
     "placeholder": "Typ een bericht...",
     "send": "Verstuur",
     "noMessages": "Nog geen berichten"
+  },
+  "agenda": {
+    "title": "Mijn Agenda",
+    "subtitle": "Bekijk je geplande taken en afspraken",
+    "noEvents": "Geen afspraken voor deze dag",
+    "addEvent": "Afspraak toevoegen",
+    "editEvent": "Afspraak bewerken",
+    "deleteEvent": "Afspraak verwijderen",
+    "deleteEventConfirm": "Weet je zeker dat je deze afspraak wilt verwijderen?",
+    "eventTitle": "Titel",
+    "eventTitlePlaceholder": "Wat is de afspraak?",
+    "eventDescription": "Beschrijving",
+    "eventDescriptionPlaceholder": "Voeg een beschrijving toe...",
+    "startTime": "Starttijd",
+    "endTime": "Eindtijd",
+    "allDay": "Hele dag",
+    "eventColor": "Kleur",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "eventCreated": "Afspraak aangemaakt",
+    "eventUpdated": "Afspraak bijgewerkt",
+    "eventDeleted": "Afspraak verwijderd",
+    "createError": "Fout bij aanmaken afspraak",
+    "updateError": "Fout bij bijwerken afspraak",
+    "deleteError": "Fout bij verwijderen afspraak",
+    "viewMonth": "Maand",
+    "viewWeek": "Week",
+    "viewDay": "Dag",
+    "today": "Vandaag",
+    "loading": "Agenda laden...",
+    "tasksWithDeadline": "Taken met deadline",
+    "calendarEvents": "Agenda afspraken",
+    "showTasks": "Taken tonen",
+    "showEvents": "Afspraken tonen",
+    "taskDeadline": "Taak deadline",
+    "noTasksForDay": "Geen taken voor deze dag",
+    "selectDate": "Selecteer een datum",
+    "markComplete": "Markeer als voltooid",
+    "taskCompleted": "Taak voltooid",
+    "taskCompletedError": "Fout bij voltooien taak"
   },
   "notifications": {
     "title": "Notificaties",
@@ -831,8 +852,11 @@
     "downloadError": "Fout bij downloaden: ",
     "notLoggedIn": "Niet ingelogd",
     "loadingPdf": "PDF laden...",
+    "loadingPDF": "PDF laden...",
     "pdfLoadError": "Fout bij laden PDF",
+    "pdfError": "Fout bij laden van de PDF. Probeer het opnieuw of download het bestand.",
     "downloadPdf": "Download PDF",
+    "downloadPDF": "Download PDF",
     "noPreview": "Geen voorbeeld beschikbaar",
     "download": "Download",
     "dropOrClick": "Sleep een bestand hierheen of klik om te uploaden",
