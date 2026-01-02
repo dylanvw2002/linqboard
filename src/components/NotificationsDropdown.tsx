@@ -48,6 +48,24 @@ const addDismissedAssignment = (id: string) => {
   }
 };
 
+// Helper to get read assignment IDs from localStorage
+const getReadAssignments = (): string[] => {
+  try {
+    const stored = localStorage.getItem('read_assignment_notifications');
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const addReadAssignment = (id: string) => {
+  const readAssignments = getReadAssignments();
+  if (!readAssignments.includes(id)) {
+    readAssignments.push(id);
+    localStorage.setItem('read_assignment_notifications', JSON.stringify(readAssignments));
+  }
+};
+
 export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: NotificationsDropdownProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -146,6 +164,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
     // Add assignment notifications (filter out dismissed ones)
     if (assignees) {
       const dismissedIds = getDismissedAssignments();
+      const readIds = getReadAssignments();
       const assignmentNotifs = assignees
         .filter((a: any) => columns.some(c => c.id === a.tasks?.column_id))
         .filter((a: any) => !dismissedIds.includes(a.id)) // Filter dismissed
@@ -155,7 +174,7 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
           title: "Nieuwe toewijzing",
           message: `Je bent toegewezen aan: ${a.tasks?.title}`,
           created_at: a.created_at,
-          read: false,
+          read: readIds.includes(a.id), // Check localStorage for read status
           task_id: a.task_id,
         }));
       
@@ -179,6 +198,8 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
       
       fetchNotifications();
     } else {
+      // Save read status to localStorage for assignment notifications
+      addReadAssignment(notification.id);
       setNotifications(prev => 
         prev.map(n => n.id === notification.id ? { ...n, read: true } : n)
       );
@@ -199,6 +220,13 @@ export const NotificationsDropdown = ({ boardId, isDemo, onOpenTask }: Notificat
       toast.error("Kon notificaties niet wissen");
       return;
     }
+
+    // Also dismiss all assignment notifications
+    notifications.forEach(n => {
+      if (n.type === "assignment") {
+        addDismissedAssignment(n.id);
+      }
+    });
 
     // Clear local state
     setNotifications([]);
