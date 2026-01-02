@@ -100,7 +100,8 @@ function createShareEmail(
   event: CalendarEvent, 
   senderName: string, 
   message: string | undefined,
-  logoBase64: string
+  logoBase64: string,
+  addToLinqBoardUrl: string
 ): string {
   const eventDate = parseISO(event.start_time);
   const formattedDate = format(eventDate, "EEEE d MMMM yyyy", { locale: nl });
@@ -201,9 +202,22 @@ function createShareEmail(
                 </table>
               </div>
               
-              <p style="color: #4a5568; font-size: 14px; line-height: 1.6; margin: 24px 0; text-align: center;">
-                Download het bijgevoegde .ics bestand om deze afspraak toe te voegen aan je agenda (Google Calendar, Outlook, Apple Calendar, etc.)
+              <!-- Add to LinqBoard Button -->
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="${addToLinqBoardUrl}" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 16px 32px; border-radius: 8px; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.4);">
+                  ➕ Toevoegen aan mijn LinqBoard Agenda
+                </a>
+              </div>
+              
+              <p style="color: #718096; font-size: 13px; line-height: 1.6; margin: 16px 0; text-align: center;">
+                Klik op de knop hierboven om deze afspraak direct toe te voegen aan je LinqBoard agenda.
               </p>
+              
+              <div style="border-top: 1px solid #e2e8f0; margin: 24px 0; padding-top: 24px;">
+                <p style="color: #a0aec0; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
+                  Je kunt ook het bijgevoegde .ics bestand downloaden om deze afspraak toe te voegen aan andere agenda-apps (Google Calendar, Outlook, Apple Calendar, etc.)
+                </p>
+              </div>
               
               <p style="color: #718096; font-size: 13px; line-height: 1.6; margin: 24px 0 0 0; text-align: center;">
                 Deze uitnodiging is verstuurd via <a href="https://linqboard.io" style="color: #667eea; text-decoration: none;">LinqBoard</a>
@@ -260,8 +274,19 @@ Deno.serve(async (req) => {
     const icsContent = generateICSContent(event);
     const icsBase64 = btoa(icsContent);
 
+    // Create link to add event to LinqBoard agenda
+    const eventData = encodeURIComponent(JSON.stringify({
+      title: event.title,
+      description: event.description,
+      start_time: event.start_time,
+      end_time: event.end_time,
+      all_day: event.all_day,
+      color: event.color
+    }));
+    const addToLinqBoardUrl = `https://linqboard.lovable.app/agenda?add_event=${eventData}`;
+
     // Create HTML email
-    const html = createShareEmail(event, senderName, message, logoBase64);
+    const html = createShareEmail(event, senderName, message, logoBase64, addToLinqBoardUrl);
 
     // Format date for subject
     const eventDate = parseISO(event.start_time);
