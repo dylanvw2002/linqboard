@@ -754,6 +754,10 @@ const Dashboard = () => {
               <Button size="sm" variant="outline" onClick={() => navigate("/pricing")} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9">
                 {t('subscription.viewPlans')}
               </Button>
+              <Button size="sm" variant="outline" onClick={() => navigate("/agenda")} className="border-2 text-xs sm:text-sm lg:text-base h-7 sm:h-8 lg:h-9">
+                <Calendar className="mr-1.5 h-3 w-3 sm:h-3.5 sm:w-3.5 lg:h-4 lg:w-4" />
+                Mijn Agenda
+              </Button>
             </div>
           </div>
       </div>
