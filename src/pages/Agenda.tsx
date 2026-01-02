@@ -376,11 +376,12 @@ export default function Agenda() {
         <Card className={`${isMobile ? '' : 'lg:col-span-1'} flex flex-col`}>
           <CardContent className="p-4 flex-1 flex flex-col">
             <Calendar
+              fill
               mode="single"
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
               locale={nl}
-              className="rounded-md pointer-events-auto w-full flex-1 flex flex-col [&_.rdp-months]:flex-1 [&_.rdp-month]:flex [&_.rdp-month]:flex-col [&_.rdp-month]:h-full [&_.rdp-caption]:mb-4 [&_.rdp-table]:flex-1 [&_.rdp-table]:flex [&_.rdp-table]:flex-col [&_.rdp-head]:mb-2 [&_.rdp-tbody]:flex-1 [&_.rdp-tbody]:flex [&_.rdp-tbody]:flex-col [&_.rdp-row]:flex-1 [&_.rdp-row]:flex [&_.rdp-cell]:flex-1 [&_.rdp-cell]:flex [&_.rdp-cell]:items-center [&_.rdp-cell]:justify-center [&_.rdp-day]:w-full [&_.rdp-day]:h-full [&_.rdp-day]:text-base [&_.rdp-head_row]:flex [&_.rdp-head_cell]:flex-1 [&_.rdp-head_cell]:text-center"
+              className="rounded-md pointer-events-auto w-full h-full"
               modifiers={{
                 hasItems: datesWithItems,
               }}
