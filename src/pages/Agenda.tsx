@@ -373,14 +373,14 @@ export default function Agenda() {
     return (
       <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-3'}`}>
         {/* Calendar */}
-        <Card className={isMobile ? '' : 'lg:col-span-1'}>
-          <CardContent className="p-4">
+        <Card className={`${isMobile ? '' : 'lg:col-span-1'} h-full`}>
+          <CardContent className="p-4 h-full flex items-stretch">
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={(date) => date && setSelectedDate(date)}
               locale={nl}
-              className="rounded-md pointer-events-auto w-full"
+              className="rounded-md pointer-events-auto w-full h-full flex flex-col [&_.rdp-months]:flex-1 [&_.rdp-month]:h-full [&_.rdp-table]:h-full [&_.rdp-tbody]:flex [&_.rdp-tbody]:flex-col [&_.rdp-tbody]:flex-1 [&_.rdp-row]:flex-1"
               modifiers={{
                 hasItems: datesWithItems,
               }}
