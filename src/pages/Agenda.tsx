@@ -4,14 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight, Share2, Download } from "lucide-react";
+import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight, Share2, Download, Mail, Loader2 } from "lucide-react";
 import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, isToday, parseISO, addDays, addWeeks, isSameMonth, startOfMonth, endOfMonth, eachHourOfInterval, setHours, setMinutes, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { toast } from "sonner";
@@ -67,6 +67,15 @@ export default function Agenda() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
   
+  // Share dialog state
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [sharingEvent, setSharingEvent] = useState<CalendarEvent | null>(null);
+  const [shareEmail, setShareEmail] = useState("");
+  const [shareName, setShareName] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
+  const [isSendingShare, setIsSendingShare] = useState(false);
+  const [currentUserName, setCurrentUserName] = useState("");
+  
   // Form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -85,6 +94,18 @@ export default function Agenda() {
       navigate("/auth");
       return;
     }
+    
+    // Fetch user profile for name
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("user_id", user.id)
+      .single();
+    
+    if (profile?.full_name) {
+      setCurrentUserName(profile.full_name);
+    }
+    
     await Promise.all([fetchEvents(), fetchTasks(user.id)]);
     setLoading(false);
   };
@@ -313,7 +334,7 @@ export default function Agenda() {
     return lines.join('\r\n');
   };
 
-  const handleShareEvent = (event: CalendarEvent, e: React.MouseEvent) => {
+  const handleDownloadICS = (event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
     
     const icsContent = generateICSContent(event);
@@ -328,7 +349,54 @@ export default function Agenda() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    toast.success("Agenda-item gedownload! Deel het .ics bestand om anderen toe te laten voegen aan hun agenda.");
+    toast.success("Agenda-item gedownload!");
+  };
+
+  const openShareDialog = (event: CalendarEvent, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSharingEvent(event);
+    setShareEmail("");
+    setShareName("");
+    setShareMessage("");
+    setShareDialogOpen(true);
+  };
+
+  const handleShareViaEmail = async () => {
+    if (!sharingEvent || !shareEmail) {
+      toast.error("Vul een e-mailadres in");
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(shareEmail)) {
+      toast.error("Vul een geldig e-mailadres in");
+      return;
+    }
+
+    setIsSendingShare(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('share-calendar-event', {
+        body: {
+          event: sharingEvent,
+          recipientEmail: shareEmail,
+          recipientName: shareName || undefined,
+          senderName: currentUserName || 'Iemand',
+          message: shareMessage || undefined,
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success(`Uitnodiging verstuurd naar ${shareEmail}`);
+      setShareDialogOpen(false);
+    } catch (error) {
+      console.error('Error sharing event:', error);
+      toast.error("Kon de uitnodiging niet versturen. Probeer het opnieuw.");
+    } finally {
+      setIsSendingShare(false);
+    }
   };
 
   // Week view helpers
@@ -371,10 +439,19 @@ export default function Agenda() {
             variant="ghost"
             size="icon"
             className="h-6 w-6"
-            title="Deel dit event"
-            onClick={(e) => handleShareEvent(event, e)}
+            title="Deel via email"
+            onClick={(e) => openShareDialog(event, e)}
           >
             <Share2 className="h-3 w-3" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            title="Download .ics bestand"
+            onClick={(e) => handleDownloadICS(event, e)}
+          >
+            <Download className="h-3 w-3" />
           </Button>
           <Button
             variant="ghost"
@@ -899,6 +976,92 @@ export default function Agenda() {
         {viewMode === "week" && <WeekView />}
         {viewMode === "day" && <DayView />}
       </main>
+
+      {/* Share Dialog */}
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
+              Deel agenda-item
+            </DialogTitle>
+            <DialogDescription>
+              Verstuur een uitnodiging per e-mail met een .ics bestand dat direct in elke agenda-app kan worden geïmporteerd.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {sharingEvent && (
+            <div className="bg-muted/50 p-3 rounded-lg border">
+              <p className="font-medium text-sm">{sharingEvent.title}</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {format(parseISO(sharingEvent.start_time), "EEEE d MMMM yyyy", { locale: nl })}
+                {!sharingEvent.all_day && ` om ${format(parseISO(sharingEvent.start_time), "HH:mm")}`}
+              </p>
+            </div>
+          )}
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="share-email">E-mailadres *</Label>
+              <Input
+                id="share-email"
+                type="email"
+                placeholder="naam@voorbeeld.nl"
+                value={shareEmail}
+                onChange={(e) => setShareEmail(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="share-name">Naam ontvanger (optioneel)</Label>
+              <Input
+                id="share-name"
+                type="text"
+                placeholder="Jan Jansen"
+                value={shareName}
+                onChange={(e) => setShareName(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="share-message">Persoonlijk bericht (optioneel)</Label>
+              <Textarea
+                id="share-message"
+                placeholder="Voeg een persoonlijke boodschap toe..."
+                value={shareMessage}
+                onChange={(e) => setShareMessage(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShareDialogOpen(false)}
+              disabled={isSendingShare}
+            >
+              Annuleren
+            </Button>
+            <Button
+              onClick={handleShareViaEmail}
+              disabled={isSendingShare || !shareEmail}
+            >
+              {isSendingShare ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Versturen...
+                </>
+              ) : (
+                <>
+                  <Mail className="h-4 w-4 mr-2" />
+                  Verstuur uitnodiging
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
