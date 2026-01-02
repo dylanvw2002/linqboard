@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -59,6 +59,7 @@ const getColorClass = (color: string) => {
 
 export default function Agenda() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -86,6 +87,38 @@ export default function Agenda() {
   const [endTime, setEndTime] = useState("");
   const [allDay, setAllDay] = useState(false);
   const [color, setColor] = useState("blue");
+
+  // Handle add_event from shared invitation link
+  useEffect(() => {
+    const addEventParam = searchParams.get("add_event");
+    if (addEventParam && !loading) {
+      try {
+        const eventData = JSON.parse(decodeURIComponent(addEventParam));
+        // Pre-fill the form with the shared event data
+        setTitle(eventData.title || "");
+        setDescription(eventData.description || "");
+        setStartTime(eventData.start_time ? eventData.start_time.slice(0, 16) : "");
+        setEndTime(eventData.end_time ? eventData.end_time.slice(0, 16) : "");
+        setAllDay(eventData.all_day || false);
+        setColor(eventData.color || "blue");
+        setEditingEvent(null);
+        setDialogOpen(true);
+        
+        // Set selected date to the event's date
+        if (eventData.start_time) {
+          setSelectedDate(parseISO(eventData.start_time));
+        }
+        
+        // Clear the URL parameter
+        setSearchParams({});
+        
+        toast.info("Je kunt deze uitnodiging toevoegen aan je agenda");
+      } catch (error) {
+        console.error("Error parsing add_event parameter:", error);
+        setSearchParams({});
+      }
+    }
+  }, [searchParams, loading, setSearchParams]);
 
   useEffect(() => {
     checkAuthAndFetch();
