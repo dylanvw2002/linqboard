@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Plus, CalendarIcon, Clock, Trash2, Edit, CheckCircle2, Calendar as CalendarViewIcon, List, LayoutGrid, ChevronLeft, ChevronRight, Share2, Download } from "lucide-react";
 import { format, isSameDay, startOfWeek, endOfWeek, eachDayOfInterval, isToday, parseISO, addDays, addWeeks, isSameMonth, startOfMonth, endOfMonth, eachHourOfInterval, setHours, setMinutes, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { toast } from "sonner";
@@ -264,6 +264,73 @@ export default function Agenda() {
     }
   };
 
+  // Generate ICS file content for sharing calendar events
+  const generateICSContent = (event: CalendarEvent) => {
+    const formatICSDate = (dateStr: string, allDay: boolean) => {
+      const date = parseISO(dateStr);
+      if (allDay) {
+        return format(date, "yyyyMMdd");
+      }
+      return format(date, "yyyyMMdd'T'HHmmss");
+    };
+
+    const escapeICS = (text: string) => {
+      return text.replace(/[\\;,\n]/g, (match) => {
+        if (match === '\n') return '\\n';
+        return '\\' + match;
+      });
+    };
+
+    const uid = `${event.id}@linqboard`;
+    const dtstamp = format(new Date(), "yyyyMMdd'T'HHmmss'Z'");
+    const dtstart = formatICSDate(event.start_time, event.all_day);
+    const dtend = event.end_time 
+      ? formatICSDate(event.end_time, event.all_day)
+      : event.all_day 
+        ? formatICSDate(addDays(parseISO(event.start_time), 1).toISOString(), true)
+        : formatICSDate(addDays(parseISO(event.start_time), 1).toISOString(), false);
+
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//LinqBoard//Calendar//NL',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${dtstamp}`,
+      event.all_day ? `DTSTART;VALUE=DATE:${dtstart}` : `DTSTART:${dtstart}`,
+      event.all_day ? `DTEND;VALUE=DATE:${dtend}` : `DTEND:${dtend}`,
+      `SUMMARY:${escapeICS(event.title)}`,
+    ];
+
+    if (event.description) {
+      lines.push(`DESCRIPTION:${escapeICS(event.description)}`);
+    }
+
+    lines.push('END:VEVENT', 'END:VCALENDAR');
+
+    return lines.join('\r\n');
+  };
+
+  const handleShareEvent = (event: CalendarEvent, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const icsContent = generateICSContent(event);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${event.title.replace(/[^a-zA-Z0-9]/g, '_')}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success("Agenda-item gedownload! Deel het .ics bestand om anderen toe te laten voegen aan hun agenda.");
+  };
+
   // Week view helpers
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
@@ -300,6 +367,15 @@ export default function Agenda() {
       </div>
       {!compact && (
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            title="Deel dit event"
+            onClick={(e) => handleShareEvent(event, e)}
+          >
+            <Share2 className="h-3 w-3" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
