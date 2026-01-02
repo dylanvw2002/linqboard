@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -456,8 +456,10 @@ export const AttachmentCount = ({
 }: {
   taskId: string;
 }) => {
-  const [count, setCount] = useState(0);
-  const fetchCount = async () => {
+  const [count, setCount] = useState<number | null>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const fetchCount = useCallback(async () => {
     try {
       const {
         count: attachmentCount,
@@ -471,7 +473,17 @@ export const AttachmentCount = ({
     } catch (error) {
       console.error("Error fetching attachment count:", error);
     }
-  };
+  }, [taskId]);
+
+  const debouncedFetchCount = useCallback(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      fetchCount();
+    }, 150);
+  }, [fetchCount]);
+
   useEffect(() => {
     fetchCount();
 
@@ -479,7 +491,7 @@ export const AttachmentCount = ({
     const handleAttachmentChange = (e: Event) => {
       const customEvent = e as CustomEvent;
       if (customEvent.detail?.taskId === taskId) {
-        fetchCount();
+        debouncedFetchCount();
       }
     };
     window.addEventListener('attachment-deleted', handleAttachmentChange);
@@ -490,15 +502,21 @@ export const AttachmentCount = ({
       table: "task_attachments",
       filter: `task_id=eq.${taskId}`
     }, () => {
-      fetchCount();
+      debouncedFetchCount();
     }).subscribe();
     return () => {
       window.removeEventListener('attachment-deleted', handleAttachmentChange);
       window.removeEventListener('attachment-uploaded', handleAttachmentChange);
       supabase.removeChannel(channel);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
     };
-  }, [taskId]);
-  if (count === 0) return null;
+  }, [taskId, fetchCount, debouncedFetchCount]);
+
+  // Tijdens laden of geen bijlagen: render niets maar stabiel
+  if (count === null || count === 0) return null;
+  
   return <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border bg-primary/10 text-primary border-primary/20">
       <Paperclip className="w-3 h-3" />
       {count}
