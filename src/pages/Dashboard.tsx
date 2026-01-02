@@ -682,7 +682,7 @@ const Dashboard = () => {
                 </Button>
               )}
 
-              <div className="grid lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 lg:gap-4 xl:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 xl:gap-5 max-w-4xl mx-auto">
               {organizations.slice(currentPage * 3, (currentPage + 1) * 3).map(org => <Card key={org.id} className="p-3 lg:p-4 xl:p-5 hover:shadow-xl transition-all border-2 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm group relative">
                   {org.role === 'owner' ? <>
                     <Button variant="ghost" size="icon" className="absolute top-2 right-[72px] lg:right-[80px] xl:right-[88px] text-muted-foreground hover:text-primary hover:bg-primary/10 z-10 h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" onClick={e => {
