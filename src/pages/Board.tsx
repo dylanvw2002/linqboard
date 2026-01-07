@@ -573,6 +573,7 @@ const Board = () => {
   const [editTaskAssignees, setEditTaskAssignees] = useState<string[]>([]);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
+  const [draggedOverTaskIndex, setDraggedOverTaskIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [taskDragPosition, setTaskDragPosition] = useState<{ x: number; y: number } | null>(null);
   const [taskDragOffset, setTaskDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -2351,6 +2352,38 @@ const Board = () => {
       if (columnId && columnId !== draggedOverColumn) {
         setDraggedOverColumn(columnId);
       }
+      
+      // Detect position within column based on task elements
+      if (columnId) {
+        const columnTasks = tasks.filter(t => t.column_id === columnId && t.id !== draggedTask.id)
+          .sort((a, b) => a.position - b.position);
+        
+        // Find all task elements in this column
+        const taskElements = columnElement.querySelectorAll('[data-task-id]');
+        let insertIndex = columnTasks.length; // Default to end
+        
+        for (let i = 0; i < taskElements.length; i++) {
+          const taskEl = taskElements[i] as HTMLElement;
+          const taskId = taskEl.getAttribute('data-task-id');
+          if (taskId === draggedTask.id) continue;
+          
+          const rect = taskEl.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          
+          if (e.clientY < midY) {
+            // Find the index of this task in columnTasks
+            const taskIndex = columnTasks.findIndex(t => t.id === taskId);
+            if (taskIndex !== -1) {
+              insertIndex = taskIndex;
+              break;
+            }
+          }
+        }
+        
+        setDraggedOverTaskIndex(insertIndex);
+      }
+    } else {
+      setDraggedOverTaskIndex(null);
     }
   };
   
@@ -2359,12 +2392,51 @@ const Board = () => {
     
     const targetColumnId = draggedOverColumn;
     const originalColumnId = draggedTaskColumnRef.current;
+    const insertIndex = draggedOverTaskIndex;
     
     // Reset drag state
     setTaskDragPosition(null);
     setIsDragging(false);
+    setDraggedOverTaskIndex(null);
     
-    if (!targetColumnId || targetColumnId === originalColumnId) {
+    // Handle reordering within same column
+    if (targetColumnId === originalColumnId && targetColumnId && insertIndex !== null) {
+      const columnTasks = tasks.filter(t => t.column_id === targetColumnId && t.id !== draggedTask.id)
+        .sort((a, b) => a.position - b.position);
+      
+      // Calculate new position
+      let newPosition: number;
+      if (insertIndex === 0) {
+        newPosition = columnTasks.length > 0 ? columnTasks[0].position - 1 : 0;
+      } else if (insertIndex >= columnTasks.length) {
+        newPosition = columnTasks.length > 0 ? columnTasks[columnTasks.length - 1].position + 1 : 0;
+      } else {
+        const prevTask = columnTasks[insertIndex - 1];
+        const nextTask = columnTasks[insertIndex];
+        newPosition = (prevTask.position + nextTask.position) / 2;
+      }
+      
+      if (isDemo) {
+        const updatedTasks = tasks.map(t => t.id === draggedTask.id ? { ...t, position: newPosition } : t);
+        setTasks(updatedTasks);
+        setDraggedTask(null);
+        setDraggedOverColumn(null);
+        return;
+      }
+      
+      try {
+        const { error } = await supabase.from("tasks").update({ position: newPosition }).eq("id", draggedTask.id);
+        if (error) throw error;
+        await fetchBoardData();
+      } catch (error: any) {
+        toast.error(t('board.errorMovingTask'));
+      }
+      setDraggedTask(null);
+      setDraggedOverColumn(null);
+      return;
+    }
+    
+    if (!targetColumnId) {
       setDraggedTask(null);
       setDraggedOverColumn(null);
       return;
@@ -2377,12 +2449,26 @@ const Board = () => {
       return;
     }
     
+    // Calculate position based on insert index
+    const columnTasks = tasks.filter(t => t.column_id === targetColumnId && t.id !== draggedTask.id)
+      .sort((a, b) => a.position - b.position);
+    
+    let newPosition: number;
+    if (insertIndex === null || insertIndex >= columnTasks.length) {
+      newPosition = columnTasks.length > 0 ? columnTasks[columnTasks.length - 1].position + 1 : 0;
+    } else if (insertIndex === 0) {
+      newPosition = columnTasks.length > 0 ? columnTasks[0].position - 1 : 0;
+    } else {
+      const prevTask = columnTasks[insertIndex - 1];
+      const nextTask = columnTasks[insertIndex];
+      newPosition = (prevTask.position + nextTask.position) / 2;
+    }
+    
     if (isDemo) {
-      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
       const updatedTasks = tasks.map(t => t.id === draggedTask.id ? {
         ...t,
         column_id: targetColumn.id,
-        position: maxPosition + 1,
+        position: newPosition,
         due_date: targetColumn.column_type === 'completed' ? null : t.due_date
       } : t);
       setTasks(updatedTasks);
@@ -2393,10 +2479,9 @@ const Board = () => {
     }
     
     try {
-      const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
       const updateData: any = {
         column_id: targetColumn.id,
-        position: maxPosition + 1
+        position: newPosition
       };
       if (targetColumn.column_type === 'completed') {
         updateData.due_date = null;
@@ -3739,70 +3824,105 @@ const Board = () => {
                 marginLeft: '-28px',
                 marginRight: '-28px'
               }}>
-                {filterTasks(getColumnTasks(column.id)).map(task => {
+                {(() => {
+                  const columnTasksFiltered = filterTasks(getColumnTasks(column.id));
+                  const columnTasksForDrop = columnTasksFiltered.filter(t => t.id !== draggedTask?.id);
+                  
+                  return columnTasksFiltered.map((task, taskIndex) => {
                     const isSimpleColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
                     const isOverdue = task.due_date ? new Date(task.due_date) < new Date(new Date().setHours(0, 0, 0, 0)) : false;
+                    
+                    // Calculate if we should show drop indicator before this task
+                    const showDropIndicatorBefore = draggedTask && 
+                      draggedOverColumn === column.id && 
+                      draggedOverTaskIndex !== null &&
+                      task.id !== draggedTask.id &&
+                      (() => {
+                        const indexInFiltered = columnTasksForDrop.findIndex(t => t.id === task.id);
+                        return indexInFiltered === draggedOverTaskIndex;
+                      })();
+                    
+                    // Show drop indicator at end of list
+                    const isLastTask = taskIndex === columnTasksFiltered.length - 1;
+                    const showDropIndicatorAfter = isLastTask && 
+                      draggedTask && 
+                      draggedOverColumn === column.id && 
+                      draggedOverTaskIndex !== null &&
+                      draggedOverTaskIndex >= columnTasksForDrop.length &&
+                      task.id !== draggedTask.id;
+                    
                     if (isSimpleColumn) {
                       return <SimpleTaskCard key={task.id} taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />;
                     }
-                    return <article 
-                      key={task.id} 
-                      onPointerDown={e => handleTaskPointerDown(e, task, column.glow_type)}
-                      onPointerMove={handleTaskPointerMove}
-                      onPointerUp={handleTaskPointerUp}
-                      onPointerCancel={handleTaskPointerUp}
-                      onClick={() => !isDragging && openEditDialog(task)} 
-                      className={cn(
-                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-grab will-change-transform transform-gpu select-none touch-none",
-                        "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity",
-                        "after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-                        !isDragging && "hover:-translate-y-2 transition-all duration-200",
-                        "border-white/40 dark:border-white/20",
-                        getGlowStyles(column.glow_type).cardGradient,
-                        getGlowStyles(column.glow_type).cardShadow,
-                        draggedTask?.id === task.id && "opacity-40 scale-95",
-                        isOverdue && !draggedTask && "animate-overdue-glow"
-                      )}
-                    >
-                      <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                      <div className="flex gap-2 items-start">
-                        <div className="flex-1 min-w-0 pl-4">
-                          <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
-                            <AttachmentCount taskId={task.id} />
-                            {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                                📅 {format(new Date(task.due_date), "d MMM", {
-                                  locale: getDateLocale()
-                                })}
-                              </span>}
-                            {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
-                                {getPriorityBadge(task.priority)!.label}
-                              </span>}
+                    return (
+                      <div key={task.id}>
+                        {showDropIndicatorBefore && (
+                          <div className="h-1 bg-primary rounded-full mb-3 animate-pulse" />
+                        )}
+                        <article 
+                          data-task-id={task.id}
+                          onPointerDown={e => handleTaskPointerDown(e, task, column.glow_type)}
+                          onPointerMove={handleTaskPointerMove}
+                          onPointerUp={handleTaskPointerUp}
+                          onPointerCancel={handleTaskPointerUp}
+                          onClick={() => !isDragging && openEditDialog(task)} 
+                          className={cn(
+                            "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-grab will-change-transform transform-gpu select-none touch-none",
+                            "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity",
+                            "after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                            !isDragging && "hover:-translate-y-2 transition-all duration-200",
+                            "border-white/40 dark:border-white/20",
+                            getGlowStyles(column.glow_type).cardGradient,
+                            getGlowStyles(column.glow_type).cardShadow,
+                            draggedTask?.id === task.id && "opacity-40 scale-95",
+                            isOverdue && !draggedTask && "animate-overdue-glow"
+                          )}
+                        >
+                          <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                          <div className="flex gap-2 items-start">
+                            <div className="flex-1 min-w-0 pl-4">
+                              <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
+                                <AttachmentCount taskId={task.id} />
+                                {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                                    📅 {format(new Date(task.due_date), "d MMM", {
+                                      locale: getDateLocale()
+                                    })}
+                                  </span>}
+                                {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                                    {getPriorityBadge(task.priority)!.label}
+                                  </span>}
+                              </div>
+                              <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
+                                {task.title}
+                              </h4>
+                              {task.description && <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2">
+                                  {task.description}
+                                </p>}
+                            </div>
+                            {task.assignees && task.assignees.length > 0 && <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
+                                {task.assignees.slice(0, 3).map((assignee, idx) => <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{
+                                  marginLeft: idx > 0 ? '-6px' : '0'
+                                }}>
+                                    <AvatarImage src={assignee.avatar_url || undefined} />
+                                    <AvatarFallback className="text-xs bg-primary/10">
+                                      {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>)}
+                                {task.assignees.length > 3 && <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{
+                                  marginLeft: '-6px'
+                                }}>
+                                    +{task.assignees.length - 3}
+                                  </div>}
+                            </div>}
                           </div>
-                          <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
-                            {task.title}
-                          </h4>
-                          {task.description && <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2">
-                              {task.description}
-                            </p>}
-                        </div>
-                        {task.assignees && task.assignees.length > 0 && <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
-                            {task.assignees.slice(0, 3).map((assignee, idx) => <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{
-                              marginLeft: idx > 0 ? '-6px' : '0'
-                            }}>
-                                <AvatarImage src={assignee.avatar_url || undefined} />
-                                <AvatarFallback className="text-xs bg-primary/10">
-                                  {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>)}
-                            {task.assignees.length > 3 && <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{
-                              marginLeft: '-6px'
-                            }}>
-                                +{task.assignees.length - 3}
-                              </div>}
-                        </div>}
+                        </article>
+                        {showDropIndicatorAfter && (
+                          <div className="h-1 bg-primary rounded-full mt-3 animate-pulse" />
+                        )}
                       </div>
-                    </article>;
-                  })}
+                    );
+                  });
+                })()}
               </div>
             </div>
           </section>;
