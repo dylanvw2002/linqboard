@@ -4403,12 +4403,13 @@ const Board = () => {
             }}
           >
             <article className={cn(
-              "relative backdrop-blur-[60px] bg-white/90 dark:bg-card/90 border-2 rounded-[28px] p-3",
-              "border-white/60 dark:border-white/30",
+              "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3",
+              "border-white/40 dark:border-white/20",
               "shadow-[0_25px_60px_rgba(0,0,0,0.35)]",
               "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none",
               "after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
-              glowStyles.cardGradient
+              glowStyles.cardGradient,
+              glowStyles.cardShadow
             )}>
               <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
               <div className="flex gap-2 items-start">
@@ -4425,11 +4426,11 @@ const Board = () => {
                       </span>
                     )}
                   </div>
-                  <h4 className="font-extrabold text-base mb-1 text-foreground relative z-10">
+                  <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
                     {draggedTask.title}
                   </h4>
                   {draggedTask.description && (
-                    <p className="text-muted-foreground text-sm line-clamp-2 relative z-10">
+                    <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] line-clamp-2 relative z-10">
                       {draggedTask.description}
                     </p>
                   )}
