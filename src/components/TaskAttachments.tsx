@@ -24,6 +24,7 @@ interface Attachment {
 }
 interface TaskAttachmentsProps {
   taskId: string;
+  readOnly?: boolean;
 }
 const getFileIcon = (fileType: string) => {
   if (fileType.includes("pdf")) return <FileText className="w-8 h-8 text-red-500" />;
@@ -86,7 +87,8 @@ const FilePreview = ({
   return <div className="w-12 h-12 flex items-center justify-center">{getFileIcon(attachment.file_type)}</div>;
 };
 export const TaskAttachments = ({
-  taskId
+  taskId,
+  readOnly = false
 }: TaskAttachmentsProps) => {
   const { t } = useTranslation();
   const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -321,19 +323,21 @@ export const TaskAttachments = ({
       <div className="space-y-3">
         <Label>{t('attachments.title')}</Label>
 
-      {/* Upload sectie */}
-      <div className={`border-2 border-dashed rounded-lg p-4 transition-colors ${isDragging ? "border-primary bg-primary/10" : "border-border hover:bg-accent/5"}`} onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
-        <input type="file" id={`file-upload-${taskId}`} className="hidden" onChange={handleFileUpload} disabled={uploading} />
-        <label htmlFor={`file-upload-${taskId}`} className="flex flex-col items-center justify-center cursor-pointer">
-          <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-          <p className="text-sm text-muted-foreground text-center">
-            {uploading ? t('attachments.uploading') : t('attachments.dropOrClick')}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            {t('attachments.supportedTypes')}
-          </p>
-        </label>
-      </div>
+      {/* Upload sectie - alleen tonen in edit mode */}
+      {!readOnly && (
+        <div className={`border-2 border-dashed rounded-lg p-4 transition-colors ${isDragging ? "border-primary bg-primary/10" : "border-border hover:bg-accent/5"}`} onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
+          <input type="file" id={`file-upload-${taskId}`} className="hidden" onChange={handleFileUpload} disabled={uploading} />
+          <label htmlFor={`file-upload-${taskId}`} className="flex flex-col items-center justify-center cursor-pointer">
+            <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground text-center">
+              {uploading ? t('attachments.uploading') : t('attachments.dropOrClick')}
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('attachments.supportedTypes')}
+            </p>
+          </label>
+        </div>
+      )}
 
       {/* Bijlagen lijst */}
       {loading ? <div className="text-sm text-muted-foreground">{t('attachments.loadingAttachments')}</div> : attachments.length > 0 ? <div className="space-y-2">
@@ -354,9 +358,11 @@ export const TaskAttachments = ({
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDownload(attachment)} title={t('common.download')}>
                   <Download className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(attachment)} title={t('common.delete')}>
-                  <X className="h-4 w-4" />
-                </Button>
+                {!readOnly && (
+                  <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDelete(attachment)} title={t('common.delete')}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </div>)}
         </div> : <p className="text-sm text-muted-foreground">{t('attachments.noAttachments')}</p>}
