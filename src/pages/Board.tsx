@@ -3793,15 +3793,7 @@ const Board = () => {
       }}>
         <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0 border-b">
-            <div className="flex items-center justify-between">
-              <DialogTitle>{isTaskEditMode ? t('board.editTask') : t('board.taskDetails')}</DialogTitle>
-              {!isTaskEditMode && (
-                <Button variant="outline" size="sm" onClick={() => setIsTaskEditMode(true)}>
-                  <Pencil className="h-4 w-4 mr-2" />
-                  {t('common.edit')}
-                </Button>
-              )}
-            </div>
+            <DialogTitle>{isTaskEditMode ? t('board.editTask') : t('board.taskDetails')}</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
             <div className="space-y-3 sm:space-y-4 py-4">
@@ -3893,6 +3885,10 @@ const Board = () => {
                     
                     {/* Action buttons */}
                     <div className="flex gap-2 pt-4 border-t">
+                      <Button onClick={() => setIsTaskEditMode(true)} className="flex-1">
+                        <Pencil className="h-4 w-4 mr-2" />
+                        {t('common.edit')}
+                      </Button>
                       <Button onClick={() => setExportDialogOpen(true)} variant="outline">
                         <Mail className="h-4 w-4 sm:mr-2" />
                         <span className="hidden sm:inline">{t('board.exportTask')}</span>
