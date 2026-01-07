@@ -288,8 +288,7 @@ async function executeTool(
             priority: args.priority || 'medium',
             due_date: args.due_date || null,
             column_id: column.id,
-            position: maxPosition + 1,
-            created_by: userId
+            position: maxPosition + 1
           });
 
         if (error) throw error;
