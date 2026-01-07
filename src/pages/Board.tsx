@@ -4148,7 +4148,7 @@ const Board = () => {
             style={{
               left: taskDragPosition.x - taskDragOffset.x,
               top: taskDragPosition.y - taskDragOffset.y,
-              transform: `rotate(${rotation}deg) scale(1.02)`,
+              transform: `rotate(${rotation}deg)`,
               transition: 'transform 0.1s ease-out',
               width: '280px',
             }}
