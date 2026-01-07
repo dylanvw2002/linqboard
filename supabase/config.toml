@@ -77,3 +77,6 @@ verify_jwt = true
 
 [functions.share-calendar-event]
 verify_jwt = true
+
+[functions.send-update-notification]
+verify_jwt = false
