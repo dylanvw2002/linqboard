@@ -20,6 +20,8 @@ interface UserPresence {
 }
 
 export const ActiveUsers = ({ organizationId, isDemo = false, isMobile = false }: ActiveUsersProps) => {
+  // Hide on mobile
+  if (isMobile) return null;
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
   const { t } = useTranslation();
