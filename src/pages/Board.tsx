@@ -2276,6 +2276,12 @@ const Board = () => {
     setDraggedTask(task);
     setIsDragging(true);
     e.dataTransfer.effectAllowed = "move";
+    // Create a transparent drag image to use custom styling
+    const dragImage = document.createElement('div');
+    dragImage.style.opacity = '0';
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 0, 0);
+    setTimeout(() => document.body.removeChild(dragImage), 0);
   };
   const handleDragEnd = () => {
     setDraggedTask(null);
@@ -3617,8 +3623,12 @@ const Board = () => {
                 }
               }}
               onDragOver={e => handleDragOver(e, column.id)} 
-              onDrop={e => handleDrop(e, column.id)} 
-              className="flex-1 min-h-0 relative group/scroll [scrollbar-width:none] hover:[scrollbar-width:thin] overflow-x-hidden" 
+              onDrop={e => handleDrop(e, column.id)}
+              onDragLeave={() => setDraggedOverColumn(null)}
+              className={cn(
+                "flex-1 min-h-0 relative group/scroll [scrollbar-width:none] hover:[scrollbar-width:thin] overflow-x-hidden transition-all duration-200",
+                draggedOverColumn === column.id && draggedTask?.column_id !== column.id && "drop-zone-active"
+              )}
               style={{
                 paddingRight: `${(displayColumn.content_padding_right || 0) + 16}px`,
                 paddingBottom: `${displayColumn.content_padding_bottom || 0}px`,
@@ -3659,7 +3669,7 @@ const Board = () => {
                     if (isSimpleColumn) {
                       return <SimpleTaskCard key={task.id} taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />;
                     }
-                    return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 animate-[pop_0.2s_ease-out] cursor-move hover:-translate-y-2 transition-all duration-300 before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "opacity-50 scale-95", isOverdue && "animate-overdue-glow")}>
+                    return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-grab will-change-transform transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", !isDragging && "hover:-translate-y-2 transition-all duration-200", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "drag-active scale-[1.03] rotate-[1.5deg] shadow-[0_20px_40px_rgba(0,0,0,0.2)] z-50 cursor-grabbing", draggedTask && draggedTask.id !== task.id && "transition-transform duration-200", isOverdue && !draggedTask && "animate-overdue-glow")}>
                     <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
                     <div className="flex gap-2 items-start">
                       <div className="flex-1 min-w-0 pl-4">

@@ -179,6 +179,50 @@ export default {
             boxShadow: "0 0 30px 6px hsl(0 84% 60% / 0.2)",
           },
         },
+        "drag-lift": {
+          "0%": {
+            transform: "scale(1) rotate(0deg)",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          },
+          "100%": {
+            transform: "scale(1.03) rotate(1.5deg)",
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+          },
+        },
+        "drag-drop": {
+          "0%": {
+            transform: "scale(1.03) rotate(1.5deg)",
+            opacity: "0.9",
+          },
+          "50%": {
+            transform: "scale(0.98) rotate(0deg)",
+          },
+          "100%": {
+            transform: "scale(1) rotate(0deg)",
+            opacity: "1",
+          },
+        },
+        "drop-zone-pulse": {
+          "0%, 100%": {
+            opacity: "0.5",
+          },
+          "50%": {
+            opacity: "0.8",
+          },
+        },
+        "pop": {
+          "0%": {
+            transform: "scale(0.95)",
+            opacity: "0",
+          },
+          "70%": {
+            transform: "scale(1.02)",
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -193,6 +237,10 @@ export default {
         "wiggle": "wiggle 1s ease-in-out infinite",
         "pulse-red": "pulse-red 8s ease-in-out infinite",
         "slow-red-glow": "slow-red-glow 15s ease-in-out infinite",
+        "drag-lift": "drag-lift 0.15s ease-out forwards",
+        "drag-drop": "drag-drop 0.25s ease-out forwards",
+        "drop-zone-pulse": "drop-zone-pulse 1s ease-in-out infinite",
+        "pop": "pop 0.2s ease-out",
       },
     },
   },
