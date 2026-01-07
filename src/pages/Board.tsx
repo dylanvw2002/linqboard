@@ -36,6 +36,7 @@ import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
 import { TaskChecklist } from "@/components/TaskChecklist";
+import { TaskChecklistCreate, NewChecklistItem } from "@/components/TaskChecklistCreate";
 
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
@@ -564,6 +565,7 @@ const Board = () => {
   const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
+  const [newTaskChecklistItems, setNewTaskChecklistItems] = useState<NewChecklistItem[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isTaskEditMode, setIsTaskEditMode] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState("");
@@ -2169,6 +2171,7 @@ const Board = () => {
       setNewTaskPriority("medium");
       setNewTaskDueDate(undefined);
       setNewTaskAssignees([]);
+      setNewTaskChecklistItems([]);
       return;
     }
     try {
@@ -2192,6 +2195,17 @@ const Board = () => {
         await supabase.from("task_assignees").insert(assigneeInserts);
       }
       
+      // Add checklist items if any were created
+      if (newTaskChecklistItems.length > 0 && newTask) {
+        const checklistInserts = newTaskChecklistItems.map((item, index) => ({
+          task_id: newTask.id,
+          title: item.title,
+          is_completed: item.is_completed,
+          position: index
+        }));
+        await supabase.from("task_checklist_items").insert(checklistInserts);
+      }
+      
       toast.success(t('board.taskAdded'));
       setOpenDialog(null);
       setNewTaskTitle("");
@@ -2199,6 +2213,7 @@ const Board = () => {
       setNewTaskPriority("medium");
       setNewTaskDueDate(undefined);
       setNewTaskAssignees([]);
+      setNewTaskChecklistItems([]);
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
@@ -3336,6 +3351,14 @@ const Board = () => {
                                 </div>
                               </div>
                               
+                              {/* Checklist */}
+                              <div className="border-t pt-3">
+                                <TaskChecklistCreate 
+                                  items={newTaskChecklistItems} 
+                                  onChange={setNewTaskChecklistItems} 
+                                />
+                              </div>
+                              
                               <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
                                 {t('common.add')}
                               </button>
@@ -3804,6 +3827,14 @@ const Board = () => {
                             placeholder={t('board.addTeamMember')} 
                           />
                         </div>
+                      </div>
+                      
+                      {/* Checklist */}
+                      <div className="border-t pt-3">
+                        <TaskChecklistCreate 
+                          items={newTaskChecklistItems} 
+                          onChange={setNewTaskChecklistItems} 
+                        />
                       </div>
                       
                       <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
