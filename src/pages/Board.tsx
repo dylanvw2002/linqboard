@@ -575,7 +575,10 @@ const Board = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [taskDragPosition, setTaskDragPosition] = useState<{ x: number; y: number } | null>(null);
   const [taskDragOffset, setTaskDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [taskDragVelocity, setTaskDragVelocity] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const lastDragPositionRef = useRef<{ x: number; y: number } | null>(null);
   const draggedTaskColumnRef = useRef<string | null>(null);
+  const draggedTaskGlowRef = useRef<GlowType | undefined>(undefined);
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -2289,8 +2292,11 @@ const Board = () => {
       y: e.clientY - rect.top
     });
     setTaskDragPosition({ x: e.clientX, y: e.clientY });
+    lastDragPositionRef.current = { x: e.clientX, y: e.clientY };
+    setTaskDragVelocity({ x: 0, y: 0 });
     setDraggedTask(task);
     draggedTaskColumnRef.current = task.column_id;
+    draggedTaskGlowRef.current = columnGlowType;
     setIsDragging(true);
     
     target.setPointerCapture(e.pointerId);
@@ -2299,7 +2305,16 @@ const Board = () => {
   const handleTaskPointerMove = (e: React.PointerEvent) => {
     if (!draggedTask || !isDragging) return;
     
-    setTaskDragPosition({ x: e.clientX, y: e.clientY });
+    const newPos = { x: e.clientX, y: e.clientY };
+    
+    // Calculate velocity for rotation effect
+    if (lastDragPositionRef.current) {
+      const vx = newPos.x - lastDragPositionRef.current.x;
+      setTaskDragVelocity({ x: vx, y: 0 });
+    }
+    lastDragPositionRef.current = newPos;
+    
+    setTaskDragPosition(newPos);
     
     // Detect which column we're over
     const elements = document.elementsFromPoint(e.clientX, e.clientY);
@@ -4121,37 +4136,77 @@ const Board = () => {
       {/* Fixed AI Chat Widget rechtsonder (alleen voor ingelogde gebruikers) */}
       {!isDemo && board && <FixedChatWidget boardId={board.id} boardName={board.name} />}
       
-      {/* Floating Drag Preview */}
-      {draggedTask && taskDragPosition && (
-        <div 
-          className="fixed pointer-events-none z-[1000] will-change-transform"
-          style={{
-            left: taskDragPosition.x - taskDragOffset.x,
-            top: taskDragPosition.y - taskDragOffset.y,
-            transform: 'rotate(3deg) scale(1.05)',
-          }}
-        >
-          <div className={cn(
-            "backdrop-blur-[60px] bg-white/80 dark:bg-card/80 border-2 rounded-[28px] p-3 w-[280px]",
-            "border-primary/50 shadow-[0_25px_50px_rgba(0,0,0,0.3)]",
-            "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none"
-          )}>
-            <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-            <div className="flex gap-2 items-start">
-              <div className="flex-1 min-w-0 pl-4">
-                <h4 className="font-extrabold text-base mb-1 text-foreground">
-                  {draggedTask.title}
-                </h4>
-                {draggedTask.description && (
-                  <p className="text-muted-foreground text-sm line-clamp-2">
-                    {draggedTask.description}
-                  </p>
+      {/* Floating Drag Preview - Exact replica of task card */}
+      {draggedTask && taskDragPosition && (() => {
+        const glowStyles = getGlowStyles(draggedTaskGlowRef.current);
+        // Clamp rotation between -8 and 8 degrees based on horizontal velocity
+        const rotation = Math.max(-8, Math.min(8, taskDragVelocity.x * 0.5));
+        
+        return (
+          <div 
+            className="fixed pointer-events-none z-[1000] will-change-transform transform-gpu"
+            style={{
+              left: taskDragPosition.x - taskDragOffset.x,
+              top: taskDragPosition.y - taskDragOffset.y,
+              transform: `rotate(${rotation}deg) scale(1.02)`,
+              transition: 'transform 0.1s ease-out',
+              width: '280px',
+            }}
+          >
+            <article className={cn(
+              "relative backdrop-blur-[60px] bg-white/90 dark:bg-card/90 border-2 rounded-[28px] p-3",
+              "border-white/60 dark:border-white/30",
+              "shadow-[0_25px_60px_rgba(0,0,0,0.35)]",
+              "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none",
+              "after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+              glowStyles.cardGradient
+            )}>
+              <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+              <div className="flex gap-2 items-start">
+                <div className="flex-1 min-w-0 pl-4">
+                  <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
+                    {draggedTask.due_date && (
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(draggedTask.due_date)}`}>
+                        📅 {format(new Date(draggedTask.due_date), "d MMM", { locale: getDateLocale() })}
+                      </span>
+                    )}
+                    {draggedTask.priority && getPriorityBadge(draggedTask.priority) && (
+                      <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(draggedTask.priority)!.color)}>
+                        {getPriorityBadge(draggedTask.priority)!.label}
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="font-extrabold text-base mb-1 text-foreground relative z-10">
+                    {draggedTask.title}
+                  </h4>
+                  {draggedTask.description && (
+                    <p className="text-muted-foreground text-sm line-clamp-2 relative z-10">
+                      {draggedTask.description}
+                    </p>
+                  )}
+                </div>
+                {draggedTask.assignees && draggedTask.assignees.length > 0 && (
+                  <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
+                    {draggedTask.assignees.slice(0, 3).map((assignee, idx) => (
+                      <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{ marginLeft: idx > 0 ? '-6px' : '0' }}>
+                        <AvatarImage src={assignee.avatar_url || undefined} />
+                        <AvatarFallback className="text-xs bg-primary/10">
+                          {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+                    {draggedTask.assignees.length > 3 && (
+                      <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{ marginLeft: '-6px' }}>
+                        +{draggedTask.assignees.length - 3}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-            </div>
+            </article>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>;
 };
 export default Board;
