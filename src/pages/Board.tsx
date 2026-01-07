@@ -2452,65 +2452,63 @@ const Board = () => {
       ? []
       : normalize(tasksByColumn(originalColumnId).filter(t => t.id !== draggedTask.id));
 
-    // Demo mode: update local state only
+    // Optimistic UI update: apply changes to local state immediately
+    const updates = new Map<string, Task>();
+    [...targetNext, ...originNext].forEach(tsk => updates.set(tsk.id, tsk));
+
+    setTasks(prev => prev.map(tsk => updates.get(tsk.id) ?? tsk));
+
+    // Demo mode: no backend sync needed
     if (isDemo) {
-      const updates = new Map<string, Task>();
-      [...targetNext, ...originNext].forEach(t => updates.set(t.id, t));
-
-      setTasks(prev =>
-        prev
-          .map(t => updates.get(t.id) ?? t)
-          .filter(t => {
-            // If moved across columns, draggedTask should no longer exist in old column.
-            if (!isSameColumn && t.id === draggedTask.id) return true;
-            return true;
-          })
-      );
-
       if (!isSameColumn) {
         toast.success(t('board.taskMoved', { column: targetColumn.name }) + ' (demo)');
       }
-
       cleanup();
       return;
     }
 
-    try {
-      const updateOps: Array<{ id: string; data: any }> = [];
+    // Background sync to database (don't await - fire and forget with error handling)
+    const syncToDatabase = async () => {
+      try {
+        const updateOps: Array<{ id: string; data: any }> = [];
 
-      // Reindex target column (includes moved task)
-      for (const tsk of targetNext) {
-        const data: any = { position: tsk.position };
+        // Reindex target column (includes moved task)
+        for (const tsk of targetNext) {
+          const data: any = { position: tsk.position };
 
-        // Only the moved task needs a column_id / due_date update.
-        if (tsk.id === draggedTask.id) {
-          data.column_id = targetColumnId;
-          if (targetColumn.column_type === 'completed') data.due_date = null;
+          // Only the moved task needs a column_id / due_date update.
+          if (tsk.id === draggedTask.id) {
+            data.column_id = targetColumnId;
+            if (targetColumn.column_type === 'completed') data.due_date = null;
+          }
+
+          updateOps.push({ id: tsk.id, data });
         }
 
-        updateOps.push({ id: tsk.id, data });
+        // Reindex origin column after removal
+        for (const tsk of originNext) {
+          updateOps.push({ id: tsk.id, data: { position: tsk.position } });
+        }
+
+        await Promise.all(
+          updateOps.map(async op => {
+            const { error } = await supabase.from('tasks').update(op.data).eq('id', op.id);
+            if (error) throw error;
+          })
+        );
+
+        if (!isSameColumn) {
+          toast.success(t('board.taskMoved', { column: targetColumn.name }));
+        }
+      } catch (error: any) {
+        // Rollback: refetch from database on error
+        toast.error(t('board.errorMovingTask'));
+        await fetchBoardData();
       }
+    };
 
-      // Reindex origin column after removal
-      for (const tsk of originNext) {
-        updateOps.push({ id: tsk.id, data: { position: tsk.position } });
-      }
-
-      await Promise.all(
-        updateOps.map(async op => {
-          const { error } = await supabase.from('tasks').update(op.data).eq('id', op.id);
-          if (error) throw error;
-        })
-      );
-
-      if (!isSameColumn) {
-        toast.success(t('board.taskMoved', { column: targetColumn.name }));
-      }
-
-      await fetchBoardData();
-    } catch (error: any) {
-      toast.error(t('board.errorMovingTask'));
-    }
+    // Fire background sync
+    syncToDatabase();
 
     cleanup();
   };
