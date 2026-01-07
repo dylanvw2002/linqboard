@@ -3874,6 +3874,13 @@ const Board = () => {
                     {/* Attachments */}
                     {editingTask && <TaskAttachments taskId={editingTask.id} readOnly />}
                     
+                    {/* Reminders */}
+                    {editingTask && (
+                      <div className="border-t pt-4">
+                        <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
+                      </div>
+                    )}
+                    
                     {/* History */}
                     {editingTask && (
                       <div className="border-t pt-4">
@@ -3886,10 +3893,6 @@ const Board = () => {
                     
                     {/* Action buttons */}
                     <div className="flex gap-2 pt-4 border-t">
-                      <Button onClick={() => setIsTaskEditMode(true)} className="flex-1">
-                        <Pencil className="h-4 w-4 mr-2" />
-                        {t('common.edit')}
-                      </Button>
                       <Button onClick={() => setExportDialogOpen(true)} variant="outline">
                         <Mail className="h-4 w-4 sm:mr-2" />
                         <span className="hidden sm:inline">{t('board.exportTask')}</span>
