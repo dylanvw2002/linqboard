@@ -678,6 +678,7 @@ const Board = () => {
   const GRID_SIZE = 20;
   const SNAP_THRESHOLD = 15;
   const SCALE_FACTOR = zoomLevel; // UI scale factor (now dynamic)
+  const BOARD_SCALE = isMobile ? 1 : SCALE_FACTOR;
 
   // Get date-fns locale based on current language
   const getDateLocale = (): Locale => {
@@ -2319,7 +2320,7 @@ const Board = () => {
       y: e.clientY - rect.top
     });
     setTaskDragPosition({ x: e.clientX, y: e.clientY });
-    setTaskDragWidth(rect.width);
+    setTaskDragWidth(rect.width / BOARD_SCALE);
     lastDragPositionRef.current = { x: e.clientX, y: e.clientY };
     setTaskDragVelocity({ x: 0, y: 0 });
     setDraggedTask(task);
@@ -3874,7 +3875,7 @@ const Board = () => {
                             "border-white/40 dark:border-white/20",
                             getGlowStyles(column.glow_type).cardGradient,
                             getGlowStyles(column.glow_type).cardShadow,
-                            draggedTask?.id === task.id && "opacity-40 scale-95",
+                            draggedTask?.id === task.id && "opacity-40",
                             isOverdue && !draggedTask && "animate-overdue-glow"
                           )}
                         >
@@ -4397,9 +4398,10 @@ const Board = () => {
             style={{
               left: taskDragPosition.x - taskDragOffset.x,
               top: taskDragPosition.y - taskDragOffset.y,
-              transform: `rotate(${rotation}deg)`,
-              transition: 'transform 0.1s ease-out',
               width: `${taskDragWidth}px`,
+              transform: `scale(${BOARD_SCALE}) rotate(${rotation}deg)`,
+              transformOrigin: `${taskDragOffset.x / BOARD_SCALE}px ${taskDragOffset.y / BOARD_SCALE}px`,
+              transition: 'transform 0.1s ease-out',
             }}
           >
             <article className={cn(
