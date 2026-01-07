@@ -217,7 +217,12 @@
     "assigneeRemoved": "Toewijzing verwijderd",
     "errorMovingTask": "Fout bij verplaatsen taak",
     "errorCompletingTask": "Fout bij voltooien taak",
-    "moveError": "Fout bij verplaatsen: "
+    "moveError": "Fout bij verplaatsen: ",
+    "checklist": "Checklist",
+    "checklistItemAdded": "Item toegevoegd",
+    "checklistItemDeleted": "Item verwijderd",
+    "addChecklistItem": "Item toevoegen...",
+    "emptyChecklist": "Nog geen checklist items"
   },
   "columns": {
     "addColumn": "Kolom toevoegen",
