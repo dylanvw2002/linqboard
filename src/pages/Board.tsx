@@ -577,6 +577,7 @@ const Board = () => {
   const [taskDragPosition, setTaskDragPosition] = useState<{ x: number; y: number } | null>(null);
   const [taskDragOffset, setTaskDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [taskDragVelocity, setTaskDragVelocity] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [taskDragWidth, setTaskDragWidth] = useState<number>(280);
   const lastDragPositionRef = useRef<{ x: number; y: number } | null>(null);
   const draggedTaskColumnRef = useRef<string | null>(null);
   const draggedTaskGlowRef = useRef<GlowType | undefined>(undefined);
@@ -2317,6 +2318,7 @@ const Board = () => {
       y: e.clientY - rect.top
     });
     setTaskDragPosition({ x: e.clientX, y: e.clientY });
+    setTaskDragWidth(rect.width);
     lastDragPositionRef.current = { x: e.clientX, y: e.clientY };
     setTaskDragVelocity({ x: 0, y: 0 });
     setDraggedTask(task);
@@ -4277,7 +4279,7 @@ const Board = () => {
               top: taskDragPosition.y - taskDragOffset.y,
               transform: `rotate(${rotation}deg)`,
               transition: 'transform 0.1s ease-out',
-              width: '280px',
+              width: `${taskDragWidth}px`,
             }}
           >
             <article className={cn(
