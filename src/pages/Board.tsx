@@ -35,6 +35,7 @@ import { useDesktopNotifications } from "@/hooks/useDesktopNotifications";
 import { ColumnEditSidebar } from "@/components/ColumnEditSidebar";
 import { ResizeHandles } from "@/components/ResizeHandles";
 import { SimpleTaskCard } from "@/components/SimpleTaskCard";
+import { TaskChecklist } from "@/components/TaskChecklist";
 
 import { getGlowStyles, GlowType } from "@/lib/glowStyles";
 import { ColumnType } from "@/lib/columnTypes";
@@ -4067,6 +4068,13 @@ const Board = () => {
                       </div>
                     )}
                     
+                    {/* Checklist */}
+                    {editingTask && (
+                      <div className="border-t pt-4">
+                        <TaskChecklist taskId={editingTask.id} readOnly />
+                      </div>
+                    )}
+                    
                     {/* Attachments */}
                     {editingTask && <TaskAttachments taskId={editingTask.id} readOnly />}
                     
@@ -4174,6 +4182,13 @@ const Board = () => {
                       <TeamMemberSelect members={orgMembers} selectedMembers={editTaskAssignees} onSelect={handleAddAssignee} placeholder={t('board.addTeamMember')} />
                     </div>
                   </div>
+                  
+                  {/* Checklist */}
+                  {editingTask && (
+                    <div className="border-t pt-4">
+                      <TaskChecklist taskId={editingTask.id} />
+                    </div>
+                  )}
                   
                   {editingTask && <TaskAttachments taskId={editingTask.id} />}
                   
