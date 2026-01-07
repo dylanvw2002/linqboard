@@ -573,6 +573,9 @@ const Board = () => {
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [taskDragPosition, setTaskDragPosition] = useState<{ x: number; y: number } | null>(null);
+  const [taskDragOffset, setTaskDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const draggedTaskColumnRef = useRef<string | null>(null);
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -2272,33 +2275,66 @@ const Board = () => {
       guides
     };
   };
-  const handleDragStart = (e: React.DragEvent, task: Task) => {
+  // Custom pointer-based drag for tasks
+  const handleTaskPointerDown = (e: React.PointerEvent, task: Task, columnGlowType?: GlowType) => {
+    if (editMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    
+    setTaskDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    setTaskDragPosition({ x: e.clientX, y: e.clientY });
     setDraggedTask(task);
+    draggedTaskColumnRef.current = task.column_id;
     setIsDragging(true);
-    e.dataTransfer.effectAllowed = "move";
+    
+    target.setPointerCapture(e.pointerId);
   };
-  const handleDragEnd = () => {
-    setDraggedTask(null);
-    setDraggedOverColumn(null);
-    setIsDragging(false);
+  
+  const handleTaskPointerMove = (e: React.PointerEvent) => {
+    if (!draggedTask || !isDragging) return;
+    
+    setTaskDragPosition({ x: e.clientX, y: e.clientY });
+    
+    // Detect which column we're over
+    const elements = document.elementsFromPoint(e.clientX, e.clientY);
+    const columnElement = elements.find(el => el.hasAttribute('data-column-id'));
+    if (columnElement) {
+      const columnId = columnElement.getAttribute('data-column-id');
+      if (columnId && columnId !== draggedOverColumn) {
+        setDraggedOverColumn(columnId);
+      }
+    }
   };
-  const handleDragOver = (e: React.DragEvent, columnId: string) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-    setDraggedOverColumn(columnId);
-  };
-  const handleDrop = async (e: React.DragEvent, columnId: string) => {
-    e.preventDefault();
+  
+  const handleTaskPointerUp = async (e: React.PointerEvent) => {
     if (!draggedTask) return;
-    const targetColumn = columns.find(col => col.id === columnId);
-    if (!targetColumn) return;
-    const currentColumn = columns.find(col => col.id === draggedTask.column_id);
-    if (currentColumn?.id === columnId) {
+    
+    const targetColumnId = draggedOverColumn;
+    const originalColumnId = draggedTaskColumnRef.current;
+    
+    // Reset drag state
+    setTaskDragPosition(null);
+    setIsDragging(false);
+    
+    if (!targetColumnId || targetColumnId === originalColumnId) {
       setDraggedTask(null);
       setDraggedOverColumn(null);
-      setIsDragging(false);
       return;
     }
+    
+    const targetColumn = columns.find(col => col.id === targetColumnId);
+    if (!targetColumn) {
+      setDraggedTask(null);
+      setDraggedOverColumn(null);
+      return;
+    }
+    
     if (isDemo) {
       const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
       const updatedTasks = tasks.map(t => t.id === draggedTask.id ? {
@@ -2308,42 +2344,42 @@ const Board = () => {
         due_date: targetColumn.column_type === 'completed' ? null : t.due_date
       } : t);
       setTasks(updatedTasks);
-      toast.success(t('board.taskMoved', {
-        column: targetColumn.name
-      }) + ' (demo)');
+      toast.success(t('board.taskMoved', { column: targetColumn.name }) + ' (demo)');
       setDraggedTask(null);
       setDraggedOverColumn(null);
-      setIsDragging(false);
       return;
     }
+    
     try {
       const maxPosition = tasks.filter(t => t.column_id === targetColumn.id).reduce((max, t) => Math.max(max, t.position), -1);
-
-      // Clear deadline if moving to a completed column
       const updateData: any = {
         column_id: targetColumn.id,
         position: maxPosition + 1
       };
-      console.log('Moving to column:', targetColumn.name, 'Type:', targetColumn.column_type, 'Task due_date before:', draggedTask.due_date);
       if (targetColumn.column_type === 'completed') {
         updateData.due_date = null;
-        console.log('Clearing due_date because column type is completed');
       }
-      console.log('Update data:', updateData);
-      const {
-        error
-      } = await supabase.from("tasks").update(updateData).eq("id", draggedTask.id);
+      const { error } = await supabase.from("tasks").update(updateData).eq("id", draggedTask.id);
       if (error) throw error;
-      toast.success(t('board.taskMoved', {
-        column: targetColumn.name
-      }));
+      toast.success(t('board.taskMoved', { column: targetColumn.name }));
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorMovingTask'));
     }
     setDraggedTask(null);
     setDraggedOverColumn(null);
-    setIsDragging(false);
+  };
+
+  // Legacy drag handlers (keep for compatibility but won't be used)
+  const handleDragStart = (e: React.DragEvent, task: Task) => {
+    e.preventDefault();
+  };
+  const handleDragEnd = () => {};
+  const handleDragOver = (e: React.DragEvent, columnId: string) => {
+    e.preventDefault();
+  };
+  const handleDrop = async (e: React.DragEvent, columnId: string) => {
+    e.preventDefault();
   };
   const startResize = (e: React.MouseEvent, column: Column, handle: string) => {
     e.preventDefault();
@@ -3424,7 +3460,11 @@ const Board = () => {
         {columns.map(column => {
             const isSelected = selectedColumn?.id === column.id;
             const displayColumn = isSelected && resizing ? selectedColumn : column;
-            return <section key={column.id} className={cn("absolute flex flex-col transition-all", editMode && !isSelected && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl", draggedColumn?.id === column.id && "opacity-50", isSelected && "ring-4 ring-primary shadow-2xl")} style={{
+            return <section 
+              key={column.id} 
+              data-column-id={column.id}
+              className={cn("absolute flex flex-col transition-all", editMode && !isSelected && "cursor-move hover:ring-2 hover:ring-primary hover:shadow-2xl", draggedColumn?.id === column.id && "opacity-50", isSelected && "ring-4 ring-primary shadow-2xl")} 
+              style={{
               left: `${displayColumn.x_position}px`,
               top: `${displayColumn.y_position}px`,
               width: `${displayColumn.width}px`,
@@ -3663,45 +3703,63 @@ const Board = () => {
                     if (isSimpleColumn) {
                       return <SimpleTaskCard key={task.id} taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />;
                     }
-                    return <article key={task.id} draggable onDragStart={e => handleDragStart(e, task)} onDragEnd={handleDragEnd} onClick={() => !isDragging && openEditDialog(task)} className={cn("relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-grab will-change-transform transform-gpu before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none", !isDragging && "hover:-translate-y-2 transition-all duration-200", "border-white/40 dark:border-white/20", getGlowStyles(column.glow_type).cardGradient, getGlowStyles(column.glow_type).cardShadow, draggedTask?.id === task.id && "drag-active scale-[1.03] rotate-[1.5deg] shadow-[0_20px_40px_rgba(0,0,0,0.2)] z-50 cursor-grabbing", draggedTask && draggedTask.id !== task.id && "transition-transform duration-200", isOverdue && !draggedTask && "animate-overdue-glow")}>
-                    <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
-                    <div className="flex gap-2 items-start">
-                      <div className="flex-1 min-w-0 pl-4">
-                        <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
-                          <AttachmentCount taskId={task.id} />
-                          {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
-                              📅 {format(new Date(task.due_date), "d MMM", {
-                                locale: getDateLocale()
-                              })}
-                            </span>}
-                          {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
-                              {getPriorityBadge(task.priority)!.label}
-                            </span>}
+                    return <article 
+                      key={task.id} 
+                      onPointerDown={e => handleTaskPointerDown(e, task, column.glow_type)}
+                      onPointerMove={handleTaskPointerMove}
+                      onPointerUp={handleTaskPointerUp}
+                      onPointerCancel={handleTaskPointerUp}
+                      onClick={() => !isDragging && openEditDialog(task)} 
+                      className={cn(
+                        "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-grab will-change-transform transform-gpu select-none touch-none",
+                        "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity",
+                        "after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none",
+                        !isDragging && "hover:-translate-y-2 transition-all duration-200",
+                        "border-white/40 dark:border-white/20",
+                        getGlowStyles(column.glow_type).cardGradient,
+                        getGlowStyles(column.glow_type).cardShadow,
+                        draggedTask?.id === task.id && "opacity-40 scale-95",
+                        isOverdue && !draggedTask && "animate-overdue-glow"
+                      )}
+                    >
+                      <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+                      <div className="flex gap-2 items-start">
+                        <div className="flex-1 min-w-0 pl-4">
+                          <div className="flex items-center gap-1.5 flex-wrap mb-1 relative z-10">
+                            <AttachmentCount taskId={task.id} />
+                            {task.due_date && <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold border ${getDeadlineBadgeColor(task.due_date)}`}>
+                                📅 {format(new Date(task.due_date), "d MMM", {
+                                  locale: getDateLocale()
+                                })}
+                              </span>}
+                            {task.priority && getPriorityBadge(task.priority) && <span className={cn("inline-block px-2 py-0.5 rounded-full text-xs font-bold border", getPriorityBadge(task.priority)!.color)}>
+                                {getPriorityBadge(task.priority)!.label}
+                              </span>}
+                          </div>
+                          <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
+                            {task.title}
+                          </h4>
+                          {task.description && <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2">
+                              {task.description}
+                            </p>}
                         </div>
-                        <h4 className="font-extrabold text-[clamp(13px,1.5vw,16px)] mb-1 text-foreground relative z-10">
-                          {task.title}
-                        </h4>
-                        {task.description && <p className="text-muted-foreground text-[clamp(11px,1.2vw,13px)] relative z-10 line-clamp-2">
-                            {task.description}
-                          </p>}
+                        {task.assignees && task.assignees.length > 0 && <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
+                            {task.assignees.slice(0, 3).map((assignee, idx) => <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{
+                              marginLeft: idx > 0 ? '-6px' : '0'
+                            }}>
+                                <AvatarImage src={assignee.avatar_url || undefined} />
+                                <AvatarFallback className="text-xs bg-primary/10">
+                                  {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>)}
+                            {task.assignees.length > 3 && <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{
+                              marginLeft: '-6px'
+                            }}>
+                                +{task.assignees.length - 3}
+                              </div>}
+                        </div>}
                       </div>
-                      {task.assignees && task.assignees.length > 0 && <div className="flex items-center gap-0.5 relative z-10 flex-shrink-0">
-                          {task.assignees.slice(0, 3).map((assignee, idx) => <Avatar key={assignee.user_id} className="h-9 w-9 border-2 border-white" style={{
-                            marginLeft: idx > 0 ? '-6px' : '0'
-                          }}>
-                              <AvatarImage src={assignee.avatar_url || undefined} />
-                              <AvatarFallback className="text-xs bg-primary/10">
-                                {assignee.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>)}
-                          {task.assignees.length > 3 && <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold" style={{
-                            marginLeft: '-6px'
-                          }}>
-                              +{task.assignees.length - 3}
-                            </div>}
-                      </div>}
-                  </div>
-                </article>;
+                    </article>;
                   })}
               </div>
             </div>
@@ -4062,6 +4120,38 @@ const Board = () => {
       
       {/* Fixed AI Chat Widget rechtsonder (alleen voor ingelogde gebruikers) */}
       {!isDemo && board && <FixedChatWidget boardId={board.id} boardName={board.name} />}
+      
+      {/* Floating Drag Preview */}
+      {draggedTask && taskDragPosition && (
+        <div 
+          className="fixed pointer-events-none z-[1000] will-change-transform"
+          style={{
+            left: taskDragPosition.x - taskDragOffset.x,
+            top: taskDragPosition.y - taskDragOffset.y,
+            transform: 'rotate(3deg) scale(1.05)',
+          }}
+        >
+          <div className={cn(
+            "backdrop-blur-[60px] bg-white/80 dark:bg-card/80 border-2 rounded-[28px] p-3 w-[280px]",
+            "border-primary/50 shadow-[0_25px_50px_rgba(0,0,0,0.3)]",
+            "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/40 before:to-transparent before:pointer-events-none"
+          )}>
+            <div className="absolute top-2.5 left-2.5 text-muted-foreground/50 text-sm select-none pointer-events-none">☰</div>
+            <div className="flex gap-2 items-start">
+              <div className="flex-1 min-w-0 pl-4">
+                <h4 className="font-extrabold text-base mb-1 text-foreground">
+                  {draggedTask.title}
+                </h4>
+                {draggedTask.description && (
+                  <p className="text-muted-foreground text-sm line-clamp-2">
+                    {draggedTask.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>;
 };
 export default Board;
