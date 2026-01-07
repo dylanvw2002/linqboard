@@ -4408,7 +4408,7 @@ const Board = () => {
       <img src={logo} alt="LinqBoard Logo" className="fixed -bottom-8 left-2 h-32 w-auto z-50 cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate(isDemo ? "/" : "/dashboard")} />
       
       {/* Fixed AI Chat Widget rechtsonder (alleen voor ingelogde gebruikers) */}
-      {!isDemo && board && <FixedChatWidget boardId={board.id} boardName={board.name} onBoardRefresh={fetchBoardData} />}
+      {!isDemo && board && <FixedChatWidget boardId={board.id} boardName={board.name} />}
       
       {/* Floating Drag Preview - Exact replica of task card */}
       {draggedTask && taskDragPosition && (() => {

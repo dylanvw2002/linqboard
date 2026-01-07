@@ -30,10 +30,9 @@ interface Message {
 interface FixedChatWidgetProps {
   boardId: string;
   boardName: string;
-  onBoardRefresh?: () => void;
 }
 
-export const FixedChatWidget = ({ boardId, boardName, onBoardRefresh }: FixedChatWidgetProps) => {
+export const FixedChatWidget = ({ boardId, boardName }: FixedChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -241,12 +240,6 @@ export const FixedChatWidget = ({ boardId, boardName, onBoardRefresh }: FixedCha
         created_at: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
-
-      // If AI performed an action, refresh the board
-      if (data.action && onBoardRefresh) {
-        onBoardRefresh();
-        toast.success("Board bijgewerkt door AI");
-      }
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Kon bericht niet verzenden");
