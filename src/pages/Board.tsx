@@ -3832,7 +3832,7 @@ const Board = () => {
                 }}
               />
               {/* Task rendering - extra padding for shadows */}
-              <div data-task-content className="grid gap-3 content-start" style={{
+              <div data-task-content className="grid gap-3 content-start [&>*]:transition-transform [&>*]:duration-200 [&>*]:ease-out" style={{
                 paddingTop: '14px',
                 paddingBottom: '16px',
                 paddingLeft: '40px',
@@ -3871,11 +3871,21 @@ const Board = () => {
                       return <SimpleTaskCard key={task.id} taskId={task.id} title={task.title} description={task.description} dueDate={task.due_date} onClick={() => !isDragging && openEditDialog(task)} glowShadow={getGlowStyles(column.glow_type).cardShadow} assignees={task.assignees} glowGradient={getGlowStyles(column.glow_type).cardGradient} columns={columns} />;
                     }
                     return (
-                      <div key={task.id}>
+                      <div 
+                        key={task.id}
+                        className={cn(
+                          "transition-all duration-200 ease-out",
+                          draggedTask?.id === task.id && "opacity-40 scale-95"
+                        )}
+                        style={{
+                          // Trigger layout animation when order changes
+                          transform: draggedTask?.id === task.id ? 'scale(0.95)' : 'scale(1)'
+                        }}
+                      >
                         {showDropIndicatorBefore && (
                           <div className="h-1 bg-primary rounded-full mb-3 animate-pulse" />
                         )}
-                        <article 
+                        <article
                           data-task-id={task.id}
                           onPointerDown={e => handleTaskPointerDown(e, task, column.glow_type)}
                           onPointerMove={handleTaskPointerMove}
@@ -3890,7 +3900,6 @@ const Board = () => {
                             "border-white/40 dark:border-white/20",
                             getGlowStyles(column.glow_type).cardGradient,
                             getGlowStyles(column.glow_type).cardShadow,
-                            draggedTask?.id === task.id && "opacity-40",
                             isOverdue && !draggedTask && "animate-overdue-glow"
                           )}
                         >
