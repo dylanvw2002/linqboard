@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "https://esm.sh/resend@2.0.0";
+import { Resend } from "https://esm.sh/resend@4.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -199,7 +199,7 @@ serve(async (req: Request): Promise<Response> => {
     const profileMap = new Map(profiles?.map(p => [p.user_id, p.full_name]) || []);
 
     // Send emails
-    const results: { email: string; success: boolean; error?: string }[] = [];
+    const results: { email: string; success: boolean; id?: string; error?: string }[] = [];
 
     for (const user of users) {
       if (!user.email) continue;
@@ -216,21 +216,23 @@ serve(async (req: Request): Promise<Response> => {
           logoBase64
         );
 
-        await resend.emails.send({
-          from: "LinqBoard <updates@linqboard.nl>",
+        const { data, error } = await resend.emails.send({
+          from: "LinqBoard <info@linqboard.io>",
           to: [user.email],
           subject: `🆕 ${title}`,
           html: emailHtml,
         });
 
-        console.log(`Email sent to ${user.email}`);
-        results.push({ email: user.email, success: true });
+        if (error) throw error;
+
+        console.log(`Email accepted by provider for ${user.email} (id: ${data?.id ?? "n/a"})`);
+        results.push({ email: user.email, success: true, id: data?.id });
 
         // Small delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       } catch (emailError: any) {
         console.error(`Failed to send to ${user.email}:`, emailError);
-        results.push({ email: user.email, success: false, error: emailError.message });
+        results.push({ email: user.email, success: false, error: emailError?.message ?? String(emailError) });
       }
     }
 
