@@ -20,6 +20,7 @@ interface UpdateNotificationRequest {
   intro: string;
   features: Feature[];
   improvements: string[];
+  testEmail?: string; // Optional: send only to this email for testing
 }
 
 async function imageUrlToBase64(url: string): Promise<string> {
@@ -152,7 +153,7 @@ serve(async (req: Request): Promise<Response> => {
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    const { title, intro, features, improvements }: UpdateNotificationRequest = await req.json();
+    const { title, intro, features, improvements, testEmail }: UpdateNotificationRequest = await req.json();
 
     if (!title || !intro || !features) {
       return new Response(
@@ -172,7 +173,12 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    const users = usersData.users;
+    // Filter to test email if provided
+    let users = usersData.users;
+    if (testEmail) {
+      users = users.filter(u => u.email === testEmail);
+      console.log(`Test mode: sending only to ${testEmail}`);
+    }
     console.log(`Found ${users.length} users to notify`);
 
     // Get logo as base64
