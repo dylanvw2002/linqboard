@@ -2390,112 +2390,129 @@ const Board = () => {
   
   const handleTaskPointerUp = async (e: React.PointerEvent) => {
     if (!draggedTask) return;
-    
+
     const targetColumnId = draggedOverColumn;
     const originalColumnId = draggedTaskColumnRef.current;
     const insertIndex = draggedOverTaskIndex;
-    
-    // Reset drag state
+
+    // Reset drag visuals/state (we keep draggedTask until after we compute updates)
     setTaskDragPosition(null);
     setIsDragging(false);
     setDraggedOverTaskIndex(null);
-    
-    // Handle reordering within same column
-    if (targetColumnId === originalColumnId && targetColumnId && insertIndex !== null) {
-      const columnTasks = tasks.filter(t => t.column_id === targetColumnId && t.id !== draggedTask.id)
-        .sort((a, b) => a.position - b.position);
-      
-      // Calculate new position
-      let newPosition: number;
-      if (insertIndex === 0) {
-        newPosition = columnTasks.length > 0 ? columnTasks[0].position - 1 : 0;
-      } else if (insertIndex >= columnTasks.length) {
-        newPosition = columnTasks.length > 0 ? columnTasks[columnTasks.length - 1].position + 1 : 0;
-      } else {
-        const prevTask = columnTasks[insertIndex - 1];
-        const nextTask = columnTasks[insertIndex];
-        newPosition = (prevTask.position + nextTask.position) / 2;
-      }
-      
-      if (isDemo) {
-        const updatedTasks = tasks.map(t => t.id === draggedTask.id ? { ...t, position: newPosition } : t);
-        setTasks(updatedTasks);
-        setDraggedTask(null);
-        setDraggedOverColumn(null);
-        return;
-      }
-      
-      try {
-        const { error } = await supabase.from("tasks").update({ position: newPosition }).eq("id", draggedTask.id);
-        if (error) throw error;
-        await fetchBoardData();
-      } catch (error: any) {
-        toast.error(t('board.errorMovingTask'));
-      }
+
+    const cleanup = () => {
       setDraggedTask(null);
       setDraggedOverColumn(null);
+    };
+
+    if (!targetColumnId || !originalColumnId) {
+      cleanup();
       return;
     }
-    
-    if (!targetColumnId) {
-      setDraggedTask(null);
-      setDraggedOverColumn(null);
-      return;
-    }
-    
+
     const targetColumn = columns.find(col => col.id === targetColumnId);
     if (!targetColumn) {
-      setDraggedTask(null);
-      setDraggedOverColumn(null);
+      cleanup();
       return;
     }
-    
-    // Calculate position based on insert index
-    const columnTasks = tasks.filter(t => t.column_id === targetColumnId && t.id !== draggedTask.id)
-      .sort((a, b) => a.position - b.position);
-    
-    let newPosition: number;
-    if (insertIndex === null || insertIndex >= columnTasks.length) {
-      newPosition = columnTasks.length > 0 ? columnTasks[columnTasks.length - 1].position + 1 : 0;
-    } else if (insertIndex === 0) {
-      newPosition = columnTasks.length > 0 ? columnTasks[0].position - 1 : 0;
-    } else {
-      const prevTask = columnTasks[insertIndex - 1];
-      const nextTask = columnTasks[insertIndex];
-      newPosition = (prevTask.position + nextTask.position) / 2;
-    }
-    
+
+    const isSameColumn = targetColumnId === originalColumnId;
+
+    // We store positions as integers in the DB, so we must reindex instead of using fractional positions.
+    const tasksByColumn = (columnId: string) =>
+      tasks
+        .filter(t => t.column_id === columnId)
+        .sort((a, b) => a.position - b.position);
+
+    const normalize = (ordered: Task[]) =>
+      ordered.map((t, idx) => ({ ...t, position: idx + 1 }));
+
+    // Build next order for target column
+    const targetCurrent = tasksByColumn(targetColumnId);
+    const targetWithoutDragged = targetCurrent.filter(t => t.id !== draggedTask.id);
+    const safeIndex = Math.min(
+      Math.max(insertIndex ?? targetWithoutDragged.length, 0),
+      targetWithoutDragged.length
+    );
+
+    const movedTask: Task = {
+      ...draggedTask,
+      column_id: targetColumnId,
+      due_date: targetColumn.column_type === 'completed' ? null : draggedTask.due_date
+    };
+
+    const targetNext = normalize([
+      ...targetWithoutDragged.slice(0, safeIndex),
+      movedTask,
+      ...targetWithoutDragged.slice(safeIndex)
+    ]);
+
+    // Build next order for original column when moving across columns
+    const originNext = isSameColumn
+      ? []
+      : normalize(tasksByColumn(originalColumnId).filter(t => t.id !== draggedTask.id));
+
+    // Demo mode: update local state only
     if (isDemo) {
-      const updatedTasks = tasks.map(t => t.id === draggedTask.id ? {
-        ...t,
-        column_id: targetColumn.id,
-        position: newPosition,
-        due_date: targetColumn.column_type === 'completed' ? null : t.due_date
-      } : t);
-      setTasks(updatedTasks);
-      toast.success(t('board.taskMoved', { column: targetColumn.name }) + ' (demo)');
-      setDraggedTask(null);
-      setDraggedOverColumn(null);
+      const updates = new Map<string, Task>();
+      [...targetNext, ...originNext].forEach(t => updates.set(t.id, t));
+
+      setTasks(prev =>
+        prev
+          .map(t => updates.get(t.id) ?? t)
+          .filter(t => {
+            // If moved across columns, draggedTask should no longer exist in old column.
+            if (!isSameColumn && t.id === draggedTask.id) return true;
+            return true;
+          })
+      );
+
+      if (!isSameColumn) {
+        toast.success(t('board.taskMoved', { column: targetColumn.name }) + ' (demo)');
+      }
+
+      cleanup();
       return;
     }
-    
+
     try {
-      const updateData: any = {
-        column_id: targetColumn.id,
-        position: newPosition
-      };
-      if (targetColumn.column_type === 'completed') {
-        updateData.due_date = null;
+      const updateOps: Array<{ id: string; data: any }> = [];
+
+      // Reindex target column (includes moved task)
+      for (const tsk of targetNext) {
+        const data: any = { position: tsk.position };
+
+        // Only the moved task needs a column_id / due_date update.
+        if (tsk.id === draggedTask.id) {
+          data.column_id = targetColumnId;
+          if (targetColumn.column_type === 'completed') data.due_date = null;
+        }
+
+        updateOps.push({ id: tsk.id, data });
       }
-      const { error } = await supabase.from("tasks").update(updateData).eq("id", draggedTask.id);
-      if (error) throw error;
-      toast.success(t('board.taskMoved', { column: targetColumn.name }));
+
+      // Reindex origin column after removal
+      for (const tsk of originNext) {
+        updateOps.push({ id: tsk.id, data: { position: tsk.position } });
+      }
+
+      await Promise.all(
+        updateOps.map(async op => {
+          const { error } = await supabase.from('tasks').update(op.data).eq('id', op.id);
+          if (error) throw error;
+        })
+      );
+
+      if (!isSameColumn) {
+        toast.success(t('board.taskMoved', { column: targetColumn.name }));
+      }
+
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorMovingTask'));
     }
-    setDraggedTask(null);
-    setDraggedOverColumn(null);
+
+    cleanup();
   };
 
   // Legacy drag handlers (keep for compatibility but won't be used)
