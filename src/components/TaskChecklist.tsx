@@ -57,10 +57,8 @@ export const TaskChecklist = ({ taskId, readOnly = false }: TaskChecklistProps) 
   const totalCount = items.length;
   const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  // Toggle item completion
+  // Toggle item completion (allowed in both view and edit mode)
   const toggleItem = async (item: ChecklistItem) => {
-    if (readOnly) return;
-
     const newCompleted = !item.is_completed;
     const { data: userData } = await supabase.auth.getUser();
 
@@ -186,7 +184,6 @@ export const TaskChecklist = ({ taskId, readOnly = false }: TaskChecklistProps) 
             <Checkbox
               checked={item.is_completed}
               onCheckedChange={() => toggleItem(item)}
-              disabled={readOnly}
               className="shrink-0"
             />
             <span
