@@ -575,13 +575,17 @@ const Board = () => {
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
   const [draggedOverTaskIndex, setDraggedOverTaskIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isPendingDrag, setIsPendingDrag] = useState(false);
   const [taskDragPosition, setTaskDragPosition] = useState<{ x: number; y: number } | null>(null);
   const [taskDragOffset, setTaskDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [taskDragVelocity, setTaskDragVelocity] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [taskDragWidth, setTaskDragWidth] = useState<number>(280);
   const lastDragPositionRef = useRef<{ x: number; y: number } | null>(null);
+  const dragStartPositionRef = useRef<{ x: number; y: number } | null>(null);
+  const pendingDragTaskRef = useRef<Task | null>(null);
   const draggedTaskColumnRef = useRef<string | null>(null);
   const draggedTaskGlowRef = useRef<GlowType | undefined>(undefined);
+  const DRAG_THRESHOLD = 5; // pixels before drag activates
   const [editingTaskColumn, setEditingTaskColumn] = useState<string | null>(null);
   const [columnManagementOpen, setColumnManagementOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -2315,26 +2319,42 @@ const Board = () => {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
     
+    // Store initial drag info but don't start dragging yet
     setTaskDragOffset({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
     });
-    setTaskDragPosition({ x: e.clientX, y: e.clientY });
     setTaskDragWidth(rect.width / BOARD_SCALE);
+    dragStartPositionRef.current = { x: e.clientX, y: e.clientY };
     lastDragPositionRef.current = { x: e.clientX, y: e.clientY };
-    setTaskDragVelocity({ x: 0, y: 0 });
-    setDraggedTask(task);
+    pendingDragTaskRef.current = task;
     draggedTaskColumnRef.current = task.column_id;
     draggedTaskGlowRef.current = columnGlowType;
-    setIsDragging(true);
+    setIsPendingDrag(true);
     
     target.setPointerCapture(e.pointerId);
   };
   
   const handleTaskPointerMove = (e: React.PointerEvent) => {
-    if (!draggedTask || !isDragging) return;
-    
     const newPos = { x: e.clientX, y: e.clientY };
+    
+    // Check if we're in pending drag state and should activate real drag
+    if (isPendingDrag && !isDragging && pendingDragTaskRef.current && dragStartPositionRef.current) {
+      const dx = newPos.x - dragStartPositionRef.current.x;
+      const dy = newPos.y - dragStartPositionRef.current.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance >= DRAG_THRESHOLD) {
+        // Activate real drag
+        setDraggedTask(pendingDragTaskRef.current);
+        setTaskDragPosition(newPos);
+        setTaskDragVelocity({ x: 0, y: 0 });
+        setIsDragging(true);
+      }
+      return;
+    }
+    
+    if (!draggedTask || !isDragging) return;
     
     // Calculate velocity for rotation effect
     if (lastDragPositionRef.current) {
@@ -2389,6 +2409,21 @@ const Board = () => {
   };
   
   const handleTaskPointerUp = async (e: React.PointerEvent) => {
+    const wasPending = isPendingDrag;
+    const wasRealDrag = isDragging && draggedTask;
+    const pendingTask = pendingDragTaskRef.current;
+    
+    // Reset pending drag state
+    setIsPendingDrag(false);
+    pendingDragTaskRef.current = null;
+    dragStartPositionRef.current = null;
+    
+    // If we never activated real drag, treat as a click - open task detail
+    if (wasPending && !wasRealDrag && pendingTask) {
+      openEditDialog(pendingTask);
+      return;
+    }
+    
     if (!draggedTask) return;
 
     const targetColumnId = draggedOverColumn;
@@ -3891,7 +3926,6 @@ const Board = () => {
                           onPointerMove={handleTaskPointerMove}
                           onPointerUp={handleTaskPointerUp}
                           onPointerCancel={handleTaskPointerUp}
-                          onClick={() => !isDragging && openEditDialog(task)} 
                           className={cn(
                             "relative backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 rounded-[28px] p-3 cursor-grab will-change-transform transform-gpu select-none touch-none",
                             "before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none before:opacity-0 hover:before:opacity-100 before:transition-opacity",
