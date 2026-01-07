@@ -636,6 +636,7 @@
     "assigneeAdded": "{{user}} heeft {{assignee}} toegewezen",
     "assigneeRemoved": "{{user}} heeft {{assignee}} verwijderd",
     "changed": "{{user}} heeft een wijziging gemaakt",
+    "exported": "{{user}} heeft deze taak geëxporteerd naar {{recipients}}",
     "titleLabel": "Titel",
     "priorityLabel": "Prioriteit",
     "none": "geen"

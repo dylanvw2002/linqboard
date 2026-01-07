@@ -2035,6 +2035,29 @@ const Board = () => {
       if (!data || !data.success) {
         throw new Error(data?.error || 'Failed to export task');
       }
+      
+      // Log export to task history
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Get recipient names for history
+        const recipientNames: string[] = [];
+        for (const userId of exportSelectedMembers) {
+          const member = orgMembers.find(m => m.user_id === userId);
+          if (member) recipientNames.push(member.full_name);
+        }
+        recipientNames.push(...emails);
+        
+        await supabase.from('task_history').insert({
+          task_id: editingTask.id,
+          user_id: user.id,
+          action: 'exported',
+          changes: {
+            recipients: recipientNames,
+            include_attachments: exportIncludeAttachments
+          }
+        });
+      }
+      
       toast.success(t('board.exportSuccess'));
       setExportDialogOpen(false);
       setExportSelectedMembers([]);
