@@ -2350,7 +2350,7 @@ const Board = () => {
     const columnElement = elements.find(el => el.hasAttribute('data-column-id'));
     if (columnElement) {
       const columnId = columnElement.getAttribute('data-column-id');
-      if (columnId && columnId !== draggedOverColumn) {
+      if (columnId) {
         setDraggedOverColumn(columnId);
       }
       
