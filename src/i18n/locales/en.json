@@ -604,6 +604,24 @@
       "feature4": "Dedicated support"
     }
   },
+  "taskHistory": {
+    "title": "History",
+    "loading": "Loading...",
+    "noHistory": "No history yet",
+    "someone": "Someone",
+    "unknown": "Unknown",
+    "created": "{{user}} created this task",
+    "updated": "{{user}} updated details",
+    "moved": "{{user}} moved the task from \"{{from}}\" to \"{{to}}\"",
+    "deleted": "{{user}} deleted this task",
+    "assigneeAdded": "{{user}} assigned {{assignee}}",
+    "assigneeRemoved": "{{user}} removed {{assignee}}",
+    "changed": "{{user}} made a change",
+    "exported": "{{user}} exported this task to {{recipients}}",
+    "titleLabel": "Title",
+    "priorityLabel": "Priority",
+    "none": "none"
+  },
   "subscriptionFailed": {
     "title": "Payment Failed",
     "subtitle": "We couldn't process your payment",

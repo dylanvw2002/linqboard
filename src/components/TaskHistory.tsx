@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import { nl } from "date-fns/locale";
-import { History, UserPlus, UserMinus, ArrowRight, Pencil, Plus, Trash2 } from "lucide-react";
+import { History, UserPlus, UserMinus, ArrowRight, Pencil, Plus, Trash2, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface HistoryEntry {
@@ -105,6 +105,8 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
         return <UserPlus className="h-4 w-4" />;
       case 'assignee_removed':
         return <UserMinus className="h-4 w-4" />;
+      case 'exported':
+        return <Mail className="h-4 w-4" />;
       default:
         return <History className="h-4 w-4" />;
     }
@@ -128,6 +130,9 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
         return t('taskHistory.assigneeAdded', { user: userName, assignee: entry.changes.user_name });
       case 'assignee_removed':
         return t('taskHistory.assigneeRemoved', { user: userName, assignee: entry.changes.user_name });
+      case 'exported':
+        const recipients = entry.changes.recipients?.join(', ') || '';
+        return t('taskHistory.exported', { user: userName, recipients });
       default:
         return t('taskHistory.changed', { user: userName });
     }
@@ -145,6 +150,8 @@ export const TaskHistory = ({ taskId, columns }: TaskHistoryProps) => {
         return 'text-purple-600';
       case 'assignee_removed':
         return 'text-orange-600';
+      case 'exported':
+        return 'text-cyan-600';
       default:
         return 'text-gray-600';
     }
