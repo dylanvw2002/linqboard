@@ -162,6 +162,8 @@
     "dueDate": "Deadline",
     "addTask": "Add task",
     "editTask": "Edit task",
+    "taskDetails": "Task details",
+    "inColumn": "In column",
     "deleteTask": "Delete task",
     "activeUsers": "Active users",
     "noActiveUsers": "No active users",

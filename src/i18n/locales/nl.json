@@ -163,6 +163,8 @@
     "expectedReturn": "Verwachte terugkeer",
     "assignedTo": "Toegewezen aan",
     "editTask": "Taak bewerken",
+    "taskDetails": "Taak details",
+    "inColumn": "In kolom",
     "editModeOn": "Bewerkmodus inschakelen",
     "editModeOff": "Bewerkmodus uit",
     "editModeActive": "Bewerkmodus actief - Klik op HEADER of TAAK GEBIED → sleep de handvatten om te vergroten/verkleinen",

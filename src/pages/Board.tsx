@@ -564,6 +564,7 @@ const Board = () => {
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isTaskEditMode, setIsTaskEditMode] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
@@ -1796,6 +1797,7 @@ const Board = () => {
     setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
     setEditTaskPriority(task.priority);
     setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
+    setIsTaskEditMode(false); // Start in view mode
   };
 
   const handleOpenTaskFromNotification = async (taskId: string) => {
@@ -3782,17 +3784,121 @@ const Board = () => {
           })}
       </main>}
 
-      {/* Edit Task Dialog */}
-      <Dialog open={editingTask !== null} onOpenChange={open => !open && setEditingTask(null)}>
+      {/* Task View/Edit Dialog */}
+      <Dialog open={editingTask !== null} onOpenChange={open => {
+        if (!open) {
+          setEditingTask(null);
+          setIsTaskEditMode(false);
+        }
+      }}>
         <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-          <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
-            <DialogTitle>{t('board.editTask')}</DialogTitle>
+          <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0 border-b">
+            <div className="flex items-center justify-between">
+              <DialogTitle>{isTaskEditMode ? t('board.editTask') : t('board.taskDetails')}</DialogTitle>
+              {!isTaskEditMode && (
+                <Button variant="outline" size="sm" onClick={() => setIsTaskEditMode(true)}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  {t('common.edit')}
+                </Button>
+              )}
+            </div>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
-            <div className="space-y-3 sm:space-y-4 py-2">
+            <div className="space-y-3 sm:space-y-4 py-4">
             {(() => {
                 const taskColumn = columns.find(c => c.id === editingTask?.column_id);
                 const isSimpleColumn = taskColumn && (taskColumn.column_type === 'sick_leave' || taskColumn.column_type === 'vacation');
+                
+                // VIEW MODE
+                if (!isTaskEditMode) {
+                  return <>
+                    {/* Task Title */}
+                    <div>
+                      <h2 className="text-2xl font-bold text-foreground">{editingTask?.title}</h2>
+                      {taskColumn && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {t('board.inColumn')}: <span className="font-medium text-foreground">{taskColumn.name}</span>
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* Badges row */}
+                    <div className="flex flex-wrap gap-2">
+                      {editTaskDueDate && (
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border ${getDeadlineBadgeColor(editTaskDueDate.toISOString())}`}>
+                          <CalendarIcon className="h-4 w-4" />
+                          {format(editTaskDueDate, "PPP", { locale: getDateLocale() })}
+                        </span>
+                      )}
+                      {editTaskPriority && getPriorityBadge(editTaskPriority) && (
+                        <span className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border", getPriorityBadge(editTaskPriority)!.color)}>
+                          {getPriorityBadge(editTaskPriority)!.label}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Description */}
+                    {editTaskDescription && (
+                      <div className="bg-muted/50 rounded-xl p-4">
+                        <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-2 block">
+                          {isSimpleColumn ? t('board.reason') : t('common.description')}
+                        </Label>
+                        <p className="text-foreground whitespace-pre-wrap">{editTaskDescription}</p>
+                      </div>
+                    )}
+                    
+                    {/* Assignees */}
+                    {editTaskAssignees.length > 0 && (
+                      <div>
+                        <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-3 block">{t('board.assignedTo')}</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {editTaskAssignees.map(userId => {
+                            const member = orgMembers.find(m => m.user_id === userId);
+                            if (!member) return null;
+                            return (
+                              <div key={userId} className="flex items-center gap-2 px-3 py-2 bg-secondary rounded-lg">
+                                <Avatar className="h-8 w-8">
+                                  <AvatarImage src={member.avatar_url || undefined} />
+                                  <AvatarFallback className="text-sm font-bold bg-primary/30 text-primary">
+                                    {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm font-medium">{member.full_name}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Attachments */}
+                    {editingTask && <TaskAttachments taskId={editingTask.id} readOnly />}
+                    
+                    {/* History */}
+                    {editingTask && (
+                      <div className="border-t pt-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <Label className="text-xs uppercase tracking-wide text-muted-foreground">Geschiedenis</Label>
+                          <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Action buttons */}
+                    <div className="flex gap-2 pt-4 border-t">
+                      <Button onClick={() => setIsTaskEditMode(true)} className="flex-1">
+                        <Pencil className="h-4 w-4 mr-2" />
+                        {t('common.edit')}
+                      </Button>
+                      <Button onClick={() => setExportDialogOpen(true)} variant="outline">
+                        <Mail className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">{t('board.exportTask')}</span>
+                      </Button>
+                    </div>
+                  </>;
+                }
+                
+                // EDIT MODE
                 return <>
                   <div>
                     <Label htmlFor="edit-title">{isSimpleColumn ? t('board.name') : t('board.title')} *</Label>
@@ -3800,7 +3906,7 @@ const Board = () => {
                   </div>
                   <div>
                     <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
-                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} rows={4} />
                   </div>
                   {!isSimpleColumn && <div>
                       <Label>{t('board.priority')}</Label>
@@ -3881,16 +3987,15 @@ const Board = () => {
                   
                   <div className="flex gap-2 pt-4">
                     <Button onClick={handleDeleteFromDialog} variant="destructive">
+                      <Trash2 className="h-4 w-4 mr-2" />
                       {t('common.delete')}
+                    </Button>
+                    <Button onClick={() => setIsTaskEditMode(false)} variant="outline">
+                      {t('common.cancel')}
                     </Button>
                     <Button onClick={handleEditTask} className="flex-1">
                       {t('common.save')}
                     </Button>
-                    <Button onClick={() => setExportDialogOpen(true)} variant="outline" className="flex-1 sm:px-4 px-2">
-                      <Mail className="h-4 w-4 sm:mr-2" />
-                      <span className="hidden sm:inline">{t('board.exportTask')}</span>
-                    </Button>
-                    
                   </div>
                 </>;
               })()}
