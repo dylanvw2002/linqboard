@@ -2276,12 +2276,6 @@ const Board = () => {
     setDraggedTask(task);
     setIsDragging(true);
     e.dataTransfer.effectAllowed = "move";
-    // Create a transparent drag image to use custom styling
-    const dragImage = document.createElement('div');
-    dragImage.style.opacity = '0';
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 0, 0);
-    setTimeout(() => document.body.removeChild(dragImage), 0);
   };
   const handleDragEnd = () => {
     setDraggedTask(null);
