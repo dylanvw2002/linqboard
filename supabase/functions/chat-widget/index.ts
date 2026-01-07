@@ -84,6 +84,40 @@ async function performWebSearch(query: string): Promise<string | null> {
   }
 }
 
+function normalizeKey(input: string): string {
+  return (input || "")
+    .toLowerCase()
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function resolveColumnByName(columns: any[], requestedName: string) {
+  const wanted = normalizeKey(requestedName);
+  if (!wanted) return null;
+
+  const prepared = (columns || []).map((c: any) => ({
+    column: c,
+    key: normalizeKey(c.name),
+  }));
+
+  // Exact match first
+  let found = prepared.find((x) => x.key === wanted)?.column;
+
+  // Common alias: "to-do" / "todo" / "to do"
+  if (!found && wanted === "todo") {
+    found = prepared.find((x) => x.key === "todo" || x.key === "todo")?.column;
+  }
+
+  // Fuzzy contains (both directions)
+  if (!found) {
+    found = prepared.find((x) => x.key.includes(wanted) || wanted.includes(x.key))?.column;
+  }
+
+  return found || null;
+}
+
 // Tool definitions for AI
 const tools = [
   {
@@ -180,7 +214,7 @@ async function loadBoardContext(supabaseAdmin: any, boardId: string, userId: str
   // Get board info
   const { data: board } = await supabaseAdmin
     .from('boards')
-    .select('id, name')
+    .select('id, name, organization_id')
     .eq('id', boardId)
     .single();
 
@@ -267,9 +301,7 @@ async function executeTool(
   try {
     switch (toolName) {
       case 'create_task': {
-        const column = columns.find((c: any) => 
-          c.name.toLowerCase() === args.column_name.toLowerCase()
-        );
+        const column = resolveColumnByName(columns, args.column_name);
         
         if (!column) {
           return { 
@@ -312,14 +344,12 @@ async function executeTool(
           };
         }
 
-        const targetColumn = columns.find((c: any) => 
-          c.name.toLowerCase() === args.target_column.toLowerCase()
-        );
+        const targetColumn = resolveColumnByName(columns, args.target_column);
         
         if (!targetColumn) {
           return { 
             success: false, 
-            message: `Kolom "${args.target_column}" niet gevonden` 
+            message: `Kolom "${args.target_column}" niet gevonden. Beschikbare kolommen: ${columns.map((c: any) => c.name).join(', ')}` 
           };
         }
 
@@ -567,6 +597,13 @@ serve(async (req) => {
     const boardContext = await loadBoardContext(supabaseAdmin, boardId, user.id);
     const boardContextString = buildBoardContextString(boardContext, userName);
 
+    console.log('Chat context:', {
+      widgetId,
+      boardId,
+      columns: (boardContext.columns || []).map((c: any) => c.name),
+      tasksCount: (boardContext.tasks || []).length,
+    });
+
     // Get chat history
     let historyQuery = supabaseAdmin
       .from('widget_chat_messages')
@@ -616,7 +653,7 @@ serve(async (req) => {
     }
 
     // Build system prompt with board context
-    let systemPrompt = `Je bent Linq, een slimme AI-assistent voor het LinqBoard project management platform.
+    let systemPrompt = `Je bent Linq, een slimme AI-assistent voor LinqBoard (taken en boards).
 
 JE KUNT ACTIES UITVOEREN:
 - Taken aanmaken, verplaatsen en bewerken
@@ -624,11 +661,15 @@ JE KUNT ACTIES UITVOEREN:
 - Verlopen deadlines tonen
 - Je eigen taken tonen
 
-REGELS:
-1. Bij verzoeken om taken te maken/verplaatsen/bewerken: gebruik de juiste tool.
-2. Houd antwoorden KORT: maximaal 2-3 zinnen.
-3. Wees proactief: stel voor om taken aan te maken als iemand iets bespreekt.
-4. Nederlands spreken.
+REGELS (belangrijk):
+1. Gebruik een tool alleen als je alle vereiste info hebt (bijv. titel + kolom).
+2. Als info ontbreekt of onduidelijk is: stel 1 korte verduidelijkingsvraag, en doe géén tool-call.
+3. Kolomnamen moeten matchen met de kolommen uit de BOARD CONTEXT (maar jij mag varianten als "to-do" interpreteren).
+4. Antwoorden mogen iets uitgebreider als dat helpt (max ~5 zinnen), maar blijf direct.
+5. Nederlands.
+
+Voorbeeld:
+- User: "Ja, in de kolom To-do" → Jij: "Top—wat is de titel van de taak?" (geen tool-call)
 
 ${boardContextString}`;
 
