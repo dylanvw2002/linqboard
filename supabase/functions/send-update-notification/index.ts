@@ -221,8 +221,8 @@ serve(async (req: Request): Promise<Response> => {
         console.log(`Email accepted by provider for ${user.email} (id: ${data?.id ?? "n/a"})`);
         results.push({ email: user.email, success: true, id: data?.id });
 
-        // Small delay to avoid rate limiting
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        // Delay to stay under Resend's rate limit (2 requests/second)
+        await new Promise((resolve) => setTimeout(resolve, 600));
       } catch (emailError: any) {
         console.error(`Failed to send to ${user.email}:`, emailError);
         results.push({ email: user.email, success: false, error: emailError?.message ?? String(emailError) });
