@@ -37,7 +37,7 @@ function createUpdateEmail(
   intro: string,
   features: Feature[],
   improvements: string[],
-  logoBase64: string
+  logoUrl: string
 ): string {
   const featuresHtml = features.map(f => `
     <div style="margin-bottom: 20px; padding: 16px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; border-left: 4px solid #6366f1;">
@@ -74,7 +74,7 @@ function createUpdateEmail(
               <!-- Header with gradient -->
               <tr>
                 <td style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); padding: 40px 40px 30px 40px; text-align: center;">
-                  <img src="${logoBase64}" alt="LinqBoard" style="height: 50px; margin-bottom: 20px;" />
+                  <img src="${logoUrl}" alt="LinqBoard" style="height: 50px; margin-bottom: 20px;" />
                   <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     ${title}
                   </h1>
@@ -181,15 +181,8 @@ serve(async (req: Request): Promise<Response> => {
     }
     console.log(`Found ${users.length} users to notify`);
 
-    // Get logo as base64
-    const logoUrl = "https://jfdpljhkrcuietevzshr.supabase.co/storage/v1/object/public/avatars/linqboard-logo-new.png";
-    let logoBase64: string;
-    try {
-      logoBase64 = await imageUrlToBase64(logoUrl);
-    } catch (e) {
-      console.error("Failed to convert logo:", e);
-      logoBase64 = "";
-    }
+    // Use direct URL for logo (base64 often blocked by email clients)
+    const logoUrl = "https://linqboard.io/logo-linqboard.png";
 
     // Get user profiles for names
     const { data: profiles } = await supabaseAdmin
@@ -213,7 +206,7 @@ serve(async (req: Request): Promise<Response> => {
           intro,
           features,
           improvements || [],
-          logoBase64
+          logoUrl
         );
 
         const { data, error } = await resend.emails.send({
