@@ -516,7 +516,7 @@ const Board = () => {
   
   const taskSchema = z.object({
     title: z.string().trim().min(1, t('board.titleRequired')).max(200, t('board.titleMaxLength')),
-    description: z.string().trim().max(1000, t('board.descriptionMaxLength')).optional()
+    description: z.string().trim().optional()
   });
 
   // Touch gesture state for mobile/tablet
@@ -3275,7 +3275,7 @@ const Board = () => {
                               </div>
                               <div>
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
-                                <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                                <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                               </div>
                               <div>
                                 <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
@@ -3753,7 +3753,7 @@ const Board = () => {
                       </div>
                       <div>
                         <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
-                        <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} />
+                        <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                       </div>
                       <div>
                         <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
@@ -4148,7 +4148,7 @@ const Board = () => {
                   </div>
                   <div>
                     <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
-                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} maxLength={1000} rows={4} />
+                    <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} rows={4} />
                   </div>
                   {!isSimpleColumn && <div>
                       <Label>{t('board.priority')}</Label>
