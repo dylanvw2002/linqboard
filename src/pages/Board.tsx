@@ -516,7 +516,7 @@ const Board = () => {
   
   const taskSchema = z.object({
     title: z.string().trim().min(1, t('board.titleRequired')).max(200, t('board.titleMaxLength')),
-    description: z.string().trim().max(1000, t('board.descriptionMaxLength')).optional()
+    description: z.string().trim().optional()
   });
 
   // Touch gesture state for mobile/tablet
