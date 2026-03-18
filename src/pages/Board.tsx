@@ -3753,7 +3753,7 @@ const Board = () => {
                   </DialogTrigger>
                   <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
                     <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
-                      <DialogTitle>{t('board.addNewTask')} - {column.name}</DialogTitle>
+                      <DialogTitle>{column.column_type === 'sick_leave' ? 'Ziek melden' : column.column_type === 'vacation' ? 'Verlof melden' : `${t('board.addNewTask')} - ${column.name}`}</DialogTitle>
                     </DialogHeader>
                     <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
                       <div className="space-y-3 sm:space-y-4 py-2">
