@@ -67,8 +67,8 @@ function calcUsedHours(
   let totalHours = 0;
 
   records.forEach((r) => {
-    // If hours is explicitly set, use that directly
-    if (r.hours != null && r.hours > 0) {
+    // If hours is explicitly set AND it's a single-day record, use that directly
+    if (r.hours != null && r.hours > 0 && !r.end_date) {
       totalHours += r.hours;
       return;
     }
@@ -367,7 +367,7 @@ export function AbsenceManagementDialog({
     // Add org members without settings as defaults
     orgMembers.forEach((m) => {
       if (!coveredUserIds.has(m.user_id)) {
-        const personRecords = yearRecords.filter((r) => r.user_id === m.user_id);
+        const personRecords = yearRecords.filter((r) => r.user_id === m.user_id || r.person_name === m.full_name);
         const usedHours = calcUsedHours(personRecords, defaultSchedule, selectedYear);
         const weeklyHours = DAY_KEYS.reduce((sum, k) => sum + (defaultSchedule[k] || 0), 0);
         result.push({
