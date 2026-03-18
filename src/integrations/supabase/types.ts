@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      absence_records: {
+        Row: {
+          absence_type: string
+          created_at: string
+          created_by: string
+          end_date: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          person_name: string
+          start_date: string
+          user_id: string | null
+        }
+        Insert: {
+          absence_type: string
+          created_at?: string
+          created_by: string
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          person_name: string
+          start_date: string
+          user_id?: string | null
+        }
+        Update: {
+          absence_type?: string
+          created_at?: string
+          created_by?: string
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          person_name?: string
+          start_date?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "absence_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_log: {
         Row: {
           action: string
