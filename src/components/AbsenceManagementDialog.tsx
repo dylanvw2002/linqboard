@@ -67,6 +67,13 @@ function calcUsedHours(
   let totalHours = 0;
 
   records.forEach((r) => {
+    // If hours is explicitly set, use that directly
+    if (r.hours != null && r.hours > 0) {
+      totalHours += r.hours;
+      return;
+    }
+
+    // Otherwise calculate from work schedule
     const start = parseISO(r.start_date);
     const end = r.end_date ? parseISO(r.end_date) : new Date();
     const yearStart = new Date(year, 0, 1);
