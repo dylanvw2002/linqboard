@@ -2215,16 +2215,20 @@ const Board = () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           const matchedMember = orgMembers.find(m => m.full_name === validation.data.title);
+          const startDate = format(new Date(), "yyyy-MM-dd");
+          const endDate = newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null;
+          const isSingleDayVacation = !endDate || endDate === startDate;
+
           await supabase.from("absence_records").insert({
             organization_id: organizationId,
             person_name: validation.data.title,
             user_id: matchedMember?.user_id || null,
             absence_type: column.column_type,
-            start_date: format(new Date(), "yyyy-MM-dd"),
-            end_date: newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null,
+            start_date: startDate,
+            end_date: endDate,
             notes: validation.data.description || null,
             created_by: session.user.id,
-            hours: parseFloat(newTaskHours) || null,
+            hours: column.column_type === 'vacation' && isSingleDayVacation ? (parseFloat(newTaskHours) || null) : null,
           } as any);
         }
       }
