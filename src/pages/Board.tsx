@@ -564,6 +564,7 @@ const Board = () => {
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
+  const [newTaskHours, setNewTaskHours] = useState<string>("8");
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [newTaskChecklistItems, setNewTaskChecklistItems] = useState<NewChecklistItem[]>([]);
