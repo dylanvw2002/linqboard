@@ -2221,7 +2221,7 @@ const Board = () => {
             user_id: matchedMember?.user_id || null,
             absence_type: column.column_type,
             start_date: format(new Date(), "yyyy-MM-dd"),
-            end_date: null,
+            end_date: newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null,
             notes: validation.data.description || null,
             created_by: session.user.id,
             hours: parseFloat(newTaskHours) || null,
