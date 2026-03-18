@@ -4134,8 +4134,8 @@ const Board = () => {
                       </div>
                     )}
                     
-                    {/* History */}
-                    {editingTask && (
+                    {/* History - hide for sick/vacation */}
+                    {editingTask && !isSimpleColumn && (
                       <div className="border-t pt-4">
                         <div className="flex items-center justify-between mb-3">
                           <Label className="text-xs uppercase tracking-wide text-muted-foreground">Geschiedenis</Label>
