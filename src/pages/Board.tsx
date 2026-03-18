@@ -3316,8 +3316,8 @@ const Board = () => {
                                 </div>
                               </div>}
                               
-                              {/* Team member assignment */}
-                              <div>
+                              {/* Team member assignment - hide for sick/vacation */}
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                                 <Label>{t('board.assignedTo')}</Label>
                                 <div className="space-y-3">
                                   {newTaskAssignees.length > 0 && <div className="flex flex-wrap gap-2">
@@ -3349,15 +3349,15 @@ const Board = () => {
                                     placeholder={t('board.addTeamMember')} 
                                   />
                                 </div>
-                              </div>
+                              </div>}
                               
-                              {/* Checklist */}
-                              <div className="border-t pt-3">
+                              {/* Checklist - hide for sick/vacation */}
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
                                 <TaskChecklistCreate 
                                   items={newTaskChecklistItems} 
                                   onChange={setNewTaskChecklistItems} 
                                 />
-                              </div>
+                              </div>}
                               
                               <button onClick={() => handleAddTask(column.id)} className="w-full backdrop-blur-md bg-primary/90 text-primary-foreground border-0 px-3.5 py-2.5 rounded-xl font-bold hover:bg-primary transition-all hover:shadow-lg">
                                 {t('common.add')}
