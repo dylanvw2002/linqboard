@@ -540,12 +540,51 @@ export function AbsenceManagementDialog({
               </TabsContent>
             )}
 
-            {/* STATISTICS TAB */}
             <TabsContent value="stats" className="mt-4 space-y-4">
               <YearSelector />
+
+              {/* Add custom person */}
+              {!showAddStatsPerson ? (
+                <Button onClick={() => setShowAddStatsPerson(true)} variant="outline" className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Persoon toevoegen
+                </Button>
+              ) : (
+                <div className="flex gap-2 p-3 bg-muted/50 rounded-xl border">
+                  <Input
+                    value={statsNewName}
+                    onChange={(e) => setStatsNewName(e.target.value)}
+                    placeholder="Naam invoeren"
+                    className="flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && statsNewName.trim()) {
+                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
+                        setStatsNewName("");
+                        setShowAddStatsPerson(false);
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (statsNewName.trim()) {
+                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
+                        setStatsNewName("");
+                        setShowAddStatsPerson(false);
+                      }
+                    }}
+                  >
+                    Toevoegen
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { setShowAddStatsPerson(false); setStatsNewName(""); }}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+
               {personStats.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
-                  Geen {typeLabel}registraties in {selectedYear}
+                  Geen personen gevonden
                 </div>
               ) : (
                 <div className="space-y-3">
