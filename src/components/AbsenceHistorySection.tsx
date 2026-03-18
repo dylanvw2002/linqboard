@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
-import { format, parseISO, differenceInCalendarDays } from "date-fns";
+import { format, parseISO, eachDayOfInterval, getDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Clock, History } from "lucide-react";
 
@@ -16,6 +16,36 @@ interface AbsenceRecord {
   created_at: string;
 }
 
+type WorkSchedule = Record<string, number>;
+
+const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const DEFAULT_SCHEDULE: WorkSchedule = { mon: 8, tue: 8, wed: 8, thu: 8, fri: 8, sat: 0, sun: 0 };
+
+function calcWorkingDaysAndHours(
+  startDate: string,
+  endDate: string | null,
+  schedule: WorkSchedule
+): { workDays: number; totalHours: number } {
+  const dayMap = [6, 0, 1, 2, 3, 4, 5]; // JS getDay() -> mon=0..sun=6
+  const start = parseISO(startDate);
+  const end = endDate ? parseISO(endDate) : new Date();
+  if (start > end) return { workDays: 0, totalHours: 0 };
+
+  const days = eachDayOfInterval({ start, end });
+  let workDays = 0;
+  let totalHours = 0;
+  days.forEach((d) => {
+    const dayIdx = dayMap[getDay(d)];
+    const key = DAY_KEYS[dayIdx];
+    const hours = schedule[key] || 0;
+    if (hours > 0) {
+      workDays++;
+      totalHours += hours;
+    }
+  });
+  return { workDays, totalHours };
+}
+
 interface AbsenceHistorySectionProps {
   personName: string;
   organizationId: string;
@@ -24,22 +54,35 @@ interface AbsenceHistorySectionProps {
 
 export function AbsenceHistorySection({ personName, organizationId, absenceType }: AbsenceHistorySectionProps) {
   const [records, setRecords] = useState<AbsenceRecord[]>([]);
+  const [schedule, setSchedule] = useState<WorkSchedule>(DEFAULT_SCHEDULE);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchRecords = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      const { data } = await supabase
-        .from("absence_records")
-        .select("id, person_name, absence_type, start_date, end_date, hours, notes, created_at")
-        .eq("organization_id", organizationId)
-        .eq("person_name", personName)
-        .eq("absence_type", absenceType)
-        .order("start_date", { ascending: false });
-      setRecords(data || []);
+      const [recordsRes, settingsRes] = await Promise.all([
+        supabase
+          .from("absence_records")
+          .select("id, person_name, absence_type, start_date, end_date, hours, notes, created_at")
+          .eq("organization_id", organizationId)
+          .eq("person_name", personName)
+          .eq("absence_type", absenceType)
+          .order("start_date", { ascending: false }),
+        supabase
+          .from("person_vacation_settings")
+          .select("work_schedule")
+          .eq("organization_id", organizationId)
+          .eq("person_name", personName)
+          .order("year", { ascending: false })
+          .limit(1)
+      ]);
+      setRecords(recordsRes.data || []);
+      if (settingsRes.data && settingsRes.data.length > 0) {
+        setSchedule(settingsRes.data[0].work_schedule as WorkSchedule);
+      }
       setLoading(false);
     };
-    fetchRecords();
+    fetchData();
   }, [personName, organizationId, absenceType]);
 
   const label = absenceType === "sick_leave" ? "Ziektegeschiedenis" : "Verlofgeschiedenis";
@@ -57,9 +100,13 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
       ) : (
         <div className="space-y-2 mt-2">
           {records.map((record) => {
-            const days = record.end_date
-              ? differenceInCalendarDays(parseISO(record.end_date), parseISO(record.start_date)) + 1
-              : differenceInCalendarDays(new Date(), parseISO(record.start_date)) + 1;
+            const { workDays, totalHours } = calcWorkingDaysAndHours(
+              record.start_date,
+              record.end_date,
+              schedule
+            );
+            // If explicit hours set, use those instead
+            const displayHours = record.hours != null && record.hours > 0 ? record.hours : totalHours;
             return (
               <div key={record.id} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg border">
                 <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -74,13 +121,11 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs text-muted-foreground">
-                      {days} {days === 1 ? "dag" : "dagen"}
+                      {workDays} werk{workDays === 1 ? "dag" : "dagen"}
                     </span>
-                    {record.hours != null && record.hours > 0 && (
-                      <span className="text-xs text-muted-foreground">
-                        · {record.hours} uur
-                      </span>
-                    )}
+                    <span className="text-xs text-muted-foreground">
+                      · {displayHours} uur
+                    </span>
                   </div>
                   {record.notes && (
                     <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
