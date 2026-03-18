@@ -361,6 +361,7 @@ export function AbsenceManagementDialog({
       if (!coveredUserIds.has(m.user_id)) {
         const personRecords = yearRecords.filter((r) => r.user_id === m.user_id);
         const usedHours = calcUsedHours(personRecords, defaultSchedule, selectedYear);
+        const weeklyHours = DAY_KEYS.reduce((sum, k) => sum + (defaultSchedule[k] || 0), 0);
         result.push({
           id: `default_${m.user_id}`,
           organization_id: organizationId,
@@ -370,8 +371,8 @@ export function AbsenceManagementDialog({
           work_schedule: defaultSchedule,
           year: selectedYear,
           usedHours,
-          remainingHours: 0,
-          weeklyHours: 0,
+          remainingHours: -usedHours,
+          weeklyHours,
           member: m,
           hasSettings: false,
         });
