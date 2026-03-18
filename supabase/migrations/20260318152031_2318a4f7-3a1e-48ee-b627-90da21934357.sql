@@ -1,0 +1,1 @@
+ALTER TABLE public.absence_records ADD COLUMN hours numeric DEFAULT NULL;
