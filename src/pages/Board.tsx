@@ -3429,6 +3429,16 @@ const Board = () => {
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="bg-background border-border z-[100]" align="end">
+                            <DropdownMenuItem 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteTask(task.id);
+                              }} 
+                              className="text-xs py-1.5 text-green-600 dark:text-green-400 font-semibold"
+                            >
+                              {column.column_type === 'sick_leave' ? '✅ Is weer beter' : '✅ Verlof verlopen'}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuLabel className="text-sm">Verplaats naar</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             {columns.filter(col => col.id !== column.id).map((col) => (
