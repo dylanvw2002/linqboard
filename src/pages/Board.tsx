@@ -2238,6 +2238,7 @@ const Board = () => {
       setNewTaskAssignees([]);
       setNewTaskChecklistItems([]);
       setNewTaskHours("8");
+      setNewTaskEndDate(undefined);
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
