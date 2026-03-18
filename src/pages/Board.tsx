@@ -2222,7 +2222,8 @@ const Board = () => {
             end_date: null,
             notes: validation.data.description || null,
             created_by: session.user.id,
-          });
+            hours: parseFloat(newTaskHours) || null,
+          } as any);
         }
       }
       
