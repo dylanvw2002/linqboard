@@ -3879,7 +3879,8 @@ const Board = () => {
                       </div>
                     </div>
                   </DialogContent>
-                </Dialog>
+                  </Dialog>
+                </div>
               )}
             </div>
             <div 
