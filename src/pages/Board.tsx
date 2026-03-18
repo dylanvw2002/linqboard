@@ -2206,6 +2206,24 @@ const Board = () => {
         }));
         await supabase.from("task_checklist_items").insert(checklistInserts);
       }
+
+      // Auto-create absence_record for sick_leave/vacation columns
+      if ((column.column_type === 'sick_leave' || column.column_type === 'vacation') && newTask && organizationId) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const matchedMember = orgMembers.find(m => m.full_name === validation.data.title);
+          await supabase.from("absence_records").insert({
+            organization_id: organizationId,
+            person_name: validation.data.title,
+            user_id: matchedMember?.user_id || null,
+            absence_type: column.column_type,
+            start_date: format(new Date(), "yyyy-MM-dd"),
+            end_date: null,
+            notes: validation.data.description || null,
+            created_by: session.user.id,
+          });
+        }
+      }
       
       toast.success(t('board.taskAdded'));
       setOpenDialog(null);
@@ -2227,6 +2245,17 @@ const Board = () => {
       return;
     }
     try {
+      // Check if task is in a sick/vacation column to also remove absence_record
+      const task = tasks.find(t => t.id === taskId);
+      const column = task ? columns.find(c => c.id === task.column_id) : null;
+      if (task && column && (column.column_type === 'sick_leave' || column.column_type === 'vacation') && organizationId) {
+        await supabase.from("absence_records")
+          .delete()
+          .eq("organization_id", organizationId)
+          .eq("person_name", task.title)
+          .eq("absence_type", column.column_type);
+      }
+
       const {
         error
       } = await supabase.from("tasks").delete().eq("id", taskId);
