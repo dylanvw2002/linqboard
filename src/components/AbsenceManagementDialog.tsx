@@ -298,12 +298,26 @@ export function AbsenceManagementDialog({
   );
 
   const personStats = useMemo(() => {
-    const stats: Record<string, { name: string; count: number; days: number; avatar_url?: string | null }> = {};
+    const stats: Record<string, { name: string; count: number; days: number; avatar_url?: string | null; isCustom?: boolean }> = {};
+
+    // Add all org members as default entries
+    orgMembers.forEach((m) => {
+      stats[m.user_id] = { name: m.full_name, count: 0, days: 0, avatar_url: m.avatar_url };
+    });
+
+    // Add custom persons
+    statsCustomPersons.forEach((name) => {
+      if (!Object.values(stats).some((s) => s.name === name)) {
+        stats[`custom_${name}`] = { name, count: 0, days: 0, isCustom: true };
+      }
+    });
+
+    // Fill in actual data from records
     yearRecords.forEach((r) => {
       const key = r.user_id || r.person_name;
       if (!stats[key]) {
-        const member = r.user_id ? orgMembers.find((m) => m.user_id === r.user_id) : null;
-        stats[key] = { name: r.person_name, count: 0, days: 0, avatar_url: member?.avatar_url };
+        // Person from records not in org members or custom list
+        stats[key] = { name: r.person_name, count: 0, days: 0 };
       }
       stats[key].count += 1;
       const start = parseISO(r.start_date);
@@ -315,7 +329,7 @@ export function AbsenceManagementDialog({
       stats[key].days += Math.max(0, differenceInCalendarDays(effectiveEnd, effectiveStart) + 1);
     });
     return Object.values(stats).sort((a, b) => b.days - a.days);
-  }, [yearRecords, orgMembers, selectedYear]);
+  }, [yearRecords, orgMembers, selectedYear, statsCustomPersons]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
