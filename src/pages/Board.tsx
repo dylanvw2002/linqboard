@@ -4245,7 +4245,7 @@ const Board = () => {
                       <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
                     </div>}
                   
-                  {editingTask && <div className="border-t pt-4">
+                  {editingTask && !isSimpleColumn && <div className="border-t pt-4">
                       <div className="flex items-center justify-between mb-3">
                         <Label>Geschiedenis</Label>
                         <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
