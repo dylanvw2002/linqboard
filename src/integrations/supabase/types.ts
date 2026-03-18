@@ -667,6 +667,50 @@ export type Database = {
         }
         Relationships: []
       }
+      person_vacation_settings: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          person_name: string
+          total_vacation_hours: number
+          updated_at: string
+          user_id: string | null
+          work_schedule: Json
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          person_name: string
+          total_vacation_hours?: number
+          updated_at?: string
+          user_id?: string | null
+          work_schedule?: Json
+          year?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          person_name?: string
+          total_vacation_hours?: number
+          updated_at?: string
+          user_id?: string | null
+          work_schedule?: Json
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "person_vacation_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
