@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter, Calendar as CalendarLucide, Clipboard as ClipboardIcon, FileText, Target, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout, BarChart3 } from "lucide-react";
@@ -3284,7 +3284,20 @@ const Board = () => {
                               <div className="space-y-3 sm:space-y-4 py-2">
                               <div>
                                 <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
-                                <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                                {column.column_type === 'sick_leave' || column.column_type === 'vacation' ? (
+                                  <Select value={newTaskTitle} onValueChange={setNewTaskTitle}>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Selecteer persoon" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {orgMembers.map(m => (
+                                        <SelectItem key={m.user_id} value={m.full_name}>{m.full_name}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                ) : (
+                                  <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={t('board.titlePlaceholder')} maxLength={200} />
+                                )}
                               </div>
                               <div>
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
@@ -3785,7 +3798,20 @@ const Board = () => {
                         <div className="space-y-3 sm:space-y-4 py-2">
                         <div>
                           <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
-                          <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                          {column.column_type === 'sick_leave' || column.column_type === 'vacation' ? (
+                            <Select value={newTaskTitle} onValueChange={setNewTaskTitle}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecteer persoon" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {orgMembers.map(m => (
+                                  <SelectItem key={m.user_id} value={m.full_name}>{m.full_name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={t('board.titlePlaceholder')} maxLength={200} />
+                          )}
                         </div>
                         <div>
                           <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
