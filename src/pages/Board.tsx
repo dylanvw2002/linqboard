@@ -47,6 +47,7 @@ import { Badge } from "@/components/ui/badge";
 import { FixedChatWidget } from "@/components/FixedChatWidget";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AbsenceManagementDialog } from "@/components/AbsenceManagementDialog";
+import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
 interface Column {
   id: string;
   name: string;
@@ -4237,6 +4238,15 @@ const Board = () => {
                           <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
                         </div>
                       </div>
+                    )}
+                    
+                    {/* Absence history for sick/vacation */}
+                    {editingTask && isSimpleColumn && organizationId && (
+                      <AbsenceHistorySection 
+                        personName={editingTask.title} 
+                        organizationId={organizationId} 
+                        absenceType={taskColumn.column_type as "sick_leave" | "vacation"} 
+                      />
                     )}
                     
                     {/* Action buttons */}
