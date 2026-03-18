@@ -110,6 +110,11 @@ export function AbsenceManagementDialog({
   const [editHours, setEditHours] = useState("");
   const [editSchedule, setEditSchedule] = useState<Record<string, number>>({});
 
+  // Stats custom persons
+  const [statsCustomPersons, setStatsCustomPersons] = useState<string[]>([]);
+  const [showAddStatsPerson, setShowAddStatsPerson] = useState(false);
+  const [statsNewName, setStatsNewName] = useState("");
+
   // Add record form state
   const [showAddForm, setShowAddForm] = useState(false);
   const [personSource, setPersonSource] = useState<"member" | "custom">("member");
