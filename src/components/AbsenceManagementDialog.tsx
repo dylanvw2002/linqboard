@@ -27,6 +27,7 @@ interface AbsenceRecord {
   notes: string | null;
   created_by: string;
   created_at: string;
+  hours: number | null;
 }
 
 interface VacationSettings {
