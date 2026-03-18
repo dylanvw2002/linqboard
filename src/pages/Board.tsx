@@ -3258,7 +3258,19 @@ const Board = () => {
                           <Trash2 className="h-5 w-5 text-red-600 dark:text-red-500" />
                         </button>
                       ) : (
-                        <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
+                        <div className="flex gap-1.5">
+                          {(column.column_type === 'sick_leave' || column.column_type === 'vacation') && organizationId && (
+                            <AbsenceManagementDialog
+                              organizationId={organizationId}
+                              absenceType={column.column_type as "sick_leave" | "vacation"}
+                              orgMembers={orgMembers}
+                            >
+                              <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-10">
+                                <BarChart3 className="h-5 w-5" />
+                              </button>
+                            </AbsenceManagementDialog>
+                          )}
+                          <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
                           <DialogTrigger asChild>
                             <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-10">
                               +
