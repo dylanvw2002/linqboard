@@ -4239,6 +4239,15 @@ const Board = () => {
                       </div>
                     )}
                     
+                    {/* Absence history for sick/vacation */}
+                    {editingTask && isSimpleColumn && organizationId && (
+                      <AbsenceHistorySection 
+                        personName={editingTask.title} 
+                        organizationId={organizationId} 
+                        absenceType={taskColumn.column_type as "sick_leave" | "vacation"} 
+                      />
+                    )}
+                    
                     {/* Action buttons */}
                     <div className="flex gap-2 pt-4 border-t">
                       {isSimpleColumn && (
