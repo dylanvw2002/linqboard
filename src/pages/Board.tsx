@@ -3284,7 +3284,20 @@ const Board = () => {
                               <div className="space-y-3 sm:space-y-4 py-2">
                               <div>
                                 <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
-                                <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                                {column.column_type === 'sick_leave' || column.column_type === 'vacation' ? (
+                                  <Select value={newTaskTitle} onValueChange={setNewTaskTitle}>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Selecteer persoon" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {orgMembers.map(m => (
+                                        <SelectItem key={m.user_id} value={m.full_name}>{m.full_name}</SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                ) : (
+                                  <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={t('board.titlePlaceholder')} maxLength={200} />
+                                )}
                               </div>
                               <div>
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
