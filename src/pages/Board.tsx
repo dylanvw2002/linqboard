@@ -3277,8 +3277,8 @@ const Board = () => {
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
                                 <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                               </div>
-                              <div>
-                                <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                                <Label>{t('board.deadline')}</Label>
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
@@ -3297,7 +3297,7 @@ const Board = () => {
                                       </div>}
                                   </PopoverContent>
                                 </Popover>
-                              </div>
+                              </div>}
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                                 <Label>{t('board.priority')}</Label>
                                 <div className="flex gap-2">
@@ -3765,8 +3765,8 @@ const Board = () => {
                         <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
                         <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                       </div>
-                      <div>
-                        <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                      {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                        <Label>{t('board.deadline')}</Label>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
@@ -3785,7 +3785,7 @@ const Board = () => {
                               </div>}
                           </PopoverContent>
                         </Popover>
-                      </div>
+                      </div>}
                       {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                         <Label>{t('board.priority')}</Label>
                         <div className="flex gap-2">
@@ -4060,8 +4060,8 @@ const Board = () => {
                       )}
                     </div>
                     
-                    {/* Badges row */}
-                    <div className="flex flex-wrap gap-2">
+                    {/* Badges row - hide for sick/vacation */}
+                    {!isSimpleColumn && <div className="flex flex-wrap gap-2">
                       {editTaskDueDate && (
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border ${getDeadlineBadgeColor(editTaskDueDate.toISOString())}`}>
                           <CalendarIcon className="h-4 w-4" />
@@ -4073,7 +4073,7 @@ const Board = () => {
                           {getPriorityBadge(editTaskPriority)!.label}
                         </span>
                       )}
-                    </div>
+                    </div>}
                     
                     {/* Description */}
                     {editTaskDescription && (
@@ -4109,18 +4109,18 @@ const Board = () => {
                       </div>
                     )}
                     
-                    {/* Checklist */}
-                    {editingTask && (
+                    {/* Checklist - hide for sick/vacation */}
+                    {editingTask && !isSimpleColumn && (
                       <div className="border-t pt-4">
                         <TaskChecklist taskId={editingTask.id} readOnly />
                       </div>
                     )}
                     
                     {/* Attachments */}
-                    {editingTask && <TaskAttachments taskId={editingTask.id} readOnly />}
+                    {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} readOnly />}
                     
-                    {/* Reminders */}
-                    {editingTask && (
+                    {/* Reminders - hide for sick/vacation */}
+                    {editingTask && !isSimpleColumn && (
                       <div className="border-t pt-4">
                         <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
                       </div>
@@ -4177,8 +4177,8 @@ const Board = () => {
                         </Button>
                       </div>
                     </div>}
-                  <div>
-                    <Label>{isSimpleColumn ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                  {!isSimpleColumn && <div>
+                    <Label>{t('board.deadline')}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !editTaskDueDate && "text-muted-foreground")}>
@@ -4197,7 +4197,7 @@ const Board = () => {
                           </div>}
                       </PopoverContent>
                     </Popover>
-                  </div>
+                  </div>}
                   
                   <div>
                     <Label>{t('board.assignedTo')}</Label>
@@ -4224,16 +4224,16 @@ const Board = () => {
                     </div>
                   </div>
                   
-                  {/* Checklist */}
-                  {editingTask && (
+                  {/* Checklist - hide for sick/vacation */}
+                  {editingTask && !isSimpleColumn && (
                     <div className="border-t pt-4">
                       <TaskChecklist taskId={editingTask.id} />
                     </div>
                   )}
                   
-                  {editingTask && <TaskAttachments taskId={editingTask.id} />}
+                  {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} />}
                   
-                  {editingTask && <div className="border-t pt-4">
+                  {editingTask && !isSimpleColumn && <div className="border-t pt-4">
                       <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
                     </div>}
                   
