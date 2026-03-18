@@ -334,7 +334,7 @@ export function AbsenceManagementDialog({
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
     if (!isVacation) return [];
-    const defaultSchedule = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 };
+    const defaultSchedule = { mon: 8, tue: 8, wed: 8, thu: 8, fri: 8, sat: 0, sun: 0 };
     const result: Array<VacationSettings & { usedHours: number; remainingHours: number; weeklyHours: number; member: OrgMember | null | undefined; hasSettings: boolean }> = [];
     const coveredUserIds = new Set<string>();
 
