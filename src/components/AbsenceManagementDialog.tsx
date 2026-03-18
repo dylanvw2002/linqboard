@@ -122,6 +122,7 @@ export function AbsenceManagementDialog({
   const [statsCustomPersons, setStatsCustomPersons] = useState<string[]>([]);
   const [showAddStatsPerson, setShowAddStatsPerson] = useState(false);
   const [statsNewName, setStatsNewName] = useState("");
+  const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
 
   // Add record form state
   const [showAddForm, setShowAddForm] = useState(false);
