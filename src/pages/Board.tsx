@@ -4039,7 +4039,15 @@ const Board = () => {
       }}>
         <DialogContent className="max-w-[96vw] sm:max-w-3xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
           <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0 border-b">
-            <DialogTitle>{isTaskEditMode ? t('board.editTask') : t('board.taskDetails')}</DialogTitle>
+            <DialogTitle>{(() => {
+              const taskCol = columns.find(c => c.id === editingTask?.column_id);
+              const isSick = taskCol?.column_type === 'sick_leave';
+              const isVacation = taskCol?.column_type === 'vacation';
+              if (isTaskEditMode) {
+                return isSick ? 'Ziekmelding bewerken' : isVacation ? 'Verlof bewerken' : t('board.editTask');
+              }
+              return isSick ? 'Ziekmelding' : isVacation ? 'Verlof' : t('board.taskDetails');
+            })()}</DialogTitle>
           </DialogHeader>
           <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
             <div className="space-y-3 sm:space-y-4 py-4">
