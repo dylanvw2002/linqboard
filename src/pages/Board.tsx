@@ -4061,7 +4061,7 @@ const Board = () => {
                     {/* Task Title */}
                     <div>
                       <h2 className="text-2xl font-bold text-foreground">{editingTask?.title}</h2>
-                      {taskColumn && (
+                      {taskColumn && !isSimpleColumn && (
                         <p className="text-sm text-muted-foreground mt-1">
                           {t('board.inColumn')}: <span className="font-medium text-foreground">{taskColumn.name}</span>
                         </p>
@@ -4134,8 +4134,8 @@ const Board = () => {
                       </div>
                     )}
                     
-                    {/* History */}
-                    {editingTask && (
+                    {/* History - hide for sick/vacation */}
+                    {editingTask && !isSimpleColumn && (
                       <div className="border-t pt-4">
                         <div className="flex items-center justify-between mb-3">
                           <Label className="text-xs uppercase tracking-wide text-muted-foreground">Geschiedenis</Label>
@@ -4245,7 +4245,7 @@ const Board = () => {
                       <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
                     </div>}
                   
-                  {editingTask && <div className="border-t pt-4">
+                  {editingTask && !isSimpleColumn && <div className="border-t pt-4">
                       <div className="flex items-center justify-between mb-3">
                         <Label>Geschiedenis</Label>
                         <TaskHistoryDialog taskId={editingTask.id} columns={columns} />
