@@ -3379,6 +3379,7 @@ const Board = () => {
                             </div>
                           </DialogContent>
                         </Dialog>
+                        </div>
                       )}
                       
                       {/* Right arrow */}
