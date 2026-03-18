@@ -2235,6 +2235,7 @@ const Board = () => {
       setNewTaskDueDate(undefined);
       setNewTaskAssignees([]);
       setNewTaskChecklistItems([]);
+      setNewTaskHours("8");
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
