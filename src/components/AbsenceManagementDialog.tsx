@@ -334,21 +334,52 @@ export function AbsenceManagementDialog({
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
     if (!isVacation) return [];
-    return vacationSettings.map((s) => {
+    const defaultSchedule = { mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0, sun: 0 };
+    const result: Array<VacationSettings & { usedHours: number; remainingHours: number; weeklyHours: number; member: OrgMember | null | undefined; hasSettings: boolean }> = [];
+    const coveredUserIds = new Set<string>();
+
+    // First add persons with settings
+    vacationSettings.forEach((s) => {
+      if (s.user_id) coveredUserIds.add(s.user_id);
       const personRecords = yearRecords.filter(
         (r) => (r.user_id && r.user_id === s.user_id) || r.person_name === s.person_name
       );
       const usedHours = calcUsedHours(personRecords, s.work_schedule, selectedYear);
       const weeklyHours = DAY_KEYS.reduce((sum, k) => sum + (s.work_schedule[k] || 0), 0);
-      return {
+      result.push({
         ...s,
         usedHours,
         remainingHours: s.total_vacation_hours - usedHours,
         weeklyHours,
         member: s.user_id ? orgMembers.find((m) => m.user_id === s.user_id) : null,
-      };
+        hasSettings: true,
+      });
     });
-  }, [vacationSettings, yearRecords, orgMembers, selectedYear, isVacation]);
+
+    // Add org members without settings as defaults
+    orgMembers.forEach((m) => {
+      if (!coveredUserIds.has(m.user_id)) {
+        const personRecords = yearRecords.filter((r) => r.user_id === m.user_id);
+        const usedHours = calcUsedHours(personRecords, defaultSchedule, selectedYear);
+        result.push({
+          id: `default_${m.user_id}`,
+          organization_id: organizationId,
+          person_name: m.full_name,
+          user_id: m.user_id,
+          total_vacation_hours: 0,
+          work_schedule: defaultSchedule,
+          year: selectedYear,
+          usedHours,
+          remainingHours: 0,
+          weeklyHours: 0,
+          member: m,
+          hasSettings: false,
+        });
+      }
+    });
+
+    return result;
+  }, [vacationSettings, yearRecords, orgMembers, selectedYear, isVacation, organizationId]);
 
   const YearSelector = () => (
     <div className="flex items-center justify-center gap-3">
@@ -482,9 +513,13 @@ export function AbsenceManagementDialog({
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-sm truncate">{b.person_name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {b.weeklyHours}u/week · {b.usedHours}u opgenomen · {b.remainingHours}u over
-                              </p>
+                              {b.hasSettings ? (
+                                <p className="text-xs text-muted-foreground">
+                                  {b.weeklyHours}u/week · {b.usedHours}u opgenomen · {b.remainingHours}u over
+                                </p>
+                              ) : (
+                                <p className="text-xs text-muted-foreground italic">Nog niet ingesteld</p>
+                              )}
                             </div>
                             <div className="flex gap-1">
                               {!isEditing ? (
@@ -493,7 +528,29 @@ export function AbsenceManagementDialog({
                                 </Button>
                               ) : (
                                 <>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600" onClick={() => handleUpdateSettings(b.id)}>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600" onClick={async () => {
+                                    if (!b.hasSettings) {
+                                      // Create settings for this member
+                                      const hours = parseFloat(editHours);
+                                      if (isNaN(hours) || hours < 0) { toast.error("Ongeldige uren"); return; }
+                                      try {
+                                        const { error } = await supabase.from("person_vacation_settings").insert({
+                                          organization_id: organizationId,
+                                          person_name: b.person_name,
+                                          user_id: b.user_id,
+                                          total_vacation_hours: hours,
+                                          work_schedule: editSchedule,
+                                          year: selectedYear,
+                                        } as any);
+                                        if (error) throw error;
+                                        toast.success("Instellingen opgeslagen");
+                                        setEditingSettingsId(null);
+                                        loadVacationSettings();
+                                      } catch (error: any) { toast.error("Fout: " + error.message); }
+                                    } else {
+                                      handleUpdateSettings(b.id);
+                                    }
+                                  }}>
                                     <Check className="h-3.5 w-3.5" />
                                   </Button>
                                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingSettingsId(null)}>
@@ -501,9 +558,11 @@ export function AbsenceManagementDialog({
                                   </Button>
                                 </>
                               )}
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeleteSettings(b.id)}>
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
+                              {b.hasSettings && (
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeleteSettings(b.id)}>
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
                             </div>
                           </div>
 
