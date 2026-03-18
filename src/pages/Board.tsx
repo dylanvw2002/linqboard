@@ -47,6 +47,7 @@ import { Badge } from "@/components/ui/badge";
 import { FixedChatWidget } from "@/components/FixedChatWidget";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AbsenceManagementDialog } from "@/components/AbsenceManagementDialog";
+import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
 interface Column {
   id: string;
   name: string;
