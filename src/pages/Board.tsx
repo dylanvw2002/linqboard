@@ -2259,11 +2259,13 @@ const Board = () => {
       const task = tasks.find(t => t.id === taskId);
       const column = task ? columns.find(c => c.id === task.column_id) : null;
       if (task && column && (column.column_type === 'sick_leave' || column.column_type === 'vacation') && organizationId) {
+        // Set end_date to today instead of deleting, so history is preserved
         await supabase.from("absence_records")
-          .delete()
+          .update({ end_date: format(new Date(), "yyyy-MM-dd") })
           .eq("organization_id", organizationId)
           .eq("person_name", task.title)
-          .eq("absence_type", column.column_type);
+          .eq("absence_type", column.column_type)
+          .is("end_date", null);
       }
 
       const {
