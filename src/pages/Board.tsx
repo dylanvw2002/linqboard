@@ -4224,16 +4224,16 @@ const Board = () => {
                     </div>
                   </div>
                   
-                  {/* Checklist */}
-                  {editingTask && (
+                  {/* Checklist - hide for sick/vacation */}
+                  {editingTask && !isSimpleColumn && (
                     <div className="border-t pt-4">
                       <TaskChecklist taskId={editingTask.id} />
                     </div>
                   )}
                   
-                  {editingTask && <TaskAttachments taskId={editingTask.id} />}
+                  {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} />}
                   
-                  {editingTask && <div className="border-t pt-4">
+                  {editingTask && !isSimpleColumn && <div className="border-t pt-4">
                       <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
                     </div>}
                   
