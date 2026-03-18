@@ -110,6 +110,11 @@ export function AbsenceManagementDialog({
   const [editHours, setEditHours] = useState("");
   const [editSchedule, setEditSchedule] = useState<Record<string, number>>({});
 
+  // Stats custom persons
+  const [statsCustomPersons, setStatsCustomPersons] = useState<string[]>([]);
+  const [showAddStatsPerson, setShowAddStatsPerson] = useState(false);
+  const [statsNewName, setStatsNewName] = useState("");
+
   // Add record form state
   const [showAddForm, setShowAddForm] = useState(false);
   const [personSource, setPersonSource] = useState<"member" | "custom">("member");
@@ -293,12 +298,26 @@ export function AbsenceManagementDialog({
   );
 
   const personStats = useMemo(() => {
-    const stats: Record<string, { name: string; count: number; days: number; avatar_url?: string | null }> = {};
+    const stats: Record<string, { name: string; count: number; days: number; avatar_url?: string | null; isCustom?: boolean }> = {};
+
+    // Add all org members as default entries
+    orgMembers.forEach((m) => {
+      stats[m.user_id] = { name: m.full_name, count: 0, days: 0, avatar_url: m.avatar_url };
+    });
+
+    // Add custom persons
+    statsCustomPersons.forEach((name) => {
+      if (!Object.values(stats).some((s) => s.name === name)) {
+        stats[`custom_${name}`] = { name, count: 0, days: 0, isCustom: true };
+      }
+    });
+
+    // Fill in actual data from records
     yearRecords.forEach((r) => {
       const key = r.user_id || r.person_name;
       if (!stats[key]) {
-        const member = r.user_id ? orgMembers.find((m) => m.user_id === r.user_id) : null;
-        stats[key] = { name: r.person_name, count: 0, days: 0, avatar_url: member?.avatar_url };
+        // Person from records not in org members or custom list
+        stats[key] = { name: r.person_name, count: 0, days: 0 };
       }
       stats[key].count += 1;
       const start = parseISO(r.start_date);
@@ -310,7 +329,7 @@ export function AbsenceManagementDialog({
       stats[key].days += Math.max(0, differenceInCalendarDays(effectiveEnd, effectiveStart) + 1);
     });
     return Object.values(stats).sort((a, b) => b.days - a.days);
-  }, [yearRecords, orgMembers, selectedYear]);
+  }, [yearRecords, orgMembers, selectedYear, statsCustomPersons]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
@@ -521,12 +540,51 @@ export function AbsenceManagementDialog({
               </TabsContent>
             )}
 
-            {/* STATISTICS TAB */}
             <TabsContent value="stats" className="mt-4 space-y-4">
               <YearSelector />
+
+              {/* Add custom person */}
+              {!showAddStatsPerson ? (
+                <Button onClick={() => setShowAddStatsPerson(true)} variant="outline" className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Persoon toevoegen
+                </Button>
+              ) : (
+                <div className="flex gap-2 p-3 bg-muted/50 rounded-xl border">
+                  <Input
+                    value={statsNewName}
+                    onChange={(e) => setStatsNewName(e.target.value)}
+                    placeholder="Naam invoeren"
+                    className="flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && statsNewName.trim()) {
+                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
+                        setStatsNewName("");
+                        setShowAddStatsPerson(false);
+                      }
+                    }}
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      if (statsNewName.trim()) {
+                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
+                        setStatsNewName("");
+                        setShowAddStatsPerson(false);
+                      }
+                    }}
+                  >
+                    Toevoegen
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => { setShowAddStatsPerson(false); setStatsNewName(""); }}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+
               {personStats.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
-                  Geen {typeLabel}registraties in {selectedYear}
+                  Geen personen gevonden
                 </div>
               ) : (
                 <div className="space-y-3">
