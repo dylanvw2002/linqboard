@@ -4060,8 +4060,8 @@ const Board = () => {
                       )}
                     </div>
                     
-                    {/* Badges row */}
-                    <div className="flex flex-wrap gap-2">
+                    {/* Badges row - hide for sick/vacation */}
+                    {!isSimpleColumn && <div className="flex flex-wrap gap-2">
                       {editTaskDueDate && (
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border ${getDeadlineBadgeColor(editTaskDueDate.toISOString())}`}>
                           <CalendarIcon className="h-4 w-4" />
@@ -4073,7 +4073,7 @@ const Board = () => {
                           {getPriorityBadge(editTaskPriority)!.label}
                         </span>
                       )}
-                    </div>
+                    </div>}
                     
                     {/* Description */}
                     {editTaskDescription && (
