@@ -4146,14 +4146,19 @@ const Board = () => {
                     
                     {/* Action buttons */}
                     <div className="flex gap-2 pt-4 border-t">
-                      <Button onClick={() => setIsTaskEditMode(true)} className="flex-1">
+                      {isSimpleColumn && (
+                        <Button onClick={handleDeleteFromDialog} variant="default" className="flex-1 bg-green-600 hover:bg-green-700 text-white">
+                          ✅ {taskColumn?.column_type === 'sick_leave' ? 'Beter melden' : 'Verlof beëindigen'}
+                        </Button>
+                      )}
+                      <Button onClick={() => setIsTaskEditMode(true)} variant={isSimpleColumn ? "outline" : "default"} className={isSimpleColumn ? "" : "flex-1"}>
                         <Pencil className="h-4 w-4 mr-2" />
                         {t('common.edit')}
                       </Button>
-                      <Button onClick={() => setExportDialogOpen(true)} variant="outline">
+                      {!isSimpleColumn && <Button onClick={() => setExportDialogOpen(true)} variant="outline">
                         <Mail className="h-4 w-4 sm:mr-2" />
                         <span className="hidden sm:inline">{t('board.exportTask')}</span>
-                      </Button>
+                      </Button>}
                     </div>
                   </>;
                 }
