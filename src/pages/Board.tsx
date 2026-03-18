@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter, Calendar as CalendarLucide, Clipboard as ClipboardIcon, FileText, Target, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout, BarChart3 } from "lucide-react";
