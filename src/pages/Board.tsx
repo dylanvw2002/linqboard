@@ -3753,32 +3753,44 @@ const Board = () => {
                   </button>
                 )
               ) : (
-                <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
-                  <DialogTrigger asChild>
-                    {editMode ? <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" onClick={e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setDeleteColumnId(column.id);
-                      }}>
-                        <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
-                      </button> : <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
-                        +
-                      </button>}
-                  </DialogTrigger>
-                  <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
-                    <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
-                      <DialogTitle>{column.column_type === 'sick_leave' ? 'Ziek melden' : column.column_type === 'vacation' ? 'Verlof melden' : `${t('board.addNewTask')} - ${column.name}`}</DialogTitle>
-                    </DialogHeader>
-                    <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
-                      <div className="space-y-3 sm:space-y-4 py-2">
-                      <div>
-                        <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
-                        <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
-                      </div>
-                      <div>
-                        <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
-                        <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
-                      </div>
+                <div className="flex gap-1">
+                  {(column.column_type === 'sick_leave' || column.column_type === 'vacation') && organizationId && !editMode && (
+                    <AbsenceManagementDialog
+                      organizationId={organizationId}
+                      absenceType={column.column_type as "sick_leave" | "vacation"}
+                      orgMembers={orgMembers}
+                    >
+                      <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                        <BarChart3 className="h-4 w-4" />
+                      </button>
+                    </AbsenceManagementDialog>
+                  )}
+                  <Dialog open={openDialog === column.id} onOpenChange={open => setOpenDialog(open ? column.id : null)}>
+                    <DialogTrigger asChild>
+                      {editMode ? <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none" onClick={e => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDeleteColumnId(column.id);
+                        }}>
+                          <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
+                        </button> : <button className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+                          +
+                        </button>}
+                    </DialogTrigger>
+                    <DialogContent className="max-w-[96vw] sm:max-w-2xl max-h-[85vh] p-0 flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
+                      <DialogHeader className="px-4 pt-6 sm:px-6 pb-3 shrink-0">
+                        <DialogTitle>{column.column_type === 'sick_leave' ? 'Ziek melden' : column.column_type === 'vacation' ? 'Verlof melden' : `${t('board.addNewTask')} - ${column.name}`}</DialogTitle>
+                      </DialogHeader>
+                      <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
+                        <div className="space-y-3 sm:space-y-4 py-2">
+                        <div>
+                          <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
+                          <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.namePlaceholder') : t('board.titlePlaceholder')} maxLength={200} />
+                        </div>
+                        <div>
+                          <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
+                          <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
+                        </div>
                       {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                         <Label>{t('board.deadline')}</Label>
                         <Popover>
