@@ -652,33 +652,67 @@ export function AbsenceManagementDialog({
                   Geen personen gevonden
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {personStats.map((person) => (
-                    <div key={person.name} className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={person.avatar_url || undefined} />
-                        <AvatarFallback className="text-sm font-bold bg-primary/20 text-primary">
-                          {person.name.split(" ").map((n) => n[0]).join("").toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{person.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {person.count}x {typeLabel} · {person.days} dagen
-                        </p>
-                      </div>
-                      <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
-                          style={{ width: `${Math.min(100, (person.days / 365) * 100)}%` }}
-                        />
-                      </div>
-                      <span className="text-xs font-mono text-muted-foreground w-10 text-right">
-                        {((person.days / 365) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                  <div className="space-y-3">
+                    {personStats.map((person) => {
+                      const personRecords = yearRecords
+                        .filter((record) => record.person_name === person.name)
+                        .sort((a, b) => b.start_date.localeCompare(a.start_date));
+
+                      return (
+                        <div key={person.name} className="space-y-2">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedStatsPerson((current) => current === person.name ? null : person.name)}
+                            className="w-full flex items-center gap-3 p-3 bg-muted/50 rounded-xl text-left hover:bg-muted/70 transition-colors"
+                          >
+                            <Avatar className="h-10 w-10">
+                              <AvatarImage src={person.avatar_url || undefined} />
+                              <AvatarFallback className="text-sm font-bold bg-primary/20 text-primary">
+                                {person.name.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm truncate">{person.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {person.count}x {typeLabel} · {person.days} dagen
+                              </p>
+                            </div>
+                            <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
+                              <div
+                                className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
+                                style={{ width: `${Math.min(100, (person.days / 365) * 100)}%` }}
+                              />
+                            </div>
+                            <span className="text-xs font-mono text-muted-foreground w-10 text-right">
+                              {((person.days / 365) * 100).toFixed(1)}%
+                            </span>
+                          </button>
+
+                          {selectedStatsPerson === person.name && (
+                            <div className="ml-4 pl-4 border-l border-border space-y-2">
+                              {personRecords.length === 0 ? (
+                                <p className="text-xs text-muted-foreground">Geen registraties gevonden</p>
+                              ) : (
+                                personRecords.map((record) => (
+                                  <div key={record.id} className="rounded-lg border bg-muted/30 p-3">
+                                    <p className="text-sm font-medium">
+                                      {format(parseISO(record.start_date), "d MMM yyyy", { locale: nl })}
+                                      {record.end_date
+                                        ? ` — ${format(parseISO(record.end_date), "d MMM yyyy", { locale: nl })}`
+                                        : " — heden"}
+                                    </p>
+                                    {record.notes && (
+                                      <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
+                                    )}
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
               )}
             </TabsContent>
 
