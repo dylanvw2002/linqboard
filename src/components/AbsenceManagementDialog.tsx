@@ -67,8 +67,8 @@ function calcUsedHours(
   let totalHours = 0;
 
   records.forEach((r) => {
-    // If hours is explicitly set, use that directly
-    if (r.hours != null && r.hours > 0) {
+    // If hours is explicitly set AND it's a single-day record, use that directly
+    if (r.hours != null && r.hours > 0 && !r.end_date) {
       totalHours += r.hours;
       return;
     }
