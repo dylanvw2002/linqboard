@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter, Calendar as CalendarLucide, Clipboard as ClipboardIcon, FileText, Target, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout } from "lucide-react";
+import { CalendarIcon, ArrowLeft, Trash2, Pencil, Plus, Upload, X, Image, ZoomIn, ZoomOut, Mail, StickyNote, Clock, Cloud, Calculator, Link, Users, Music, MessageSquare, Trophy, Bell, Filter, Calendar as CalendarLucide, Clipboard as ClipboardIcon, FileText, Target, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout, BarChart3 } from "lucide-react";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 import { nl, enUS, es, de } from "date-fns/locale";
 import { z } from "zod";
