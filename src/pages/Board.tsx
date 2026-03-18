@@ -3340,7 +3340,6 @@ const Board = () => {
                                 <Input type="number" min={0} max={24} step={0.5} value={newTaskHours} onChange={e => setNewTaskHours(e.target.value)} placeholder="8" />
                                 <p className="text-xs text-muted-foreground mt-1">Standaard 8 uur (hele dag)</p>
                               </div>}
-                              </div>
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                                 <Label>{t('board.deadline')}</Label>
                                 <Popover>
