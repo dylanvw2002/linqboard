@@ -4177,8 +4177,8 @@ const Board = () => {
                         </Button>
                       </div>
                     </div>}
-                  <div>
-                    <Label>{isSimpleColumn ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                  {!isSimpleColumn && <div>
+                    <Label>{t('board.deadline')}</Label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !editTaskDueDate && "text-muted-foreground")}>
@@ -4197,7 +4197,7 @@ const Board = () => {
                           </div>}
                       </PopoverContent>
                     </Popover>
-                  </div>
+                  </div>}
                   
                   <div>
                     <Label>{t('board.assignedTo')}</Label>
