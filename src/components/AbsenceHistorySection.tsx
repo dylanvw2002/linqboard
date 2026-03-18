@@ -123,9 +123,6 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
                     <span className="text-xs text-muted-foreground">
                       {workDays} werk{workDays === 1 ? "dag" : "dagen"}
                     </span>
-                    <span className="text-xs text-muted-foreground">
-                      · {displayHours} uur
-                    </span>
                   </div>
                   {record.notes && (
                     <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
