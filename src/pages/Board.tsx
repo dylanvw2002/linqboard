@@ -4212,7 +4212,7 @@ const Board = () => {
                     </Popover>
                   </div>}
                   
-                  <div>
+                  {!isSimpleColumn && <div>
                     <Label>{t('board.assignedTo')}</Label>
                     <div className="space-y-3">
                       {editTaskAssignees.length > 0 && <div className="flex flex-wrap gap-2">
@@ -4235,7 +4235,7 @@ const Board = () => {
                         </div>}
                       <TeamMemberSelect members={orgMembers} selectedMembers={editTaskAssignees} onSelect={handleAddAssignee} placeholder={t('board.addTeamMember')} />
                     </div>
-                  </div>
+                  </div>}
                   
                   {/* Checklist - hide for sick/vacation */}
                   {editingTask && !isSimpleColumn && (
