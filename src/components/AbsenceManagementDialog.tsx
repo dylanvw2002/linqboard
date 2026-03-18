@@ -513,9 +513,13 @@ export function AbsenceManagementDialog({
                             </Avatar>
                             <div className="flex-1 min-w-0">
                               <p className="font-semibold text-sm truncate">{b.person_name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {b.weeklyHours}u/week · {b.usedHours}u opgenomen · {b.remainingHours}u over
-                              </p>
+                              {b.hasSettings ? (
+                                <p className="text-xs text-muted-foreground">
+                                  {b.weeklyHours}u/week · {b.usedHours}u opgenomen · {b.remainingHours}u over
+                                </p>
+                              ) : (
+                                <p className="text-xs text-muted-foreground italic">Nog niet ingesteld</p>
+                              )}
                             </div>
                             <div className="flex gap-1">
                               {!isEditing ? (
@@ -524,7 +528,29 @@ export function AbsenceManagementDialog({
                                 </Button>
                               ) : (
                                 <>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600" onClick={() => handleUpdateSettings(b.id)}>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600" onClick={async () => {
+                                    if (!b.hasSettings) {
+                                      // Create settings for this member
+                                      const hours = parseFloat(editHours);
+                                      if (isNaN(hours) || hours < 0) { toast.error("Ongeldige uren"); return; }
+                                      try {
+                                        const { error } = await supabase.from("person_vacation_settings").insert({
+                                          organization_id: organizationId,
+                                          person_name: b.person_name,
+                                          user_id: b.user_id,
+                                          total_vacation_hours: hours,
+                                          work_schedule: editSchedule,
+                                          year: selectedYear,
+                                        } as any);
+                                        if (error) throw error;
+                                        toast.success("Instellingen opgeslagen");
+                                        setEditingSettingsId(null);
+                                        loadVacationSettings();
+                                      } catch (error: any) { toast.error("Fout: " + error.message); }
+                                    } else {
+                                      handleUpdateSettings(b.id);
+                                    }
+                                  }}>
                                     <Check className="h-3.5 w-3.5" />
                                   </Button>
                                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingSettingsId(null)}>
@@ -532,9 +558,11 @@ export function AbsenceManagementDialog({
                                   </Button>
                                 </>
                               )}
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeleteSettings(b.id)}>
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </Button>
+                              {b.hasSettings && (
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeleteSettings(b.id)}>
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
                             </div>
                           </div>
 
