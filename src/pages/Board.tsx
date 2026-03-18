@@ -4061,7 +4061,7 @@ const Board = () => {
                     {/* Task Title */}
                     <div>
                       <h2 className="text-2xl font-bold text-foreground">{editingTask?.title}</h2>
-                      {taskColumn && (
+                      {taskColumn && !isSimpleColumn && (
                         <p className="text-sm text-muted-foreground mt-1">
                           {t('board.inColumn')}: <span className="font-medium text-foreground">{taskColumn.name}</span>
                         </p>
