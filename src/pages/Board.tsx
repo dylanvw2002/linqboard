@@ -3335,6 +3335,12 @@ const Board = () => {
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
                                 <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                               </div>
+                              {(column.column_type === 'vacation') && <div>
+                                <Label>Aantal uren</Label>
+                                <Input type="number" min={0} max={24} step={0.5} value={newTaskHours} onChange={e => setNewTaskHours(e.target.value)} placeholder="8" />
+                                <p className="text-xs text-muted-foreground mt-1">Standaard 8 uur (hele dag)</p>
+                              </div>}
+                              </div>
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                                 <Label>{t('board.deadline')}</Label>
                                 <Popover>
