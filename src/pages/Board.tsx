@@ -4093,8 +4093,8 @@ const Board = () => {
                       </div>
                     )}
                     
-                    {/* Assignees */}
-                    {editTaskAssignees.length > 0 && (
+                    {/* Assignees - hide for sick/vacation */}
+                    {!isSimpleColumn && editTaskAssignees.length > 0 && (
                       <div>
                         <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-3 block">{t('board.assignedTo')}</Label>
                         <div className="flex flex-wrap gap-2">
