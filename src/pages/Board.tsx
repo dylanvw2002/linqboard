@@ -3277,8 +3277,8 @@ const Board = () => {
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
                                 <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                               </div>
-                              <div>
-                                <Label>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.expectedReturn') : t('board.deadline')}</Label>
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
+                                <Label>{t('board.deadline')}</Label>
                                 <Popover>
                                   <PopoverTrigger asChild>
                                     <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskDueDate && "text-muted-foreground")}>
@@ -3297,7 +3297,7 @@ const Board = () => {
                                       </div>}
                                   </PopoverContent>
                                 </Popover>
-                              </div>
+                              </div>}
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                                 <Label>{t('board.priority')}</Label>
                                 <div className="flex gap-2">
