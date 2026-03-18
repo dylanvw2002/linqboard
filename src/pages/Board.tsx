@@ -3337,11 +3337,30 @@ const Board = () => {
                                 <Label htmlFor={`description-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reason') : t('common.description')}</Label>
                                 <Textarea id={`description-${column.id}`} value={newTaskDescription} onChange={e => setNewTaskDescription(e.target.value)} placeholder={column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} />
                               </div>
-                              {(column.column_type === 'vacation') && <div>
-                                <Label>Aantal uren</Label>
-                                <Input type="number" min={0} max={24} step={0.5} value={newTaskHours} onChange={e => setNewTaskHours(e.target.value)} placeholder="8" />
-                                <p className="text-xs text-muted-foreground mt-1">Standaard 8 uur (hele dag)</p>
-                              </div>}
+                              {(column.column_type === 'vacation') && <>
+                                <div>
+                                  <Label>Aantal uren</Label>
+                                  <Input type="number" min={0} max={24} step={0.5} value={newTaskHours} onChange={e => setNewTaskHours(e.target.value)} placeholder="8" />
+                                  <p className="text-xs text-muted-foreground mt-1">Standaard 8 uur (hele dag)</p>
+                                </div>
+                                <div>
+                                  <Label>Tot en met</Label>
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !newTaskEndDate && "text-muted-foreground")}>
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {newTaskEndDate ? format(newTaskEndDate, "PPP", { locale: getDateLocale() }) : "Selecteer einddatum (optioneel)"}
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                      <Calendar mode="single" selected={newTaskEndDate} onSelect={setNewTaskEndDate} initialFocus className="pointer-events-auto" />
+                                      {newTaskEndDate && <div className="p-3 border-t">
+                                        <Button variant="outline" className="w-full" onClick={() => setNewTaskEndDate(undefined)}>Einddatum verwijderen</Button>
+                                      </div>}
+                                    </PopoverContent>
+                                  </Popover>
+                                </div>
+                              </>}
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div>
                                 <Label>{t('board.deadline')}</Label>
                                 <Popover>
