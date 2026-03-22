@@ -4891,6 +4891,8 @@ const Board = () => {
           </div>
         );
       })()}
+
+      {board && <TaskArchiveDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog} boardId={board.id} />}
     </div>;
 };
 export default Board;
