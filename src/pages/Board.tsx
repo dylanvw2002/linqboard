@@ -1092,13 +1092,57 @@ const Board = () => {
     
     try {
       const taskIds = columnTasks.map(t => t.id);
-      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Get column name for archive
+      const colName = columns.find(c => c.id === clearCompletedColumnId)?.name || "Afgerond";
+
+      // Fetch assignee names and labels for each task
+      const { data: assigneeData } = await supabase.from("task_assignees").select("task_id, user_id").in("task_id", taskIds);
+      const { data: labelData } = await supabase.from("task_labels").select("task_id, label").in("task_id", taskIds);
+      const { data: timeData } = await supabase.from("time_entries").select("task_id, duration_minutes").in("task_id", taskIds);
+
+      // Map assignee user_ids to names
+      const assigneeUserIds = [...new Set((assigneeData || []).map(a => a.user_id))];
+      const profileMap: Record<string, string> = {};
+      if (assigneeUserIds.length > 0) {
+        const { data: profiles } = await supabase.from("profiles").select("user_id, full_name").in("user_id", assigneeUserIds);
+        (profiles || []).forEach(p => { profileMap[p.user_id] = p.full_name; });
+      }
+
+      // Build archive records
+      const archiveRecords = columnTasks.map(task => {
+        const taskAssignees = (assigneeData || []).filter(a => a.task_id === task.id).map(a => profileMap[a.user_id] || "Onbekend");
+        const taskLabels = (labelData || []).filter(l => l.task_id === task.id).map(l => l.label);
+        const totalMinutes = (timeData || []).filter(te => te.task_id === task.id).reduce((sum, te) => sum + (te.duration_minutes || 0), 0);
+        return {
+          original_task_id: task.id,
+          board_id: boardId,
+          column_name: colName,
+          title: task.title,
+          description: task.description,
+          priority: task.priority,
+          due_date: task.due_date,
+          assignee_names: taskAssignees.length > 0 ? taskAssignees : null,
+          labels: taskLabels.length > 0 ? taskLabels : null,
+          time_logged_minutes: totalMinutes,
+          archived_by: session.user.id,
+          organization_id: organizationId,
+        };
+      });
+
+      // Insert archive records
+      await supabase.from("archived_tasks").insert(archiveRecords as any);
+
       // Delete related records first
       await supabase.from('task_assignees').delete().in('task_id', taskIds);
       await supabase.from('task_labels').delete().in('task_id', taskIds);
       await supabase.from('task_attachments').delete().in('task_id', taskIds);
       await supabase.from('task_reminders').delete().in('task_id', taskIds);
       await supabase.from('comments').delete().in('task_id', taskIds);
+      await supabase.from('time_entries').delete().in('task_id', taskIds);
+      await supabase.from('task_dependencies').delete().in('task_id', taskIds);
       
       // Delete the tasks
       const { error } = await supabase.from('tasks').delete().in('id', taskIds);
