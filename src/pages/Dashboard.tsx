@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { LogOut, Loader2, Plus, ArrowRight, Trash2, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout, ChevronLeft, ChevronRight } from "lucide-react";
+import { LogOut, Loader2, Plus, ArrowRight, Trash2, User, Crown, FileText, Pencil, Share2, Users, Calendar, Clipboard, Target, Clock, CheckSquare, Archive, CheckCircle2, Zap, Paperclip, Layout, ChevronLeft, ChevronRight, BarChart3 } from "lucide-react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
