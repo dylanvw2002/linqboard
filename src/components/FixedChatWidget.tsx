@@ -357,18 +357,18 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
     if (!currentUserId) return;
     const existing = dmReactions[messageId]?.find(r => r.emoji === emoji && r.users.includes(currentUserId));
     if (existing) {
-      await supabase.from("message_reactions").delete()
+      await (supabase as any).from("message_reactions").delete()
         .eq("message_type", "direct_message")
         .eq("message_id", messageId)
         .eq("emoji", emoji)
         .eq("user_id", currentUserId);
     } else {
-      await supabase.from("message_reactions").insert({
+      await (supabase as any).from("message_reactions").insert({
         message_type: "direct_message",
         message_id: messageId,
         emoji,
         user_id: currentUserId,
-      } as any);
+      });
     }
     // Reload reactions
     if (dmMessages.length > 0) loadDmReactions(dmMessages.map(m => m.id));
