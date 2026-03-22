@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Archive, Trash2, Clock, Calendar, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Archive, Clock, Calendar, User, Search, History } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { toast } from "sonner";
+import { TaskHistory } from "./TaskHistory";
 
 interface ArchivedTask {
   id: string;
@@ -27,14 +27,21 @@ interface TaskArchiveDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   boardId: string;
+  columns?: Array<{ id: string; name: string }>;
 }
 
-export function TaskArchiveDialog({ open, onOpenChange, boardId }: TaskArchiveDialogProps) {
+export function TaskArchiveDialog({ open, onOpenChange, boardId, columns = [] }: TaskArchiveDialogProps) {
   const [archivedTasks, setArchivedTasks] = useState<ArchivedTask[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedTask, setSelectedTask] = useState<ArchivedTask | null>(null);
 
   useEffect(() => {
-    if (open) fetchArchived();
+    if (open) {
+      fetchArchived();
+      setSelectedTask(null);
+      setSearch("");
+    }
   }, [open, boardId]);
 
   const fetchArchived = async () => {
@@ -46,20 +53,6 @@ export function TaskArchiveDialog({ open, onOpenChange, boardId }: TaskArchiveDi
       .order("archived_at", { ascending: false });
     if (data) setArchivedTasks(data as ArchivedTask[]);
     setLoading(false);
-  };
-
-  const deleteArchived = async (id: string) => {
-    await supabase.from("archived_tasks").delete().eq("id", id);
-    setArchivedTasks(prev => prev.filter(t => t.id !== id));
-    toast.success("Archieftaak verwijderd");
-  };
-
-  const clearAll = async () => {
-    const ids = archivedTasks.map(t => t.id);
-    if (ids.length === 0) return;
-    await supabase.from("archived_tasks").delete().in("id", ids);
-    setArchivedTasks([]);
-    toast.success("Archief geleegd");
   };
 
   const formatDuration = (mins: number) => {
@@ -75,85 +68,163 @@ export function TaskArchiveDialog({ open, onOpenChange, boardId }: TaskArchiveDi
     return "secondary";
   };
 
+  const filtered = archivedTasks.filter(t => {
+    if (!search.trim()) return true;
+    const q = search.toLowerCase();
+    return (
+      t.title.toLowerCase().includes(q) ||
+      t.description?.toLowerCase().includes(q) ||
+      t.column_name.toLowerCase().includes(q) ||
+      t.assignee_names?.some(n => n.toLowerCase().includes(q)) ||
+      t.labels?.some(l => l.toLowerCase().includes(q))
+    );
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Archive className="h-5 w-5" />
-            Takenarchief
+            {selectedTask ? (
+              <span className="flex items-center gap-2">
+                <button onClick={() => setSelectedTask(null)} className="text-muted-foreground hover:text-foreground text-sm">
+                  ← Archief
+                </button>
+                <span className="text-muted-foreground">/</span>
+                <span className="truncate">{selectedTask.title}</span>
+              </span>
+            ) : (
+              "Takenarchief"
+            )}
           </DialogTitle>
         </DialogHeader>
 
-        {archivedTasks.length > 0 && (
-          <div className="flex justify-end">
-            <Button variant="outline" size="sm" onClick={clearAll} className="text-destructive">
-              <Trash2 className="h-3 w-3 mr-1" />
-              Archief legen
-            </Button>
-          </div>
-        )}
-
-        <ScrollArea className="max-h-[60vh]">
-          {loading ? (
-            <p className="text-center text-muted-foreground py-8">Laden...</p>
-          ) : archivedTasks.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">Geen gearchiveerde taken</p>
-          ) : (
-            <div className="space-y-2">
-              {archivedTasks.map(task => (
-                <div key={task.id} className="border rounded-lg p-3 bg-muted/30 space-y-1.5">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-sm truncate">{task.title}</h4>
-                      {task.description && (
-                        <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{task.description}</p>
-                      )}
-                    </div>
-                    <button onClick={() => deleteArchived(task.id)} className="text-muted-foreground hover:text-destructive shrink-0">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5 items-center text-xs">
-                    <Badge variant="outline" className="text-[10px]">{task.column_name}</Badge>
-                    {task.priority && (
-                      <Badge variant={priorityColor(task.priority) as any} className="text-[10px]">{task.priority}</Badge>
-                    )}
-                    {task.labels?.map(l => (
-                      <Badge key={l} variant="secondary" className="text-[10px]">{l}</Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      Gearchiveerd: {format(new Date(task.archived_at), "dd MMM yyyy HH:mm", { locale: nl })}
-                    </span>
-                    {task.due_date && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        Deadline: {format(new Date(task.due_date), "dd MMM yyyy", { locale: nl })}
-                      </span>
-                    )}
-                    {formatDuration(task.time_logged_minutes) && (
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {formatDuration(task.time_logged_minutes)}
-                      </span>
-                    )}
-                    {task.assignee_names && task.assignee_names.length > 0 && (
-                      <span className="flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        {task.assignee_names.join(", ")}
-                      </span>
-                    )}
-                  </div>
+        {selectedTask ? (
+          <ScrollArea className="max-h-[60vh]">
+            <div className="space-y-4">
+              {/* Task details */}
+              <div className="border rounded-lg p-4 bg-muted/30 space-y-3">
+                <h3 className="font-semibold">{selectedTask.title}</h3>
+                {selectedTask.description && (
+                  <p className="text-sm text-muted-foreground">{selectedTask.description}</p>
+                )}
+                <div className="flex flex-wrap gap-1.5 items-center">
+                  <Badge variant="outline">{selectedTask.column_name}</Badge>
+                  {selectedTask.priority && (
+                    <Badge variant={priorityColor(selectedTask.priority) as any}>{selectedTask.priority}</Badge>
+                  )}
+                  {selectedTask.labels?.map(l => (
+                    <Badge key={l} variant="secondary">{l}</Badge>
+                  ))}
                 </div>
-              ))}
+                <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    Gearchiveerd: {format(new Date(selectedTask.archived_at), "dd MMM yyyy HH:mm", { locale: nl })}
+                  </span>
+                  {selectedTask.due_date && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      Deadline: {format(new Date(selectedTask.due_date), "dd MMM yyyy", { locale: nl })}
+                    </span>
+                  )}
+                  {formatDuration(selectedTask.time_logged_minutes) && (
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      Gelogde tijd: {formatDuration(selectedTask.time_logged_minutes)}
+                    </span>
+                  )}
+                  {selectedTask.assignee_names && selectedTask.assignee_names.length > 0 && (
+                    <span className="flex items-center gap-1">
+                      <User className="h-3 w-3" />
+                      {selectedTask.assignee_names.join(", ")}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Task history */}
+              <div>
+                <h4 className="font-medium text-sm flex items-center gap-1.5 mb-2">
+                  <History className="h-4 w-4" />
+                  Geschiedenis
+                </h4>
+                <TaskHistory taskId={selectedTask.original_task_id} columns={columns} />
+              </div>
             </div>
-          )}
-        </ScrollArea>
+          </ScrollArea>
+        ) : (
+          <>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Zoek in archief..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            <ScrollArea className="max-h-[55vh]">
+              {loading ? (
+                <p className="text-center text-muted-foreground py-8">Laden...</p>
+              ) : filtered.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">
+                  {search ? "Geen resultaten gevonden" : "Geen gearchiveerde taken"}
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {filtered.map(task => (
+                    <button
+                      key={task.id}
+                      onClick={() => setSelectedTask(task)}
+                      className="w-full text-left border rounded-lg p-3 bg-muted/30 space-y-1.5 hover:bg-muted/50 transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-sm truncate">{task.title}</h4>
+                          {task.description && (
+                            <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{task.description}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 items-center text-xs">
+                        <Badge variant="outline" className="text-[10px]">{task.column_name}</Badge>
+                        {task.priority && (
+                          <Badge variant={priorityColor(task.priority) as any} className="text-[10px]">{task.priority}</Badge>
+                        )}
+                        {task.labels?.map(l => (
+                          <Badge key={l} variant="secondary" className="text-[10px]">{l}</Badge>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {format(new Date(task.archived_at), "dd MMM yyyy", { locale: nl })}
+                        </span>
+                        {formatDuration(task.time_logged_minutes) && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {formatDuration(task.time_logged_minutes)}
+                          </span>
+                        )}
+                        {task.assignee_names && task.assignee_names.length > 0 && (
+                          <span className="flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {task.assignee_names.join(", ")}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
