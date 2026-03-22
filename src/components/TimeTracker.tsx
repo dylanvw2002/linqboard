@@ -135,21 +135,19 @@ export function TimeTracker({ taskId, isEditMode }: TimeTrackerProps) {
       </div>
 
       {/* Timer button */}
-      {isEditMode && (
-        <div className="flex gap-2">
-          {activeEntry ? (
-            <Button onClick={stopTimer} variant="destructive" size="sm" className="flex-1">
-              <Square className="h-3 w-3 mr-1" />
-              Stop ({formatDuration(elapsed)})
-            </Button>
-          ) : (
-            <Button onClick={startTimer} size="sm" className="flex-1">
-              <Play className="h-3 w-3 mr-1" />
-              Start timer
-            </Button>
-          )}
-        </div>
-      )}
+      <div className="flex gap-2">
+        {activeEntry ? (
+          <Button onClick={stopTimer} variant="destructive" size="sm" className="flex-1">
+            <Square className="h-3 w-3 mr-1" />
+            Stop ({formatDuration(elapsed)})
+          </Button>
+        ) : (
+          <Button onClick={startTimer} size="sm" className="flex-1">
+            <Play className="h-3 w-3 mr-1" />
+            Start timer
+          </Button>
+        )}
+      </div>
 
       {/* Manual entry */}
       {isEditMode && !activeEntry && (
