@@ -1118,7 +1118,7 @@ const Board = () => {
         const totalMinutes = (timeData || []).filter(te => te.task_id === task.id).reduce((sum, te) => sum + (te.duration_minutes || 0), 0);
         return {
           original_task_id: task.id,
-          board_id: boardId,
+          board_id: board?.id || "",
           column_name: colName,
           title: task.title,
           description: task.description,
