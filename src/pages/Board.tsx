@@ -2209,8 +2209,12 @@ const Board = () => {
         description: validation.data.description || null,
         priority: newTaskPriority,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
-        position: maxPosition + 1
-      }).select().single();
+        position: maxPosition + 1,
+        recurrence_pattern: newTaskRecurrencePattern,
+        recurrence_interval: newTaskRecurrencePattern ? newTaskRecurrenceInterval : 1,
+        recurrence_end_date: newTaskRecurrenceEndDate ? format(newTaskRecurrenceEndDate, "yyyy-MM-dd") : null,
+        is_recurring_template: !!newTaskRecurrencePattern,
+      } as any).select().single();
       if (error) throw error;
       
       // Add assignees if any were selected
