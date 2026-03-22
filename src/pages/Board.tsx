@@ -2270,6 +2270,9 @@ const Board = () => {
       setNewTaskChecklistItems([]);
       setNewTaskHours("8");
       setNewTaskEndDate(undefined);
+      setNewTaskRecurrencePattern(null);
+      setNewTaskRecurrenceInterval(1);
+      setNewTaskRecurrenceEndDate(undefined);
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
