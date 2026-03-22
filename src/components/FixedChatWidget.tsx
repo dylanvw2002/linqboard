@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Bot, User, Trash2, Minimize2 } from "lucide-react";
+import { Send, MessageCircle, User, Trash2, Minimize2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
