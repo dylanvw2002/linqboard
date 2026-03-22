@@ -1238,6 +1238,7 @@ const Board = () => {
     fetchBoardData();
     fetchOrgMembers();
     fetchOrgMembersWithEmails();
+    fetchManualPersonNames();
     fetchUserPlan();
     checkBackgroundPermission();
   }, [organizationId, isDemo, t]);
