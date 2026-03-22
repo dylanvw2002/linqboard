@@ -51,6 +51,7 @@ import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
 import { RecurrenceSelect } from "@/components/RecurrenceSelect";
 import { TimeTracker } from "@/components/TimeTracker";
 import { TaskDependencies } from "@/components/TaskDependencies";
+import { TaskArchiveDialog } from "@/components/TaskArchiveDialog";
 interface Column {
   id: string;
   name: string;
