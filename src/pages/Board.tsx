@@ -3348,9 +3348,13 @@ const Board = () => {
                                       <SelectValue placeholder="Selecteer persoon" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {orgMembers.map(m => (
-                                        <SelectItem key={m.user_id} value={m.full_name}>{m.full_name}</SelectItem>
-                                      ))}
+                                      {(() => {
+                                        const memberNames = orgMembers.map(m => m.full_name);
+                                        const allNames = [...new Set([...memberNames, ...manualPersonNames])].sort();
+                                        return allNames.map(name => (
+                                          <SelectItem key={name} value={name}>{name}</SelectItem>
+                                        ));
+                                      })()}
                                     </SelectContent>
                                   </Select>
                                 ) : (
