@@ -166,7 +166,7 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   // Load reactions for DM messages
   const loadDmReactions = useCallback(async (messageIds: string[]) => {
     if (messageIds.length === 0) return;
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from("message_reactions")
       .select("*")
       .eq("message_type", "direct_message")
