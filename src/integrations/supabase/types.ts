@@ -905,6 +905,45 @@ export type Database = {
           },
         ]
       }
+      task_dependencies: {
+        Row: {
+          created_at: string
+          dependency_type: string
+          depends_on_task_id: string
+          id: string
+          task_id: string
+        }
+        Insert: {
+          created_at?: string
+          dependency_type?: string
+          depends_on_task_id: string
+          id?: string
+          task_id: string
+        }
+        Update: {
+          created_at?: string
+          dependency_type?: string
+          depends_on_task_id?: string
+          id?: string
+          task_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_dependencies_depends_on_task_id_fkey"
+            columns: ["depends_on_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_dependencies_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_history: {
         Row: {
           action: string
@@ -1012,8 +1051,13 @@ export type Database = {
           description: string | null
           due_date: string | null
           id: string
+          is_recurring_template: boolean | null
           position: number
           priority: Database["public"]["Enums"]["task_priority"] | null
+          recurrence_end_date: string | null
+          recurrence_interval: number | null
+          recurrence_pattern: string | null
+          recurring_parent_id: string | null
           title: string
           updated_at: string
         }
@@ -1023,8 +1067,13 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          is_recurring_template?: boolean | null
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"] | null
+          recurrence_end_date?: string | null
+          recurrence_interval?: number | null
+          recurrence_pattern?: string | null
+          recurring_parent_id?: string | null
           title: string
           updated_at?: string
         }
@@ -1034,8 +1083,13 @@ export type Database = {
           description?: string | null
           due_date?: string | null
           id?: string
+          is_recurring_template?: boolean | null
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"] | null
+          recurrence_end_date?: string | null
+          recurrence_interval?: number | null
+          recurrence_pattern?: string | null
+          recurring_parent_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -1045,6 +1099,54 @@ export type Database = {
             columns: ["column_id"]
             isOneToOne: false
             referencedRelation: "columns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_recurring_parent_id_fkey"
+            columns: ["recurring_parent_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_entries: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          end_time: string | null
+          id: string
+          start_time: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
