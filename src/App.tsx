@@ -20,6 +20,7 @@ import SubscriptionFailed from "./pages/SubscriptionFailed";
 import InvoicePreview from "./pages/InvoicePreview";
 import NotFound from "./pages/NotFound";
 import Agenda from "./pages/Agenda";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/subscription-failed" element={<SubscriptionFailed />} />
             <Route path="/invoice-preview" element={<InvoicePreview />} />
             <Route path="/agenda" element={<Agenda />} />
+            <Route path="/reports" element={<Reports />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

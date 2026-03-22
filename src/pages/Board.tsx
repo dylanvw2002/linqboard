@@ -48,6 +48,9 @@ import { FixedChatWidget } from "@/components/FixedChatWidget";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AbsenceManagementDialog } from "@/components/AbsenceManagementDialog";
 import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
+import { RecurrenceSelect } from "@/components/RecurrenceSelect";
+import { TimeTracker } from "@/components/TimeTracker";
+import { TaskDependencies } from "@/components/TaskDependencies";
 interface Column {
   id: string;
   name: string;
@@ -570,6 +573,9 @@ const Board = () => {
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [newTaskChecklistItems, setNewTaskChecklistItems] = useState<NewChecklistItem[]>([]);
+  const [newTaskRecurrencePattern, setNewTaskRecurrencePattern] = useState<string | null>(null);
+  const [newTaskRecurrenceInterval, setNewTaskRecurrenceInterval] = useState(1);
+  const [newTaskRecurrenceEndDate, setNewTaskRecurrenceEndDate] = useState<Date | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isTaskEditMode, setIsTaskEditMode] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState("");
@@ -2203,8 +2209,12 @@ const Board = () => {
         description: validation.data.description || null,
         priority: newTaskPriority,
         due_date: newTaskDueDate ? newTaskDueDate.toISOString() : null,
-        position: maxPosition + 1
-      }).select().single();
+        position: maxPosition + 1,
+        recurrence_pattern: newTaskRecurrencePattern,
+        recurrence_interval: newTaskRecurrencePattern ? newTaskRecurrenceInterval : 1,
+        recurrence_end_date: newTaskRecurrenceEndDate ? format(newTaskRecurrenceEndDate, "yyyy-MM-dd") : null,
+        is_recurring_template: !!newTaskRecurrencePattern,
+      } as any).select().single();
       if (error) throw error;
       
       // Add assignees if any were selected
@@ -2260,6 +2270,9 @@ const Board = () => {
       setNewTaskChecklistItems([]);
       setNewTaskHours("8");
       setNewTaskEndDate(undefined);
+      setNewTaskRecurrencePattern(null);
+      setNewTaskRecurrenceInterval(1);
+      setNewTaskRecurrenceEndDate(undefined);
       await fetchBoardData();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
@@ -3463,6 +3476,18 @@ const Board = () => {
                                 </div>
                               </div>}
                               
+                              {/* Recurrence - hide for sick/vacation */}
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
+                                <RecurrenceSelect
+                                  pattern={newTaskRecurrencePattern}
+                                  interval={newTaskRecurrenceInterval}
+                                  endDate={newTaskRecurrenceEndDate}
+                                  onPatternChange={setNewTaskRecurrencePattern}
+                                  onIntervalChange={setNewTaskRecurrenceInterval}
+                                  onEndDateChange={setNewTaskRecurrenceEndDate}
+                                />
+                              </div>}
+                              
                               {/* Checklist - hide for sick/vacation */}
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
                                 <TaskChecklistCreate 
@@ -4005,6 +4030,18 @@ const Board = () => {
                         </div>
                       </div>}
                       
+                      {/* Recurrence - hide for sick/vacation */}
+                      {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
+                        <RecurrenceSelect
+                          pattern={newTaskRecurrencePattern}
+                          interval={newTaskRecurrenceInterval}
+                          endDate={newTaskRecurrenceEndDate}
+                          onPatternChange={setNewTaskRecurrencePattern}
+                          onIntervalChange={setNewTaskRecurrenceInterval}
+                          onEndDateChange={setNewTaskRecurrenceEndDate}
+                        />
+                      </div>}
+                      
                       {/* Checklist - hide for sick/vacation */}
                       {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
                         <TaskChecklistCreate 
@@ -4294,6 +4331,20 @@ const Board = () => {
                     {/* Attachments */}
                     {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} readOnly />}
                     
+                    {/* Time Tracker - view mode */}
+                    {editingTask && !isSimpleColumn && (
+                      <div className="border-t pt-4">
+                        <TimeTracker taskId={editingTask.id} isEditMode={false} />
+                      </div>
+                    )}
+                    
+                    {/* Dependencies - view mode */}
+                    {editingTask && !isSimpleColumn && (
+                      <div className="border-t pt-4">
+                        <TaskDependencies taskId={editingTask.id} allTasks={tasks} isEditMode={false} />
+                      </div>
+                    )}
+                    
                     {/* Reminders - hide for sick/vacation */}
                     {editingTask && !isSimpleColumn && (
                       <div className="border-t pt-4">
@@ -4421,6 +4472,20 @@ const Board = () => {
                   )}
                   
                   {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} />}
+                  
+                  {/* Time Tracker - edit mode */}
+                  {editingTask && !isSimpleColumn && (
+                    <div className="border-t pt-4">
+                      <TimeTracker taskId={editingTask.id} isEditMode={true} />
+                    </div>
+                  )}
+                  
+                  {/* Dependencies - edit mode */}
+                  {editingTask && !isSimpleColumn && (
+                    <div className="border-t pt-4">
+                      <TaskDependencies taskId={editingTask.id} allTasks={tasks} isEditMode={true} />
+                    </div>
+                  )}
                   
                   {editingTask && !isSimpleColumn && <div className="border-t pt-4">
                       <TaskReminders taskId={editingTask.id} dueDate={editTaskDueDate?.toISOString() || null} />
