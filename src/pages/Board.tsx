@@ -4892,7 +4892,7 @@ const Board = () => {
         );
       })()}
 
-      {board && <TaskArchiveDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog} boardId={board.id} />}
+      {board && <TaskArchiveDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog} boardId={board.id} columns={columns} />}
     </div>;
 };
 export default Board;
