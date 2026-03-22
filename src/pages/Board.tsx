@@ -577,6 +577,7 @@ const Board = () => {
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
   const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [orgMembers, setOrgMembers] = useState<Assignee[]>([]);
+  const [manualPersonNames, setManualPersonNames] = useState<string[]>([]);
   const [editTaskAssignees, setEditTaskAssignees] = useState<string[]>([]);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
