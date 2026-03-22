@@ -639,6 +639,7 @@ const Board = () => {
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [clearCompletedColumnId, setClearCompletedColumnId] = useState<string | null>(null);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<any | null>(null);
   const [widgetDragOffset, setWidgetDragOffset] = useState({
     x: 0,
