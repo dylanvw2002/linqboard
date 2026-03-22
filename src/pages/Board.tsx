@@ -51,6 +51,7 @@ import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
 import { RecurrenceSelect } from "@/components/RecurrenceSelect";
 import { TimeTracker } from "@/components/TimeTracker";
 import { TaskDependencies } from "@/components/TaskDependencies";
+import { TaskArchiveDialog } from "@/components/TaskArchiveDialog";
 interface Column {
   id: string;
   name: string;
@@ -638,6 +639,7 @@ const Board = () => {
   } | null>(null);
   const [deleteColumnId, setDeleteColumnId] = useState<string | null>(null);
   const [clearCompletedColumnId, setClearCompletedColumnId] = useState<string | null>(null);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
   const [draggedWidget, setDraggedWidget] = useState<any | null>(null);
   const [widgetDragOffset, setWidgetDragOffset] = useState({
     x: 0,
@@ -1090,13 +1092,57 @@ const Board = () => {
     
     try {
       const taskIds = columnTasks.map(t => t.id);
-      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Get column name for archive
+      const colName = columns.find(c => c.id === clearCompletedColumnId)?.name || "Afgerond";
+
+      // Fetch assignee names and labels for each task
+      const { data: assigneeData } = await supabase.from("task_assignees").select("task_id, user_id").in("task_id", taskIds);
+      const { data: labelData } = await supabase.from("task_labels").select("task_id, label").in("task_id", taskIds);
+      const { data: timeData } = await supabase.from("time_entries").select("task_id, duration_minutes").in("task_id", taskIds);
+
+      // Map assignee user_ids to names
+      const assigneeUserIds = [...new Set((assigneeData || []).map(a => a.user_id))];
+      const profileMap: Record<string, string> = {};
+      if (assigneeUserIds.length > 0) {
+        const { data: profiles } = await supabase.from("profiles").select("user_id, full_name").in("user_id", assigneeUserIds);
+        (profiles || []).forEach(p => { profileMap[p.user_id] = p.full_name; });
+      }
+
+      // Build archive records
+      const archiveRecords = columnTasks.map(task => {
+        const taskAssignees = (assigneeData || []).filter(a => a.task_id === task.id).map(a => profileMap[a.user_id] || "Onbekend");
+        const taskLabels = (labelData || []).filter(l => l.task_id === task.id).map(l => l.label);
+        const totalMinutes = (timeData || []).filter(te => te.task_id === task.id).reduce((sum, te) => sum + (te.duration_minutes || 0), 0);
+        return {
+          original_task_id: task.id,
+          board_id: board?.id || "",
+          column_name: colName,
+          title: task.title,
+          description: task.description,
+          priority: task.priority,
+          due_date: task.due_date,
+          assignee_names: taskAssignees.length > 0 ? taskAssignees : null,
+          labels: taskLabels.length > 0 ? taskLabels : null,
+          time_logged_minutes: totalMinutes,
+          archived_by: session.user.id,
+          organization_id: organizationId,
+        };
+      });
+
+      // Insert archive records
+      await supabase.from("archived_tasks").insert(archiveRecords as any);
+
       // Delete related records first
       await supabase.from('task_assignees').delete().in('task_id', taskIds);
       await supabase.from('task_labels').delete().in('task_id', taskIds);
       await supabase.from('task_attachments').delete().in('task_id', taskIds);
       await supabase.from('task_reminders').delete().in('task_id', taskIds);
       await supabase.from('comments').delete().in('task_id', taskIds);
+      await supabase.from('time_entries').delete().in('task_id', taskIds);
+      await supabase.from('task_dependencies').delete().in('task_id', taskIds);
       
       // Delete the tasks
       const { error } = await supabase.from('tasks').delete().in('id', taskIds);
@@ -3321,13 +3367,22 @@ const Board = () => {
                       
                       {/* Add task button OR Clear completed button */}
                       {column.column_type === 'completed' ? (
-                        <button 
-                          onClick={() => setClearCompletedColumnId(column.id)}
-                          className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-red-50 dark:hover:bg-red-950/30 transition-all relative z-10"
-                          title={t('board.clearCompletedTasks')}
-                        >
-                          <Trash2 className="h-5 w-5 text-red-600 dark:text-red-500" />
-                        </button>
+                        <div className="flex gap-1.5">
+                          <button 
+                            onClick={() => setShowArchiveDialog(true)}
+                            className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-white/30 dark:hover:bg-card/30 transition-all relative z-10"
+                            title="Takenarchief"
+                          >
+                            <Archive className="h-5 w-5" />
+                          </button>
+                          <button 
+                            onClick={() => setClearCompletedColumnId(column.id)}
+                            className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground px-3 py-2 rounded-lg font-bold text-xl hover:bg-red-50 dark:hover:bg-red-950/30 transition-all relative z-10"
+                            title={t('board.clearCompletedTasks')}
+                          >
+                            <Trash2 className="h-5 w-5 text-red-600 dark:text-red-500" />
+                          </button>
+                        </div>
                       ) : (
                         <div className="flex gap-1.5">
                           {(column.column_type === 'sick_leave' || column.column_type === 'vacation') && organizationId && (
@@ -3868,13 +3923,22 @@ const Board = () => {
                       <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
                     </button>
                 ) : (
-                  <button 
-                    onClick={() => setClearCompletedColumnId(column.id)}
-                    className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
-                    title={t('board.clearCompletedTasks')}
-                  >
-                    <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
-                  </button>
+                  <div className="flex gap-1">
+                    <button 
+                      onClick={() => setShowArchiveDialog(true)}
+                      className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-white/30 dark:hover:bg-card/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+                      title="Takenarchief"
+                    >
+                      <Archive className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => setClearCompletedColumnId(column.id)}
+                      className="backdrop-blur-[60px] bg-white/20 dark:bg-card/20 text-foreground border-2 border-white/40 dark:border-white/20 px-2.5 py-1.5 rounded-xl font-bold text-sm hover:bg-red-50 dark:hover:bg-red-950/30 transition-all shadow-[0_4px_16px_rgba(0,0,0,0.08),inset_0_2px_2px_rgba(255,255,255,0.5)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15),inset_0_2px_2px_rgba(255,255,255,0.7)] relative z-10 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/20 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[9px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none"
+                      title={t('board.clearCompletedTasks')}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-600 dark:text-red-500" />
+                    </button>
+                  </div>
                 )
               ) : (
                 <div className="flex gap-1">
@@ -4827,6 +4891,8 @@ const Board = () => {
           </div>
         );
       })()}
+
+      {board && <TaskArchiveDialog open={showArchiveDialog} onOpenChange={setShowArchiveDialog} boardId={board.id} />}
     </div>;
 };
 export default Board;

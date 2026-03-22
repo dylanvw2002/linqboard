@@ -102,6 +102,65 @@ export type Database = {
           },
         ]
       }
+      archived_tasks: {
+        Row: {
+          archived_at: string
+          archived_by: string
+          assignee_names: string[] | null
+          board_id: string
+          column_name: string
+          description: string | null
+          due_date: string | null
+          id: string
+          labels: string[] | null
+          organization_id: string
+          original_task_id: string
+          priority: string | null
+          time_logged_minutes: number | null
+          title: string
+        }
+        Insert: {
+          archived_at?: string
+          archived_by: string
+          assignee_names?: string[] | null
+          board_id: string
+          column_name: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          labels?: string[] | null
+          organization_id: string
+          original_task_id: string
+          priority?: string | null
+          time_logged_minutes?: number | null
+          title: string
+        }
+        Update: {
+          archived_at?: string
+          archived_by?: string
+          assignee_names?: string[] | null
+          board_id?: string
+          column_name?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          labels?: string[] | null
+          organization_id?: string
+          original_task_id?: string
+          priority?: string | null
+          time_logged_minutes?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "archived_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       board_templates: {
         Row: {
           columns_config: Json
