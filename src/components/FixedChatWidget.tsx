@@ -286,20 +286,20 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   );
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-[440px] h-[500px] flex backdrop-blur-[60px] bg-white/25 dark:bg-card/25 border-2 border-white/40 dark:border-white/20 rounded-[28px] shadow-[0_8px_24px_rgba(2,6,23,0.15)] before:absolute before:inset-0 before:rounded-[28px] before:bg-gradient-to-br before:from-white/30 before:to-transparent before:pointer-events-none after:absolute after:inset-[1px] after:rounded-[27px] after:bg-gradient-to-br after:from-transparent after:to-white/10 after:pointer-events-none">
+    <div className="fixed bottom-4 right-4 z-50 w-[420px] h-[520px] flex overflow-hidden rounded-2xl shadow-2xl border border-border/60 bg-card dark:bg-card">
       {/* Contacts sidebar */}
-      <div className="w-[60px] border-r border-white/30 dark:border-white/20 flex flex-col items-center py-3 gap-1.5 relative z-10 overflow-y-auto">
-        {/* AI contact - always first */}
+      <div className="w-16 bg-muted/50 dark:bg-muted/30 border-r border-border/40 flex flex-col items-center py-4 gap-2 overflow-y-auto">
+        {/* AI contact */}
         <button
           onClick={() => setChatTarget({ type: "ai" })}
-          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 ${chatTarget.type === "ai" ? "ring-2 ring-primary scale-110" : "hover:scale-105 opacity-70 hover:opacity-100"}`}
+          className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0 ${chatTarget.type === "ai" ? "bg-primary/15 ring-2 ring-primary shadow-sm" : "hover:bg-muted opacity-70 hover:opacity-100"}`}
           title="Linq AI"
         >
-          <img src={mascot} alt="AI" className="w-full h-full object-contain" />
+          <img src={mascot} alt="AI" className="w-8 h-8 object-contain" />
         </button>
 
         {otherMembers.length > 0 && (
-          <div className="w-8 border-t border-white/30 dark:border-white/20 my-1" />
+          <div className="w-8 h-px bg-border/60 my-1" />
         )}
 
         {/* Team members */}
@@ -307,17 +307,17 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
           <button
             key={member.user_id}
             onClick={() => setChatTarget({ type: "dm", member })}
-            className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 ${chatTarget.type === "dm" && chatTarget.member.user_id === member.user_id ? "ring-2 ring-primary scale-110" : "hover:scale-105 opacity-70 hover:opacity-100"}`}
+            className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-all shrink-0 ${chatTarget.type === "dm" && chatTarget.member.user_id === member.user_id ? "bg-primary/15 ring-2 ring-primary shadow-sm" : "hover:bg-muted opacity-70 hover:opacity-100"}`}
             title={member.full_name}
           >
-            <Avatar className="w-full h-full">
+            <Avatar className="w-8 h-8">
               <AvatarImage src={member.avatar_url || undefined} />
-              <AvatarFallback className="text-xs bg-muted">
+              <AvatarFallback className="text-[10px] font-medium bg-secondary text-secondary-foreground">
                 {member.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
               </AvatarFallback>
             </Avatar>
             {(unreadCounts[member.user_id] || 0) > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm">
                 {unreadCounts[member.user_id]}
               </span>
             )}
@@ -326,30 +326,36 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
       </div>
 
       {/* Chat area */}
-      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <div className="flex items-center justify-between px-3 py-2 border-b border-white/30 dark:border-white/20 bg-gradient-to-r from-primary/10 to-accent/10 rounded-tr-[26px] h-12">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center justify-between px-4 h-14 border-b border-border/40 bg-muted/30">
+          <div className="flex items-center gap-2.5 min-w-0">
             {chatTarget.type === "ai" ? (
               <>
-                <img src={mascot} alt="AI" className="h-7 object-contain" />
-                <span className="font-semibold text-sm truncate">Linq AI</span>
+                <img src={mascot} alt="AI" className="h-8 object-contain" />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm text-foreground">Linq AI</span>
+                  <span className="text-[10px] text-muted-foreground">Altijd beschikbaar</span>
+                </div>
               </>
             ) : (
               <>
-                <Avatar className="w-7 h-7">
+                <Avatar className="w-8 h-8">
                   <AvatarImage src={chatTarget.member.avatar_url || undefined} />
                   <AvatarFallback className="text-xs">{chatTarget.member.full_name[0]}</AvatarFallback>
                 </Avatar>
-                <span className="font-semibold text-sm truncate">{chatTarget.member.full_name}</span>
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm text-foreground truncate">{chatTarget.member.full_name}</span>
+                  <span className="text-[10px] text-muted-foreground">Teamlid</span>
+                </div>
               </>
             )}
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             {chatTarget.type === "ai" && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-7 w-7"><Trash2 className="h-3.5 w-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
@@ -363,19 +369,22 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
                 </AlertDialogContent>
               </AlertDialog>
             )}
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsExpanded(false)}>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => setIsExpanded(false)}>
               <Minimize2 className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-3" ref={scrollRef}>
+        <ScrollArea className="flex-1 px-4 py-3" ref={scrollRef}>
           <div className="space-y-3">
             {chatTarget.type === "ai" ? (
               <>
                 {aiMessages.length === 0 && !isLoading && (
-                  <div className="text-center text-muted-foreground text-xs py-8">Start een gesprek met Linq!</div>
+                  <div className="flex flex-col items-center justify-center py-12 gap-3">
+                    <img src={mascot} alt="Linq" className="h-16 opacity-60" />
+                    <p className="text-muted-foreground text-xs text-center">Start een gesprek met Linq!</p>
+                  </div>
                 )}
                 {aiMessages.map((msg, i) => renderMessageBubble({
                   role: msg.role,
@@ -388,7 +397,13 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
             ) : (
               <>
                 {dmMessages.length === 0 && (
-                  <div className="text-center text-muted-foreground text-xs py-8">Begin een gesprek met {chatTarget.member.full_name}!</div>
+                  <div className="flex flex-col items-center justify-center py-12 gap-3">
+                    <Avatar className="w-14 h-14">
+                      <AvatarImage src={chatTarget.member.avatar_url || undefined} />
+                      <AvatarFallback className="text-lg">{chatTarget.member.full_name[0]}</AvatarFallback>
+                    </Avatar>
+                    <p className="text-muted-foreground text-xs text-center">Begin een gesprek met {chatTarget.member.full_name}!</p>
+                  </div>
                 )}
                 {dmMessages.map((msg, i) => {
                   const isMe = msg.sender_id === currentUserId;
@@ -417,16 +432,16 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
         </ScrollArea>
 
         {/* Input */}
-        <div className="p-2.5 border-t border-white/30 dark:border-white/20 rounded-br-[26px]">
+        <div className="p-3 border-t border-border/40 bg-muted/20">
           <form onSubmit={e => { e.preventDefault(); handleSend(); }} className="flex gap-2">
             <Input
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder={chatTarget.type === "ai" ? "Stel een vraag..." : `Bericht aan ${chatTarget.member.full_name}...`}
               disabled={isLoading}
-              className="flex-1 h-9 text-sm"
+              className="flex-1 h-9 text-sm bg-background border-border/50 focus-visible:ring-primary/30"
             />
-            <Button type="submit" size="icon" className="h-9 w-9" disabled={isLoading || !input.trim()}>
+            <Button type="submit" size="icon" className="h-9 w-9 shrink-0" disabled={isLoading || !input.trim()}>
               <Send className="w-4 h-4" />
             </Button>
           </form>
