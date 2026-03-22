@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, Bot, User, Trash2, Minimize2 } from "lucide-react";
+import { Send, MessageCircle, User, Trash2, Minimize2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -249,7 +249,7 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   if (!isExpanded) {
     return (
       <button onClick={() => setIsExpanded(true)} className="fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center">
-        <Bot className="h-6 w-6" />
+        <MessageCircle className="h-6 w-6" />
       </button>
     );
   }
