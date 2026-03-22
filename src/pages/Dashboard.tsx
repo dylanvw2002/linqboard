@@ -930,7 +930,7 @@ const Dashboard = () => {
 
       {/* Remove Member Confirmation Dialog */}
       <AlertDialog open={!!removeMemberId} onOpenChange={open => !open && setRemoveMemberId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="z-[200]">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('dashboard.removeMemberTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
