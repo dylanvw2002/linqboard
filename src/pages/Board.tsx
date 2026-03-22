@@ -577,6 +577,7 @@ const Board = () => {
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
   const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [orgMembers, setOrgMembers] = useState<Assignee[]>([]);
+  const [manualPersonNames, setManualPersonNames] = useState<string[]>([]);
   const [editTaskAssignees, setEditTaskAssignees] = useState<string[]>([]);
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
   const [draggedOverColumn, setDraggedOverColumn] = useState<string | null>(null);
@@ -1237,6 +1238,7 @@ const Board = () => {
     fetchBoardData();
     fetchOrgMembers();
     fetchOrgMembersWithEmails();
+    fetchManualPersonNames();
     fetchUserPlan();
     checkBackgroundPermission();
   }, [organizationId, isDemo, t]);
@@ -1550,6 +1552,21 @@ const Board = () => {
       }
     } catch (error) {
       console.error(t('board.errorLoadingMembers'), error);
+    }
+  };
+  const fetchManualPersonNames = async () => {
+    if (!organizationId || isDemo) return;
+    try {
+      const { data } = await supabase
+        .from("person_vacation_settings")
+        .select("person_name")
+        .eq("organization_id", organizationId);
+      if (data) {
+        const names = [...new Set(data.map(d => d.person_name))];
+        setManualPersonNames(names);
+      }
+    } catch (error) {
+      console.error("Error fetching manual person names:", error);
     }
   };
   const fetchBoardData = async () => {
@@ -3331,9 +3348,13 @@ const Board = () => {
                                       <SelectValue placeholder="Selecteer persoon" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {orgMembers.map(m => (
-                                        <SelectItem key={m.user_id} value={m.full_name}>{m.full_name}</SelectItem>
-                                      ))}
+                                      {(() => {
+                                        const memberNames = orgMembers.map(m => m.full_name);
+                                        const allNames = [...new Set([...memberNames, ...manualPersonNames])].sort();
+                                        return allNames.map(name => (
+                                          <SelectItem key={name} value={name}>{name}</SelectItem>
+                                        ));
+                                      })()}
                                     </SelectContent>
                                   </Select>
                                 ) : (
@@ -3869,9 +3890,13 @@ const Board = () => {
                                 <SelectValue placeholder="Selecteer persoon" />
                               </SelectTrigger>
                               <SelectContent>
-                                {orgMembers.map(m => (
-                                  <SelectItem key={m.user_id} value={m.full_name}>{m.full_name}</SelectItem>
-                                ))}
+                                {(() => {
+                                  const memberNames = orgMembers.map(m => m.full_name);
+                                  const allNames = [...new Set([...memberNames, ...manualPersonNames])].sort();
+                                  return allNames.map(name => (
+                                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                                  ));
+                                })()}
                               </SelectContent>
                             </Select>
                           ) : (
