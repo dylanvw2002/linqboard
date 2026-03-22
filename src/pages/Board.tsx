@@ -3476,6 +3476,18 @@ const Board = () => {
                                 </div>
                               </div>}
                               
+                              {/* Recurrence - hide for sick/vacation */}
+                              {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
+                                <RecurrenceSelect
+                                  pattern={newTaskRecurrencePattern}
+                                  interval={newTaskRecurrenceInterval}
+                                  endDate={newTaskRecurrenceEndDate}
+                                  onPatternChange={setNewTaskRecurrencePattern}
+                                  onIntervalChange={setNewTaskRecurrenceInterval}
+                                  onEndDateChange={setNewTaskRecurrenceEndDate}
+                                />
+                              </div>}
+                              
                               {/* Checklist - hide for sick/vacation */}
                               {!(column.column_type === 'sick_leave' || column.column_type === 'vacation') && <div className="border-t pt-3">
                                 <TaskChecklistCreate 
