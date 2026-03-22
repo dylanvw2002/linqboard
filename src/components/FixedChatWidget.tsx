@@ -249,7 +249,7 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   if (!isExpanded) {
     return (
       <button onClick={() => setIsExpanded(true)} className="fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center">
-        <Bot className="h-6 w-6" />
+        <MessageCircle className="h-6 w-6" />
       </button>
     );
   }
