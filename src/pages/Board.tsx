@@ -573,6 +573,9 @@ const Board = () => {
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date | undefined>(undefined);
   const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [newTaskChecklistItems, setNewTaskChecklistItems] = useState<NewChecklistItem[]>([]);
+  const [newTaskRecurrencePattern, setNewTaskRecurrencePattern] = useState<string | null>(null);
+  const [newTaskRecurrenceInterval, setNewTaskRecurrenceInterval] = useState(1);
+  const [newTaskRecurrenceEndDate, setNewTaskRecurrenceEndDate] = useState<Date | undefined>(undefined);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [isTaskEditMode, setIsTaskEditMode] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState("");
