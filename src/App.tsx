@@ -20,6 +20,7 @@ import SubscriptionFailed from "./pages/SubscriptionFailed";
 import InvoicePreview from "./pages/InvoicePreview";
 import NotFound from "./pages/NotFound";
 import Agenda from "./pages/Agenda";
+import Reports from "./pages/Reports";
 
 const queryClient = new QueryClient({
   defaultOptions: {
