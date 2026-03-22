@@ -48,6 +48,9 @@ import { FixedChatWidget } from "@/components/FixedChatWidget";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 import { AbsenceManagementDialog } from "@/components/AbsenceManagementDialog";
 import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
+import { RecurrenceSelect } from "@/components/RecurrenceSelect";
+import { TimeTracker } from "@/components/TimeTracker";
+import { TaskDependencies } from "@/components/TaskDependencies";
 interface Column {
   id: string;
   name: string;
