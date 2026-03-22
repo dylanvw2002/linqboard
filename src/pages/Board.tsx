@@ -1554,6 +1554,21 @@ const Board = () => {
       console.error(t('board.errorLoadingMembers'), error);
     }
   };
+  const fetchManualPersonNames = async () => {
+    if (!organizationId || isDemo) return;
+    try {
+      const { data } = await supabase
+        .from("person_vacation_settings")
+        .select("person_name")
+        .eq("organization_id", organizationId);
+      if (data) {
+        const names = [...new Set(data.map(d => d.person_name))];
+        setManualPersonNames(names);
+      }
+    } catch (error) {
+      console.error("Error fetching manual person names:", error);
+    }
+  };
   const fetchBoardData = async () => {
     try {
       if (!organizationId) {
