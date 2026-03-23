@@ -10,7 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X, Search } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X } from "lucide-react";
 import { format, differenceInCalendarDays, parseISO, eachDayOfInterval, getDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -381,14 +382,6 @@ export function AbsenceManagementDialog({
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
   }, [yearRecords, orgMembers, selectedYear, manualPersons]);
 
-  const normalizedStatsSearchQuery = normalizeSearchValue(statsSearchQuery);
-
-  const filteredStats = useMemo(() => {
-    if (!normalizedStatsSearchQuery) return personStats;
-    return personStats.filter((person) =>
-      normalizeSearchValue(person.name).includes(normalizedStatsSearchQuery)
-    );
-  }, [personStats, normalizedStatsSearchQuery]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
@@ -730,101 +723,100 @@ export function AbsenceManagementDialog({
                 </div>
               )}
 
-              {/* Search input */}
-              {personStats.length > 0 && (
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    value={statsSearchQuery}
-                    onChange={(e) => setStatsSearchQuery(e.target.value)}
-                    placeholder="Zoek op naam..."
-                    className="pl-9"
-                  />
-                </div>
-              )}
+              <div className="rounded-xl border bg-background overflow-hidden">
+                <Command
+                  shouldFilter
+                  value={statsSearchQuery}
+                  onValueChange={setStatsSearchQuery}
+                  className="bg-transparent"
+                >
+                  <CommandInput placeholder="Zoek op naam..." />
+                  <CommandList className="max-h-none overflow-visible">
+                    <CommandEmpty className="py-8 text-center text-muted-foreground">
+                      Geen personen gevonden voor deze zoekopdracht
+                    </CommandEmpty>
+                    <CommandGroup className="space-y-3 p-3">
+                      {personStats.map((person) => {
+                        const personRecords = yearRecords
+                          .filter((record) => record.person_name === person.name)
+                          .sort((a, b) => b.start_date.localeCompare(a.start_date));
 
-              {filteredStats.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                  {statsSearchQuery.trim() ? "Geen personen gevonden voor deze zoekopdracht" : "Geen personen gevonden"}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredStats.map((person) => {
-                    const personRecords = yearRecords
-                      .filter((record) => record.person_name === person.name)
-                      .sort((a, b) => b.start_date.localeCompare(a.start_date));
-
-                    return (
-                      <div key={person.name} className="space-y-2">
-                        <button
-                          type="button"
-                          onClick={() => setSelectedStatsPerson((current) => current === person.name ? null : person.name)}
-                          className="w-full flex items-center gap-3 p-3 bg-muted/50 rounded-xl text-left hover:bg-muted/70 transition-colors"
-                        >
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={person.avatar_url || undefined} />
-                            <AvatarFallback className="text-sm font-bold bg-primary/20 text-primary">
-                              {person.name.split(" ").map((n) => n[0]).join("").toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-sm truncate">{person.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {person.count}x {typeLabel} · {person.days} dagen
-                            </p>
-                          </div>
-                          <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
-                              style={{ width: `${Math.min(100, (person.days / 365) * 100)}%` }}
-                            />
-                          </div>
-                          <span className="text-xs font-mono text-muted-foreground w-10 text-right">
-                            {((person.days / 365) * 100).toFixed(1)}%
-                          </span>
-                        </button>
-
-                        {selectedStatsPerson === person.name && (
-                          <div className="ml-4 pl-4 border-l border-border space-y-2">
-                            {personRecords.length === 0 ? (
-                              <p className="text-xs text-muted-foreground">Geen registraties gevonden</p>
-                            ) : (
-                              personRecords.map((record) => (
-                                <div key={record.id} className="rounded-lg border bg-muted/30 p-3 flex items-start gap-3">
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium">
-                                      {format(parseISO(record.start_date), "d MMM yyyy", { locale: nl })}
-                                      {record.end_date
-                                        ? ` — ${format(parseISO(record.end_date), "d MMM yyyy", { locale: nl })}`
-                                        : " — heden"}
-                                    </p>
-                                    {record.notes && (
-                                      <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
-                                    )}
-                                  </div>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      if (confirm("Weet je zeker dat je deze registratie wilt verwijderen?")) {
-                                        handleDeleteRecord(record.id);
-                                      }
-                                    }}
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                  </Button>
+                        return (
+                          <CommandItem
+                            key={person.name}
+                            value={person.name}
+                            onSelect={() => setSelectedStatsPerson((current) => current === person.name ? null : person.name)}
+                            className="block rounded-xl p-0 data-[selected=true]:bg-transparent data-[selected=true]:text-foreground"
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-xl text-left hover:bg-muted/70 transition-colors">
+                                <Avatar className="h-10 w-10">
+                                  <AvatarImage src={person.avatar_url || undefined} />
+                                  <AvatarFallback className="text-sm font-bold bg-primary/20 text-primary">
+                                    {person.name.split(" ").map((n) => n[0]).join("").toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-semibold text-sm truncate">{person.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {person.count}x {typeLabel} · {person.days} dagen
+                                  </p>
                                 </div>
-                              ))
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                                <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
+                                  <div
+                                    className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
+                                    style={{ width: `${Math.min(100, (person.days / 365) * 100)}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs font-mono text-muted-foreground w-10 text-right">
+                                  {((person.days / 365) * 100).toFixed(1)}%
+                                </span>
+                              </div>
+
+                              {selectedStatsPerson === person.name && (
+                                <div className="ml-4 pl-4 border-l border-border space-y-2">
+                                  {personRecords.length === 0 ? (
+                                    <p className="text-xs text-muted-foreground">Geen registraties gevonden</p>
+                                  ) : (
+                                    personRecords.map((record) => (
+                                      <div key={record.id} className="rounded-lg border bg-muted/30 p-3 flex items-start gap-3">
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-sm font-medium">
+                                            {format(parseISO(record.start_date), "d MMM yyyy", { locale: nl })}
+                                            {record.end_date
+                                              ? ` — ${format(parseISO(record.end_date), "d MMM yyyy", { locale: nl })}`
+                                              : " — heden"}
+                                          </p>
+                                          {record.notes && (
+                                            <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
+                                          )}
+                                        </div>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (confirm("Weet je zeker dat je deze registratie wilt verwijderen?")) {
+                                              handleDeleteRecord(record.id);
+                                            }
+                                          }}
+                                        >
+                                          <Trash2 className="h-3.5 w-3.5" />
+                                        </Button>
+                                      </div>
+                                    ))
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </CommandItem>
+                        );
+                      })}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </div>
             </TabsContent>
 
           </Tabs>
