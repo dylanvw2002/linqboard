@@ -51,6 +51,7 @@ import { PersonSearchSelect } from "@/components/PersonSearchSelect";
 import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
 import { RecurrenceSelect } from "@/components/RecurrenceSelect";
 import { TimeTracker } from "@/components/TimeTracker";
+import { TaskNotes } from "@/components/TaskNotes";
 import { TaskDependencies } from "@/components/TaskDependencies";
 import { TaskArchiveDialog } from "@/components/TaskArchiveDialog";
 interface Column {
