@@ -1,9 +1,22 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { format, parseISO, eachDayOfInterval, getDay } from "date-fns";
 import { nl } from "date-fns/locale";
-import { Clock, History } from "lucide-react";
+import { Clock, History, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface AbsenceRecord {
   id: string;
@@ -57,9 +70,8 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
   const [schedule, setSchedule] = useState<WorkSchedule>(DEFAULT_SCHEDULE);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  const fetchData = async () => {
+    setLoading(true);
       const [recordsRes, settingsRes] = await Promise.all([
         supabase
           .from("absence_records")
@@ -81,9 +93,24 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
         setSchedule(settingsRes.data[0].work_schedule as WorkSchedule);
       }
       setLoading(false);
-    };
+  };
+
+  useEffect(() => {
     fetchData();
   }, [personName, organizationId, absenceType]);
+
+  const handleDelete = async (recordId: string) => {
+    const { error } = await supabase
+      .from("absence_records")
+      .delete()
+      .eq("id", recordId);
+    if (error) {
+      toast.error("Kon registratie niet verwijderen");
+    } else {
+      toast.success("Registratie verwijderd");
+      fetchData();
+    }
+  };
 
   const label = absenceType === "sick_leave" ? "Ziektegeschiedenis" : "Verlofgeschiedenis";
 
@@ -128,6 +155,27 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
                     <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
                   )}
                 </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Registratie verwijderen</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Weet je zeker dat je deze {absenceType === "sick_leave" ? "ziekte" : "verlof"}registratie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDelete(record.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Verwijderen
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             );
           })}
