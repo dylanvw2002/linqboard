@@ -768,20 +768,29 @@ export function AbsenceManagementDialog({
               ) : (
                 <>
                   {/* AI Analysis */}
-                  <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20">
-                    <p className="text-sm font-semibold mb-3">Linq's Analyse</p>
-                    {aiLoading && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Patronen worden geanalyseerd...
+                  <div className="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 via-background to-accent/5 p-5 shadow-sm">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+                    <div className="absolute bottom-0 left-0 w-20 h-20 bg-accent/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+                    <div className="relative">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-bold tracking-wide text-primary">Linq's Analyse</p>
                       </div>
-                    )}
-                    {aiAnalysis && !aiLoading && (
-                      <div className="flex items-start gap-4">
-                        <img src={mascot} alt="Linq" className="h-24 w-24 object-contain flex-shrink-0" />
-                        <blockquote className="border-l-2 border-primary/40 pl-3 text-sm text-foreground/90 leading-relaxed whitespace-pre-line italic">{aiAnalysis}</blockquote>
-                      </div>
-                    )}
+                      {aiLoading && (
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground py-4">
+                          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                          <span className="italic">Even kijken naar de patronen...</span>
+                        </div>
+                      )}
+                      {aiAnalysis && !aiLoading && (
+                        <div className="flex items-start gap-5">
+                          <img src={mascot} alt="Linq" className="h-20 w-20 object-contain flex-shrink-0 drop-shadow-md" />
+                          <div className="flex-1 bg-background/60 backdrop-blur-sm rounded-xl p-4 border border-border/50 shadow-inner">
+                            <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
               {/* Chart Section */}
