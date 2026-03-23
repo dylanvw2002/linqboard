@@ -652,22 +652,55 @@ export function AbsenceManagementDialog({
                     onChange={(e) => setStatsNewName(e.target.value)}
                     placeholder="Naam invoeren"
                     className="flex-1"
-                    onKeyDown={(e) => {
+                    onKeyDown={async (e) => {
                       if (e.key === "Enter" && statsNewName.trim()) {
-                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
+                        const name = statsNewName.trim();
+                        const exists = manualPersons.some((person) => person.toLowerCase() === name.toLowerCase());
+                        if (!exists) {
+                          const { error } = await supabase.from("person_vacation_settings").insert({
+                            organization_id: organizationId,
+                            person_name: name,
+                            user_id: null,
+                            total_vacation_hours: 0,
+                            work_schedule: defaultSchedule,
+                            year: selectedYear,
+                          } as any);
+                          if (error) {
+                            toast.error("Fout: " + error.message);
+                            return;
+                          }
+                        }
                         setStatsNewName("");
                         setShowAddStatsPerson(false);
+                        loadManualPersons();
+                        if (isVacation) loadVacationSettings();
                       }
                     }}
                   />
                   <Button
                     size="sm"
-                    onClick={() => {
-                      if (statsNewName.trim()) {
-                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
-                        setStatsNewName("");
-                        setShowAddStatsPerson(false);
+                    onClick={async () => {
+                      const name = statsNewName.trim();
+                      if (!name) return;
+                      const exists = manualPersons.some((person) => person.toLowerCase() === name.toLowerCase());
+                      if (!exists) {
+                        const { error } = await supabase.from("person_vacation_settings").insert({
+                          organization_id: organizationId,
+                          person_name: name,
+                          user_id: null,
+                          total_vacation_hours: 0,
+                          work_schedule: defaultSchedule,
+                          year: selectedYear,
+                        } as any);
+                        if (error) {
+                          toast.error("Fout: " + error.message);
+                          return;
+                        }
                       }
+                      setStatsNewName("");
+                      setShowAddStatsPerson(false);
+                      loadManualPersons();
+                      if (isVacation) loadVacationSettings();
                     }}
                   >
                     Toevoegen
