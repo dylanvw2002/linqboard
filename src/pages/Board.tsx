@@ -1739,12 +1739,16 @@ const Board = () => {
               absenceTaskCandidates
                 .filter(task => {
                   const columnType = absenceColumns.get(task.column_id);
-                  return absenceRecords?.some(record =>
+                  const personRecords = absenceRecords?.filter(record =>
                     record.person_name === task.title &&
-                    record.absence_type === columnType &&
-                    !!record.end_date &&
-                    record.end_date <= today
+                    record.absence_type === columnType
+                  ) || [];
+                  // Hide task only if there are records but NONE are active (all have end_date <= today)
+                  if (personRecords.length === 0) return false;
+                  const hasActiveRecord = personRecords.some(record =>
+                    !record.end_date || record.end_date > today
                   );
+                  return !hasActiveRecord;
                 })
                 .map(task => task.id)
             );
