@@ -382,22 +382,94 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   const toggleReaction = async (messageId: string, emoji: string) => {
     if (!currentUserId) return;
     const existing = dmReactions[messageId]?.find(r => r.emoji === emoji && r.users.includes(currentUserId));
-    if (existing) {
-      await (supabase as any).from("message_reactions").delete()
-        .eq("message_type", "direct_message")
-        .eq("message_id", messageId)
-        .eq("emoji", emoji)
-        .eq("user_id", currentUserId);
-    } else {
-      await (supabase as any).from("message_reactions").insert({
-        message_type: "direct_message",
-        message_id: messageId,
-        emoji,
-        user_id: currentUserId,
-      });
+    const previousReactions = dmReactions;
+
+    setDmReactions(prev => {
+      const messageReactions = prev[messageId] ?? [];
+
+      if (existing) {
+        const nextMessageReactions = messageReactions
+          .map(reaction => {
+            if (reaction.emoji !== emoji) return reaction;
+
+            const nextUsers = reaction.users.filter(userId => userId !== currentUserId);
+            return {
+              ...reaction,
+              count: Math.max(0, reaction.count - 1),
+              users: nextUsers,
+            };
+          })
+          .filter(reaction => reaction.count > 0);
+
+        return {
+          ...prev,
+          [messageId]: nextMessageReactions,
+        };
+      }
+
+      const matchingReaction = messageReactions.find(reaction => reaction.emoji === emoji);
+
+      if (matchingReaction) {
+        return {
+          ...prev,
+          [messageId]: messageReactions.map(reaction =>
+            reaction.emoji === emoji
+              ? {
+                  ...reaction,
+                  count: reaction.count + 1,
+                  users: [...reaction.users, currentUserId],
+                }
+              : reaction
+          ),
+        };
+      }
+
+      return {
+        ...prev,
+        [messageId]: [
+          ...messageReactions,
+          {
+            emoji,
+            user_id: currentUserId,
+            count: 1,
+            users: [currentUserId],
+          },
+        ],
+      };
+    });
+
+    try {
+      if (existing) {
+        const { error } = await (supabase as any)
+          .from("message_reactions")
+          .delete()
+          .eq("message_type", "direct_message")
+          .eq("message_id", messageId)
+          .eq("emoji", emoji)
+          .eq("user_id", currentUserId);
+
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("message_reactions")
+          .insert({
+            message_type: "direct_message",
+            message_id: messageId,
+            emoji,
+            user_id: currentUserId,
+          });
+
+        if (error) throw error;
+      }
+
+      if (dmMessages.length > 0) {
+        loadDmReactions(dmMessages.map(m => m.id));
+      }
+    } catch (error) {
+      console.error("Emoji reaction failed:", error);
+      setDmReactions(previousReactions);
+      toast.error("Emoji toevoegen mislukt");
     }
-    // Reload reactions
-    if (dmMessages.length > 0) loadDmReactions(dmMessages.map(m => m.id));
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -492,7 +564,12 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
                 {EMOJI_OPTIONS.map(emoji => (
                   <button
                     key={emoji}
-                    onClick={() => msg.messageId && toggleReaction(msg.messageId, emoji)}
+                    type="button"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      if (msg.messageId) toggleReaction(msg.messageId, emoji);
+                    }}
                     className="hover:scale-125 transition-transform text-base px-0.5"
                   >
                     {emoji}
