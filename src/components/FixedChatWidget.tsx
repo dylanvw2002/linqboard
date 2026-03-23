@@ -120,6 +120,17 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
     if (currentUserId) fetchUnreadCounts();
   }, [currentUserId, fetchUnreadCounts]);
 
+  // Listen for new DMs even when collapsed
+  useEffect(() => {
+    if (!currentUserId) return;
+    const ch = supabase.channel(`dm-unread-global-${currentUserId}`)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${currentUserId}` }, () => {
+        fetchUnreadCounts();
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [currentUserId, fetchUnreadCounts]);
+
   // Load AI messages
   const loadAiMessages = useCallback(async () => {
     if (!currentUserId) return;
