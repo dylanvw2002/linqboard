@@ -1176,6 +1176,7 @@ export type Database = {
           due_date: string | null
           id: string
           is_recurring_template: boolean | null
+          notes: string | null
           position: number
           priority: Database["public"]["Enums"]["task_priority"] | null
           recurrence_end_date: string | null
@@ -1192,6 +1193,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           is_recurring_template?: boolean | null
+          notes?: string | null
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"] | null
           recurrence_end_date?: string | null
@@ -1208,6 +1210,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           is_recurring_template?: boolean | null
+          notes?: string | null
           position?: number
           priority?: Database["public"]["Enums"]["task_priority"] | null
           recurrence_end_date?: string | null

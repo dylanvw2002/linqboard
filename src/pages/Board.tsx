@@ -84,6 +84,7 @@ interface Task {
   title: string;
   assignees?: Assignee[];
   description: string | null;
+  notes?: string | null;
   priority: "low" | "medium" | "high" | null;
   position: number;
   due_date?: string | null;
@@ -583,6 +584,7 @@ const Board = () => {
   const [isTaskEditMode, setIsTaskEditMode] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
+  const [editTaskNotes, setEditTaskNotes] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
   const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [orgMembers, setOrgMembers] = useState<Assignee[]>([]);
@@ -1939,6 +1941,7 @@ const Board = () => {
     setEditingTask(task);
     setEditTaskTitle(task.title);
     setEditTaskDescription(task.description || "");
+    setEditTaskNotes(task.notes || "");
     setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
     setEditTaskPriority(task.priority);
     setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
@@ -2082,6 +2085,7 @@ const Board = () => {
             ...task,
             title: validation.data.title,
             description: validation.data.description || null,
+            notes: editTaskNotes || null,
             due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
             priority: editTaskPriority
           };
@@ -2099,6 +2103,7 @@ const Board = () => {
       } = await supabase.from("tasks").update({
         title: validation.data.title,
         description: validation.data.description || null,
+        notes: editTaskNotes || null,
         due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
         priority: editTaskPriority
       }).eq("id", editingTask.id);
@@ -4475,6 +4480,14 @@ const Board = () => {
                       </div>
                     )}
                     
+                    {/* Notes */}
+                    {!isSimpleColumn && editTaskNotes && (
+                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
+                        <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-2 block">Notities</Label>
+                        <p className="text-foreground whitespace-pre-wrap">{editTaskNotes}</p>
+                      </div>
+                    )}
+                    
                     {/* Assignees - hide for sick/vacation */}
                     {!isSimpleColumn && editTaskAssignees.length > 0 && (
                       <div>
@@ -4578,6 +4591,12 @@ const Board = () => {
                     <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
                     <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} rows={4} />
                   </div>
+                  {!isSimpleColumn && (
+                    <div>
+                      <Label htmlFor="edit-notes">Notities</Label>
+                      <Textarea id="edit-notes" value={editTaskNotes} onChange={e => setEditTaskNotes(e.target.value)} placeholder="Voeg notities toe..." rows={3} />
+                    </div>
+                  )}
                   {!isSimpleColumn && <div>
                       <Label>{t('board.priority')}</Label>
                       <div className="flex gap-2">
