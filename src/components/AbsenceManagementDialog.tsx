@@ -736,14 +736,14 @@ export function AbsenceManagementDialog({
 
               {/* Chart Section */}
               {personStats.some((p) => p.days > 0) && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Monthly chart */}
+                <div className="space-y-4">
+                  {/* Monthly chart - full width */}
                   <div className="p-3 rounded-xl border bg-muted/30">
                     <p className="text-xs font-semibold text-muted-foreground mb-2">Dagen per maand</p>
-                    <ResponsiveContainer width="100%" height={140}>
-                      <BarChart data={monthlyChartData}>
-                        <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                        <YAxis hide />
+                    <ResponsiveContainer width="100%" height={160}>
+                      <BarChart data={monthlyChartData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} interval={0} />
+                        <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} allowDecimals={false} width={30} />
                         <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
                         <Bar dataKey="dagen" radius={[4, 4, 0, 0]}>
                           {monthlyChartData.map((_, i) => (
@@ -757,10 +757,10 @@ export function AbsenceManagementDialog({
                   {topPersonsChartData.length > 0 && (
                     <div className="p-3 rounded-xl border bg-muted/30">
                       <p className="text-xs font-semibold text-muted-foreground mb-2">Top personen</p>
-                      <ResponsiveContainer width="100%" height={140}>
-                        <BarChart data={topPersonsChartData} layout="vertical">
+                      <ResponsiveContainer width="100%" height={Math.max(100, topPersonsChartData.length * 32)}>
+                        <BarChart data={topPersonsChartData} layout="vertical" margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                           <XAxis type="number" hide />
-                          <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} width={60} axisLine={false} tickLine={false} />
+                          <YAxis dataKey="name" type="category" tick={{ fontSize: 11 }} width={70} axisLine={false} tickLine={false} />
                           <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} formatter={(value: number, _: string, props: any) => [`${value} dagen`, props.payload.fullName]} />
                           <Bar dataKey="dagen" radius={[0, 4, 4, 0]}>
                             {topPersonsChartData.map((_, i) => (
