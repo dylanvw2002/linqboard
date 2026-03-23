@@ -34,6 +34,10 @@ type WorkSchedule = Record<string, number>;
 const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const DEFAULT_SCHEDULE: WorkSchedule = { mon: 8, tue: 8, wed: 8, thu: 8, fri: 8, sat: 0, sun: 0 };
 
+function isEmptySchedule(schedule: WorkSchedule): boolean {
+  return DAY_KEYS.every(key => !schedule[key] || schedule[key] === 0);
+}
+
 function calcWorkingDaysAndHours(
   startDate: string,
   endDate: string | null,
@@ -90,7 +94,8 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
       ]);
       setRecords(recordsRes.data || []);
       if (settingsRes.data && settingsRes.data.length > 0) {
-        setSchedule(settingsRes.data[0].work_schedule as WorkSchedule);
+        const savedSchedule = settingsRes.data[0].work_schedule as WorkSchedule;
+        setSchedule(isEmptySchedule(savedSchedule) ? DEFAULT_SCHEDULE : savedSchedule);
       }
       setLoading(false);
   };
@@ -132,7 +137,6 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
               record.end_date,
               schedule
             );
-            // If explicit hours set, use those instead
             const displayHours = record.hours != null && record.hours > 0 ? record.hours : totalHours;
             return (
               <div key={record.id} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg border">
@@ -148,7 +152,7 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs text-muted-foreground">
-                      {workDays} werk{workDays === 1 ? "dag" : "dagen"}
+                      {displayHours} uur
                     </span>
                   </div>
                   {record.notes && (
