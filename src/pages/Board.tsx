@@ -4663,13 +4663,6 @@ const Board = () => {
                   
                   {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} />}
                   
-                  {/* Time Tracker - edit mode */}
-                  {editingTask && !isSimpleColumn && (
-                    <div className="border-t pt-4">
-                      <TimeTracker taskId={editingTask.id} isEditMode={true} />
-                    </div>
-                  )}
-                  
                   {/* Dependencies - edit mode */}
                   {editingTask && !isSimpleColumn && (
                     <div className="border-t pt-4">
