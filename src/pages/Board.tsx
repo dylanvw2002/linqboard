@@ -1941,6 +1941,7 @@ const Board = () => {
     setEditingTask(task);
     setEditTaskTitle(task.title);
     setEditTaskDescription(task.description || "");
+    setEditTaskNotes(task.notes || "");
     setEditTaskDueDate(task.due_date ? new Date(task.due_date) : undefined);
     setEditTaskPriority(task.priority);
     setEditTaskAssignees(task.assignees?.map(a => a.user_id) || []);
