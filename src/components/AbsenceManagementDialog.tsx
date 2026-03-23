@@ -299,6 +299,7 @@ export function AbsenceManagementDialog({
       toast.success("Record toegevoegd");
       resetForm();
       loadRecords();
+      loadManualPersons();
     } catch (error: any) {
       toast.error("Fout bij toevoegen: " + error.message);
     }
