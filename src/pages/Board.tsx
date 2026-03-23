@@ -2103,6 +2103,7 @@ const Board = () => {
       } = await supabase.from("tasks").update({
         title: validation.data.title,
         description: validation.data.description || null,
+        notes: editTaskNotes || null,
         due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
         priority: editTaskPriority
       }).eq("id", editingTask.id);
