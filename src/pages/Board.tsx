@@ -4480,22 +4480,9 @@ const Board = () => {
                       </div>
                     )}
                     
-                    {/* Notes - editable in view mode */}
-                    {!isSimpleColumn && (
-                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
-                        <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-2 block">Notities</Label>
-                        <Textarea
-                          value={editTaskNotes}
-                          onChange={e => setEditTaskNotes(e.target.value)}
-                          onBlur={async () => {
-                            if (!editingTask || isDemo) return;
-                            await supabase.from("tasks").update({ notes: editTaskNotes || null }).eq("id", editingTask.id);
-                          }}
-                          placeholder="Voeg notities toe..."
-                          rows={3}
-                          className="bg-transparent border-0 p-0 focus-visible:ring-0 resize-none text-foreground placeholder:text-muted-foreground/50"
-                        />
-                      </div>
+                    {/* Task Notes - view mode */}
+                    {!isSimpleColumn && editingTask && (
+                      <TaskNotes taskId={editingTask.id} />
                     )}
                     
                     {/* Assignees - hide for sick/vacation */}
