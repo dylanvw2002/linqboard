@@ -778,7 +778,7 @@ export function AbsenceManagementDialog({
                     )}
                     {aiAnalysis && !aiLoading && (
                       <div className="flex items-start gap-4">
-                        <img src={mascot} alt="Linq" className="h-16 w-16 rounded-full object-cover object-top flex-shrink-0" />
+                        <img src={mascot} alt="Linq" className="h-16 w-16 rounded-full object-cover object-top flex-shrink-0" width={128} height={128} />
                         <blockquote className="border-l-2 border-primary/40 pl-3 text-sm text-foreground/90 leading-relaxed whitespace-pre-line italic">{aiAnalysis}</blockquote>
                       </div>
                     )}
