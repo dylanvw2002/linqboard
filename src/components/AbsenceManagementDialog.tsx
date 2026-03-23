@@ -768,11 +768,8 @@ export function AbsenceManagementDialog({
               ) : (
                 <>
                   {/* AI Analysis */}
-                  <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
-                    <div className="flex items-center gap-2">
-                        <img src={mascot} alt="Linq" className="h-8 w-8 rounded-full object-cover object-top" />
-                        <p className="text-sm font-semibold">Linq's Analyse</p>
-                      </div>
+                  <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20">
+                    <p className="text-sm font-semibold mb-3">Linq's Analyse</p>
                     {aiLoading && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -780,7 +777,10 @@ export function AbsenceManagementDialog({
                       </div>
                     )}
                     {aiAnalysis && !aiLoading && (
-                      <blockquote className="border-l-2 border-primary/40 pl-3 text-sm text-foreground/90 leading-relaxed whitespace-pre-line italic">{aiAnalysis}</blockquote>
+                      <div className="flex items-start gap-4">
+                        <img src={mascot} alt="Linq" className="h-16 w-16 rounded-full object-cover object-top flex-shrink-0" />
+                        <blockquote className="border-l-2 border-primary/40 pl-3 text-sm text-foreground/90 leading-relaxed whitespace-pre-line italic">{aiAnalysis}</blockquote>
+                      </div>
                     )}
                   </div>
 
