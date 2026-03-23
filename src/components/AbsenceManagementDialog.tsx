@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X } from "lucide-react";
-import { format, differenceInCalendarDays, parseISO, eachDayOfInterval, getDay } from "date-fns";
+import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X, Sparkles, Loader2 } from "lucide-react";
+import { format, differenceInCalendarDays, parseISO, eachDayOfInterval, getDay, getMonth } from "date-fns";
 import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 interface AbsenceRecord {
   id: string;
@@ -133,6 +134,8 @@ export function AbsenceManagementDialog({
   const [statsNewName, setStatsNewName] = useState("");
   const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
   const [statsSearchQuery, setStatsSearchQuery] = useState("");
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
 
   // Add record form state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -383,6 +386,62 @@ export function AbsenceManagementDialog({
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
   }, [yearRecords, orgMembers, selectedYear, manualPersons]);
 
+  // Monthly chart data
+  const monthlyChartData = useMemo(() => {
+    const months = ["Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+    const monthlyCounts = new Array(12).fill(0);
+    yearRecords.forEach((r) => {
+      const start = parseISO(r.start_date);
+      const end = r.end_date ? parseISO(r.end_date) : new Date();
+      const yearStart = new Date(selectedYear, 0, 1);
+      const yearEnd = new Date(selectedYear, 11, 31);
+      const effectiveStart = start < yearStart ? yearStart : start;
+      const effectiveEnd = end > yearEnd ? yearEnd : end;
+      if (effectiveStart > effectiveEnd) return;
+      const days = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
+      days.forEach((d) => { monthlyCounts[getMonth(d)] += 1; });
+    });
+    return months.map((name, i) => ({ name, dagen: monthlyCounts[i] }));
+  }, [yearRecords, selectedYear]);
+
+  // Top persons chart data (top 5 by days)
+  const topPersonsChartData = useMemo(() => {
+    return personStats
+      .filter((p) => p.days > 0)
+      .slice(0, 6)
+      .map((p) => ({ name: p.name.split(" ")[0], dagen: p.days, fullName: p.name }));
+  }, [personStats]);
+
+  const fetchAiAnalysis = useCallback(async () => {
+    if (personStats.every((p) => p.count === 0)) {
+      setAiAnalysis("Geen registraties gevonden om te analyseren.");
+      return;
+    }
+    setAiLoading(true);
+    setAiAnalysis(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-absence", {
+        body: {
+          personStats: personStats.map((p) => ({ name: p.name, count: p.count, days: p.days })),
+          yearRecords: yearRecords.map((r) => ({
+            person_name: r.person_name,
+            start_date: r.start_date,
+            end_date: r.end_date,
+            notes: r.notes,
+          })),
+          year: selectedYear,
+          absenceType,
+        },
+      });
+      if (error) throw error;
+      setAiAnalysis(data.analysis);
+    } catch (e: any) {
+      console.error("AI analysis error:", e);
+      setAiAnalysis("Analyse kon niet worden geladen.");
+    } finally {
+      setAiLoading(false);
+    }
+  }, [personStats, yearRecords, selectedYear, absenceType]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
@@ -652,7 +711,70 @@ export function AbsenceManagementDialog({
             <TabsContent value="stats" className="mt-4 space-y-4">
               <YearSelector />
 
-              {/* Add custom person */}
+              {/* Chart Section */}
+              {personStats.some((p) => p.days > 0) && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Monthly chart */}
+                    <div className="p-3 rounded-xl border bg-muted/30">
+                      <p className="text-xs font-semibold text-muted-foreground mb-2">Dagen per maand</p>
+                      <ResponsiveContainer width="100%" height={140}>
+                        <BarChart data={monthlyChartData}>
+                          <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                          <YAxis hide />
+                          <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+                          <Bar dataKey="dagen" radius={[4, 4, 0, 0]}>
+                            {monthlyChartData.map((_, i) => (
+                              <Cell key={i} fill={absenceType === "sick_leave" ? "hsl(0 72% 65%)" : "hsl(217 91% 60%)"} opacity={0.8} />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    {/* Top persons chart */}
+                    {topPersonsChartData.length > 0 && (
+                      <div className="p-3 rounded-xl border bg-muted/30">
+                        <p className="text-xs font-semibold text-muted-foreground mb-2">Top personen</p>
+                        <ResponsiveContainer width="100%" height={140}>
+                          <BarChart data={topPersonsChartData} layout="vertical">
+                            <XAxis type="number" hide />
+                            <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} width={60} axisLine={false} tickLine={false} />
+                            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} formatter={(value: number, _: string, props: any) => [`${value} dagen`, props.payload.fullName]} />
+                            <Bar dataKey="dagen" radius={[0, 4, 4, 0]}>
+                              {topPersonsChartData.map((_, i) => (
+                                <Cell key={i} fill={absenceType === "sick_leave" ? "hsl(0 72% 65%)" : "hsl(217 91% 60%)"} opacity={0.7 + (i * 0.05)} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* AI Analysis */}
+                  <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-semibold">AI Analyse</p>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={fetchAiAnalysis} disabled={aiLoading} className="h-7 text-xs">
+                        {aiLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
+                        {aiAnalysis ? "Opnieuw analyseren" : "Analyseren"}
+                      </Button>
+                    </div>
+                    {aiLoading && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Patronen worden geanalyseerd...
+                      </div>
+                    )}
+                    {aiAnalysis && !aiLoading && (
+                      <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
+                    )}
+                  </div>
+                </div>
+              )}
               {!showAddStatsPerson ? (
                 <Button onClick={() => setShowAddStatsPerson(true)} variant="outline" className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
