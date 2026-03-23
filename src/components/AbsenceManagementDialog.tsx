@@ -10,7 +10,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X, Search } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X } from "lucide-react";
 import { format, differenceInCalendarDays, parseISO, eachDayOfInterval, getDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
