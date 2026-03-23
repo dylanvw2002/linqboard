@@ -570,18 +570,18 @@ export function AbsenceManagementDialog({
 
         <div className="overflow-y-auto flex-1 px-4 sm:px-6 pb-4 sm:pb-6">
           <Tabs defaultValue={isVacation ? "balance" : "stats"} className="mt-4">
-            <TabsList className={cn("w-full", isVacation && "grid grid-cols-2")}>
-              {isVacation && (
+            {isVacation && (
+              <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="balance" className="gap-1.5">
                   <Clock className="h-4 w-4" />
                   Balans
                 </TabsTrigger>
-              )}
-              <TabsTrigger value="stats" className="gap-1.5">
-                <BarChart3 className="h-4 w-4" />
-                Statistieken
-              </TabsTrigger>
-            </TabsList>
+                <TabsTrigger value="stats" className="gap-1.5">
+                  <BarChart3 className="h-4 w-4" />
+                  Statistieken
+                </TabsTrigger>
+              </TabsList>
+            )}
 
             {/* BALANCE TAB (vacation only) */}
             {isVacation && (
