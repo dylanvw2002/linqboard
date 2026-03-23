@@ -759,16 +759,31 @@ export function AbsenceManagementDialog({
                                 <p className="text-xs text-muted-foreground">Geen registraties gevonden</p>
                               ) : (
                                 personRecords.map((record) => (
-                                  <div key={record.id} className="rounded-lg border bg-muted/30 p-3">
-                                    <p className="text-sm font-medium">
-                                      {format(parseISO(record.start_date), "d MMM yyyy", { locale: nl })}
-                                      {record.end_date
-                                        ? ` — ${format(parseISO(record.end_date), "d MMM yyyy", { locale: nl })}`
-                                        : " — heden"}
-                                    </p>
-                                    {record.notes && (
-                                      <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
-                                    )}
+                                  <div key={record.id} className="rounded-lg border bg-muted/30 p-3 flex items-start gap-3">
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium">
+                                        {format(parseISO(record.start_date), "d MMM yyyy", { locale: nl })}
+                                        {record.end_date
+                                          ? ` — ${format(parseISO(record.end_date), "d MMM yyyy", { locale: nl })}`
+                                          : " — heden"}
+                                      </p>
+                                      {record.notes && (
+                                        <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
+                                      )}
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (confirm("Weet je zeker dat je deze registratie wilt verwijderen?")) {
+                                          handleDeleteRecord(record.id);
+                                        }
+                                      }}
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </Button>
                                   </div>
                                 ))
                               )}
