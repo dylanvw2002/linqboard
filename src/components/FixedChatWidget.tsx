@@ -391,11 +391,17 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   };
 
   const otherMembers = orgMembers.filter(m => m.user_id !== currentUserId);
+  const totalUnread = Object.values(unreadCounts).reduce((sum, c) => sum + c, 0);
 
   if (!isExpanded) {
     return (
       <button onClick={() => setIsExpanded(true)} className="fixed bottom-4 right-4 z-50 h-10 w-10 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center">
         <MessageCircle className="h-5 w-5" />
+        {totalUnread > 0 && (
+          <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] bg-destructive text-destructive-foreground text-[11px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm">
+            {totalUnread}
+          </span>
+        )}
       </button>
     );
   }
