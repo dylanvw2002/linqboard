@@ -403,7 +403,7 @@ export function AbsenceManagementDialog({
       const effectiveEnd = end > yearEnd ? yearEnd : end;
       if (effectiveStart > effectiveEnd) return;
       const days = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
-      days.forEach((d) => { monthlyCounts[getMonth(d)] += 1; });
+      days.forEach((d) => { const day = getDay(d); if (day !== 0 && day !== 6) monthlyCounts[getMonth(d)] += 1; });
     });
     return months.map((name, i) => ({ name, dagen: monthlyCounts[i] }));
   }, [yearRecords, selectedYear]);
