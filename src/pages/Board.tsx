@@ -4581,11 +4581,9 @@ const Board = () => {
                     <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
                     <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} rows={4} />
                   </div>
-                  {!isSimpleColumn && (
-                    <div>
-                      <Label htmlFor="edit-notes">Notities</Label>
-                      <Textarea id="edit-notes" value={editTaskNotes} onChange={e => setEditTaskNotes(e.target.value)} placeholder="Voeg notities toe..." rows={3} />
-                    </div>
+                  {/* Task Notes - edit mode */}
+                  {!isSimpleColumn && editingTask && (
+                    <TaskNotes taskId={editingTask.id} />
                   )}
                   {!isSimpleColumn && <div>
                       <Label>{t('board.priority')}</Label>
