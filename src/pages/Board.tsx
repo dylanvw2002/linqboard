@@ -584,6 +584,7 @@ const Board = () => {
   const [isTaskEditMode, setIsTaskEditMode] = useState(false);
   const [editTaskTitle, setEditTaskTitle] = useState("");
   const [editTaskDescription, setEditTaskDescription] = useState("");
+  const [editTaskNotes, setEditTaskNotes] = useState("");
   const [editTaskDueDate, setEditTaskDueDate] = useState<Date | undefined>(undefined);
   const [editTaskPriority, setEditTaskPriority] = useState<"low" | "medium" | "high" | null>("medium");
   const [orgMembers, setOrgMembers] = useState<Assignee[]>([]);
