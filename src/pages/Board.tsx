@@ -1610,7 +1610,7 @@ const Board = () => {
   const fetchManualPersonNames = async () => {
     if (!organizationId || isDemo) return;
     try {
-      const [vacationRes, absenceRes] = await Promise.all([
+      const [vacationRes, absenceRes, membershipsRes] = await Promise.all([
         supabase
           .from("person_vacation_settings")
           .select("person_name")
@@ -1619,10 +1619,25 @@ const Board = () => {
           .from("absence_records")
           .select("person_name")
           .eq("organization_id", organizationId),
+        supabase
+          .from("memberships")
+          .select("user_id")
+          .eq("organization_id", organizationId),
       ]);
       const vacNames = vacationRes.data?.map(d => d.person_name) || [];
       const absNames = absenceRes.data?.map(d => d.person_name) || [];
-      const memberNames = orgMembers.map(m => m.full_name);
+      
+      // Fetch profile names for org members independently to avoid race condition
+      let memberNames: string[] = [];
+      const memberIds = membershipsRes.data?.map(m => m.user_id) || [];
+      if (memberIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .in("user_id", memberIds);
+        memberNames = profiles?.map(p => p.full_name) || [];
+      }
+      
       const manualOnly = [...new Set([...vacNames, ...absNames])].filter(n => !memberNames.includes(n));
       setManualPersonNames(manualOnly);
     } catch (error) {
@@ -2329,6 +2344,7 @@ const Board = () => {
       setNewTaskRecurrenceInterval(1);
       setNewTaskRecurrenceEndDate(undefined);
       await fetchBoardData();
+      fetchManualPersonNames();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
     }
