@@ -118,8 +118,8 @@ export function AbsenceManagementDialog({
   const [editHours, setEditHours] = useState("");
   const [editSchedule, setEditSchedule] = useState<Record<string, number>>({});
 
-  // Stats custom persons
-  const [statsCustomPersons, setStatsCustomPersons] = useState<string[]>([]);
+  // Persisted + ad-hoc custom persons
+  const [manualPersons, setManualPersons] = useState<string[]>([]);
   const [showAddStatsPerson, setShowAddStatsPerson] = useState(false);
   const [statsNewName, setStatsNewName] = useState("");
   const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
@@ -136,13 +136,15 @@ export function AbsenceManagementDialog({
   const title = absenceType === "sick_leave" ? "Ziektebeheer" : "Verlofbeheer";
   const typeLabel = absenceType === "sick_leave" ? "ziek" : "verlof";
   const isVacation = absenceType === "vacation";
+  const defaultSchedule = { mon: 8, tue: 8, wed: 8, thu: 8, fri: 8, sat: 0, sun: 0 };
 
   useEffect(() => {
     if (open) {
       loadRecords();
+      loadManualPersons();
       if (isVacation) loadVacationSettings();
     }
-  }, [open, organizationId, selectedYear]);
+  }, [open, organizationId, selectedYear, absenceType, isVacation]);
 
   const loadRecords = async () => {
     setLoading(true);
@@ -159,6 +161,36 @@ export function AbsenceManagementDialog({
       console.error("Error loading absence records:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadManualPersons = async () => {
+    try {
+      const [settingsRes, absenceRes] = await Promise.all([
+        supabase
+          .from("person_vacation_settings")
+          .select("person_name, user_id")
+          .eq("organization_id", organizationId)
+          .eq("year", selectedYear),
+        supabase
+          .from("absence_records")
+          .select("person_name, user_id")
+          .eq("organization_id", organizationId),
+      ]);
+
+      const memberIds = new Set(orgMembers.map((m) => m.user_id));
+      const memberNames = new Set(orgMembers.map((m) => m.full_name));
+      const names = [...(settingsRes.data || []), ...(absenceRes.data || [])]
+        .filter((person: any) => {
+          if (person.user_id && memberIds.has(person.user_id)) return false;
+          if (memberNames.has(person.person_name)) return false;
+          return Boolean(person.person_name);
+        })
+        .map((person: any) => person.person_name.trim());
+
+      setManualPersons([...new Set(names)].sort((a, b) => a.localeCompare(b, "nl")));
+    } catch (error: any) {
+      console.error("Error loading manual persons:", error);
     }
   };
 
@@ -267,6 +299,7 @@ export function AbsenceManagementDialog({
       toast.success("Record toegevoegd");
       resetForm();
       loadRecords();
+      loadManualPersons();
     } catch (error: any) {
       toast.error("Fout bij toevoegen: " + error.message);
     }
@@ -314,10 +347,10 @@ export function AbsenceManagementDialog({
       stats[m.user_id] = { name: m.full_name, count: 0, days: 0, avatar_url: m.avatar_url };
     });
 
-    // Add custom persons
-    statsCustomPersons.forEach((name) => {
+    // Add persisted manual persons (non-members)
+    manualPersons.forEach((name) => {
       if (!Object.values(stats).some((s) => s.name === name)) {
-        stats[`custom_${name}`] = { name, count: 0, days: 0, isCustom: true };
+        stats[`manual_${name}`] = { name, count: 0, days: 0, isCustom: true };
       }
     });
 
@@ -325,8 +358,7 @@ export function AbsenceManagementDialog({
     yearRecords.forEach((r) => {
       const key = r.user_id || r.person_name;
       if (!stats[key]) {
-        // Person from records not in org members or custom list
-        stats[key] = { name: r.person_name, count: 0, days: 0 };
+        stats[key] = { name: r.person_name, count: 0, days: 0, isCustom: !orgMembers.some((m) => m.full_name === r.person_name || m.user_id === r.user_id) };
       }
       stats[key].count += 1;
       const start = parseISO(r.start_date);
@@ -337,8 +369,8 @@ export function AbsenceManagementDialog({
       const effectiveEnd = end > yearEnd ? yearEnd : end;
       stats[key].days += Math.max(0, differenceInCalendarDays(effectiveEnd, effectiveStart) + 1);
     });
-    return Object.values(stats).sort((a, b) => b.days - a.days);
-  }, [yearRecords, orgMembers, selectedYear, statsCustomPersons]);
+    return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
+  }, [yearRecords, orgMembers, selectedYear, manualPersons]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
@@ -621,22 +653,55 @@ export function AbsenceManagementDialog({
                     onChange={(e) => setStatsNewName(e.target.value)}
                     placeholder="Naam invoeren"
                     className="flex-1"
-                    onKeyDown={(e) => {
+                    onKeyDown={async (e) => {
                       if (e.key === "Enter" && statsNewName.trim()) {
-                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
+                        const name = statsNewName.trim();
+                        const exists = manualPersons.some((person) => person.toLowerCase() === name.toLowerCase());
+                        if (!exists) {
+                          const { error } = await supabase.from("person_vacation_settings").insert({
+                            organization_id: organizationId,
+                            person_name: name,
+                            user_id: null,
+                            total_vacation_hours: 0,
+                            work_schedule: defaultSchedule,
+                            year: selectedYear,
+                          } as any);
+                          if (error) {
+                            toast.error("Fout: " + error.message);
+                            return;
+                          }
+                        }
                         setStatsNewName("");
                         setShowAddStatsPerson(false);
+                        loadManualPersons();
+                        if (isVacation) loadVacationSettings();
                       }
                     }}
                   />
                   <Button
                     size="sm"
-                    onClick={() => {
-                      if (statsNewName.trim()) {
-                        setStatsCustomPersons((prev) => [...prev, statsNewName.trim()]);
-                        setStatsNewName("");
-                        setShowAddStatsPerson(false);
+                    onClick={async () => {
+                      const name = statsNewName.trim();
+                      if (!name) return;
+                      const exists = manualPersons.some((person) => person.toLowerCase() === name.toLowerCase());
+                      if (!exists) {
+                        const { error } = await supabase.from("person_vacation_settings").insert({
+                          organization_id: organizationId,
+                          person_name: name,
+                          user_id: null,
+                          total_vacation_hours: 0,
+                          work_schedule: defaultSchedule,
+                          year: selectedYear,
+                        } as any);
+                        if (error) {
+                          toast.error("Fout: " + error.message);
+                          return;
+                        }
                       }
+                      setStatsNewName("");
+                      setShowAddStatsPerson(false);
+                      loadManualPersons();
+                      if (isVacation) loadVacationSettings();
                     }}
                   >
                     Toevoegen
