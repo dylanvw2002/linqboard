@@ -51,6 +51,7 @@ import { PersonSearchSelect } from "@/components/PersonSearchSelect";
 import { AbsenceHistorySection } from "@/components/AbsenceHistorySection";
 import { RecurrenceSelect } from "@/components/RecurrenceSelect";
 import { TimeTracker } from "@/components/TimeTracker";
+import { TaskNotes } from "@/components/TaskNotes";
 import { TaskDependencies } from "@/components/TaskDependencies";
 import { TaskArchiveDialog } from "@/components/TaskArchiveDialog";
 interface Column {
@@ -4480,22 +4481,9 @@ const Board = () => {
                       </div>
                     )}
                     
-                    {/* Notes - editable in view mode */}
-                    {!isSimpleColumn && (
-                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
-                        <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-2 block">Notities</Label>
-                        <Textarea
-                          value={editTaskNotes}
-                          onChange={e => setEditTaskNotes(e.target.value)}
-                          onBlur={async () => {
-                            if (!editingTask || isDemo) return;
-                            await supabase.from("tasks").update({ notes: editTaskNotes || null }).eq("id", editingTask.id);
-                          }}
-                          placeholder="Voeg notities toe..."
-                          rows={3}
-                          className="bg-transparent border-0 p-0 focus-visible:ring-0 resize-none text-foreground placeholder:text-muted-foreground/50"
-                        />
-                      </div>
+                    {/* Task Notes - view mode */}
+                    {!isSimpleColumn && editingTask && (
+                      <TaskNotes taskId={editingTask.id} />
                     )}
                     
                     {/* Assignees - hide for sick/vacation */}
@@ -4594,11 +4582,9 @@ const Board = () => {
                     <Label htmlFor="edit-description">{isSimpleColumn ? t('board.reason') : t('common.description')}</Label>
                     <Textarea id="edit-description" value={editTaskDescription} onChange={e => setEditTaskDescription(e.target.value)} placeholder={isSimpleColumn ? t('board.reasonPlaceholder') : t('board.descriptionPlaceholder')} rows={4} />
                   </div>
-                  {!isSimpleColumn && (
-                    <div>
-                      <Label htmlFor="edit-notes">Notities</Label>
-                      <Textarea id="edit-notes" value={editTaskNotes} onChange={e => setEditTaskNotes(e.target.value)} placeholder="Voeg notities toe..." rows={3} />
-                    </div>
+                  {/* Task Notes - edit mode */}
+                  {!isSimpleColumn && editingTask && (
+                    <TaskNotes taskId={editingTask.id} />
                   )}
                   {!isSimpleColumn && <div>
                       <Label>{t('board.priority')}</Label>
