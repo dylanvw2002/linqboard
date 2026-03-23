@@ -58,6 +58,14 @@ const DAY_LABELS: Record<string, string> = {
   mon: "Ma", tue: "Di", wed: "Wo", thu: "Do", fri: "Vr", sat: "Za", sun: "Zo",
 };
 
+function normalizeSearchValue(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
 function calcUsedHours(
   records: AbsenceRecord[],
   workSchedule: Record<string, number>,
