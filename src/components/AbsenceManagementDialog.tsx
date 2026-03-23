@@ -354,6 +354,18 @@ export function AbsenceManagementDialog({
     [records, selectedYear]
   );
 
+  // Filter by selected month
+  const filteredYearRecords = useMemo(() => {
+    if (selectedMonth === null) return yearRecords;
+    return yearRecords.filter((r) => {
+      const start = parseISO(r.start_date);
+      const end = r.end_date ? parseISO(r.end_date) : new Date();
+      const monthStart = new Date(selectedYear, selectedMonth, 1);
+      const monthEnd = new Date(selectedYear, selectedMonth + 1, 0);
+      return start <= monthEnd && end >= monthStart;
+    });
+  }, [yearRecords, selectedMonth, selectedYear]);
+
   const personStats = useMemo(() => {
     const stats: Record<string, { name: string; count: number; days: number; avatar_url?: string | null; isCustom?: boolean }> = {};
 
@@ -370,7 +382,7 @@ export function AbsenceManagementDialog({
     });
 
     // Fill in actual data from records
-    yearRecords.forEach((r) => {
+    filteredYearRecords.forEach((r) => {
       const key = r.user_id || r.person_name;
       if (!stats[key]) {
         stats[key] = { name: r.person_name, count: 0, days: 0, isCustom: !orgMembers.some((m) => m.full_name === r.person_name || m.user_id === r.user_id) };
@@ -378,10 +390,10 @@ export function AbsenceManagementDialog({
       stats[key].count += 1;
       const start = parseISO(r.start_date);
       const end = r.end_date ? parseISO(r.end_date) : new Date();
-      const yearStart = new Date(selectedYear, 0, 1);
-      const yearEnd = new Date(selectedYear, 11, 31);
-      const effectiveStart = start < yearStart ? yearStart : start;
-      const effectiveEnd = end > yearEnd ? yearEnd : end;
+      const periodStart = selectedMonth !== null ? new Date(selectedYear, selectedMonth, 1) : new Date(selectedYear, 0, 1);
+      const periodEnd = selectedMonth !== null ? new Date(selectedYear, selectedMonth + 1, 0) : new Date(selectedYear, 11, 31);
+      const effectiveStart = start < periodStart ? periodStart : start;
+      const effectiveEnd = end > periodEnd ? periodEnd : end;
       if (effectiveStart > effectiveEnd) return;
       // Count only weekdays (mon-fri)
       const allDays = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
@@ -389,7 +401,7 @@ export function AbsenceManagementDialog({
       stats[key].days += workDays.length;
     });
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
-  }, [yearRecords, orgMembers, selectedYear, manualPersons]);
+  }, [filteredYearRecords, orgMembers, selectedYear, selectedMonth, manualPersons]);
 
   // Monthly chart data
   const monthlyChartData = useMemo(() => {
