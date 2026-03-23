@@ -2271,12 +2271,11 @@ const Board = () => {
       return;
     }
     try {
-      // For sick_leave/vacation columns: if end_date is in the past, only create absence_record, no board task
+      // For sick_leave/vacation columns: if end_date is set, only create absence_record, no board task
       const isAbsenceColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
       const endDate = newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null;
       const startDate = format(newTaskStartDate, "yyyy-MM-dd");
-      const today = format(new Date(), "yyyy-MM-dd");
-      const isPastAbsence = isAbsenceColumn && endDate && endDate < today;
+      const isPastAbsence = isAbsenceColumn && endDate;
 
       if (isPastAbsence && organizationId) {
         // Only create absence_record, no task on the board
