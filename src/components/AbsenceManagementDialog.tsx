@@ -462,8 +462,10 @@ export function AbsenceManagementDialog({
 
   // Auto-trigger AI analysis when data is loaded
   useEffect(() => {
-    if (open && !loading && personStats.length > 0) {
+    if (open && !loading && filteredYearRecords.length > 0) {
       fetchAiAnalysis();
+    } else if (filteredYearRecords.length === 0) {
+      setAiAnalysis(null);
     }
   }, [open, loading, selectedYear, selectedMonth]);
 
