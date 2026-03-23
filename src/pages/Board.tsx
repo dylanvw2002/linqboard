@@ -4480,6 +4480,14 @@ const Board = () => {
                       </div>
                     )}
                     
+                    {/* Notes */}
+                    {!isSimpleColumn && editTaskNotes && (
+                      <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
+                        <Label className="text-xs uppercase tracking-wide text-muted-foreground mb-2 block">Notities</Label>
+                        <p className="text-foreground whitespace-pre-wrap">{editTaskNotes}</p>
+                      </div>
+                    )}
+                    
                     {/* Assignees - hide for sick/vacation */}
                     {!isSimpleColumn && editTaskAssignees.length > 0 && (
                       <div>
