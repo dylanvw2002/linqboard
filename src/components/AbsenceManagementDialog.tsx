@@ -443,6 +443,13 @@ export function AbsenceManagementDialog({
     }
   }, [personStats, yearRecords, selectedYear, absenceType]);
 
+  // Auto-trigger AI analysis when data is loaded
+  useEffect(() => {
+    if (open && !loading && personStats.length > 0) {
+      fetchAiAnalysis();
+    }
+  }, [open, loading, selectedYear]);
+
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
     if (!isVacation) return [];
