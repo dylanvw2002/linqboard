@@ -2271,6 +2271,49 @@ const Board = () => {
       return;
     }
     try {
+      // For sick_leave/vacation columns: if end_date is in the past, only create absence_record, no board task
+      const isAbsenceColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
+      const endDate = newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null;
+      const startDate = format(newTaskStartDate, "yyyy-MM-dd");
+      const today = format(new Date(), "yyyy-MM-dd");
+      const isPastAbsence = isAbsenceColumn && endDate && endDate < today;
+
+      if (isPastAbsence && organizationId) {
+        // Only create absence_record, no task on the board
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const matchedMember = orgMembers.find(m => m.full_name === validation.data.title);
+          const isSingleDayVacation = endDate === startDate;
+          await supabase.from("absence_records").insert({
+            organization_id: organizationId,
+            person_name: validation.data.title,
+            user_id: matchedMember?.user_id || null,
+            absence_type: column.column_type,
+            start_date: startDate,
+            end_date: endDate,
+            notes: validation.data.description || null,
+            created_by: session.user.id,
+            hours: column.column_type === 'vacation' && isSingleDayVacation ? (parseFloat(newTaskHours) || null) : null,
+          } as any);
+        }
+        toast.success(isAbsenceColumn && column.column_type === 'sick_leave' ? 'Ziekteregistratie toegevoegd' : 'Verlofregistratie toegevoegd');
+        setOpenDialog(null);
+        setNewTaskTitle("");
+        setNewTaskDescription("");
+        setNewTaskPriority("medium");
+        setNewTaskDueDate(undefined);
+        setNewTaskAssignees([]);
+        setNewTaskChecklistItems([]);
+        setNewTaskHours("8");
+        setNewTaskEndDate(undefined);
+        setNewTaskStartDate(new Date());
+        setNewTaskRecurrencePattern(null);
+        setNewTaskRecurrenceInterval(1);
+        setNewTaskRecurrenceEndDate(undefined);
+        fetchManualPersonNames();
+        return;
+      }
+
       const maxPosition = tasks.filter(t => t.column_id === column.id).reduce((max, t) => Math.max(max, t.position), -1);
       const { data: newTask, error } = await supabase.from("tasks").insert({
         column_id: column.id,
@@ -2307,12 +2350,10 @@ const Board = () => {
       }
 
       // Auto-create absence_record for sick_leave/vacation columns
-      if ((column.column_type === 'sick_leave' || column.column_type === 'vacation') && newTask && organizationId) {
+      if (isAbsenceColumn && newTask && organizationId) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           const matchedMember = orgMembers.find(m => m.full_name === validation.data.title);
-          const startDate = format(newTaskStartDate, "yyyy-MM-dd");
-          const endDate = newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null;
           const isSingleDayVacation = !endDate || endDate === startDate;
 
           await supabase.from("absence_records").insert({
