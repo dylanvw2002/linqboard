@@ -381,7 +381,11 @@ export function AbsenceManagementDialog({
       const yearEnd = new Date(selectedYear, 11, 31);
       const effectiveStart = start < yearStart ? yearStart : start;
       const effectiveEnd = end > yearEnd ? yearEnd : end;
-      stats[key].days += Math.max(0, differenceInCalendarDays(effectiveEnd, effectiveStart) + 1);
+      if (effectiveStart > effectiveEnd) return;
+      // Count only weekdays (mon-fri)
+      const allDays = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
+      const workDays = allDays.filter((d) => { const day = getDay(d); return day !== 0 && day !== 6; });
+      stats[key].days += workDays.length;
     });
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
   }, [yearRecords, orgMembers, selectedYear, manualPersons]);
