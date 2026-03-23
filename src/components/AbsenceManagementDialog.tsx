@@ -462,8 +462,10 @@ export function AbsenceManagementDialog({
 
   // Auto-trigger AI analysis when data is loaded
   useEffect(() => {
-    if (open && !loading && personStats.length > 0) {
+    if (open && !loading && filteredYearRecords.length > 0) {
       fetchAiAnalysis();
+    } else if (filteredYearRecords.length === 0) {
+      setAiAnalysis(null);
     }
   }, [open, loading, selectedYear, selectedMonth]);
 
@@ -758,28 +760,34 @@ export function AbsenceManagementDialog({
                 ))}
               </div>
 
-              {/* AI Analysis - always visible */}
-              <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                    <p className="text-sm font-semibold">AI Analyse</p>
-                  </div>
-                  <Button variant="outline" size="sm" onClick={fetchAiAnalysis} disabled={aiLoading} className="h-7 text-xs">
-                    {aiLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
-                    {aiAnalysis ? "Opnieuw analyseren" : "Analyseren"}
-                  </Button>
+              {filteredYearRecords.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8">
+                  Geen registraties gevonden voor deze periode
                 </div>
-                {aiLoading && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Patronen worden geanalyseerd...
+              ) : (
+                <>
+                  {/* AI Analysis */}
+                  <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-primary" />
+                        <p className="text-sm font-semibold">AI Analyse</p>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={fetchAiAnalysis} disabled={aiLoading} className="h-7 text-xs">
+                        {aiLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
+                        {aiAnalysis ? "Opnieuw analyseren" : "Analyseren"}
+                      </Button>
+                    </div>
+                    {aiLoading && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Patronen worden geanalyseerd...
+                      </div>
+                    )}
+                    {aiAnalysis && !aiLoading && (
+                      <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
+                    )}
                   </div>
-                )}
-                {aiAnalysis && !aiLoading && (
-                  <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
-                )}
-              </div>
 
               {/* Chart Section */}
               {personStats.some((p) => p.days > 0) && (
@@ -985,6 +993,8 @@ export function AbsenceManagementDialog({
                   </CommandList>
                 </Command>
               </div>
+                </>
+              )}
             </TabsContent>
 
           </Tabs>
