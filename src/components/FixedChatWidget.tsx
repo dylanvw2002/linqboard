@@ -488,6 +488,15 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
           )}
         </div>
         {msg.messageId && renderReactions(msg.messageId)}
+        {msg.isMe && msg.dmMsg && (
+          <div className="flex justify-end px-1">
+            {msg.dmMsg.is_read ? (
+              <CheckCheck className="h-3.5 w-3.5 text-primary" />
+            ) : (
+              <Check className="h-3.5 w-3.5 text-muted-foreground" />
+            )}
+          </div>
+        )}
       </div>
       {msg.isMe && (
         <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 mt-4">
