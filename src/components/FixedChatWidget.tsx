@@ -232,6 +232,13 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
             loadDmMessages(memberId);
           }
         })
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "direct_messages" }, (payload: any) => {
+          const msg = payload.new;
+          if ((msg.sender_id === currentUserId && msg.receiver_id === memberId) ||
+              (msg.sender_id === memberId && msg.receiver_id === currentUserId)) {
+            loadDmMessages(memberId);
+          }
+        })
         .subscribe();
       channels.push(ch);
 
