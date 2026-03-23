@@ -2317,6 +2317,7 @@ const Board = () => {
       setNewTaskChecklistItems([]);
       setNewTaskHours("8");
       setNewTaskEndDate(undefined);
+      setNewTaskStartDate(new Date());
       setNewTaskRecurrencePattern(null);
       setNewTaskRecurrenceInterval(1);
       setNewTaskRecurrenceEndDate(undefined);
