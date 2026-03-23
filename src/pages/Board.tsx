@@ -84,6 +84,7 @@ interface Task {
   title: string;
   assignees?: Assignee[];
   description: string | null;
+  notes: string | null;
   priority: "low" | "medium" | "high" | null;
   position: number;
   due_date?: string | null;
