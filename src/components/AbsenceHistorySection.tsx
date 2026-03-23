@@ -34,6 +34,10 @@ type WorkSchedule = Record<string, number>;
 const DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 const DEFAULT_SCHEDULE: WorkSchedule = { mon: 8, tue: 8, wed: 8, thu: 8, fri: 8, sat: 0, sun: 0 };
 
+function isEmptySchedule(schedule: WorkSchedule): boolean {
+  return DAY_KEYS.every(key => !schedule[key] || schedule[key] === 0);
+}
+
 function calcWorkingDaysAndHours(
   startDate: string,
   endDate: string | null,
