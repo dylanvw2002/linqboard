@@ -381,6 +381,15 @@ export function AbsenceManagementDialog({
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
   }, [yearRecords, orgMembers, selectedYear, manualPersons]);
 
+  const normalizedStatsSearchQuery = normalizeSearchValue(statsSearchQuery);
+
+  const filteredStats = useMemo(() => {
+    if (!normalizedStatsSearchQuery) return personStats;
+    return personStats.filter((person) =>
+      normalizeSearchValue(person.name).includes(normalizedStatsSearchQuery)
+    );
+  }, [personStats, normalizedStatsSearchQuery]);
+
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
     if (!isVacation) return [];
