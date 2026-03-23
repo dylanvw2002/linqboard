@@ -4522,13 +4522,6 @@ const Board = () => {
                     {/* Attachments */}
                     {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} readOnly />}
                     
-                    {/* Time Tracker - view mode */}
-                    {editingTask && !isSimpleColumn && (
-                      <div className="border-t pt-4">
-                        <TimeTracker taskId={editingTask.id} isEditMode={false} />
-                      </div>
-                    )}
-                    
                     {/* Dependencies - view mode */}
                     {editingTask && !isSimpleColumn && (
                       <div className="border-t pt-4">
@@ -4669,13 +4662,6 @@ const Board = () => {
                   )}
                   
                   {editingTask && !isSimpleColumn && <TaskAttachments taskId={editingTask.id} />}
-                  
-                  {/* Time Tracker - edit mode */}
-                  {editingTask && !isSimpleColumn && (
-                    <div className="border-t pt-4">
-                      <TimeTracker taskId={editingTask.id} isEditMode={true} />
-                    </div>
-                  )}
                   
                   {/* Dependencies - edit mode */}
                   {editingTask && !isSimpleColumn && (
