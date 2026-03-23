@@ -117,8 +117,8 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
   }, [currentUserId]);
 
   useEffect(() => {
-    if (isExpanded && currentUserId) fetchUnreadCounts();
-  }, [isExpanded, currentUserId, fetchUnreadCounts]);
+    if (currentUserId) fetchUnreadCounts();
+  }, [currentUserId, fetchUnreadCounts]);
 
   // Load AI messages
   const loadAiMessages = useCallback(async () => {
