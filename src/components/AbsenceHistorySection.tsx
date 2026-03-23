@@ -137,7 +137,6 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
               record.end_date,
               schedule
             );
-            // If explicit hours set, use those instead
             const displayHours = record.hours != null && record.hours > 0 ? record.hours : totalHours;
             return (
               <div key={record.id} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg border">
@@ -153,7 +152,7 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs text-muted-foreground">
-                      {workDays} werk{workDays === 1 ? "dag" : "dagen"}
+                      {displayHours} uur
                     </span>
                   </div>
                   {record.notes && (
