@@ -768,16 +768,10 @@ export function AbsenceManagementDialog({
                 <>
                   {/* AI Analysis */}
                   <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                         <Sparkles className="h-4 w-4 text-primary" />
                         <p className="text-sm font-semibold">AI Analyse</p>
                       </div>
-                      <Button variant="outline" size="sm" onClick={fetchAiAnalysis} disabled={aiLoading} className="h-7 text-xs">
-                        {aiLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
-                        {aiAnalysis ? "Opnieuw analyseren" : "Analyseren"}
-                      </Button>
-                    </div>
                     {aiLoading && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Loader2 className="h-4 w-4 animate-spin" />
