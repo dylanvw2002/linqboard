@@ -118,8 +118,8 @@ export function AbsenceManagementDialog({
   const [editHours, setEditHours] = useState("");
   const [editSchedule, setEditSchedule] = useState<Record<string, number>>({});
 
-  // Stats custom persons
-  const [statsCustomPersons, setStatsCustomPersons] = useState<string[]>([]);
+  // Persisted + ad-hoc custom persons
+  const [manualPersons, setManualPersons] = useState<string[]>([]);
   const [showAddStatsPerson, setShowAddStatsPerson] = useState(false);
   const [statsNewName, setStatsNewName] = useState("");
   const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
@@ -136,13 +136,15 @@ export function AbsenceManagementDialog({
   const title = absenceType === "sick_leave" ? "Ziektebeheer" : "Verlofbeheer";
   const typeLabel = absenceType === "sick_leave" ? "ziek" : "verlof";
   const isVacation = absenceType === "vacation";
+  const defaultSchedule = { mon: 8, tue: 8, wed: 8, thu: 8, fri: 8, sat: 0, sun: 0 };
 
   useEffect(() => {
     if (open) {
       loadRecords();
+      loadManualPersons();
       if (isVacation) loadVacationSettings();
     }
-  }, [open, organizationId, selectedYear]);
+  }, [open, organizationId, selectedYear, absenceType, isVacation]);
 
   const loadRecords = async () => {
     setLoading(true);
@@ -159,6 +161,36 @@ export function AbsenceManagementDialog({
       console.error("Error loading absence records:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadManualPersons = async () => {
+    try {
+      const [settingsRes, absenceRes] = await Promise.all([
+        supabase
+          .from("person_vacation_settings")
+          .select("person_name, user_id")
+          .eq("organization_id", organizationId)
+          .eq("year", selectedYear),
+        supabase
+          .from("absence_records")
+          .select("person_name, user_id")
+          .eq("organization_id", organizationId),
+      ]);
+
+      const memberIds = new Set(orgMembers.map((m) => m.user_id));
+      const memberNames = new Set(orgMembers.map((m) => m.full_name));
+      const names = [...(settingsRes.data || []), ...(absenceRes.data || [])]
+        .filter((person: any) => {
+          if (person.user_id && memberIds.has(person.user_id)) return false;
+          if (memberNames.has(person.person_name)) return false;
+          return Boolean(person.person_name);
+        })
+        .map((person: any) => person.person_name.trim());
+
+      setManualPersons([...new Set(names)].sort((a, b) => a.localeCompare(b, "nl")));
+    } catch (error: any) {
+      console.error("Error loading manual persons:", error);
     }
   };
 
