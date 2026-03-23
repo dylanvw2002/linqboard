@@ -93,9 +93,24 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
         setSchedule(settingsRes.data[0].work_schedule as WorkSchedule);
       }
       setLoading(false);
-    };
+  };
+
+  useEffect(() => {
     fetchData();
   }, [personName, organizationId, absenceType]);
+
+  const handleDelete = async (recordId: string) => {
+    const { error } = await supabase
+      .from("absence_records")
+      .delete()
+      .eq("id", recordId);
+    if (error) {
+      toast.error("Kon registratie niet verwijderen");
+    } else {
+      toast.success("Registratie verwijderd");
+      fetchData();
+    }
+  };
 
   const label = absenceType === "sick_leave" ? "Ziektegeschiedenis" : "Verlofgeschiedenis";
 
