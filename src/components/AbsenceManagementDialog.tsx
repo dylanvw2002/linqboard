@@ -991,6 +991,8 @@ export function AbsenceManagementDialog({
                   </CommandList>
                 </Command>
               </div>
+                </>
+              )}
             </TabsContent>
 
           </Tabs>
