@@ -2289,7 +2289,7 @@ const Board = () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           const matchedMember = orgMembers.find(m => m.full_name === validation.data.title);
-          const startDate = format(new Date(), "yyyy-MM-dd");
+          const startDate = format(newTaskStartDate, "yyyy-MM-dd");
           const endDate = newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null;
           const isSingleDayVacation = !endDate || endDate === startDate;
 
