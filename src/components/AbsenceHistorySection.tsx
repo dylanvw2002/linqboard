@@ -155,6 +155,27 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
                     <p className="text-xs text-muted-foreground mt-1 italic">{record.notes}</p>
                   )}
                 </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0 text-muted-foreground hover:text-destructive">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Registratie verwijderen</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Weet je zeker dat je deze {absenceType === "sick_leave" ? "ziekte" : "verlof"}registratie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDelete(record.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Verwijderen
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             );
           })}
