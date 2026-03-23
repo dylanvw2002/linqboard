@@ -723,9 +723,9 @@ export function AbsenceManagementDialog({
                     placeholder="Zoek op naam..."
                     className="pl-9"
                   />
-                </div>
-              )}
-
+                  </div>
+                );
+              })()}
               {(() => {
                 const filteredStats = personStats.filter((person) =>
                   person.name.toLowerCase().includes(statsSearchQuery.toLowerCase().trim())
