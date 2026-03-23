@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, BarChart3, Users, ChevronLeft, ChevronRight, Clock, Edit2, Check, X, Search } from "lucide-react";
 import { format, differenceInCalendarDays, parseISO, eachDayOfInterval, getDay } from "date-fns";
 import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -123,6 +123,7 @@ export function AbsenceManagementDialog({
   const [showAddStatsPerson, setShowAddStatsPerson] = useState(false);
   const [statsNewName, setStatsNewName] = useState("");
   const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
+  const [statsSearchQuery, setStatsSearchQuery] = useState("");
 
   // Add record form state
   const [showAddForm, setShowAddForm] = useState(false);
@@ -712,13 +713,28 @@ export function AbsenceManagementDialog({
                 </div>
               )}
 
+              {/* Search input */}
+              {personStats.length > 0 && (
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={statsSearchQuery}
+                    onChange={(e) => setStatsSearchQuery(e.target.value)}
+                    placeholder="Zoek op naam..."
+                    className="pl-9"
+                  />
+                </div>
+              )}
+
               {personStats.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
                   Geen personen gevonden
                 </div>
               ) : (
                   <div className="space-y-3">
-                    {personStats.map((person) => {
+                    {personStats
+                      .filter((person) => person.name.toLowerCase().includes(statsSearchQuery.toLowerCase()))
+                      .map((person) => {
                       const personRecords = yearRecords
                         .filter((record) => record.person_name === person.name)
                         .sort((a, b) => b.start_date.localeCompare(a.start_date));
