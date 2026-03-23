@@ -769,8 +769,8 @@ export function AbsenceManagementDialog({
                   {/* AI Analysis */}
                   <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                        <p className="text-sm font-semibold">AI Analyse</p>
+                        <img src={mascot} alt="Linq" className="h-5 w-5 rounded-full object-cover object-top" />
+                        <p className="text-sm font-semibold">Linq's Analyse</p>
                       </div>
                     {aiLoading && (
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -779,7 +779,7 @@ export function AbsenceManagementDialog({
                       </div>
                     )}
                     {aiAnalysis && !aiLoading && (
-                      <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
+                      <blockquote className="border-l-2 border-primary/40 pl-3 text-sm text-foreground/90 leading-relaxed whitespace-pre-line italic">{aiAnalysis}</blockquote>
                     )}
                   </div>
 
