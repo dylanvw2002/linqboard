@@ -465,7 +465,7 @@ export function AbsenceManagementDialog({
     if (open && !loading && personStats.length > 0) {
       fetchAiAnalysis();
     }
-  }, [open, loading, selectedYear]);
+  }, [open, loading, selectedYear, selectedMonth]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
