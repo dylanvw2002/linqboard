@@ -1716,7 +1716,41 @@ const Board = () => {
         console.log('📋 Opgehaalde taken:', tasksData?.length, 'taken');
         console.log('📋 Kolom IDs:', columnIds);
         if (tasksData && tasksData.length > 0) {
-          const taskIds = tasksData.map(t => t.id);
+          const absenceColumns = new Map(
+            (columnsData || [])
+              .filter(c => c.column_type === 'sick_leave' || c.column_type === 'vacation')
+              .map(c => [c.id, c.column_type])
+          );
+
+          const absenceTaskCandidates = tasksData.filter(task => absenceColumns.has(task.column_id));
+          let hiddenAbsenceTaskIds = new Set<string>();
+
+          if (absenceTaskCandidates.length > 0) {
+            const personNames = [...new Set(absenceTaskCandidates.map(task => task.title))];
+            const { data: absenceRecords } = await supabase
+              .from("absence_records")
+              .select("id, person_name, absence_type, start_date, end_date")
+              .eq("organization_id", organizationId)
+              .in("person_name", personNames);
+
+            const today = format(new Date(), "yyyy-MM-dd");
+            hiddenAbsenceTaskIds = new Set(
+              absenceTaskCandidates
+                .filter(task => {
+                  const columnType = absenceColumns.get(task.column_id);
+                  return absenceRecords?.some(record =>
+                    record.person_name === task.title &&
+                    record.absence_type === columnType &&
+                    !!record.end_date &&
+                    record.end_date <= today
+                  );
+                })
+                .map(task => task.id)
+            );
+          }
+
+          const visibleTasksData = tasksData.filter(task => !hiddenAbsenceTaskIds.has(task.id));
+          const taskIds = visibleTasksData.map(t => t.id);
 
           // Parallel fetch: assignees and profiles
           const [assigneesResult, allProfilesResult] = await Promise.all([supabase.from("task_assignees").select("task_id, user_id").in("task_id", taskIds),
@@ -1732,7 +1766,7 @@ const Board = () => {
           })]);
 
           // Map assignees to tasks
-          const tasksWithAssignees = tasksData.map(task => ({
+          const tasksWithAssignees = visibleTasksData.map(task => ({
             ...task,
             assignees: assigneesResult.data?.filter(a => a.task_id === task.id).map(a => {
               const profile = allProfilesResult.data?.find(p => p.user_id === a.user_id);
