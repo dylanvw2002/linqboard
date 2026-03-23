@@ -711,68 +711,66 @@ export function AbsenceManagementDialog({
             <TabsContent value="stats" className="mt-4 space-y-4">
               <YearSelector />
 
+              {/* AI Analysis - always visible */}
+              <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <p className="text-sm font-semibold">AI Analyse</p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={fetchAiAnalysis} disabled={aiLoading} className="h-7 text-xs">
+                    {aiLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
+                    {aiAnalysis ? "Opnieuw analyseren" : "Analyseren"}
+                  </Button>
+                </div>
+                {aiLoading && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Patronen worden geanalyseerd...
+                  </div>
+                )}
+                {aiAnalysis && !aiLoading && (
+                  <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
+                )}
+              </div>
+
               {/* Chart Section */}
               {personStats.some((p) => p.days > 0) && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Monthly chart */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Monthly chart */}
+                  <div className="p-3 rounded-xl border bg-muted/30">
+                    <p className="text-xs font-semibold text-muted-foreground mb-2">Dagen per maand</p>
+                    <ResponsiveContainer width="100%" height={140}>
+                      <BarChart data={monthlyChartData}>
+                        <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                        <YAxis hide />
+                        <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+                        <Bar dataKey="dagen" radius={[4, 4, 0, 0]}>
+                          {monthlyChartData.map((_, i) => (
+                            <Cell key={i} fill={absenceType === "sick_leave" ? "hsl(0 72% 65%)" : "hsl(217 91% 60%)"} opacity={0.8} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                  {/* Top persons chart */}
+                  {topPersonsChartData.length > 0 && (
                     <div className="p-3 rounded-xl border bg-muted/30">
-                      <p className="text-xs font-semibold text-muted-foreground mb-2">Dagen per maand</p>
+                      <p className="text-xs font-semibold text-muted-foreground mb-2">Top personen</p>
                       <ResponsiveContainer width="100%" height={140}>
-                        <BarChart data={monthlyChartData}>
-                          <XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                          <YAxis hide />
-                          <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-                          <Bar dataKey="dagen" radius={[4, 4, 0, 0]}>
-                            {monthlyChartData.map((_, i) => (
-                              <Cell key={i} fill={absenceType === "sick_leave" ? "hsl(0 72% 65%)" : "hsl(217 91% 60%)"} opacity={0.8} />
+                        <BarChart data={topPersonsChartData} layout="vertical">
+                          <XAxis type="number" hide />
+                          <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} width={60} axisLine={false} tickLine={false} />
+                          <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} formatter={(value: number, _: string, props: any) => [`${value} dagen`, props.payload.fullName]} />
+                          <Bar dataKey="dagen" radius={[0, 4, 4, 0]}>
+                            {topPersonsChartData.map((_, i) => (
+                              <Cell key={i} fill={absenceType === "sick_leave" ? "hsl(0 72% 65%)" : "hsl(217 91% 60%)"} opacity={0.7 + (i * 0.05)} />
                             ))}
                           </Bar>
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
-                    {/* Top persons chart */}
-                    {topPersonsChartData.length > 0 && (
-                      <div className="p-3 rounded-xl border bg-muted/30">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Top personen</p>
-                        <ResponsiveContainer width="100%" height={140}>
-                          <BarChart data={topPersonsChartData} layout="vertical">
-                            <XAxis type="number" hide />
-                            <YAxis dataKey="name" type="category" tick={{ fontSize: 10 }} width={60} axisLine={false} tickLine={false} />
-                            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} formatter={(value: number, _: string, props: any) => [`${value} dagen`, props.payload.fullName]} />
-                            <Bar dataKey="dagen" radius={[0, 4, 4, 0]}>
-                              {topPersonsChartData.map((_, i) => (
-                                <Cell key={i} fill={absenceType === "sick_leave" ? "hsl(0 72% 65%)" : "hsl(217 91% 60%)"} opacity={0.7 + (i * 0.05)} />
-                              ))}
-                            </Bar>
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* AI Analysis */}
-                  <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-primary" />
-                        <p className="text-sm font-semibold">AI Analyse</p>
-                      </div>
-                      <Button variant="outline" size="sm" onClick={fetchAiAnalysis} disabled={aiLoading} className="h-7 text-xs">
-                        {aiLoading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Sparkles className="h-3 w-3 mr-1" />}
-                        {aiAnalysis ? "Opnieuw analyseren" : "Analyseren"}
-                      </Button>
-                    </div>
-                    {aiLoading && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Patronen worden geanalyseerd...
-                      </div>
-                    )}
-                    {aiAnalysis && !aiLoading && (
-                      <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiAnalysis}</p>
-                    )}
-                  </div>
+                  )}
                 </div>
               )}
               {!showAddStatsPerson ? (
