@@ -386,6 +386,62 @@ export function AbsenceManagementDialog({
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
   }, [yearRecords, orgMembers, selectedYear, manualPersons]);
 
+  // Monthly chart data
+  const monthlyChartData = useMemo(() => {
+    const months = ["Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+    const monthlyCounts = new Array(12).fill(0);
+    yearRecords.forEach((r) => {
+      const start = parseISO(r.start_date);
+      const end = r.end_date ? parseISO(r.end_date) : new Date();
+      const yearStart = new Date(selectedYear, 0, 1);
+      const yearEnd = new Date(selectedYear, 11, 31);
+      const effectiveStart = start < yearStart ? yearStart : start;
+      const effectiveEnd = end > yearEnd ? yearEnd : end;
+      if (effectiveStart > effectiveEnd) return;
+      const days = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
+      days.forEach((d) => { monthlyCounts[getMonth(d)] += 1; });
+    });
+    return months.map((name, i) => ({ name, dagen: monthlyCounts[i] }));
+  }, [yearRecords, selectedYear]);
+
+  // Top persons chart data (top 5 by days)
+  const topPersonsChartData = useMemo(() => {
+    return personStats
+      .filter((p) => p.days > 0)
+      .slice(0, 6)
+      .map((p) => ({ name: p.name.split(" ")[0], dagen: p.days, fullName: p.name }));
+  }, [personStats]);
+
+  const fetchAiAnalysis = useCallback(async () => {
+    if (personStats.every((p) => p.count === 0)) {
+      setAiAnalysis("Geen registraties gevonden om te analyseren.");
+      return;
+    }
+    setAiLoading(true);
+    setAiAnalysis(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-absence", {
+        body: {
+          personStats: personStats.map((p) => ({ name: p.name, count: p.count, days: p.days })),
+          yearRecords: yearRecords.map((r) => ({
+            person_name: r.person_name,
+            start_date: r.start_date,
+            end_date: r.end_date,
+            notes: r.notes,
+          })),
+          year: selectedYear,
+          absenceType,
+        },
+      });
+      if (error) throw error;
+      setAiAnalysis(data.analysis);
+    } catch (e: any) {
+      console.error("AI analysis error:", e);
+      setAiAnalysis("Analyse kon niet worden geladen.");
+    } finally {
+      setAiLoading(false);
+    }
+  }, [personStats, yearRecords, selectedYear, absenceType]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
