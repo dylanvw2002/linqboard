@@ -1610,14 +1610,21 @@ const Board = () => {
   const fetchManualPersonNames = async () => {
     if (!organizationId || isDemo) return;
     try {
-      const { data } = await supabase
-        .from("person_vacation_settings")
-        .select("person_name")
-        .eq("organization_id", organizationId);
-      if (data) {
-        const names = [...new Set(data.map(d => d.person_name))];
-        setManualPersonNames(names);
-      }
+      const [vacationRes, absenceRes] = await Promise.all([
+        supabase
+          .from("person_vacation_settings")
+          .select("person_name")
+          .eq("organization_id", organizationId),
+        supabase
+          .from("absence_records")
+          .select("person_name")
+          .eq("organization_id", organizationId),
+      ]);
+      const vacNames = vacationRes.data?.map(d => d.person_name) || [];
+      const absNames = absenceRes.data?.map(d => d.person_name) || [];
+      const memberNames = orgMembers.map(m => m.full_name);
+      const manualOnly = [...new Set([...vacNames, ...absNames])].filter(n => !memberNames.includes(n));
+      setManualPersonNames(manualOnly);
     } catch (error) {
       console.error("Error fetching manual person names:", error);
     }
