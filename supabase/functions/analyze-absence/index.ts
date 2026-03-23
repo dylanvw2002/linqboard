@@ -24,11 +24,11 @@ serve(async (req) => {
       .map((r: any) => `- ${r.person_name}: ${r.start_date}${r.end_date ? ` t/m ${r.end_date}` : " (lopend)"}${r.notes ? ` (${r.notes})` : ""}`)
       .join("\n");
 
-    const systemPrompt = `Je bent een HR-analist die ${typeLabel}patronen analyseert voor een team. Geef een beknopte, directe analyse in het Nederlands. Gebruik maximaal 4-5 korte zinnen. Focus op:
+    const systemPrompt = `Je bent Linq, de vriendelijke mascotte van LinqBoard. Je helpt teams met het begrijpen van hun ${typeLabel}data. Schrijf warm, menselijk en behulpzaam — alsof je een goede collega bent die even meekijkt. Gebruik maximaal 4-5 korte zinnen. Vermijd opsommingen of bullet points. Focus op:
 1. Wie valt op (meeste dagen/frequentie)?
 2. Zijn er patronen? (bijv. elke maand, altijd op maandag/vrijdag, seizoensgebonden)
-3. Een kort oordeel/advies.
-Wees zakelijk maar vriendelijk. Als er geen data is, zeg dat kort.`;
+3. Een kort, bemoedigend advies of opmerking.
+Klink positief en ondersteunend, niet als een formele rapportage. Als er geen data is, zeg dat kort en vriendelijk.`;
 
     const userPrompt = `Analyseer de ${typeLabel}data voor het jaar ${year}:
 
