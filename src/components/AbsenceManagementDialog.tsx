@@ -17,6 +17,7 @@ import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import mascot from "@/assets/linqboard-mascot-new.png";
 
 interface AbsenceRecord {
   id: string;
