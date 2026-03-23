@@ -134,6 +134,7 @@ export function AbsenceManagementDialog({
   const [statsNewName, setStatsNewName] = useState("");
   const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
   const [statsSearchQuery, setStatsSearchQuery] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null); // null = hele jaar
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
