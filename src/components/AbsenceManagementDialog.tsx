@@ -735,6 +735,29 @@ export function AbsenceManagementDialog({
             <TabsContent value="stats" className="mt-4 space-y-4">
               <YearSelector />
 
+              {/* Month filter */}
+              <div className="flex flex-wrap gap-1.5">
+                <Button
+                  variant={selectedMonth === null ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 text-xs px-2.5"
+                  onClick={() => setSelectedMonth(null)}
+                >
+                  Heel jaar
+                </Button>
+                {["Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"].map((m, i) => (
+                  <Button
+                    key={i}
+                    variant={selectedMonth === i ? "default" : "outline"}
+                    size="sm"
+                    className="h-7 text-xs px-2"
+                    onClick={() => setSelectedMonth(i)}
+                  >
+                    {m}
+                  </Button>
+                ))}
+              </div>
+
               {/* AI Analysis - always visible */}
               <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
                 <div className="flex items-center justify-between">
