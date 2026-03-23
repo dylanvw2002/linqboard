@@ -242,6 +242,14 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
         .subscribe();
       channels.push(ch);
 
+      // Realtime reactions
+      const reactionCh = supabase.channel(`dm-reactions-${currentUserId}-${memberId}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "message_reactions" }, () => {
+          if (dmMessages.length > 0) loadDmReactions(dmMessages.map(m => m.id));
+        })
+        .subscribe();
+      channels.push(reactionCh);
+
       // Typing indicator channel
       const typingCh = supabase.channel(`typing-${[currentUserId, memberId].sort().join("-")}`)
         .on("broadcast", { event: "typing" }, (payload: any) => {
