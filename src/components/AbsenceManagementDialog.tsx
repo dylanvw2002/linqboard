@@ -381,7 +381,11 @@ export function AbsenceManagementDialog({
       const yearEnd = new Date(selectedYear, 11, 31);
       const effectiveStart = start < yearStart ? yearStart : start;
       const effectiveEnd = end > yearEnd ? yearEnd : end;
-      stats[key].days += Math.max(0, differenceInCalendarDays(effectiveEnd, effectiveStart) + 1);
+      if (effectiveStart > effectiveEnd) return;
+      // Count only weekdays (mon-fri)
+      const allDays = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
+      const workDays = allDays.filter((d) => { const day = getDay(d); return day !== 0 && day !== 6; });
+      stats[key].days += workDays.length;
     });
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
   }, [yearRecords, orgMembers, selectedYear, manualPersons]);
@@ -399,7 +403,7 @@ export function AbsenceManagementDialog({
       const effectiveEnd = end > yearEnd ? yearEnd : end;
       if (effectiveStart > effectiveEnd) return;
       const days = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
-      days.forEach((d) => { monthlyCounts[getMonth(d)] += 1; });
+      days.forEach((d) => { const day = getDay(d); if (day !== 0 && day !== 6) monthlyCounts[getMonth(d)] += 1; });
     });
     return months.map((name, i) => ({ name, dagen: monthlyCounts[i] }));
   }, [yearRecords, selectedYear]);
@@ -893,11 +897,11 @@ export function AbsenceManagementDialog({
                                 <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                                   <div
                                     className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
-                                    style={{ width: `${Math.min(100, (person.days / 365) * 100)}%` }}
+                                    style={{ width: `${Math.min(100, (person.days / 261) * 100)}%` }}
                                   />
                                 </div>
                                 <span className="text-xs font-mono text-muted-foreground w-10 text-right">
-                                  {((person.days / 365) * 100).toFixed(1)}%
+                                  {((person.days / 261) * 100).toFixed(1)}%
                                 </span>
                               </div>
 
