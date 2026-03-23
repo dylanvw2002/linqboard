@@ -320,7 +320,8 @@ export function AbsenceManagementDialog({
       const { error } = await supabase.from("absence_records").delete().eq("id", id);
       if (error) throw error;
       toast.success("Record verwijderd");
-      setRecords(records.filter((r) => r.id !== id));
+      setRecords((prev) => prev.filter((r) => r.id !== id));
+      if (isVacation) loadVacationSettings();
     } catch (error: any) {
       toast.error("Fout bij verwijderen: " + error.message);
     }
