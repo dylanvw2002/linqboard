@@ -134,6 +134,7 @@ export function AbsenceManagementDialog({
   const [statsNewName, setStatsNewName] = useState("");
   const [selectedStatsPerson, setSelectedStatsPerson] = useState<string | null>(null);
   const [statsSearchQuery, setStatsSearchQuery] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null); // null = hele jaar
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
 
@@ -353,6 +354,18 @@ export function AbsenceManagementDialog({
     [records, selectedYear]
   );
 
+  // Filter by selected month
+  const filteredYearRecords = useMemo(() => {
+    if (selectedMonth === null) return yearRecords;
+    return yearRecords.filter((r) => {
+      const start = parseISO(r.start_date);
+      const end = r.end_date ? parseISO(r.end_date) : new Date();
+      const monthStart = new Date(selectedYear, selectedMonth, 1);
+      const monthEnd = new Date(selectedYear, selectedMonth + 1, 0);
+      return start <= monthEnd && end >= monthStart;
+    });
+  }, [yearRecords, selectedMonth, selectedYear]);
+
   const personStats = useMemo(() => {
     const stats: Record<string, { name: string; count: number; days: number; avatar_url?: string | null; isCustom?: boolean }> = {};
 
@@ -369,7 +382,7 @@ export function AbsenceManagementDialog({
     });
 
     // Fill in actual data from records
-    yearRecords.forEach((r) => {
+    filteredYearRecords.forEach((r) => {
       const key = r.user_id || r.person_name;
       if (!stats[key]) {
         stats[key] = { name: r.person_name, count: 0, days: 0, isCustom: !orgMembers.some((m) => m.full_name === r.person_name || m.user_id === r.user_id) };
@@ -377,10 +390,10 @@ export function AbsenceManagementDialog({
       stats[key].count += 1;
       const start = parseISO(r.start_date);
       const end = r.end_date ? parseISO(r.end_date) : new Date();
-      const yearStart = new Date(selectedYear, 0, 1);
-      const yearEnd = new Date(selectedYear, 11, 31);
-      const effectiveStart = start < yearStart ? yearStart : start;
-      const effectiveEnd = end > yearEnd ? yearEnd : end;
+      const periodStart = selectedMonth !== null ? new Date(selectedYear, selectedMonth, 1) : new Date(selectedYear, 0, 1);
+      const periodEnd = selectedMonth !== null ? new Date(selectedYear, selectedMonth + 1, 0) : new Date(selectedYear, 11, 31);
+      const effectiveStart = start < periodStart ? periodStart : start;
+      const effectiveEnd = end > periodEnd ? periodEnd : end;
       if (effectiveStart > effectiveEnd) return;
       // Count only weekdays (mon-fri)
       const allDays = eachDayOfInterval({ start: effectiveStart, end: effectiveEnd });
@@ -388,7 +401,7 @@ export function AbsenceManagementDialog({
       stats[key].days += workDays.length;
     });
     return Object.values(stats).sort((a, b) => b.days - a.days || a.name.localeCompare(b.name, "nl"));
-  }, [yearRecords, orgMembers, selectedYear, manualPersons]);
+  }, [filteredYearRecords, orgMembers, selectedYear, selectedMonth, manualPersons]);
 
   // Monthly chart data
   const monthlyChartData = useMemo(() => {
@@ -452,7 +465,7 @@ export function AbsenceManagementDialog({
     if (open && !loading && personStats.length > 0) {
       fetchAiAnalysis();
     }
-  }, [open, loading, selectedYear]);
+  }, [open, loading, selectedYear, selectedMonth]);
 
   // Vacation balance per person
   const vacationBalances = useMemo(() => {
@@ -722,6 +735,29 @@ export function AbsenceManagementDialog({
             <TabsContent value="stats" className="mt-4 space-y-4">
               <YearSelector />
 
+              {/* Month filter */}
+              <div className="flex flex-wrap gap-1.5">
+                <Button
+                  variant={selectedMonth === null ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 text-xs px-2.5"
+                  onClick={() => setSelectedMonth(null)}
+                >
+                  Heel jaar
+                </Button>
+                {["Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"].map((m, i) => (
+                  <Button
+                    key={i}
+                    variant={selectedMonth === i ? "default" : "outline"}
+                    size="sm"
+                    className="h-7 text-xs px-2"
+                    onClick={() => setSelectedMonth(i)}
+                  >
+                    {m}
+                  </Button>
+                ))}
+              </div>
+
               {/* AI Analysis - always visible */}
               <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
                 <div className="flex items-center justify-between">
@@ -897,11 +933,11 @@ export function AbsenceManagementDialog({
                                 <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                                   <div
                                     className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
-                                    style={{ width: `${Math.min(100, (person.days / 261) * 100)}%` }}
+                                    style={{ width: `${Math.min(100, (person.days / (selectedMonth !== null ? 22 : 261)) * 100)}%` }}
                                   />
                                 </div>
                                 <span className="text-xs font-mono text-muted-foreground w-10 text-right">
-                                  {((person.days / 261) * 100).toFixed(1)}%
+                                  {((person.days / (selectedMonth !== null ? 22 : 261)) * 100).toFixed(1)}%
                                 </span>
                               </div>
 
