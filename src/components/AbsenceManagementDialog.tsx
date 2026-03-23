@@ -726,15 +726,17 @@ export function AbsenceManagementDialog({
                 </div>
               )}
 
-              {personStats.length === 0 ? (
-                <div className="text-center text-muted-foreground py-8">
-                  Geen personen gevonden
-                </div>
-              ) : (
+              {(() => {
+                const filteredStats = personStats.filter((person) =>
+                  person.name.toLowerCase().includes(statsSearchQuery.toLowerCase().trim())
+                );
+                return filteredStats.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    {statsSearchQuery.trim() ? "Geen personen gevonden voor deze zoekopdracht" : "Geen personen gevonden"}
+                  </div>
+                ) : (
                   <div className="space-y-3">
-                    {personStats
-                      .filter((person) => person.name.toLowerCase().includes(statsSearchQuery.toLowerCase()))
-                      .map((person) => {
+                    {filteredStats.map((person) => {
                       const personRecords = yearRecords
                         .filter((record) => record.person_name === person.name)
                         .sort((a, b) => b.start_date.localeCompare(a.start_date));
