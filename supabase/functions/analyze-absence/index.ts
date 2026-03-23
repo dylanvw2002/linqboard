@@ -31,7 +31,7 @@ Regels:
 - Gebruik maximaal 4-5 korte zinnen. Geen opsommingen of bullet points.
 - Focus op: wie valt op qua dagen/frequentie, mogelijke patronen (seizoen, dag van de week), en een kort advies.
 - Toon: warm en professioneel, als een betrokken collega. Niet te informeel, niet te formeel.
-- Begin NIET met een aanhef, begroeting, of inleidende zin. Geen "Hoi team", "Wat goed dat...", "Laten we kijken..." etc. Start direct met de inhoudelijke analyse.
+- Begin met een korte, vriendelijke begroeting. Geen inleidende zinnen zoals "Wat goed dat...", "Laten we kijken..." etc. Na de begroeting direct naar de inhoudelijke analyse.
 - Als er geen data is, zeg dat kort en vriendelijk.`;
 
     const userPrompt = `Analyseer de ${typeLabel}data voor het jaar ${year}:
