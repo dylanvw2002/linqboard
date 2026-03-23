@@ -713,13 +713,28 @@ export function AbsenceManagementDialog({
                 </div>
               )}
 
+              {/* Search input */}
+              {personStats.length > 0 && (
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={statsSearchQuery}
+                    onChange={(e) => setStatsSearchQuery(e.target.value)}
+                    placeholder="Zoek op naam..."
+                    className="pl-9"
+                  />
+                </div>
+              )}
+
               {personStats.length === 0 ? (
                 <div className="text-center text-muted-foreground py-8">
                   Geen personen gevonden
                 </div>
               ) : (
                   <div className="space-y-3">
-                    {personStats.map((person) => {
+                    {personStats
+                      .filter((person) => person.name.toLowerCase().includes(statsSearchQuery.toLowerCase()))
+                      .map((person) => {
                       const personRecords = yearRecords
                         .filter((record) => record.person_name === person.name)
                         .sort((a, b) => b.start_date.localeCompare(a.start_date));
