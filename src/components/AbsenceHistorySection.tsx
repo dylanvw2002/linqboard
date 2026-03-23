@@ -70,9 +70,8 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
   const [schedule, setSchedule] = useState<WorkSchedule>(DEFAULT_SCHEDULE);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  const fetchData = async () => {
+    setLoading(true);
       const [recordsRes, settingsRes] = await Promise.all([
         supabase
           .from("absence_records")
