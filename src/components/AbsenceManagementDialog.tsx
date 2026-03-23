@@ -770,7 +770,7 @@ export function AbsenceManagementDialog({
                   {/* AI Analysis */}
                   <div className="p-4 rounded-xl border bg-gradient-to-br from-muted/50 to-muted/20 space-y-3">
                     <div className="flex items-center gap-2">
-                        <img src={mascot} alt="Linq" className="h-5 w-5 rounded-full object-cover object-top" />
+                        <img src={mascot} alt="Linq" className="h-8 w-8 rounded-full object-cover object-top" />
                         <p className="text-sm font-semibold">Linq's Analyse</p>
                       </div>
                     {aiLoading && (
