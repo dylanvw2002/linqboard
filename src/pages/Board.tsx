@@ -2085,6 +2085,7 @@ const Board = () => {
             ...task,
             title: validation.data.title,
             description: validation.data.description || null,
+            notes: editTaskNotes || null,
             due_date: editTaskDueDate ? editTaskDueDate.toISOString() : null,
             priority: editTaskPriority
           };
