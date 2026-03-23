@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Send, MessageCircle, User, Trash2, Minimize2, Paperclip, X, FileIcon, Image as ImageIcon } from "lucide-react";
+import { Send, MessageCircle, User, Trash2, Minimize2, Paperclip, X, FileIcon, Image as ImageIcon, Check, CheckCheck } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -226,6 +226,13 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
       const memberId = chatTarget.member.user_id;
       const ch = supabase.channel(`dm-${currentUserId}-${memberId}`)
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages" }, (payload: any) => {
+          const msg = payload.new;
+          if ((msg.sender_id === currentUserId && msg.receiver_id === memberId) ||
+              (msg.sender_id === memberId && msg.receiver_id === currentUserId)) {
+            loadDmMessages(memberId);
+          }
+        })
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "direct_messages" }, (payload: any) => {
           const msg = payload.new;
           if ((msg.sender_id === currentUserId && msg.receiver_id === memberId) ||
               (msg.sender_id === memberId && msg.receiver_id === currentUserId)) {
@@ -488,6 +495,15 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
           )}
         </div>
         {msg.messageId && renderReactions(msg.messageId)}
+        {msg.isMe && msg.dmMsg && (
+          <div className="flex justify-end px-1">
+            {msg.dmMsg.is_read ? (
+              <CheckCheck className="h-3.5 w-3.5 text-primary" />
+            ) : (
+              <Check className="h-3.5 w-3.5 text-muted-foreground" />
+            )}
+          </div>
+        )}
       </div>
       {msg.isMe && (
         <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 mt-4">
