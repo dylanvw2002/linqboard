@@ -933,11 +933,11 @@ export function AbsenceManagementDialog({
                                 <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                                   <div
                                     className={cn("h-full rounded-full", absenceType === "sick_leave" ? "bg-red-400" : "bg-blue-400")}
-                                    style={{ width: `${Math.min(100, (person.days / 261) * 100)}%` }}
+                                    style={{ width: `${Math.min(100, (person.days / (selectedMonth !== null ? 22 : 261)) * 100)}%` }}
                                   />
                                 </div>
                                 <span className="text-xs font-mono text-muted-foreground w-10 text-right">
-                                  {((person.days / 261) * 100).toFixed(1)}%
+                                  {((person.days / (selectedMonth !== null ? 22 : 261)) * 100).toFixed(1)}%
                                 </span>
                               </div>
 
