@@ -94,7 +94,8 @@ export function AbsenceHistorySection({ personName, organizationId, absenceType 
       ]);
       setRecords(recordsRes.data || []);
       if (settingsRes.data && settingsRes.data.length > 0) {
-        setSchedule(settingsRes.data[0].work_schedule as WorkSchedule);
+        const savedSchedule = settingsRes.data[0].work_schedule as WorkSchedule;
+        setSchedule(isEmptySchedule(savedSchedule) ? DEFAULT_SCHEDULE : savedSchedule);
       }
       setLoading(false);
   };
