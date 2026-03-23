@@ -3510,20 +3510,11 @@ const Board = () => {
                               <div>
                                 <Label htmlFor={`title-${column.id}`}>{column.column_type === 'sick_leave' || column.column_type === 'vacation' ? t('board.name') : t('board.title')} *</Label>
                                 {column.column_type === 'sick_leave' || column.column_type === 'vacation' ? (
-                                  <Select value={newTaskTitle} onValueChange={setNewTaskTitle}>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Selecteer persoon" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      {(() => {
-                                        const memberNames = orgMembers.map(m => m.full_name);
-                                        const allNames = [...new Set([...memberNames, ...manualPersonNames])].sort();
-                                        return allNames.map(name => (
-                                          <SelectItem key={name} value={name}>{name}</SelectItem>
-                                        ));
-                                      })()}
-                                    </SelectContent>
-                                  </Select>
+                                  (() => {
+                                    const memberNames = orgMembers.map(m => m.full_name);
+                                    const allNames = [...new Set([...memberNames, ...manualPersonNames])].sort();
+                                    return <PersonSearchSelect value={newTaskTitle} onValueChange={setNewTaskTitle} names={allNames} />;
+                                  })()
                                 ) : (
                                   <Input id={`title-${column.id}`} value={newTaskTitle} onChange={e => setNewTaskTitle(e.target.value)} placeholder={t('board.titlePlaceholder')} maxLength={200} />
                                 )}
