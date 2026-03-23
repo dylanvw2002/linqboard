@@ -723,18 +723,21 @@ export function AbsenceManagementDialog({
                     placeholder="Zoek op naam..."
                     className="pl-9"
                   />
-                  </div>
-                );
-              })()}
+                </div>
+              )}
+
               {(() => {
                 const filteredStats = personStats.filter((person) =>
                   person.name.toLowerCase().includes(statsSearchQuery.toLowerCase().trim())
                 );
-                return filteredStats.length === 0 ? (
-                  <div className="text-center text-muted-foreground py-8">
-                    {statsSearchQuery.trim() ? "Geen personen gevonden voor deze zoekopdracht" : "Geen personen gevonden"}
-                  </div>
-                ) : (
+                if (filteredStats.length === 0) {
+                  return (
+                    <div className="text-center text-muted-foreground py-8">
+                      {statsSearchQuery.trim() ? "Geen personen gevonden voor deze zoekopdracht" : "Geen personen gevonden"}
+                    </div>
+                  );
+                }
+                return (
                   <div className="space-y-3">
                     {filteredStats.map((person) => {
                       const personRecords = yearRecords
@@ -811,7 +814,8 @@ export function AbsenceManagementDialog({
                       );
                     })}
                   </div>
-              )}
+                );
+              })()}
             </TabsContent>
 
           </Tabs>
