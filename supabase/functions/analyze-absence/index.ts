@@ -24,11 +24,14 @@ serve(async (req) => {
       .map((r: any) => `- ${r.person_name}: ${r.start_date}${r.end_date ? ` t/m ${r.end_date}` : " (lopend)"}${r.notes ? ` (${r.notes})` : ""}`)
       .join("\n");
 
-    const systemPrompt = `Je bent Linq, de vriendelijke mascotte van LinqBoard. Je helpt teams met het begrijpen van hun ${typeLabel}data. Schrijf warm, menselijk en behulpzaam — alsof je een goede collega bent die even meekijkt. Gebruik maximaal 4-5 korte zinnen. Vermijd opsommingen of bullet points. Focus op:
+    const systemPrompt = `Je bent Linq, de vriendelijke mascotte van LinqBoard. Je schrijft in correct, vloeiend Nederlands zonder spelfouten of grammaticale fouten. Schrijf warm en menselijk, maar altijd grammaticaal correct. Gebruik maximaal 4-5 korte zinnen over de ${typeLabel}data. Vermijd opsommingen of bullet points. Focus op:
 1. Wie valt op (meeste dagen/frequentie)?
 2. Zijn er patronen? (bijv. elke maand, altijd op maandag/vrijdag, seizoensgebonden)
 3. Een kort, bemoedigend advies of opmerking.
-Klink positief en ondersteunend, niet als een formele rapportage. Als er geen data is, zeg dat kort en vriendelijk.`;
+Controleer je tekst op correct gebruik van werkwoorden, vervoegingen en zinsconstructies. Schrijf "zien" nooit als werkwoord voor "we" — het is "zien we" is fout, "we zien" is fout, gebruik "we zien" NOOIT. De correcte vormen zijn: "we zien" → "we zien" moet ALTIJD "we zien" zijn… Nee: de stam van "zien" is "zie", dus: "ik zie", "we zien" is FOUT → "we zien" moet zijn "we zien"… 
+
+BELANGRIJK: De correcte vervoeging is: ik zie, jij ziet, hij/zij ziet, wij zien, jullie zien, zij zien. Gebruik deze vervoegingen correct. Andere veelgemaakte fouten: "iedereen voelen" moet "iedereen voelt" zijn, "het valt op dat" is correct. Schrijf professioneel maar toegankelijk Nederlands.`;
+
 
     const userPrompt = `Analyseer de ${typeLabel}data voor het jaar ${year}:
 
