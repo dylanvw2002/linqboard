@@ -2344,6 +2344,7 @@ const Board = () => {
       setNewTaskRecurrenceInterval(1);
       setNewTaskRecurrenceEndDate(undefined);
       await fetchBoardData();
+      fetchManualPersonNames();
     } catch (error: any) {
       toast.error(t('board.errorAddingTask'));
     }
