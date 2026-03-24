@@ -123,16 +123,47 @@ export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers
     if (currentUserId) fetchUnreadCounts();
   }, [currentUserId, fetchUnreadCounts]);
 
+  // Initialize notification sound
+  useEffect(() => {
+    notificationSoundRef.current = new Audio("/notification.mp3");
+    notificationSoundRef.current.volume = 0.5;
+  }, []);
+
+  // Play notification sound
+  const playNotificationSound = useCallback(() => {
+    try {
+      if (notificationSoundRef.current) {
+        notificationSoundRef.current.currentTime = 0;
+        notificationSoundRef.current.play().catch(() => {});
+      }
+    } catch {}
+  }, []);
+
   // Listen for new DMs even when collapsed
   useEffect(() => {
     if (!currentUserId) return;
     const ch = supabase.channel(`dm-unread-global-${currentUserId}`)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${currentUserId}` }, () => {
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages", filter: `receiver_id=eq.${currentUserId}` }, (payload: any) => {
         fetchUnreadCounts();
+
+        // Show desktop notification + sound for incoming DMs
+        const msg = payload.new;
+        if (msg && msg.sender_id !== currentUserId) {
+          const sender = orgMembers.find(m => m.user_id === msg.sender_id);
+          const senderName = sender?.full_name || "Iemand";
+          const preview = (msg.content || "").slice(0, 100);
+
+          // Don't notify if chat is open on this person
+          const isChatOpenOnSender = isExpanded && chatTarget.type === "dm" && chatTarget.member.user_id === msg.sender_id;
+          if (!isChatOpenOnSender) {
+            showDesktopNotification(`Nieuw bericht van ${senderName}`, preview);
+            playNotificationSound();
+          }
+        }
       })
       .subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [currentUserId, fetchUnreadCounts]);
+  }, [currentUserId, fetchUnreadCounts, orgMembers, isExpanded, chatTarget, showDesktopNotification, playNotificationSound]);
 
   // Load AI messages
   const loadAiMessages = useCallback(async () => {
