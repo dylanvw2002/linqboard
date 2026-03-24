@@ -71,6 +71,8 @@ interface Reaction {
 type ChatTarget = { type: "ai" } | { type: "dm"; member: OrgMember };
 
 export const FixedChatWidget = ({ boardId, boardName, organizationId, orgMembers = [] }: FixedChatWidgetProps) => {
+  const { showDesktopNotification } = useDesktopNotifications();
+  const notificationSoundRef = useRef<HTMLAudioElement | null>(null);
   const [aiMessages, setAiMessages] = useState<Message[]>([]);
   const [dmMessages, setDmMessages] = useState<DMMessage[]>([]);
   const [input, setInput] = useState("");
