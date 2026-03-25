@@ -2320,7 +2320,8 @@ const Board = () => {
       const isAbsenceColumn = column.column_type === 'sick_leave' || column.column_type === 'vacation';
       const endDate = newTaskEndDate ? format(newTaskEndDate, "yyyy-MM-dd") : null;
       const startDate = format(newTaskStartDate, "yyyy-MM-dd");
-      const isPastAbsence = isAbsenceColumn && endDate;
+      const today = format(new Date(), "yyyy-MM-dd");
+      const isPastAbsence = isAbsenceColumn && endDate && endDate < today;
 
       if (isPastAbsence && organizationId) {
         // Only create absence_record, no task on the board
