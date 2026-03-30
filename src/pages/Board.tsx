@@ -2323,6 +2323,18 @@ const Board = () => {
       const today = format(new Date(), "yyyy-MM-dd");
       const isPastAbsence = isAbsenceColumn && endDate && endDate < today;
 
+      // Check for duplicate: if person already has an active task in this absence column, prevent duplicate
+      if (isAbsenceColumn && !isPastAbsence) {
+        const existingTask = tasks.find(t => 
+          t.column_id === column.id && 
+          t.title.toLowerCase() === validation.data.title.toLowerCase()
+        );
+        if (existingTask) {
+          toast.error(`${validation.data.title} staat al in deze kolom`);
+          return;
+        }
+      }
+
       if (isPastAbsence && organizationId) {
         // Only create absence_record, no task on the board
         const { data: { session } } = await supabase.auth.getSession();
